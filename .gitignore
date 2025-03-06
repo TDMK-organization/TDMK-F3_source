@@ -52,6 +52,8 @@ Backup/
 *.xlsx
 *.xlsm
 *.xlsb
+*.csproj
+*.pdb
 
 # Ignore DLLs only in bin/ and obj/ but keep necessary libraries
 bin/*.dll
