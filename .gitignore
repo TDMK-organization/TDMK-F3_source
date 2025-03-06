@@ -1,0 +1,59 @@
+# Build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.sln.ide
+
+# Visual Studio specific
+.vs/
+*.VC.db
+*.VC.opendb
+
+# NuGet packages
+packages/
+*.nupkg
+
+# Logs
+*.log
+
+# Resharper files
+*.DotSettings.user
+
+# Publish output
+publish/
+
+# Temporary files
+*.tmp
+
+# Windows Form Designer generated files (if manually removed)
+Backup/
+
+# Executable and cache files
+*.exe
+*.cache
+*.pdb
+*.ilk
+*.idb
+*.obj
+*.tlb
+*.tli
+*.tlh
+*.manifest
+*.map
+
+# CSV and Excel files
+*.csv
+*.xls
+*.xlsx
+*.xlsm
+*.xlsb
+
+# Ignore DLLs only in bin/ and obj/ but keep necessary libraries
+bin/*.dll
+obj/*.dll
+!Libs/*.dll
