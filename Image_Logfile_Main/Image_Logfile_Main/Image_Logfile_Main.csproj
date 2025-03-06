@@ -1,0 +1,404 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B423798F-C49B-491E-9655-4D61EFC5EFB5}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>OK2SHIP</RootNamespace>
+    <AssemblyName>Image_Logfile_Main%28Ver08.1%29</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\TestAreas\Image_Logfile_Main\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>TDMK.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\AForge.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video, Version=2.2.5.0, Culture=neutral, PublicKeyToken=cbfb6e07d173c401, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\AForge.Video.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video.DirectShow, Version=2.2.5.0, Culture=neutral, PublicKeyToken=61ea4348d43881b7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\AForge.Video.DirectShow.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=7.0.2.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.Interfaces">
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\EPPlus.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.System.Drawing">
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\EPPlus.System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelDataReader">
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\ExcelDataReader.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelDataReader.DataSet">
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\ExcelDataReader.DataSet.dll</HintPath>
+    </Reference>
+    <Reference Include="IniLibs">
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\IniLibs.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="OK2SHIP_Lib">
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\OK2SHIP_Lib.dll</HintPath>
+    </Reference>
+    <Reference Include="Resize_Lib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\Resize_Lib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TDMK_EPPLUS_7, Version=7.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\TDMK_EPPLUS_7.dll</HintPath>
+    </Reference>
+    <Reference Include="TDMK_Image">
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\TDMK_Image.dll</HintPath>
+    </Reference>
+    <Reference Include="TDMK_SEEV_DLL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\TDMK_SEEV_DLL.dll</HintPath>
+    </Reference>
+    <Reference Include="TDMK_SQL, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\TDMK_SQL.dll</HintPath>
+    </Reference>
+    <Reference Include="ZedGraph, Version=5.1.2.878, Culture=neutral, PublicKeyToken=02a83cbd123fcd60, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\ZedGraph.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ACF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ACF.designer.cs">
+      <DependentUpon>ACF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ACF_Process.cs" />
+    <Compile Include="bHast_Graph.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="bHast_Graph.Designer.cs">
+      <DependentUpon>bHast_Graph.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BVH_PTH_Update.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BVH_PTH_Update.designer.cs">
+      <DependentUpon>BVH_PTH_Update.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Calcu_process.cs" />
+    <Compile Include="Camera_Data_Process.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Camera_Data_Process.designer.cs">
+      <DependentUpon>Camera_Data_Process.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Check_Impedance_logfile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Check_Impedance_logfile.designer.cs">
+      <DependentUpon>Check_Impedance_logfile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Echeck_Export.cs" />
+    <Compile Include="ECheck_Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ECheck_Main.designer.cs">
+      <DependentUpon>ECheck_Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ECheck_Process.cs" />
+    <Compile Include="Electrical_Details.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Electrical_Details.Designer.cs">
+      <DependentUpon>Electrical_Details.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EPPlus_Lib.cs" />
+    <Compile Include="ExportEPPlus.cs" />
+    <Compile Include="Export_Image_Class.cs" />
+    <Compile Include="FindControl.cs" />
+    <Compile Include="FrmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMain.Designer.cs">
+      <DependentUpon>FrmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmMainVHX.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMainVHX.designer.cs">
+      <DependentUpon>FrmMainVHX.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frm_Manual_input.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frm_Manual_input.designer.cs">
+      <DependentUpon>Frm_Manual_input.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Funtion_export.cs" />
+    <Compile Include="Funtion_setup_new.cs" />
+    <Compile Include="ImageDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImageDetail.designer.cs">
+      <DependentUpon>ImageDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Image_history.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Image_history.Designer.cs">
+      <DependentUpon>Image_history.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Impedance_data.cs" />
+    <Compile Include="Impedance_main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Impedance_main.designer.cs">
+      <DependentUpon>Impedance_main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Judgement_Image.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Judgement_Image.designer.cs">
+      <DependentUpon>Judgement_Image.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Login.designer.cs">
+      <DependentUpon>Login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="myVar.cs" />
+    <Compile Include="myVar_Echeck.cs" />
+    <Compile Include="My_Lib_For_SEEV.cs" />
+    <Compile Include="NG_Details.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NG_Details.designer.cs">
+      <DependentUpon>NG_Details.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReCheck_Data.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReCheck_Data.designer.cs">
+      <DependentUpon>ReCheck_Data.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RoundLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Setting_Pcs_Number.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Setting_Pcs_Number.Designer.cs">
+      <DependentUpon>Setting_Pcs_Number.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SolderMask.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SolderMask.designer.cs">
+      <DependentUpon>SolderMask.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Spec_Setup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Spec_Setup.Designer.cs">
+      <DependentUpon>Spec_Setup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StackUp_Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StackUp_Main.designer.cs">
+      <DependentUpon>StackUp_Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TestFunc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestFunc.Designer.cs">
+      <DependentUpon>TestFunc.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ThermalStress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ThermalStress.designer.cs">
+      <DependentUpon>ThermalStress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View_detail_Image.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View_detail_Image.Designer.cs">
+      <DependentUpon>View_detail_Image.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="ACF.resx">
+      <DependentUpon>ACF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="bHast_Graph.resx">
+      <DependentUpon>bHast_Graph.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BVH_PTH_Update.resx">
+      <DependentUpon>BVH_PTH_Update.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Camera_Data_Process.resx">
+      <DependentUpon>Camera_Data_Process.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Check_Impedance_logfile.resx">
+      <DependentUpon>Check_Impedance_logfile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ECheck_Main.resx">
+      <DependentUpon>ECheck_Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Electrical_Details.resx">
+      <DependentUpon>Electrical_Details.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmMain.resx">
+      <DependentUpon>FrmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmMainVHX.resx">
+      <DependentUpon>FrmMainVHX.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frm_Manual_input.resx">
+      <DependentUpon>Frm_Manual_input.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImageDetail.resx">
+      <DependentUpon>ImageDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Image_history.resx">
+      <DependentUpon>Image_history.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Impedance_main.resx">
+      <DependentUpon>Impedance_main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Judgement_Image.resx">
+      <DependentUpon>Judgement_Image.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Login.resx">
+      <DependentUpon>Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NG_Details.resx">
+      <DependentUpon>NG_Details.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="ReCheck_Data.resx">
+      <DependentUpon>ReCheck_Data.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Setting_Pcs_Number.resx">
+      <DependentUpon>Setting_Pcs_Number.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SolderMask.resx">
+      <DependentUpon>SolderMask.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Spec_Setup.resx">
+      <DependentUpon>Spec_Setup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StackUp_Main.resx">
+      <DependentUpon>StackUp_Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestFunc.resx">
+      <DependentUpon>TestFunc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ThermalStress.resx">
+      <DependentUpon>ThermalStress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View_detail_Image.resx">
+      <DependentUpon>View_detail_Image.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>9</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TDMK.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
