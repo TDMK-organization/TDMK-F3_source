@@ -1,0 +1,494 @@
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\bin\Debug\Image_Logfile_Main.exe.config
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\bin\Debug\Image_Logfile_Main.exe
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\bin\Debug\Image_Logfile_Main.pdb
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\bin\Debug\AForge.dll
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\bin\Debug\AForge.Video.DirectShow.dll
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\bin\Debug\AForge.Video.dll
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\bin\Debug\TDMK_SEEV_DLL.dll
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\bin\Debug\TDMK_SQL.dll
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\bin\Debug\TDMK_SEEV_DLL.pdb
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\bin\Debug\TDMK_SQL.pdb
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\bin\Debug\TDMK_SQL.dll.config
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver01_9).exe
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver01_9).pdb
+D:\Build\Image_Logfile_Main(Ver01_9).exe.config
+D:\Build\Image_Logfile_Main(Ver01_9).exe
+D:\Build\Image_Logfile_Main(Ver01_9).pdb
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.SuggestedBindingRedirects.cache
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver01_9).exe
+D:\Image_Logfile_Main(Ver01_9)\Image_Logfile_Main(Ver01_4)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver01_9).pdb
+D:\Edit Program\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver02_1).exe.config
+D:\Edit Program\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver02_1).exe
+D:\Edit Program\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver02_1).pdb
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_1).exe.config
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_1).exe
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_1).pdb
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+D:\Edit Program\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver02_1).exe.config
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver02_1).exe
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver02_1).pdb
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_3).exe.config
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_3).exe
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (1)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_3).pdb
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_4).exe
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Jul23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_4).pdb
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_4).exe
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_4).pdb
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_4).exe
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_4).pdb
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver02_4).exe.config
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver02_4).exe
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver02_4).pdb
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (27-7)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_7).exe
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main (2-8)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver02_7).pdb
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver03_2).exe
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update_New\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver03_2).pdb
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Build\Image_Logfile_Main(Ver03_2).exe.config
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Build\Image_Logfile_Main(Ver03_2).exe
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Build\Image_Logfile_Main(Ver03_2).pdb
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\TestAreas\Image_Logfile_Main(Ver03_2).exe.config
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\TestAreas\Image_Logfile_Main(Ver03_2).exe
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\TestAreas\Image_Logfile_Main(Ver03_2).pdb
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver03_2).exe
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver03_2).pdb
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TDMK-Ly\21Sep23\Image_Logfile_Main\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+D:\Customer Projects\SEEV\TestAreas\Image_Logfile_Main(Ver04_1).exe.config
+D:\Customer Projects\SEEV\TestAreas\Image_Logfile_Main(Ver04_1).exe
+D:\Customer Projects\SEEV\TestAreas\Image_Logfile_Main(Ver04_1).pdb
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.TestFunc.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver04_3).exe.config
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver04_3).exe
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\TestAreas\Image_LogFile_Main\Image_Logfile_Main(Ver04_3).pdb
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver04_3).exe
+D:\Customer Projects\SEEV\Giai Doan 2\TDMK Source Code\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver04_3).pdb
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.TestFunc.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver04_5).exe
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main (2)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver04_5).pdb
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Form1.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.TestFunc.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver04_6).exe
+E:\SEEV_GĐ2\SEEV_Modify\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver04_6).pdb
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.TestFunc.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Build\Image_Logfile_Main(Ver04_6).exe.config
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Build\Image_Logfile_Main(Ver04_6).exe
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Build\Image_Logfile_Main(Ver04_6).pdb
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CopyComplete
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Build\Image_Logfile_Main(Ver5.0).exe.config
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Build\Image_Logfile_Main(Ver5.0).exe
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Build\Image_Logfile_Main(Ver5.0).pdb
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver5.0).exe
+E:\SEEV_GĐ2\SEEV_Modify\Install for SEEV\Install for SEEV\OK2SHIP automation system\TDMK Data\Source Code\Update\Image_Logfile_Main(14-11)\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver5.0).pdb
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.AssemblyReference.cache
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.ResolveComReference.cache
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ACF.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.bHast_Graph.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.BVH_PTH_Update.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmCamera.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Check_Impedance_logfile.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.ECheck_Main.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Electrical_Details.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.FrmMain.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.FrmMainVHX.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Manual_Input.Frm_Manual_input.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ImageDetail.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Image_history.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.Impedance_main.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.Login.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Echeck_LogFile_Process.NG_Details.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Properties.Resources.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.ReCheck_Data.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Setting_Pcs_Number.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.SolderMask.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Spec_Setup.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.StackUp_Main.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.TestFunc.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\VHX.ThermalStress.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.View_detail_Image.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.GenerateResource.cache
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main.csproj.CoreCompileInputs.cache
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\OK2SHIP.Judgement_Image.resources
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Lo.B3B6A9F9.Up2Date
+E:\Git_Repo\TestAreas\Image_Logfile_Main\Image_Logfile_Main(Ver08.1).exe.config
+E:\Git_Repo\TestAreas\Image_Logfile_Main\Image_Logfile_Main(Ver08.1).exe
+E:\Git_Repo\TestAreas\Image_Logfile_Main\Image_Logfile_Main(Ver08.1).pdb
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver08.1).exe
+E:\Git_Repo\SEEV_Project\Image_Logfile_Main\Image_Logfile_Main\obj\Debug\Image_Logfile_Main(Ver08.1).pdb

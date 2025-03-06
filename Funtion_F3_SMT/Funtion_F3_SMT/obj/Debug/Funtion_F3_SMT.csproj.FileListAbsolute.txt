@@ -1,0 +1,207 @@
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.AssemblyReference.cache
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.ResolveComReference.cache
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.GenerateResource.cache
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.CoreCompileInputs.cache
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\bin\Debug\Funtion_F3_SMT.exe.config
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\bin\Debug\Funtion_F3_SMT.exe
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\bin\Debug\Funtion_F3_SMT.pdb
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\bin\Debug\TDMK_SEEV_DLL.dll
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\bin\Debug\TDMK_SQL.dll
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\bin\Debug\TDMK_SEEV_DLL.pdb
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\bin\Debug\TDMK_SQL.pdb
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\bin\Debug\TDMK_SQL.dll.config
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Setup_Spec_SMT.resources
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.CopyComplete
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.ImageDetail.resources
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Select_Image.resources
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_Data.resources
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_Data_3.resources
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_detail_Image.resources
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.FrmMain.resources
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Login.resources
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.MainScreen.resources
+E:\SEEV_SMT\F3_SMT\DATA\Funtion_F3_SMT.exe.config
+E:\SEEV_SMT\F3_SMT\DATA\Funtion_F3_SMT.exe
+E:\SEEV_SMT\F3_SMT\DATA\Funtion_F3_SMT.pdb
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.Properties.Resources.resources
+E:\SEEV_SMT\F3_SMT\Build\tessdata\configs\config.cfg
+E:\SEEV_SMT\F3_SMT\Build\tessdata\eng.traineddata
+E:\SEEV_SMT\F3_SMT\Build\tessdata\equ.traineddata
+E:\SEEV_SMT\F3_SMT\Build\tessdata\osd.traineddata
+E:\SEEV_SMT\F3_SMT\Build\tessdata\pdf.ttf
+E:\SEEV_SMT\F3_SMT\Build\tessdata\pdf.ttx
+E:\SEEV_SMT\F3_SMT\Build\x64\tesseract.dll
+E:\SEEV_SMT\F3_SMT\Build\x86\Tesseract.dll
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.ACF.resources
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT(Ver_05).exe
+E:\SEEV_SMT\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT(Ver_05).pdb
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\F3_SMT\Build\tessdata\configs\config.cfg
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\F3_SMT\Build\tessdata\eng.traineddata
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\F3_SMT\Build\tessdata\equ.traineddata
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\F3_SMT\Build\tessdata\osd.traineddata
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\F3_SMT\Build\tessdata\pdf.ttf
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\F3_SMT\Build\tessdata\pdf.ttx
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\F3_SMT\Build\x64\tesseract.dll
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\F3_SMT\Build\x86\Tesseract.dll
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\F3_SMT\Build\OK2SHIP_SMT(Ver_05).exe.config
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\F3_SMT\Build\OK2SHIP_SMT(Ver_05).exe
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\F3_SMT\Build\OK2SHIP_SMT(Ver_05).pdb
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.ResolveComReference.cache
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.ACF.resources
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.FrmMain.resources
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Login.resources
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.MainScreen.resources
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Setup_Spec_SMT.resources
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.ImageDetail.resources
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.Properties.Resources.resources
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Select_Image.resources
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_Data.resources
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_Data_3.resources
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_detail_Image.resources
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.GenerateResource.cache
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.CoreCompileInputs.cache
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.CopyComplete
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT(Ver_05).exe
+D:\Customer Projects\SEEV\SMT Project\Source Code\TDMK Ly\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT(Ver_05).pdb
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\F3_SMT\Build\tessdata\configs\config.cfg
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\F3_SMT\Build\tessdata\eng.traineddata
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\F3_SMT\Build\tessdata\equ.traineddata
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\F3_SMT\Build\tessdata\osd.traineddata
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\F3_SMT\Build\tessdata\pdf.ttf
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\F3_SMT\Build\tessdata\pdf.ttx
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\F3_SMT\Build\x64\tesseract.dll
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\F3_SMT\Build\x86\Tesseract.dll
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\F3_SMT\Build\OK2SHIP_SMT(Ver_05).exe.config
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\F3_SMT\Build\OK2SHIP_SMT(Ver_05).exe
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\F3_SMT\Build\OK2SHIP_SMT(Ver_05).pdb
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.AssemblyReference.cache
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.ResolveComReference.cache
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.ACF.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.FrmMain.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Login.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.MainScreen.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Setup_Spec_SMT.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.ImageDetail.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.Properties.Resources.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Select_Image.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_Data.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_Data_3.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_detail_Image.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.GenerateResource.cache
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.CoreCompileInputs.cache
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.CopyComplete
+E:\SEEV_SMT\F3_SMT\Build\OK2SHIP_SMT(Ver_2.1).exe.config
+E:\SEEV_SMT\F3_SMT\Build\OK2SHIP_SMT(Ver_2.1).exe
+E:\SEEV_SMT\F3_SMT\Build\OK2SHIP_SMT(Ver_2.1).pdb
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT(Ver_2.1).exe
+E:\SEEV_SMT\Funtion_F3_SMT(Edited)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT(Ver_2.1).pdb
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX_IMADA\tessdata\configs\config.cfg
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX_IMADA\tessdata\eng.traineddata
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX_IMADA\tessdata\equ.traineddata
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX_IMADA\tessdata\osd.traineddata
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX_IMADA\tessdata\pdf.ttf
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX_IMADA\tessdata\pdf.ttx
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX_IMADA\x64\tesseract.dll
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX_IMADA\x86\Tesseract.dll
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX_IMADA\OK2SHIP_SMT(Ver_2.1).exe.config
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX_IMADA\OK2SHIP_SMT(Ver_2.1).exe
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX_IMADA\OK2SHIP_SMT(Ver_2.1).pdb
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.AssemblyReference.cache
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.SuggestedBindingRedirects.cache
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.ResolveComReference.cache
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.ACF.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.FrmMain.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Login.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.MainScreen.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.ImageDetail.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.Properties.Resources.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Select_Image.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Setup_Spec_SMT.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_Data.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_Data_3.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_detail_Image.resources
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.GenerateResource.cache
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.CoreCompileInputs.cache
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.CopyComplete
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT(Ver_2.1).exe
+E:\SEEV_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT(Ver_2.1).pdb
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX-IMADA\x64\tesseract.dll
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX-IMADA\x86\Tesseract.dll
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX-IMADA\tessdata\configs\config.cfg
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX-IMADA\tessdata\eng.traineddata
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX-IMADA\tessdata\equ.traineddata
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX-IMADA\tessdata\osd.traineddata
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX-IMADA\tessdata\pdf.ttf
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX-IMADA\tessdata\pdf.ttx
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX-IMADA\OK2SHIP_SMT(Ver_2.1).exe.config
+E:\SEEV_SMT\F3_SMT(final)\F3_SMT\Test_Areas\VHX-IMADA\OK2SHIP_SMT(Ver_2.1).exe
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.AssemblyReference.cache
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.ResolveComReference.cache
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.ACF.resources
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.FrmMain.resources
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Login.resources
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.MainScreen.resources
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.ImageDetail.resources
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.Properties.Resources.resources
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Select_Image.resources
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Setup_Spec_SMT.resources
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_Data.resources
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_Data_3.resources
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_detail_Image.resources
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.GenerateResource.cache
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.CoreCompileInputs.cache
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.CopyComplete
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.exe
+E:\F3_SMT\Funtion_F3_SMT(Type3)\Funtion_F3_SMT(Edited)\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.pdb
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.AssemblyReference.cache
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.ResolveComReference.cache
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.ACF.resources
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.FrmMain.resources
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Login.resources
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.MainScreen.resources
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.ImageDetail.resources
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.Properties.Resources.resources
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.Select_Image.resources
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_Data_3.resources
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.View_detail_Image.resources
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.GenerateResource.cache
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_F3_SMT.csproj.CoreCompileInputs.cache
+E:\Git_Repo\F3_SMT(Final)\Test_Areas\VHX-IMADA\tessdata\configs\config.cfg
+E:\Git_Repo\F3_SMT(Final)\Test_Areas\VHX-IMADA\tessdata\eng.traineddata
+E:\Git_Repo\F3_SMT(Final)\Test_Areas\VHX-IMADA\tessdata\equ.traineddata
+E:\Git_Repo\F3_SMT(Final)\Test_Areas\VHX-IMADA\tessdata\osd.traineddata
+E:\Git_Repo\F3_SMT(Final)\Test_Areas\VHX-IMADA\tessdata\pdf.ttf
+E:\Git_Repo\F3_SMT(Final)\Test_Areas\VHX-IMADA\tessdata\pdf.ttx
+E:\Git_Repo\F3_SMT(Final)\Test_Areas\VHX-IMADA\x64\tesseract.dll
+E:\Git_Repo\F3_SMT(Final)\Test_Areas\VHX-IMADA\x86\Tesseract.dll
+E:\Git_Repo\F3_SMT(Final)\Test_Areas\VHX-IMADA\OK2SHIP_SMT.exe.config
+E:\Git_Repo\F3_SMT(Final)\Test_Areas\VHX-IMADA\OK2SHIP_SMT.exe
+E:\Git_Repo\F3_SMT(Final)\Test_Areas\VHX-IMADA\OK2SHIP_SMT.pdb
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\OK2SHIP_SMT.Setup_sochanlk.resources
+E:\F3_SMT\F3_SMT(Final)\Test_Areas\tessdata\configs\config.cfg
+E:\F3_SMT\F3_SMT(Final)\Test_Areas\tessdata\eng.traineddata
+E:\F3_SMT\F3_SMT(Final)\Test_Areas\tessdata\equ.traineddata
+E:\F3_SMT\F3_SMT(Final)\Test_Areas\tessdata\osd.traineddata
+E:\F3_SMT\F3_SMT(Final)\Test_Areas\tessdata\pdf.ttf
+E:\F3_SMT\F3_SMT(Final)\Test_Areas\tessdata\pdf.ttx
+E:\F3_SMT\F3_SMT(Final)\Test_Areas\x64\tesseract.dll
+E:\F3_SMT\F3_SMT(Final)\Test_Areas\x86\Tesseract.dll
+E:\F3_SMT\F3_SMT(Final)\Test_Areas\OK2SHIP_SMT1.exe
+E:\F3_SMT\F3_SMT(Final)\Test_Areas\OK2SHIP_SMT1.exe.config
+E:\F3_SMT\F3_SMT(Final)\Test_Areas\OK2SHIP_SMT1.pdb
+E:\Git_Repo\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\x64\tesseract.dll
+E:\Git_Repo\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\x86\Tesseract.dll
+E:\Git_Repo\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\tessdata\configs\config.cfg
+E:\Git_Repo\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\tessdata\eng.traineddata
+E:\Git_Repo\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\tessdata\equ.traineddata
+E:\Git_Repo\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\tessdata\osd.traineddata
+E:\Git_Repo\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\tessdata\pdf.ttf
+E:\Git_Repo\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\tessdata\pdf.ttx
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\Funtion_.A7C11D5C.Up2Date
+E:\Git_Repo\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\VHX-IMADA(Ver_4.7).exe.config
+E:\Git_Repo\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\VHX-IMADA(Ver_4.7).exe
+E:\Git_Repo\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\VHX-IMADA(Ver_4.7).pdb
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\VHX-IMADA(Ver_4.7).exe
+E:\Git_Repo\SEEV_Project\Funtion_F3_SMT\Funtion_F3_SMT\obj\Debug\VHX-IMADA(Ver_4.7).pdb

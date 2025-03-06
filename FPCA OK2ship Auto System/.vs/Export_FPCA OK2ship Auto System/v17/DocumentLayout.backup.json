@@ -1,0 +1,214 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\SEEV-F3\\FPCA OK2ship Auto System\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\SEEV-F3\\Logfile\\DATA\\F1\\BVH-PTH\\22B0500-00003_123\\bvh bs\\DODAY\\21.csv||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{09734753-CD9D-4EC2-9739-15909083A730}|Export_FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System.csproj|d:\\seev-f3\\fpca ok2ship auto system\\export_fpca ok2ship auto system\\setup_spec.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{09734753-CD9D-4EC2-9739-15909083A730}|Export_FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System.csproj|solutionrelative:export_fpca ok2ship auto system\\setup_spec.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{09734753-CD9D-4EC2-9739-15909083A730}|Export_FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System.csproj|D:\\SEEV-F3\\FPCA OK2ship Auto System\\export_fpca ok2ship auto system\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{09734753-CD9D-4EC2-9739-15909083A730}|Export_FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System.csproj|solutionrelative:export_fpca ok2ship auto system\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|Export_FPCA OK2ship Auto System||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{09734753-CD9D-4EC2-9739-15909083A730}|Export_FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System.csproj|d:\\seev-f3\\fpca ok2ship auto system\\export_fpca ok2ship auto system\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|a54ad834-9219-4aa6-b589-607af21c3e26"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 961,
+          "SelectedChildIndex": 31,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:2090367263:0:{81164725-9a96-4ece-a4cb-440d8fd285e5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:323948898:0:{81164725-9a96-4ece-a4cb-440d8fd285e5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:133:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:135:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:134:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:136:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:138:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:139:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:141:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:140:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:144:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:145:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:146:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:143:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:141:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:142:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:143:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:144:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:145:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:146:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:150:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:150:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:152:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:149:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:151:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:148:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:132:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "21.csv",
+              "DocumentMoniker": "D:\\SEEV-F3\\Logfile\\DATA\\F1\\BVH-PTH\\22B0500-00003_123\\bvh bs\\DODAY\\21.csv",
+              "RelativeDocumentMoniker": "..\\Logfile\\DATA\\F1\\BVH-PTH\\22B0500-00003_123\\bvh bs\\DODAY\\21.csv",
+              "ToolTip": "D:\\SEEV-F3\\Logfile\\DATA\\F1\\BVH-PTH\\22B0500-00003_123\\bvh bs\\DODAY\\21.csv",
+              "RelativeToolTip": "..\\Logfile\\DATA\\F1\\BVH-PTH\\22B0500-00003_123\\bvh bs\\DODAY\\21.csv",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002120|",
+              "WhenOpened": "2025-03-06T03:37:02.677Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Export_FPCA OK2ship Auto System",
+              "DocumentMoniker": "D:\\SEEV-F3\\FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System.csproj",
+              "RelativeDocumentMoniker": "Export_FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System.csproj",
+              "ToolTip": "D:\\SEEV-F3\\FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System.csproj",
+              "RelativeToolTip": "Export_FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-03-06T03:17:18.808Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Form1.cs [Design]",
+              "DocumentMoniker": "D:\\SEEV-F3\\FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System\\Form1.cs",
+              "RelativeDocumentMoniker": "Export_FPCA OK2ship Auto System\\Form1.cs",
+              "ToolTip": "D:\\SEEV-F3\\FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System\\Form1.cs [Design]",
+              "RelativeToolTip": "Export_FPCA OK2ship Auto System\\Form1.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-06T03:17:00.354Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Setup_spec.cs [Design]",
+              "DocumentMoniker": "D:\\SEEV-F3\\FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System\\Setup_spec.cs",
+              "RelativeDocumentMoniker": "Export_FPCA OK2ship Auto System\\Setup_spec.cs",
+              "ToolTip": "D:\\SEEV-F3\\FPCA OK2ship Auto System\\Export_FPCA OK2ship Auto System\\Setup_spec.cs [Design]",
+              "RelativeToolTip": "Export_FPCA OK2ship Auto System\\Setup_spec.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-06T03:16:26.52Z",
+              "EditorCaption": " [Design]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
