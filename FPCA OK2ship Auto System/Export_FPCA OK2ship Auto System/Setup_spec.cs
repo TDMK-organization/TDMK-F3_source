@@ -27,6 +27,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using Bending_Export;
 using TDMK_EPPLUS_7;
+using Export_FPCA_OK2ship_Auto_System.Services;
 
 namespace Export_FPCA_OK2ship_Auto_System
 {
@@ -87,7 +88,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             foreach (string sheet in cbl_sheet.Items)
             {
                 dt.Columns.Add(sheet.Replace(" ", "_").Replace("(", "").Replace(")", "").ToUpper());
-            } 
+            }
             DataTable dt_item_setup = Datatable_ALL(sqlcon, "SPEC_COMMENT_3");
             // DataTable dt_spec_FAI = Datatable_ALL(sqlcon, "FAI_Spec");
             DataTable FAI_spec_dt = Datatable_ALL(sqlcon, "FAI_Spec");
@@ -101,7 +102,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 foreach (string type in arr_remark)
                 {
-                    DataRow dr = dt.NewRow(); 
+                    DataRow dr = dt.NewRow();
                     dr[0] = id;
                     dr[1] = item;
                     dr[2] = type;
@@ -146,7 +147,7 @@ namespace Export_FPCA_OK2ship_Auto_System
 
             DataTable dt_item_setup = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode" }, new string[] { item }));
             DataTable FAI_Spec_dt = TDMK_Code.Datatable_Filter(sqlcon, "FAI_Spec", TDMK_Code.filter_str(new string[] { "ItemCode" }, new string[] { item }));
-            if (dt_item_setup.Rows.Count!= 0|| FAI_Spec_dt.Rows.Count!=0)
+            if (dt_item_setup.Rows.Count != 0 || FAI_Spec_dt.Rows.Count != 0)
             {
                 string[] arr_remark = new string[] { "NPI", "MASS", "Other" };
                 int id = 1;
@@ -216,7 +217,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                 }
 
                 dgv_setup_detail.DataSource = dt;
-            } 
+            }
         }
 
         public DataTable Datatable_ALL(SqlConnection database_conn, string tbl_name)
@@ -517,7 +518,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                         {
                             count_sample++;
                         }
-                        lst_spec += count_sample.ToString() + ":"; 
+                        lst_spec += count_sample.ToString() + ":";
                         if (myCode.checkDBNull(ws.Cells[i + 1, j - 1].Value).Contains("ID") || myCode.checkDBNull(ws.Cells[i + 1, j - 2].Value).Contains("ID") || cb_Type.SelectedItem.ToString() == "MASS")
                         {
                             lst_spec += "B" + "+";
@@ -576,7 +577,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                 if (val_cel.Contains("LCL"))
                                 {
                                     LCL = convert_valcell_to_double(ws.Cells[i + t, j + 2].Value, 2);
-                                } 
+                                }
                             }
                             lst_spec += R + ";" + UCL + ";" + LCL;
                             lst_spec += "_";
@@ -592,7 +593,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                     lst_spec += myCode.checkDBNull(ws.Cells[i, j - c_offset].Value) + ";";
                                     break;
                                 }
-                            } 
+                            }
                             for (int r_offset = 1; r_offset < 5; r_offset++)
                             {
                                 if (myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) != "")
@@ -600,18 +601,18 @@ namespace Export_FPCA_OK2ship_Auto_System
                                     lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
 
                                 }
-                            } 
+                            }
                             lst_spec += "_";
-                        } 
-                        
+                        }
+
                     }
-                    
+
                 }
             }
             return lst_spec;
         }
         public string lst_spec_comment3_IPQC_coupon(ExcelWorksheet ws)
-        { 
+        {
             string lst_spec = "";
             Dictionary<string, List<string>> dic_spec = new Dictionary<string, List<string>> { };
             int count_sample = 0;
@@ -628,8 +629,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                             {
                                 count_sample++;
                             }
-                            lst_spec += count_sample.ToString() + ":";  
-                            lst_spec += "A" + "+"; 
+                            lst_spec += count_sample.ToString() + ":";
+                            lst_spec += "A" + "+";
 
                             for (int c_offset = 1; c_offset < 6; c_offset++)
                             {
@@ -638,7 +639,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                     lst_spec += myCode.checkDBNull(ws.Cells[i, j - c_offset].Value) + ";";
                                     break;
                                 }
-                            } 
+                            }
                             for (int r_offset = 1; r_offset < 4; r_offset++)
                             {
                                 if (myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) != "")
@@ -681,8 +682,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                                     lst_spec += myCode.checkDBNull(ws.Cells[i, j - c_offset].Value) + ";";
                                     break;
                                 }
-                            } 
-                            
+                            }
+
                             string[] txt_find = new string[4] { "Graph", "Picture", "Max", "Average" };
                             for (int r_offset = 1; r_offset < 6; r_offset++)
                             {
@@ -693,7 +694,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                         lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
 
                                 }
-                            } 
+                            }
                             string R = "";
                             string UCL = "";
                             string LCL = "";
@@ -712,7 +713,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                 {
                                     LCL = convert_valcell_to_double(ws.Cells[i + t, j + 2].Value, 2);
                                 }
- 
+
                             }
                             lst_spec += R + ";" + UCL + ";" + LCL;
                             lst_spec += "_";
@@ -776,7 +777,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                 for (int j = 1; j < 5; j++)
                 {
                     if (myCode.checkDBNull(ws.Cells[i, j].Value).Contains("Sample"))
-                    { 
+                    {
                         while (myCode.checkDBNull(ws.Cells[i, j + count_sample].Value).Contains("Sample"))
                         {
                             count_sample++;
@@ -790,19 +791,19 @@ namespace Export_FPCA_OK2ship_Auto_System
                             {
                                 lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
                             }
-                        } 
+                        }
                         if (arr_ignore.Contains(sheet.Replace(" ", "").ToUpper()))
                         {
                             if (myCode.checkDBNull(ws.Cells[i + 4, j - 1].Value) != "")
                             {
-                                lst_spec += myCode.checkDBNull(ws.Cells[i + 4, j - 1].Value) + ";" + (i + 3).ToString() + ";" + (j - 1).ToString(); 
+                                lst_spec += myCode.checkDBNull(ws.Cells[i + 4, j - 1].Value) + ";" + (i + 3).ToString() + ";" + (j - 1).ToString();
                             }
                         }
                         else
                         {
                             if (myCode.checkDBNull(ws.Cells[i + 3, j - 1].Value) != "")
                             {
-                                lst_spec += myCode.checkDBNull(ws.Cells[i + 3, j - 1].Value) + ";" + (i + 3).ToString() + ";" + (j - 1).ToString(); 
+                                lst_spec += myCode.checkDBNull(ws.Cells[i + 3, j - 1].Value) + ";" + (i + 3).ToString() + ";" + (j - 1).ToString();
                             }
                         }
 
@@ -1131,7 +1132,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 mergedCellAddress = tar_wrksht.MergedCells[idx - 1];
             }
-            count = tar_wrksht.Cells[mergedCellAddress].Rows; 
+            count = tar_wrksht.Cells[mergedCellAddress].Rows;
             return count;
         }
 
@@ -1144,31 +1145,31 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 for (int index2 = 1; index2 < 8; ++index2)
                 {
-                    if ( myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1, index2]).Value).Contains("Sample"))
+                    if (myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1, index2]).Value).Contains("Sample"))
                     {
                         int num2 = 0;
-                        while ( myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1, index2 + num1]).Value).Contains("Sample"))
+                        while (myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1, index2 + num1]).Value).Contains("Sample"))
                             ++num1;
-                        if ( myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + 1, index2 - 1]).Value).Contains("ID") ||  myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + 1, index2 - 2]).Value).Contains("ID"))
+                        if (myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + 1, index2 - 1]).Value).Contains("ID") || myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + 1, index2 - 2]).Value).Contains("ID"))
                         {
-                            string str2 =  myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + 3, index2 - 1]).Value);
+                            string str2 = myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + 3, index2 - 1]).Value);
                             string str3 = str1 + num1.ToString() + ":" + index1.ToString() + ";" + index2.ToString() + ";" + str2 + "+";
                             for (int index3 = 1; index3 < 200; ++index3)
                             {
-                                if ( myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index3, index2 - 2]).Value).Replace(" ", "").ToUpper().Contains("Connector".ToUpper()))
+                                if (myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index3, index2 - 2]).Value).Replace(" ", "").ToUpper().Contains("Connector".ToUpper()))
                                 {
-                                    int num3 =  count_mergcell_crosscut((ExcelRangeBase)ws.Cells[index1 + index3, index2 - 2], ws);
+                                    int num3 = count_mergcell_crosscut((ExcelRangeBase)ws.Cells[index1 + index3, index2 - 2], ws);
                                     num2 += num3;
                                     str3 = str3 + ((ExcelRangeBase)ws.Cells[index1 + index3, index2 - 2]).Value.ToString() + ";" + num3.ToString() + ";" + (index1 + index3).ToString() + "_";
                                     index3 = index3 + num3 - 1;
                                 }
-                                if ( myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index3, index2 - 1]).Value).Replace(" ", "").ToUpper().Contains("Result".ToUpper()) ||  myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index3, index2 - 2]).Value).Replace(" ", "").ToUpper().Contains("Result".ToUpper()))
+                                if (myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index3, index2 - 1]).Value).Replace(" ", "").ToUpper().Contains("Result".ToUpper()) || myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index3, index2 - 2]).Value).Replace(" ", "").ToUpper().Contains("Result".ToUpper()))
                                 {
                                     string str4 = "";
                                     for (int index4 = 0; index4 < 15; ++index4)
                                     {
-                                        if ( myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index3 + 2 + index4, 3]).Value) != "")
-                                            str4 = str4 +  myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index3 + 2 + index4, 3]).Value) + "@";
+                                        if (myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index3 + 2 + index4, 3]).Value) != "")
+                                            str4 = str4 + myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index3 + 2 + index4, 3]).Value) + "@";
                                     }
                                     string str5 = str4 + "#";
                                     ExcelRangeBase cell = (ExcelRangeBase)ws.Cells[index1 + index3, index2 - 1];
@@ -1176,33 +1177,33 @@ namespace Export_FPCA_OK2ship_Auto_System
                                     {
                                         for (int index6 = 0; index6 < 5; ++index6)
                                         {
-                                            if ( myCode.checkDBNull(cell.Offset(index5, index6).Value) == "R")
+                                            if (myCode.checkDBNull(cell.Offset(index5, index6).Value) == "R")
                                             {
                                                 string str6 = str5 + "R: ";
                                                 for (int index7 = 1; index7 < 15; ++index7)
                                                 {
-                                                    if ( myCode.IsNumeric( myCode.checkDBNull(cell.Offset(index5 + index7, index6).Value)))
-                                                        str6 = str6 +  myCode.checkDBNull(cell.Offset(index5 + index7, index6).Value) + ";";
+                                                    if (myCode.IsNumeric(myCode.checkDBNull(cell.Offset(index5 + index7, index6).Value)))
+                                                        str6 = str6 + myCode.checkDBNull(cell.Offset(index5 + index7, index6).Value) + ";";
                                                 }
                                                 str5 = str6 + "^";
                                             }
-                                            if ( myCode.checkDBNull(cell.Offset(index5, index6).Value) == "UCL")
+                                            if (myCode.checkDBNull(cell.Offset(index5, index6).Value) == "UCL")
                                             {
                                                 string str7 = str5 + "UCL: ";
                                                 for (int index8 = 1; index8 < 15; ++index8)
                                                 {
-                                                    if ( myCode.IsNumeric( myCode.checkDBNull(cell.Offset(index5 + index8, index6).Value)))
-                                                        str7 = str7 +  myCode.checkDBNull(cell.Offset(index5 + index8, index6).Value) + ";";
+                                                    if (myCode.IsNumeric(myCode.checkDBNull(cell.Offset(index5 + index8, index6).Value)))
+                                                        str7 = str7 + myCode.checkDBNull(cell.Offset(index5 + index8, index6).Value) + ";";
                                                 }
                                                 str5 = str7 + "^";
                                             }
-                                            if ( myCode.checkDBNull(cell.Offset(index5, index6).Value) == "LCL")
+                                            if (myCode.checkDBNull(cell.Offset(index5, index6).Value) == "LCL")
                                             {
                                                 string str8 = str5 + "LCL: ";
                                                 for (int index9 = 1; index9 < 15; ++index9)
                                                 {
-                                                    if ( myCode.IsNumeric( myCode.checkDBNull(cell.Offset(index5 + index9, index6).Value)))
-                                                        str8 = str8 +  myCode.checkDBNull(cell.Offset(index5 + index9, index6).Value) + ";";
+                                                    if (myCode.IsNumeric(myCode.checkDBNull(cell.Offset(index5 + index9, index6).Value)))
+                                                        str8 = str8 + myCode.checkDBNull(cell.Offset(index5 + index9, index6).Value) + ";";
                                                 }
                                                 str5 = str8 + "^";
                                             }
@@ -1219,19 +1220,19 @@ namespace Export_FPCA_OK2ship_Auto_System
                             ExcelRangeBase cell1 = (ExcelRangeBase)ws.Cells[index1 + 1, index2 + num1];
                             for (int index10 = 0; index10 < num2 + 2; ++index10)
                             {
-                                if ( myCode.checkDBNull(cell1.Offset(index10, 0).Value) != "")
-                                    str9 = str9 +  myCode.checkDBNull(cell1.Offset(index10, 0).Value) + ";";
+                                if (myCode.checkDBNull(cell1.Offset(index10, 0).Value) != "")
+                                    str9 = str9 + myCode.checkDBNull(cell1.Offset(index10, 0).Value) + ";";
                             }
                             str1 = str3 + "_" + str9;
                             break;
                         }
-                        string str10 =  myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + 3, index2 - 4]).Value);
+                        string str10 = myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + 3, index2 - 4]).Value);
                         str1 = str1 + num1.ToString() + ":" + index1.ToString() + ";" + index2.ToString() + ";" + str10 + "+";
                         for (int index11 = 1; index11 < 200; ++index11)
                         {
-                            if ( myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index11, index2 - 5]).Value).Replace(" ", "").ToUpper().Contains("Connector".ToUpper()))
+                            if (myCode.checkDBNull(((ExcelRangeBase)ws.Cells[index1 + index11, index2 - 5]).Value).Replace(" ", "").ToUpper().Contains("Connector".ToUpper()))
                             {
-                                int num4 =  count_mergcell_crosscut((ExcelRangeBase)ws.Cells[index1 + index11, index2 - 5], ws);
+                                int num4 = count_mergcell_crosscut((ExcelRangeBase)ws.Cells[index1 + index11, index2 - 5], ws);
                                 str1 = str1 + ((ExcelRangeBase)ws.Cells[index1 + index11, index2 - 5]).Value.ToString() + ";" + num4.ToString() + ";" + (index1 + index11).ToString() + "_";
                                 index11 = index11 + num4 - 1;
                             }
@@ -1244,7 +1245,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         }
 
         public string lst_spec_cross_section_old(ExcelWorksheet ws)
-        { 
+        {
             string lst_spec = "";
             Dictionary<string, List<string>> dic_spec = new Dictionary<string, List<string>> { };
 
@@ -1383,8 +1384,8 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                         return lst_spec;
                     }
-                } 
-            } 
+                }
+            }
             return lst_spec;
         }
         public string lst_spec_ACF_old(myExcel.Worksheet ws)
@@ -1451,12 +1452,12 @@ namespace Export_FPCA_OK2ship_Auto_System
                             lst_spec += myCode.checkDBNull(ws.Cells[i + k, j + 2].Value) + ";";
                         }
 
-                        lst_spec += "_"; 
+                        lst_spec += "_";
                         break;
                     }
                 }
-            } 
-            
+            }
+
             lst_spec += roughness_spec(ws);
             return lst_spec;
 
@@ -1495,16 +1496,16 @@ namespace Export_FPCA_OK2ship_Auto_System
                         string UCL = "";
                         string LCL = "";
 
-                        if(myCode.IsNumeric(myCode.checkDBNull(ws.Cells[i, j + 1].Value)))
+                        if (myCode.IsNumeric(myCode.checkDBNull(ws.Cells[i, j + 1].Value)))
                         {
                             R = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i, j + 1].Value)), 2).ToString();
                         }
-                        if(myCode.IsNumeric(myCode.checkDBNull(ws.Cells[i + 1, j + 1].Value)))
+                        if (myCode.IsNumeric(myCode.checkDBNull(ws.Cells[i + 1, j + 1].Value)))
                         {
                             UCL = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + 1, j + 1].Value)), 2).ToString();
-                        }    
-                        
-                        if(myCode.IsNumeric(myCode.checkDBNull(ws.Cells[i + 2, j + 1].Value)))
+                        }
+
+                        if (myCode.IsNumeric(myCode.checkDBNull(ws.Cells[i + 2, j + 1].Value)))
                         {
                             LCL = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + 2, j + 1].Value)), 2).ToString();
 
@@ -1536,7 +1537,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                     while (curr_rgn_1.Offset(i + k, 1).Value.ToString() != "Roughness")
                     {
                         if (curr_rgn_1.Offset(i + k, 1).Value.ToString().Contains("Sa"))
-                        { 
+                        {
                             string value = curr_rgn_1.Offset(i + k, 1).Value.ToString();
                             if (!spec.Contains("Sa"))
                             {
@@ -1700,8 +1701,8 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
             return position;
         }
-         
-    
+
+
         public List<string> setup_spec_flexpending(myExcel.Worksheet ws)
         {
             //  AutoCompleteStringCollection list = new AutoCompleteStringCollection();
@@ -1731,7 +1732,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             result.Add(location);
 
             return result;
-        } 
+        }
         public string find_format_mass(string in_data_loc, string ItemCode)
         {
 
@@ -1761,8 +1762,8 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                         }
                     }
-                }
 
+                }
             }
             result = result.Replace("~$", "");
             return result;
@@ -1777,7 +1778,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", filter_str).Clone();
             int ID = TDMK_Code.SQL_MAX("SPEC_COMMENT_3", "ID", sqlcon) + 1;
             foreach (string sheet in cbl_sheet.CheckedItems)
-            { 
+            {
                 string mySheet = "";
 
                 if (sheet == "FAI")
@@ -1798,10 +1799,9 @@ namespace Export_FPCA_OK2ship_Auto_System
                     }
                     if (mySheet != "")
                     {
-                        ExcelWorksheet ws = wb.Worksheets[mySheet]; 
+                        ExcelWorksheet ws = wb.Worksheets[mySheet];
 
                         string lst_spec = "";
-
                         switch (sheet.Replace(" ", "_").ToUpper())
                         {
                             case "PEEL_TEST":
@@ -1810,7 +1810,6 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                             case "(MATING)_PULL_TEST":
                                 lst_spec = lst_spec_peeltest(ws);
-
                                 break;
                             case "(IQC_UNMATING)_PULL_TEST":
                                 lst_spec = lst_spec_unmating(ws);
@@ -1847,7 +1846,17 @@ namespace Export_FPCA_OK2ship_Auto_System
                             case "ACF":
                                 lst_spec = lst_spec_ACF(ws);
                                 break;
+                            case "SEM_BSE_&_BINARIZATION":
+                                lst_spec = SEMServices.setup_spec(ws);
+                                break;
+                            case "OQC_B2B_MATING-UNMATING":
+                                lst_spec = OQCB2BMatingUnmatting.setup_spec(ws);
+                                break;
 
+                            default:
+                                //string str = sheet.Replace(" ", "_").ToUpper();
+                                //Debugger.Break();
+                                break;
                         }
 
                         string[] arr_spec = lst_spec.Split(':');
@@ -1861,7 +1870,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                         dr[5] = cb_Type.SelectedItem.ToString();
 
                         dt_spec.Rows.Add(dr);
-                        ID++; 
+                        ID++;
                         // BatchBulkCopy(sqlcon, dt_spec, "SPEC_COMMENT_3");
                     }
                     else
@@ -1869,21 +1878,22 @@ namespace Export_FPCA_OK2ship_Auto_System
                         lst_sheet_notfound += sheet + " ; ";
                     }
                 }
-            } 
+            }
+
             //wb.Close();
-            BatchBulkCopy(sqlcon, dt_spec, "SPEC_COMMENT_3");
             string msg = "";
             if (lst_sheet_notfound == "")
             {
                 msg = "Cài đặt thành công";
                 filter_ItemCode(ItemCode);
-                
+
             }
             else
             {
                 msg = "Không tìm thấy sheet " + lst_sheet_notfound.Remove(lst_sheet_notfound.Length - 2, 2);
             }
-            MessageBox.Show(new Form { TopMost = true },msg, "Thông báo");
+            MessageBox.Show(new Form { TopMost = true }, msg, "Thông báo");
+            BatchBulkCopy(sqlcon, dt_spec, "SPEC_COMMENT_3");
             //fill_dgv_setup_detail();
 
         }
@@ -1897,7 +1907,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 string format_path = find_format_mass(Path.Combine(file_format, sheet.ToString().Replace(" ", "_").Replace("(", "").Replace(")", "").ToUpper()), txtItemCode.Text);
                 if (sheet == "FAI")
-                {                   
+                {
                     if (format_path != "")
                     {
                         ExcelWorkbook wb = TDMK_Code2.open_excel_file(format_path);
@@ -1911,9 +1921,9 @@ namespace Export_FPCA_OK2ship_Auto_System
                 }
                 else
                 {
-                   
+
                     if (format_path != "")
-                    { 
+                    {
 
                         ExcelWorkbook wb = TDMK_Code2.open_excel_file(format_path);
 
@@ -1923,7 +1933,7 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                         if (wb.Worksheets.Count > 0)
                         {
-                            ExcelWorksheet ws = wb.Worksheets[0]; 
+                            ExcelWorksheet ws = wb.Worksheets[0];
                             string lst_spec = "";
 
                             switch (sheet.Replace(" ", "_").ToUpper())
@@ -1968,7 +1978,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                     break;
 
                                 case "ACF":
-                                   
+
                                     break;
 
                             }
@@ -1985,11 +1995,11 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                             dt_spec.Rows.Add(dr);
                             ID++;
-                            
+
                         }
 
                     }
-                    
+
                     else if (sheet == "ACF" && cb_Type.SelectedItem.ToString() == "MASS")
                     {
                         string format_path_ACF_mass = find_format_mass(Path.Combine(file_format, "ACF", "ACF_BONDING"), txtItemCode.Text);
@@ -2019,14 +2029,14 @@ namespace Export_FPCA_OK2ship_Auto_System
                     {
                         sheets_notfound += sheet + ";";
                     }
-                } 
+                }
             }
             BatchBulkCopy(sqlcon, dt_spec, "SPEC_COMMENT_3");
 
             sheets_notfound = sheets_notfound.TrimEnd(';');
-            string msg = "";  
+            string msg = "";
 
-            if(sheets_notfound == "")
+            if (sheets_notfound == "")
             {
                 msg = "Cài đặt thành công!";
             }
@@ -2034,14 +2044,14 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 msg += "Không tìm thấy format của " + sheets_notfound;
             }
-            else 
+            else
             {
                 msg = "Cài đặt thành công!\n\n Không tìm thấy format của " + sheets_notfound;
             }
 
             MessageBox.Show(new Form { TopMost = true }, msg, "Thông báo");
             filter_ItemCode(ItemCode);
-           // fill_dgv_setup_detail();
+            // fill_dgv_setup_detail();
 
         }
 
@@ -2088,7 +2098,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             string[] file_xlsm = Directory.GetFiles(Path.Combine(in_data_loc, "Format"), "*" + ItemCode + "*.xlsm");
             if (file_xlsm.Length > 0)
             {
-                result = file_xlsm[0]; 
+                result = file_xlsm[0];
             }
             else
             {
@@ -2190,8 +2200,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                                         foreach (string sheet in cbl_sheet.CheckedItems)
                                         {
                                             TDMK_Code.Delelte_FilteredItem_arr("SPEC_COMMENT_3", sqlcon, TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, sheet.Replace(" ", "_").Replace("(", "").Replace(")", "").ToUpper(), cb_Type.SelectedItem.ToString() }));
-                                        } 
-                                        
+                                        }
+
                                         setup_format_commet3(format_fpath, txtItemCode.Text);
                                         lst_Item.Items.Clear();
                                         DataTable dt_item_setup = Datatable_ALL(sqlcon, "SPEC_COMMENT_3");

@@ -59,53 +59,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EPPlus, Version=7.1.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\TDMK_EPPLUS_7\Using EPPLUS_7 Ver7.4.1\EPPlus.dll</HintPath>
-    </Reference>
-    <Reference Include="EPPlus.Interfaces, Version=6.1.1.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\TDMK_EPPLUS_7\Using EPPLUS_7 Ver7.4.1\EPPlus.Interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="EPPlus.System.Drawing, Version=6.1.1.0, Culture=neutral, PublicKeyToken=2308d35469c9bac0, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\TDMK_EPPLUS_7\Using EPPLUS_7 Ver7.4.1\EPPlus.System.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="IniLibs">
-      <HintPath>..\..\..\..\F3_SMT\F3_SMT(Final)\Test_Areas\IniLibs.dll</HintPath>
-    </Reference>
-    <Reference Include="OK2SHIP_Lib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\OK2SHIP_Lib.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="TDMK_EPPLUS_7.4">
-      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\TDMK_EPPLUS_7\Using EPPLUS_7 Ver7.4.1\TDMK_EPPLUS_7.4.dll</HintPath>
-    </Reference>
-    <Reference Include="TDMK_Image">
-      <HintPath>D:\TDMK Library\TDMK_Image.dll</HintPath>
-    </Reference>
-    <Reference Include="TDMK_SEEV_DLL">
-      <HintPath>..\..\..\..\F3_SMT\F3_SMT(Final)\Test_Areas\TDMK_SEEV_DLL.dll</HintPath>
-    </Reference>
-    <Reference Include="TDMK_SQL">
-      <HintPath>..\..\..\..\F3_SMT\F3_SMT(Final)\Test_Areas\TDMK_SQL.dll</HintPath>
-    </Reference>
-    <Reference Include="ZedGraph">
-      <HintPath>..\..\..\..\F3_SMT\F3_SMT(Final)\Test_Areas\ZedGraph.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Bending_Export.cs" />
     <Compile Include="Bending_Export_EPPLUS_Lib.cs" />
     <Compile Include="EPPlus_Lib.cs" />
@@ -125,6 +78,15 @@
     <Compile Include="NVL_SP.Designer.cs">
       <DependentUpon>NVL_SP.cs</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\DBContext.cs" />
+    <Compile Include="Repositories\ExportProcess.cs" />
+    <Compile Include="Repositories\FileFolderRepository.cs" />
+    <Compile Include="Services\OQCB2BMatingUnmatting.cs" />
+    <Compile Include="Services\SEMServices.cs" />
+    <Compile Include="Services\TableOfContentService.cs" />
+    <Compile Include="Services\TDMK_services\TDMK_ConverterService.cs" />
+    <Compile Include="Services\TDMK_services\TDMK_DictionaryService.cs" />
+    <Compile Include="Services\TDMK_services\TDMK_ImageConverter.cs" />
     <Compile Include="Setup_spec.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -159,6 +121,7 @@
     <EmbeddedResource Include="TestFunction.resx">
       <DependentUpon>TestFunction.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -173,36 +136,66 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="Microsoft.Office.Core">
-      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
-      <VersionMajor>2</VersionMajor>
-      <VersionMinor>8</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="Microsoft.Office.Interop.Excel">
-      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>9</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="VBIDE">
-      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
-      <VersionMajor>5</VersionMajor>
-      <VersionMinor>3</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
+    <Content Include="TDMK.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TDMK.ico" />
+    <Reference Include="EPPlus, Version=7.4.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.Interfaces, Version=6.1.1.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\EPPlus.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.System.Drawing, Version=6.1.1.0, Culture=neutral, PublicKeyToken=2308d35469c9bac0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\EPPlus.System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="IniLibs, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\OldCode\SEEV-F3\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\IniLibs.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1001\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OK2SHIP_Lib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\OldCode\SEEV-F3\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\OK2SHIP_Lib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="TDMK_EPPLUS_7.4, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\OldCode\SEEV-F3\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\TDMK_EPPLUS_7.4.dll</HintPath>
+    </Reference>
+    <Reference Include="TDMK_Image, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\OldCode\SEEV-F3\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\TDMK_Image.dll</HintPath>
+    </Reference>
+    <Reference Include="TDMK_SEEV_DLL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\OldCode\SEEV-F3\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\TDMK_SEEV_DLL.dll</HintPath>
+    </Reference>
+    <Reference Include="TDMK_SQL, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\OldCode\SEEV-F3\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\TDMK_SQL.dll</HintPath>
+    </Reference>
+    <Reference Include="ZedGraph, Version=5.1.2.878, Culture=neutral, PublicKeyToken=02a83cbd123fcd60, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\OldCode\SEEV-F3\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\ZedGraph.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

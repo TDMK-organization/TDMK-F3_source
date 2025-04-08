@@ -743,7 +743,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 ExcelPicture pic = wsSheet1.Drawings.AddPicture(pic_name, ms);//img
                 ExcelWorkbook wrkbk = wsSheet1.Workbook;
-                decimal mdw = wrkbk.MaxFontWidth;
+                decimal mdw = (decimal)wrkbk.MaxFontWidth;
                 int pixelHeight = (int)(row_h / 0.75);
                 int pixelWidth = (int)decimal.Truncate(((256 * (decimal)col_w + decimal.Truncate(128 / (decimal)mdw)) / 256) * mdw);
                 int offset = (int)(0.05 * Math.Min(pixelHeight, pixelWidth));
@@ -803,7 +803,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 ExcelPicture pic = wsSheet1.Drawings.AddPicture(pic_name, ms);//img 
                 ExcelWorkbook wrkbk = wsSheet1.Workbook;
-                decimal mdw = wrkbk.MaxFontWidth;
+                decimal mdw = (decimal)wrkbk.MaxFontWidth;
                 int pixelHeight = (int)(row_h / 0.75);
                 int pixelWidth = (int)decimal.Truncate(((256 * (decimal)col_w + decimal.Truncate(128 / (decimal)mdw)) / 256) * mdw);
                 int offset = (int)(0.05 * Math.Min(pixelHeight, pixelWidth));

@@ -29,7 +29,6 @@ using OfficeOpenXml;
 using OK2SHIP_SMT;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.ComTypes;
-using TDMK_EPPLUS_7;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System.Collections;
 using System.Runtime.Remoting.Contexts;
@@ -38,6 +37,8 @@ using System.Security.Authentication.ExtendedProtection;
 using OfficeOpenXml.Utils.TypeConversion;
 using System.Runtime.ConstrainedExecution;
 using IniLibs;
+using Export_FPCA_OK2ship_Auto_System.Services;
+using TDMK_EPPLUS_7;
 
 
 namespace Export_FPCA_OK2ship_Auto_System
@@ -48,7 +49,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         public Bending_Export_EPPLUS_Lib Bending_Exp = new Bending_Export_EPPLUS_Lib();
         public TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
         public SEI_Lib myCode = new SEI_Lib();
-        public TDMK_EPPLUS7_lib TDMK_Code2 = new TDMK_EPPLUS7_lib();
+        public TDMK_EPPLUS_7.TDMK_EPPLUS7_lib TDMK_Code2 = new TDMK_EPPLUS7_lib();
         public SqlConnection sqlcon = null;
         public string data_loc = "";
         public Funtion_export_FPCA F_expNPI = new Funtion_export_FPCA();
@@ -207,7 +208,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                 s = "HEAT_SOAK_AND_BEND";
                                 break;
 
-                        }  
+                        }
                         if (s != "")
                         {
                             DataTable src_tbl = TDMK_Code.Datatable_Filter(sqlcon, s, filter_str);
@@ -267,7 +268,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                     {
                         DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet, TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text }));
                         if (dt_analysis.Rows.Count > 0)
-                        { 
+                        {
                             string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Sheet")).Distinct().ToArray();
                             string filter = "";
                             foreach (string item in arr_val)
@@ -284,6 +285,33 @@ namespace Export_FPCA_OK2ship_Auto_System
                             }
                         }
 
+                    }
+                    else if (sheet.Contains("SEM"))
+                    {
+                        SEMServices sem = new SEMServices();
+                        DataTable dt = sem.LoadDataProcess(txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                        if (dt.Rows.Count > 0)
+                        {
+                            dr_progress = "x";
+                        }
+                    }
+                    else if (sheet.Contains("BAR_CODE"))
+                    {
+                        OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting();
+                        DataTable dt = oqc.LoadProcess(txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                        if (dt.Rows.Count > 0)
+                        {
+                            dr_progress = "x";
+                        }
+                    }
+                    else if (sheet.Contains("UNMATING") && sheet.Contains("OQC"))
+                    {
+                        OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting();
+                        DataTable dt = oqc.LoadProcess(txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                        if (dt.Rows.Count > 0)
+                        {
+                            dr_progress = "x";
+                        }
                     }
                     else
                     {
@@ -336,7 +364,7 @@ namespace Export_FPCA_OK2ship_Auto_System
 
             en_ = !en_;
 
-        } 
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             //sqlcon = initial_data("OK2SHIP_SMT", true);
@@ -346,13 +374,14 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 lst_auto_new.Add(item.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
             }
-            lst_manual = cbl_sheet_manual.Items.Cast<string>().ToList();
+            //lst_manual = cbl_sheet_manual.Items.Cast<string>().ToList();
 
             sqlcon = Bending_Exp.initial_data("OK2SHIP_SMT", true);
             string app_path = System.Windows.Forms.Application.StartupPath;
+            string config_path = Path.Combine(app_path, "config.ini");
             //app_path = @"\\10.212.6.212\Saomai\QA\TDMK_DATA\Test_Areas\OK2SHIP_SMT\TDMK Program\FPCA OK2SHIP Auto System";
-            data_loc = Bending_Exp.find_config_path(app_path, "SEEV Data");  
-
+            IniFile za = new IniFile(config_path);
+            data_loc = za.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data";
             // app_path = System.Windows.Forms.Application.StartupPath; 
             SortedDictionary<int, string> dic_sheet = new SortedDictionary<int, string> { };
 
@@ -363,7 +392,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         {
             if (value != "")
             {
-                string[] arr_info = value.Split('^'); 
+                string[] arr_info = value.Split('^');
                 Itemcode_unmating = arr_info[0];
                 LotNo_unmating = arr_info[1];
                 ItemCode_liner_coupon = arr_info[2];
@@ -603,10 +632,10 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
             return myexcel;
         }
-         
+
 
         private void btn_export_Click(object sender, EventArgs e)
-        { 
+        {
             if (txtItemCode.Text != "" && txtLotNo.Text != "")
             {
                 string file_format = find_format(data_loc, txtItemCode.Text);
@@ -614,21 +643,34 @@ namespace Export_FPCA_OK2ship_Auto_System
                 {
                     string f_name = Path.GetFileNameWithoutExtension(file_format);
                     string report_folder = Path.Combine(data_loc, "Report", "NPI");
-                    string export_path = Path.Combine(report_folder, f_name + "-" + txtLotNo.Text + ".xlsm");
+                    string export_path = Path.Combine(report_folder, f_name + "-" + txtLotNo.Text + Path.GetExtension(file_format));
 
                     ExcelWorkbook report_saved = null;
                     ExcelPackage sourcePackage = null;
                     ExcelPackage xlPackage = null;
-                    lbl_export:
+                lbl_export:
                     if (System.IO.File.Exists(export_path))
                     {
-                         DialogResult result = MessageBox.Show(new Form { TopMost = true }, "Báo cáo của " + txtItemCode.Text + "-" + txtLotNo.Text + " đã tồn tại. Bạn có muốn cập nhật không?\nYes: Cập nhật\nNo: Tạo mới\nCancel: Thoát", "Thông báo", MessageBoxButtons.YesNoCancel);
-                         
+                        DialogResult result = MessageBox.Show(new Form { TopMost = true }, "Báo cáo của " + txtItemCode.Text + "-" + txtLotNo.Text + " đã tồn tại. Bạn có muốn cập nhật không?\nYes: Cập nhật\nNo: Tạo mới\nCancel: Thoát", "Thông báo", MessageBoxButtons.YesNoCancel);
+
                         if (result == DialogResult.Yes)
                         {
-                            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
-                            xlPackage = open_excel(export_path);
-                            report_saved = xlPackage.Workbook;
+                            try
+                            {
+                                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                                xlPackage = open_excel(export_path);
+                                report_saved = xlPackage.Workbook;
+                            }
+                            catch (Exception ex)
+                            {
+                                DialogResult resultz = MessageBox.Show("Hiện tại không thể mở thư mục này để chỉnh sửa bạn có muốn ghi đè không?", "Thông báo", MessageBoxButtons.YesNoCancel);
+                                if (resultz == DialogResult.Yes)
+                                {
+                                    System.IO.File.Delete(export_path);
+                                    goto lbl_export;
+                                }
+                                return;
+                            }
                         }
                         else if (result == DialogResult.No)
                         {
@@ -648,7 +690,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                         ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                         sourcePackage = new ExcelPackage(new FileInfo(file_format));
                         //sourcePackage.Settings.ImageSettings.PrimaryImageHandler = new OfficeOpenXml.Drawing.GenericImageHandler();
-                        report_saved = sourcePackage.Workbook; 
+                        report_saved = sourcePackage.Workbook;
 
                     }
 
@@ -681,9 +723,13 @@ namespace Export_FPCA_OK2ship_Auto_System
                     MessageBox.Show(new Form { TopMost = true }, "Đang xuất báo cáo. Vui lòng đợi!", "Thông báo", MessageBoxButtons.OK);
 
                     lst_sheet_export = new List<string> { };
+                    string[] skipSheet = new[] { "Coverpage", "Rev History", "User Guideline", "Low CPK Action", "Declaration", "Table of ContentsTable of Contents", "Deviation summary", "Assy Yield", "OQC Test", "ORT-Assy", "Thermal Cycling", "Thermal Shock", "Electrical", "Impedance", "Switch Quality", "Bar Code Verification", "Packaging", "Process flow", "Process Comparison", "Heat Soak and Recovery" };
                     foreach (string sheet in cbl_sheet.CheckedItems)
                     {
-                        lst_sheet_export.Add(sheet);
+                        if (!skipSheet.Contains(sheet))
+                        {
+                            lst_sheet_export.Add(sheet);
+                        }
                     }
                     List<string> lst_manual_exp = new List<string> { };
                     List<string> lst_auto_exp = new List<string> { };
@@ -692,10 +738,10 @@ namespace Export_FPCA_OK2ship_Auto_System
                     {
                         lst_auto_exp.Add(sheet.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
                     }
-                    foreach (string sheet in cbl_sheet_manual.CheckedItems)
-                    {
-                        lst_manual_exp.Add(sheet.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
-                    }
+                    //foreach (string sheet in cbl_sheet_manual.CheckedItems)
+                    //{
+                    //    lst_manual_exp.Add(sheet.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
+                    //}
 
                     for (int i = 0; i < dgv_progress.Rows.Count; i++)
                     {
@@ -741,7 +787,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                 ExcelWorksheet ws = report_saved.Worksheets[mySheet];
                                 //ws.Activate();
                                 bool export_ok = true;
-                                switch (mySheet)
+                                switch (mySheet.Trim())
                                 {
                                     case "ACF":
                                         string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
@@ -809,6 +855,15 @@ namespace Export_FPCA_OK2ship_Auto_System
                                         }
 
                                         break;
+                                    case "SEM BSE & Binarization":
+                                        SEMServices.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                        break;
+                                    case "OQC B2B Mating-Unmating":
+                                        OQCB2BMatingUnmatting.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                        break;
+                                    case "Table of Contents":
+                                        TableOfContentService.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                        break;
                                     default:
                                         string str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
                                         if (sheet.Contains("UNMATING"))
@@ -845,7 +900,17 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                 MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC PSA peeling (Coupon)", "Thông báo");
                                             }
                                         }
-                                        
+                                        switch (sheet)
+                                        {
+                                            case "OQC_B2B_MATING-UNMATING":
+                                                sheet = "OQC_B2B_Mating_Unmating";
+                                                break;
+                                            case "SEM_BSE_&_BINARIZATION":
+                                                sheet = "SEM_BSE_Binarization_Logfile";
+                                                break;
+                                            default:
+                                                break;
+                                        }
 
                                         DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet, str_filter);
 
@@ -952,7 +1017,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                     if (!System.IO.Directory.Exists(xlFile_path))
                         System.IO.Directory.CreateDirectory(xlFile_path);
                     Export_fromExcel_Manual(report_saved, txtItemCode.Text, txtLotNo.Text, xlFile_path);
-                     
+
                     if (sourcePackage != null)
                     {
                         sourcePackage.SaveAs(new FileInfo(export_path));
@@ -961,11 +1026,18 @@ namespace Export_FPCA_OK2ship_Auto_System
                     {
                         xlPackage.Save();
                     }
-                    
-                    myExcel.Workbook wb = TDMK_Code.open_excel_file(export_path, "", "");
-                    if (wb != null)
+
+                    try
                     {
-                        Export_fromExcel_Manual_ignore(wb, txtItemCode.Text, txtLotNo.Text, xlFile_path);
+                        myExcel.Workbook wb = TDMK_Code.open_excel_file(export_path, "", "");
+                        if (wb != null)
+                        {
+                            Export_fromExcel_Manual_ignore(wb, txtItemCode.Text, txtLotNo.Text, xlFile_path);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
                     }
 
                     MessageBox.Show(new Form { TopMost = true }, "Xuất dữ liệu thành công!", "Thông báo");
@@ -983,6 +1055,7 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         private void txtItemCode_TextChanged(object sender, EventArgs e)
         {
+            txtItemCode.Text = txtItemCode.Text.Trim();
             dgv_progress.DataSource = null;
         }
 
@@ -1065,39 +1138,39 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 Hide_column(dgv_View, ref hide_mode);
                 resize_column_image(dgv_View, sheet_select);
-            } 
+            }
         }
 
         private void lblFAI_Click(object sender, EventArgs e)
-        { 
-             
+        {
+
             Get_Latest_Version(Path.Combine(app_path, "OK2SHIP_Measurements"), "OK2SHIP_Measurements");
 
         }
         private void lblBending_Click(object sender, EventArgs e)
-        { 
+        {
             Get_Latest_Version(Path.Combine(app_path, "Bending_Items"), "Bending_Items");
 
         }
 
         private void lblType3_Click(object sender, EventArgs e)
         {
-            
+
             Get_Latest_Version(Path.Combine(app_path, "VHX-IMADA"), "VHX-IMADA");
-              
+
         }
 
 
         public void Get_Latest_Version(string folder_, string name)
-        {  
+        {
             DirectoryInfo tar_parent = new DirectoryInfo(folder_);
             FileInfo[] temp_lst = tar_parent.GetFiles("*.exe");
             string file_name = "";
-            double ver = 0; 
+            double ver = 0;
 
             foreach (FileInfo f in temp_lst)
             {
-                if(f.Name.Contains(name))
+                if (f.Name.Contains(name))
                 {
                     string v = "";
                     char[] ch_arr = Path.GetFileNameWithoutExtension(f.Name).ToCharArray();
@@ -1114,8 +1187,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                         ver = Double.Parse(v);
                         file_name = f.Name;
                     }
-                } 
-            } 
+                }
+            }
 
             if (file_name != "")
             {
@@ -1127,8 +1200,8 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
             else
             {
-                MessageBox.Show(new Form { TopMost = true }, "Không tìm thấy chương trình " + name, "Thông báo"); 
-            } 
+                MessageBox.Show(new Form { TopMost = true }, "Không tìm thấy chương trình " + name, "Thông báo");
+            }
         }
 
         private void lblSetting_Click(object sender, EventArgs e)
@@ -1165,11 +1238,11 @@ namespace Export_FPCA_OK2ship_Auto_System
             List<string> auto_lst = new List<string>();// { "FAI", "SPC", "CPK", "IPQC", "Recycle", "Materials", "Coverpage", "User Guidelines", "Declaration and Contents" };
             auto_lst = lst_auto;
             List<string> lst_checked_manual = new List<string>();
-            foreach (string sheet in cbl_sheet_manual.CheckedItems)
-            {
-                lst_checked_manual.Add(sheet.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
-            }
-            List<string> lst_ignore = new List<string>()  { "Thermal Cycling", "Thermal Shock",  "Heat Soak and Recovery"  };
+            //foreach (string sheet in cbl_sheet_manual.CheckedItems)
+            //{
+            //    lst_checked_manual.Add(sheet.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
+            //}
+            List<string> lst_ignore = new List<string>() { "Thermal Cycling", "Thermal Shock", "Heat Soak and Recovery" };
 
             foreach (ExcelWorksheet wrksheet in myWrkbook.Worksheets)
             {
@@ -1200,10 +1273,10 @@ namespace Export_FPCA_OK2ship_Auto_System
                                         myWrkbook.Worksheets[sel_tbl].TabColor = Color.Green;
                                         Update_dgv_complete(sel_tbl, true);
                                     }
-                                    catch 
+                                    catch
                                     {
                                         MessageBox.Show(new Form { TopMost = true }, sel_tbl + " :Lỗi!", "Thông báo");
-                                    } 
+                                    }
                                 }
                             }
                             break;
@@ -1222,10 +1295,10 @@ namespace Export_FPCA_OK2ship_Auto_System
             List<string> auto_lst = new List<string>();// { "FAI", "SPC", "CPK", "IPQC", "Recycle", "Materials", "Coverpage", "User Guidelines", "Declaration and Contents" };
             auto_lst = lst_auto;
             List<string> lst_checked_manual = new List<string>();
-            foreach (string sheet in cbl_sheet_manual.CheckedItems)
-            {
-                lst_checked_manual.Add(sheet.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
-            }
+            //foreach (string sheet in cbl_sheet_manual.CheckedItems)
+            //{
+            //    lst_checked_manual.Add(sheet.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
+            //}
             List<string> ignoredList = new List<string>() { "Thermal Cycling", "Thermal Shock", "Heat Soak and Recovery" };
 
             myExcel.Application xlsApp = TDMK_Code.StartExcel();
@@ -1237,7 +1310,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                 {
                     if (c.Contains(sel_tbl.Trim()))
                     {
-                        if (TDMK_Code.check_exist_list_index(c, ignoredList) != -1 && TDMK_Code.check_exist_list_index(c, lst_checked_manual) != -1)         
+                        if (TDMK_Code.check_exist_list_index(c, ignoredList) != -1 && TDMK_Code.check_exist_list_index(c, lst_checked_manual) != -1)
                         {
                             string[] list_file = Directory.GetFiles(c, "*.xlsx").Where(s => s.Contains(tar_file_name)).ToArray();
                             if (list_file.Length > 0)
@@ -1249,7 +1322,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                 mywrksheet.Delete();
                                 xlsApp.DisplayAlerts = true;
                                 sel_wrksheet.Copy(Before: myWrkbook.Sheets[sht_inx]);
-                                myWrkbook.Sheets[sel_tbl].Tab.Color = Color.Green; 
+                                myWrkbook.Sheets[sel_tbl].Tab.Color = Color.Green;
                                 sel_wrkbook.Close(false);
                                 Update_dgv_complete(sel_tbl, true);
                             }
@@ -1273,22 +1346,22 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         private void cbAll_manual_CheckedChanged(object sender, EventArgs e)
         {
-            if (cbAll_manual.Checked == true)
-            {
-                for (int i = 0; i < cbl_sheet_manual.Items.Count; i++)
-                {
-                    cbl_sheet_manual.SetItemChecked(i, true);
-                }
+            //if (cbAll_manual.Checked == true)
+            //{
+            //    for (int i = 0; i < cbl_sheet_manual.Items.Count; i++)
+            //    {
+            //        cbl_sheet_manual.SetItemChecked(i, true);
+            //    }
 
-            }
-            else
-            {
-                for (int i = 0; i < cbl_sheet_manual.Items.Count; i++)
-                {
-                    cbl_sheet_manual.SetItemChecked(i, false);
-                }
-                // lst_sheet_export = new List<string> { };
-            }
+            //}
+            //else
+            //{
+            //    for (int i = 0; i < cbl_sheet_manual.Items.Count; i++)
+            //    {
+            //        cbl_sheet_manual.SetItemChecked(i, false);
+            //    }
+            //    // lst_sheet_export = new List<string> { };
+            //}
         }
 
         private void btn_convert_Click(object sender, EventArgs e)
@@ -1298,7 +1371,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                 NVL_SP fr1 = new NVL_SP(getval) { TopMost = true };
                 fr1.ItemCodeSMT_ = txtItemCode.Text;
                 fr1.LotNoSMT_ = txtLotNo.Text;
-                fr1.infor_item_lot_ =  Itemcode_unmating + "^" + LotNo_unmating + "^" + ItemCode_liner_coupon + "^" + LotNo_liner_coupon + "^" + ItemCode_psa_coupon + "^" + LotNo_psa_coupon;
+                fr1.infor_item_lot_ = Itemcode_unmating + "^" + LotNo_unmating + "^" + ItemCode_liner_coupon + "^" + LotNo_liner_coupon + "^" + ItemCode_psa_coupon + "^" + LotNo_psa_coupon;
                 fr1.Show();
             }
             else
@@ -1313,7 +1386,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         }
 
         private void tabMain_SelectedIndexChanged(object sender, EventArgs e)
-        { 
+        {
         }
     }
 }
