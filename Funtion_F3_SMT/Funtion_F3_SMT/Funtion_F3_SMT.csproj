@@ -156,6 +156,9 @@
     <Compile Include="Setup_sochanlk.Designer.cs">
       <DependentUpon>Setup_sochanlk.cs</DependentUpon>
     </Compile>
+    <Compile Include="ToolBoxs\TDMK_Label.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UserControls\CustomDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>

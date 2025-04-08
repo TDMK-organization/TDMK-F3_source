@@ -54,7 +54,6 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void btn_UpdateItemName_Click(object sender, EventArgs e)
         {
-
             string itemName = tb_ItemName.Text.Trim();
             int counting = listItemCode.Count();
             try
@@ -77,6 +76,8 @@ namespace OK2SHIP_SMT.UserControls
                 dr["Build"] = tb_Buildz.Text.Trim();
                 dr["XOUTRate"] = tb_xoutz.Text.Trim();
                 dr["ShippingFrom"] = tb_shippingz.Text.Trim();
+                dr["EEEECode"] = tb_EEEECode.Text.Trim();
+                dr["FactoryCode"] = tb_FactoryCode.Text.Trim();
                 foreach (var item in listItemCode)
                 {
                     DataRow drs = ExportProcess.CloneDataRow(dr);
@@ -233,6 +234,8 @@ namespace OK2SHIP_SMT.UserControls
             tb_MCORe.Text = row["MCORevision"].ToString();
             tb_Program.Text = row["ProgramName"].ToString();
             tb_ItemName.Text = row["ItemName"].ToString();
+            tb_EEEECode.Text = row["EEEECode"].ToString();
+            tb_FactoryCode.Text = row["FactoryCode"].ToString();
             getItemCodeByItemName(tb_ItemName.Text);
         }
         private void dgv_ItemName_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -366,6 +369,7 @@ namespace OK2SHIP_SMT.UserControls
         List<string> listItemCode = new List<string>();
         private void getItemCodeByItemName(string itemName)
         {
+            listBox_ItemCode.Items.Clear();
             try
             {
                 if (_DATABASEMODE)

@@ -78,7 +78,7 @@ namespace OK2SHIP_SMT.Repositories
 
             return Path.GetExtension(filePath);
         }
-        
+
         public ExcelPackage FindFormatProcess(string process, string itemcode, string lotno)
         {
             switch (process)
@@ -98,7 +98,7 @@ namespace OK2SHIP_SMT.Repositories
 
         public void SaveExcelWorksheet(ExcelPackage excelPackage, string sheetName, string nameFile, string type = "NPI")
         {
-            
+
             DateTime nowDate = DateTime.Now;
             foreach (var item in excelPackage.Workbook.Worksheets)
             {
@@ -194,7 +194,7 @@ namespace OK2SHIP_SMT.Repositories
                     return sheet;
                 }
             }
-                throw new Exception("Không tìm thấy sheet kiểm tra lại tên sheet");
+            throw new Exception("Không tìm thấy sheet kiểm tra lại tên sheet");
         }
         ///
         ///Not Fix
@@ -239,31 +239,33 @@ namespace OK2SHIP_SMT.Repositories
             {
                 for (int j = 1; j <= workSheet.Dimension.Rows + 1; j++)
                 {
-
-                    foreach (string str in colHeaderz)
+                    string cellValue = workSheet.Cells[j, i].Text.Trim().Replace("\n", "");
+                    if (!string.IsNullOrEmpty(cellValue.ToString()))
                     {
-                        string strz = str.Trim().Replace("\n", "");
-                        bool prime = false;
-                        if (eq)
+                        foreach (string str in colHeaderz)
                         {
-                            prime = workSheet.Cells[j, i].Text.Equals(str);
-                        }
-                        else
-                        {
-                            prime = workSheet.Cells[j, i].Text.Contains(str);
-                        }
-                        if (prime)
-                        {
-                            if (addressHeader.TryGetValue(strz, out string value))
+                            string strz = str.Trim().Replace("\n", "");
+                            bool prime = false;
+                            if (eq)
                             {
-                                // update value
-                                addressHeader[strz] = addressHeader[strz] + "-" + workSheet.Cells[j, i].Address;
+                                prime = cellValue.Equals(str);
                             }
                             else
                             {
-                                addressHeader.Add(strz, workSheet.Cells[j, i].Address);
+                                prime = cellValue.Contains(str);
                             }
-                            break;
+                            if (prime)
+                            {
+                                if (addressHeader.TryGetValue(strz, out string value))
+                                {
+                                    // update value
+                                    addressHeader[strz] = addressHeader[strz] + "-" + workSheet.Cells[j, i].Address;
+                                }
+                                else
+                                {
+                                    addressHeader.Add(strz, workSheet.Cells[j, i].Address);
+                                }
+                            }
                         }
                     }
                     if (addressHeader.Count() == colHeader.Count())

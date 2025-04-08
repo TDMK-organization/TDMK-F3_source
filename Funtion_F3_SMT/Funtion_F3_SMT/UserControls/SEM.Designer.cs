@@ -30,6 +30,7 @@
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.lbHeadername = new System.Windows.Forms.Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btn_checkBin = new System.Windows.Forms.Button();
             this.btn_saveData = new System.Windows.Forms.Button();
@@ -45,7 +46,6 @@
             this.lb_loactionFile = new System.Windows.Forms.Label();
             this.btnGetData = new System.Windows.Forms.Button();
             this.btn_switchMode = new System.Windows.Forms.Button();
-            this.lbHeadername = new System.Windows.Forms.Label();
             this.tb_datagridview = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.lb_headerTable = new System.Windows.Forms.Label();
@@ -53,6 +53,11 @@
             this.btn_LoadData = new System.Windows.Forms.Button();
             this.btn_Export = new System.Windows.Forms.Button();
             this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.tb_EEEEECode = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tb_FactoryCode = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -76,6 +81,7 @@
             this.splitContainer2.SuspendLayout();
             this.tbl_Function.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
+            this.tableLayoutPanel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -101,10 +107,10 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45.57872F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 54.42128F));
+            this.tableLayoutPanel1.Controls.Add(this.lbHeadername, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.slCtn_Mode, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.btn_switchMode, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.lbHeadername, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -114,12 +120,25 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1391, 123);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
+            // lbHeadername
+            // 
+            this.lbHeadername.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.lbHeadername.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbHeadername.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbHeadername.Location = new System.Drawing.Point(3, 0);
+            this.lbHeadername.Name = "lbHeadername";
+            this.lbHeadername.Size = new System.Drawing.Size(628, 52);
+            this.lbHeadername.TabIndex = 5;
+            this.lbHeadername.Text = "HeaderTable1";
+            this.lbHeadername.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // tableLayoutPanel2
             // 
             this.tableLayoutPanel2.ColumnCount = 3;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 234F));
+            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel4, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.btn_checkBin, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.btn_saveData, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -200,13 +219,13 @@
             // 
             // lbItemCode
             // 
-            this.lbItemCode.AutoSize = true;
+            this.lbItemCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbItemCode.Location = new System.Drawing.Point(3, 0);
             this.lbItemCode.Name = "lbItemCode";
-            this.lbItemCode.Size = new System.Drawing.Size(52, 13);
+            this.lbItemCode.Size = new System.Drawing.Size(61, 31);
             this.lbItemCode.TabIndex = 0;
             this.lbItemCode.Text = "ItemCode";
-            this.lbItemCode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbItemCode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tb_ItemCode
             // 
@@ -219,13 +238,13 @@
             // 
             // lbLotNo
             // 
-            this.lbLotNo.AutoSize = true;
+            this.lbLotNo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbLotNo.Location = new System.Drawing.Point(3, 31);
             this.lbLotNo.Name = "lbLotNo";
-            this.lbLotNo.Size = new System.Drawing.Size(36, 13);
+            this.lbLotNo.Size = new System.Drawing.Size(61, 34);
             this.lbLotNo.TabIndex = 2;
             this.lbLotNo.Text = "LotNo";
-            this.lbLotNo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbLotNo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // slctn_Location
             // 
@@ -271,12 +290,13 @@
             // 
             // lb_loactionFile
             // 
-            this.lb_loactionFile.AutoSize = true;
+            this.lb_loactionFile.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lb_loactionFile.Location = new System.Drawing.Point(3, 0);
             this.lb_loactionFile.Name = "lb_loactionFile";
-            this.lb_loactionFile.Size = new System.Drawing.Size(51, 13);
+            this.lb_loactionFile.Size = new System.Drawing.Size(442, 15);
             this.lb_loactionFile.TabIndex = 0;
             this.lb_loactionFile.Text = "Loaction ";
+            this.lb_loactionFile.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnGetData
             // 
@@ -292,6 +312,7 @@
             // btn_switchMode
             // 
             this.btn_switchMode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_switchMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_switchMode.Location = new System.Drawing.Point(637, 3);
             this.btn_switchMode.Name = "btn_switchMode";
             this.btn_switchMode.Size = new System.Drawing.Size(751, 46);
@@ -299,21 +320,6 @@
             this.btn_switchMode.Text = "Switch Mode";
             this.btn_switchMode.UseVisualStyleBackColor = true;
             this.btn_switchMode.Click += new System.EventHandler(this.btn_switchMode_Click);
-            // 
-            // lbHeadername
-            // 
-            this.lbHeadername.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.lbHeadername.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbHeadername.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.lbHeadername.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbHeadername.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.lbHeadername.Location = new System.Drawing.Point(0, 0);
-            this.lbHeadername.Margin = new System.Windows.Forms.Padding(0);
-            this.lbHeadername.Name = "lbHeadername";
-            this.lbHeadername.Size = new System.Drawing.Size(634, 52);
-            this.lbHeadername.TabIndex = 1;
-            this.lbHeadername.Text = "lbHeader";
-            this.lbHeadername.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tb_datagridview
             // 
@@ -366,7 +372,7 @@
             this.tbl_Function.ColumnCount = 3;
             this.tbl_Function.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.76453F));
             this.tbl_Function.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 49.23547F));
-            this.tbl_Function.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 190F));
+            this.tbl_Function.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 194F));
             this.tbl_Function.Controls.Add(this.btn_LoadData, 0, 0);
             this.tbl_Function.Controls.Add(this.btn_Export, 1, 0);
             this.tbl_Function.Location = new System.Drawing.Point(845, 3);
@@ -381,7 +387,7 @@
             this.btn_LoadData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btn_LoadData.Location = new System.Drawing.Point(3, 3);
             this.btn_LoadData.Name = "btn_LoadData";
-            this.btn_LoadData.Size = new System.Drawing.Size(165, 53);
+            this.btn_LoadData.Size = new System.Drawing.Size(163, 53);
             this.btn_LoadData.TabIndex = 0;
             this.btn_LoadData.Text = "Load Data";
             this.btn_LoadData.UseVisualStyleBackColor = true;
@@ -390,9 +396,9 @@
             // btn_Export
             // 
             this.btn_Export.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_Export.Location = new System.Drawing.Point(174, 3);
+            this.btn_Export.Location = new System.Drawing.Point(172, 3);
             this.btn_Export.Name = "btn_Export";
-            this.btn_Export.Size = new System.Drawing.Size(160, 53);
+            this.btn_Export.Size = new System.Drawing.Size(158, 53);
             this.btn_Export.TabIndex = 0;
             this.btn_Export.Text = "Export";
             this.btn_Export.UseVisualStyleBackColor = true;
@@ -406,6 +412,65 @@
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.Size = new System.Drawing.Size(1385, 504);
             this.dataGridView.TabIndex = 0;
+            // 
+            // tableLayoutPanel4
+            // 
+            this.tableLayoutPanel4.ColumnCount = 2;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.22222F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 62.77778F));
+            this.tableLayoutPanel4.Controls.Add(this.tb_EEEEECode, 1, 1);
+            this.tableLayoutPanel4.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.tb_FactoryCode, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.label2, 0, 1);
+            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(394, 0);
+            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.RowCount = 2;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 48.14815F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 51.85185F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(234, 65);
+            this.tableLayoutPanel4.TabIndex = 3;
+            // 
+            // tb_EEEEECode
+            // 
+            this.tb_EEEEECode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tb_EEEEECode.Enabled = false;
+            this.tb_EEEEECode.Location = new System.Drawing.Point(90, 34);
+            this.tb_EEEEECode.Multiline = true;
+            this.tb_EEEEECode.Name = "tb_EEEEECode";
+            this.tb_EEEEECode.Size = new System.Drawing.Size(141, 28);
+            this.tb_EEEEECode.TabIndex = 3;
+            // 
+            // label1
+            // 
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(81, 31);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "FactoryCode";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_FactoryCode
+            // 
+            this.tb_FactoryCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tb_FactoryCode.Enabled = false;
+            this.tb_FactoryCode.Location = new System.Drawing.Point(90, 3);
+            this.tb_FactoryCode.Multiline = true;
+            this.tb_FactoryCode.Name = "tb_FactoryCode";
+            this.tb_FactoryCode.Size = new System.Drawing.Size(141, 25);
+            this.tb_FactoryCode.TabIndex = 1;
+            // 
+            // label2
+            // 
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.Location = new System.Drawing.Point(3, 31);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(81, 34);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "EEEEECode";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // SEM
             // 
@@ -439,6 +504,8 @@
             this.splitContainer2.ResumeLayout(false);
             this.tbl_Function.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
+            this.tableLayoutPanel4.ResumeLayout(false);
+            this.tableLayoutPanel4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -454,7 +521,6 @@
         private System.Windows.Forms.TextBox tb_Lotno;
         private System.Windows.Forms.Button btn_switchMode;
         private System.Windows.Forms.Button btnGetData;
-        private System.Windows.Forms.Label lbHeadername;
         private System.Windows.Forms.SplitContainer slctn_Location;
         private System.Windows.Forms.Label lb_loactionFile;
         private System.Windows.Forms.TextBox tb_locationFolder;
@@ -470,5 +536,11 @@
         private System.Windows.Forms.Button btn_LoadData;
         private System.Windows.Forms.Label lb_headerTable;
         private System.Windows.Forms.Button btn_checkBin;
+        private System.Windows.Forms.Label lbHeadername;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.TextBox tb_EEEEECode;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox tb_FactoryCode;
+        private System.Windows.Forms.Label label2;
     }
 }

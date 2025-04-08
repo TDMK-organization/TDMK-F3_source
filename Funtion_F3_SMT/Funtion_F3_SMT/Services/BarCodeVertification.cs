@@ -20,8 +20,8 @@ namespace OK2SHIP_SMT.Services
         }
         public DataTable ReadProcess(string locationFolder, string itemCode, string lotNo)
         {
-
             DataTable dataTable = new DataTable();
+
             try
             {
                 string[] colView = { "DateTime", "Module", "Overall Grade" };
@@ -30,6 +30,7 @@ namespace OK2SHIP_SMT.Services
                                       .Where(row => row.Field<string>("Overall Grade") == "A")
                                       .Take(100)
                                       .CopyToDataTable();
+                dataTable.Columns.Add("ID");
                 //convert DateTime
                 dataTable.Columns.Add("Datetime", typeof(DateTime));
                 foreach (DataRow row in dataTable.Rows)
@@ -50,10 +51,12 @@ namespace OK2SHIP_SMT.Services
                 //
                 dataTable.Columns.Add("ItemCode");
                 dataTable.Columns.Add("LotNo");
+                int id = 1;
                 foreach (DataRow item in dataTable.Rows)
                 {
                     item["ItemCode"] = itemCode;
                     item["LotNo"] = lotNo;
+                    item["ID"] = id++;
                 }
                 //Debugger.Break();
             }
@@ -68,20 +71,22 @@ namespace OK2SHIP_SMT.Services
         {
             string json = ConverterService.DataTableToJson(dataTable);
 
-            DBContext db = new DBContext();
-            DataTable saveDt = db.GetTableStructure("BAR_CODE_VERIFICATION");
-            DataRow dr = saveDt.NewRow();
-            dr["ItemCode"] = itemCode;
-            dr["LotNo"] = lotNo;
-            dr["ListSN"] = json;
-            saveDt.Rows.Add(dr);
-            if (prime)
+            using (DBContext db = new DBContext())
             {
-                db.BuckDataTable(saveDt, "BAR_CODE_VERIFICATION", new[] { "ItemCode", "LotNo" }, null, "Id");
-            }
-            else
-            {
-                db.SaveDataTable(saveDt, "BAR_CODE_VERIFICATION", null, "Id");
+                DataTable saveDt = db.GetTableStructure("BAR_CODE_VERIFICATION");
+                DataRow dr = saveDt.NewRow();
+                dr["ItemCode"] = itemCode;
+                dr["LotNo"] = lotNo;
+                dr["ListSN"] = json;
+                saveDt.Rows.Add(dr);
+                if (prime)
+                {
+                    db.BuckDataTable(saveDt, "BAR_CODE_VERIFICATION", new[] { "ItemCode", "LotNo" }, null, "Id");
+                }
+                else
+                {
+                    db.SaveDataTable(saveDt, "BAR_CODE_VERIFICATION", null, "Id");
+                }
             }
 
         }
@@ -164,9 +169,17 @@ namespace OK2SHIP_SMT.Services
                                 {
                                     workSheet.Cells[address].Value = bit.Length == listCodeRule.Count ? "Yes" : "No";
                                 }
+                                else if (str.Contains("SN"))
+                                {
+                                    workSheet.Cells[address].Value = item["Module"];
+                                }
+                                else if (str.Contains("Grade"))
+                                {
+                                    workSheet.Cells[address].Value = item["Overall Grade"];
+                                }
                                 else
                                 {
-                                    workSheet.Cells[address].Value = item[str.Trim()];
+                                    workSheet.Cells[address].Value = item[str];
                                 }
                             }
                         }
@@ -207,8 +220,150 @@ namespace OK2SHIP_SMT.Services
                 throw new Exception("Không có dữ liệu của itemcode lotno này");
             }
             DataTable dz = ConverterService.JsonToDataTable(dt.Rows[0]["ListSN"].ToString());
-           
+
             return dz;
+        }
+
+        public DataTable CheckSum(DataTable dataTable)
+        {
+            if (dataTable.Rows.Count <= 0)
+            {
+                throw new Exception("Không có dữ liệu của itemcode này");
+            }
+            string itemCode = dataTable.Rows[0]["ItemCode"].ToString();
+
+            // get code
+            TableOfContentService tbd = new TableOfContentService();
+            DataTable tbc_DT = tbd.getDataTableByItemCode(itemCode);
+            if (tbc_DT.Rows.Count <= 0)
+            {
+                throw new Exception("Chưa có dữ liệu table of content!");
+            }
+            string EEEEECode = tbc_DT.Rows[0]["EEEECode"].ToString().TrimEnd('\n').TrimEnd('\r');
+            string FactoryCode = tbc_DT.Rows[0]["FactoryCode"].ToString();
+
+            DataTable dtz = new DataTable();
+            dtz.Columns.Add("Datetime");
+            dtz.Columns.Add("Module");
+            dtz.Columns.Add("PPP");
+            dtz.Columns.Add("DOM");
+            dtz.Columns.Add("Sssss");
+            dtz.Columns.Add("sSSSS");
+            dtz.Columns.Add("EEEEEEE");
+
+            foreach (DataRow item in dataTable.Rows)
+            {
+
+                DataRow row = dtz.NewRow();
+                row["DOM"] = "NG";
+
+
+                if (DateTime.TryParse(item["Datetime"].ToString(), out DateTime date))
+                {
+                    row["Datetime"] = item["Datetime"];
+                    row["DOM"] = checkDOM(item["Module"].ToString(), date) ? "OK" : "NG";
+                }
+
+
+                row["Module"] = item["Module"];
+                row["PPP"] = checkPPP(item["Module"].ToString(), FactoryCode) ? "OK" : "NG";
+                row["Sssss"] = checkSssss(item["Module"].ToString()) ? "OK" : "NG";
+                row["sSSSS"] = checksSSSS(item["Module"].ToString()) ? "OK" : "NG";
+                row["EEEEEEE"] = checkEEEE(item["Module"].ToString(), EEEEECode) ? "OK" : "NG";
+
+                dtz.Rows.Add(row);
+            }
+
+            return dtz;
+
+        }
+        private static bool checkSssss(string Module)
+        {
+            Module = Module.Trim().Substring(6, 1).Trim();
+            if (Module.Length != 1)
+            {
+                return false;
+            }
+            char S = Module.ToUpper()[0];
+            if (S <= 'Z' && S >= 'A' || S <= '9' && S >= '0')
+            {
+                return true;
+            }
+            return false;
+        }
+        private static bool checksSSSS(string Module)
+        {
+            Module = Module.Trim().Substring(7, 4).Trim();
+            if (Module.Length != 4)
+            {
+                return false;
+            }
+            int i = 0;
+            while (i < Module.Length)
+            {
+                char S = Module.ToUpper()[i];
+                if (S <= 'Z' && S >= 'A')
+                {
+                }
+                else if (S <= '9' && S >= '0')
+                {
+                }
+                else
+                {
+                    return false;
+                }
+                i++;
+            }
+            return true;
+        }
+        private static bool checkEEEE(string Module, string code)
+        {
+            Module = Module.Trim().Substring(11, 7).Trim();
+            code = code.Trim();
+            if (Module.Length != 7)
+            {
+                return false;
+            }
+
+            return code.Equals(Module);
+        }
+        private static bool checkDOM(string Module, DateTime dateTimeA)
+        {
+            string DOM_DB = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+            Module = Module.Trim().Substring(3, 3).Trim();
+
+            if (Module.Length != 3)
+            {
+                return false;
+            }
+            int D = DOM_DB.IndexOf(Module[0]) * 34 * 34;
+            int O = DOM_DB.IndexOf(Module[1]) * 34;
+            int M = DOM_DB.IndexOf(Module[2]);
+            int dom_Value = D + O + M;
+            DateTime dateTime = intToDate(dom_Value);
+
+            return true;
+        }
+        public static DateTime intToDate(int n)
+        {
+            // 1/1/1970 là mốc thời gian gốc (Unix epoch)
+            DateTime goc = new DateTime(1970, 1, 1);
+
+            // Thêm n ngày vào mốc thời gian gốc
+            DateTime ketQua = goc.AddDays(n);
+
+            return ketQua;
+        }
+        private static bool checkPPP(string Module, string code)
+        {
+            Module = Module.Trim().Substring(0, 3).Trim();
+            code = code.Trim();
+            if (Module.Length != 3)
+            {
+                return false;
+            }
+
+            return code.Equals(Module);
         }
     }
 }

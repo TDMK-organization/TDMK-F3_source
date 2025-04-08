@@ -41,7 +41,7 @@ namespace OK2SHIP_SMT.Services
             dataTable = _dBContext.LoadDataTableOfPath(_NAMETABLE, filter, value, selectedCol, pageNumber, pageSize, orderBy);
             return dataTable;
         }
-
+        
         public DataTable getTableOfContent(string itemCode, string lotNo)
         {
             DataTable dataTable = new DataTable();
@@ -367,6 +367,36 @@ namespace OK2SHIP_SMT.Services
             itemName = itemName.Trim();
             DataTable dt = _dBContext.LoadDataTable(_NAMETABLE + "_SETTING", new[] { "ItemName" }, new[] { itemName }, new[] { "ItemCode" });
             return dt.AsEnumerable().Select(row => row.Field<string>("ItemCode")).ToList();
+        }
+        public DataTable getDataTableByItemCode(string itemCode, DataTable dtz = null)
+        {
+            DataTable dt = new DataTable();
+            itemCode = itemCode.Trim();
+            if (string.IsNullOrEmpty(itemCode))
+            {
+                throw new Exception("Hãy nhập itemCode");
+            }
+            if (dtz != null)
+            {
+                foreach (DataRow row in dtz.Rows)
+                {
+                    if (row.Field<string>("ItemCode") == itemCode)
+                    {
+                        DataRow newRow = ExportProcess.CloneDataRow(row);
+                        dt.Rows.Add(newRow);
+                    }
+                }
+            }
+            else
+            {
+                dt = _dBContext.LoadDataTable(_NAMETABLE + "_SETTING", new[] { "ItemCode" }, new[] { itemCode });
+            }
+            int id = 1;
+            foreach (DataRow row in dt.Rows)
+            {
+                row["Id"] = id++;
+            }
+            return dt;
         }
         public DataTable getDataTableByItemName(string itemName, DataTable dtz = null)
         {

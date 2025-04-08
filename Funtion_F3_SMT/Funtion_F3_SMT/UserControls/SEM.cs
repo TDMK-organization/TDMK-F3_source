@@ -1,5 +1,6 @@
 ﻿using Funtion_F3_SMT;
 using OK2SHIP_SMT.Services;
+using OK2SHIP_SMT.ToolBoxs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,7 +21,7 @@ namespace OK2SHIP_SMT.UserControls
         private bool browseStatusFile = false;
         private PictureBox pictureBox = new PictureBox();
         public string PROCESS { get; set; }
-        private bool MODE = false;
+        private int MODE = 0, MAX_MODE = 2;
         private SEMServices semServices = new SEMServices();
         public SEM(string pROCESS)
         {
@@ -58,9 +59,19 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void btn_checkBin_Click(object sender, EventArgs e)
         {
-            DataTable dataTable = (DataTable)dgv_Combobox.DataSource;
-            semServices.JudgementCheck(dataTable);
-            dgv_Combobox.DataSource = dataTable;
+            switch (PROCESS)
+            {
+                case "SEM BSE & Binarization":
+                    DataTable dataTable = (DataTable)dgv_Combobox.DataSource;
+                    semServices.JudgementCheck(dataTable);
+                    dgv_Combobox.DataSource = dataTable;
+                    break;
+                case "Bar Code Verification":
+                    DataTable dataTablez = (DataTable)dataGridView.DataSource;
+                    BarCodeVertification barCodeVertification = new BarCodeVertification();
+                    dgv_left.DataSource = barCodeVertification.CheckSum(dataTablez);
+                    break;
+            }
         }
         /// <summary>
         /// Open browser dialog
@@ -95,10 +106,22 @@ namespace OK2SHIP_SMT.UserControls
         {
             getDataFormFile(tb_locationFolder.Text, tb_ItemCode.Text, tb_Lotno.Text, PROCESS);
         }
- 
+        private void btn_checkSum_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string ItemCode = tb_ItemCode.Text.Trim();
+                
+                Debugger.Break();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}");
+            }
+        }
         private void btn_saveData_Click(object sender, EventArgs e)
         {
-            if(!UserSession.Instance.IsLoggedIn)
+            if (!UserSession.Instance.IsLoggedIn)
             {
                 MessageBox.Show("Bạn chưa đăng nhập! Hãy đăng nhập ngay!");
                 Login login = new Login();
@@ -262,18 +285,27 @@ namespace OK2SHIP_SMT.UserControls
         private void btn_switchMode_Click(object sender, EventArgs e)
         {
             slCtn_Mode.Panel2.Controls.Clear();
-            if (!MODE)
+            MODE++;
+            MODE = MODE % MAX_MODE;
+            switch (MODE)
             {
-                tbl_Function.Dock = DockStyle.Fill;
-                slCtn_Mode.Panel2.Controls.Add(tbl_Function);
-                tbl_Function.Show();
+                case 0:
+                    tbl_Function.Dock = DockStyle.Fill;
+                    slCtn_Mode.Panel2.Controls.Add(tbl_Function);
+                    tbl_Function.Show();
+                    break;
+                case 1:
+                    slctn_Location.Dock = DockStyle.Fill;
+                    slCtn_Mode.Panel2.Controls.Add(slctn_Location);
+                    break;
+                case 2:
+                    slctn_Location.Dock = DockStyle.Fill;
+                    break;
+                default:
+                    MessageBox.Show("Mode not found");
+                    break;
             }
-            else
-            {
-                slctn_Location.Dock = DockStyle.Fill;
-                slCtn_Mode.Panel2.Controls.Add(slctn_Location);
-            }
-            MODE = !MODE;
+
         }
         private void splitContainer2_Panel1_Resize(object sender, EventArgs e)
         {
@@ -283,25 +315,17 @@ namespace OK2SHIP_SMT.UserControls
         {
             try
             {
-
                 switch (PROCESS)
                 {
                     case "Bar Code Verification":
                         BarCodeVertification barCodeVertification = new BarCodeVertification();
                         DataTable dtBar = barCodeVertification.LoadProcess(tb_ItemCode.Text, tb_Lotno.Text);
-                        dtBar.Columns.Add("PCS");
-                        int i = 1;
-                        foreach(DataRow item in dtBar.Rows)
-                        {
-                            item["PCS"] = i++;
-                        }
                         dataGridView.DataSource = dtBar;
-                        dataGridView.Columns["PCS"].DisplayIndex = 0;
+                        dataGridView.Columns["ID"].DisplayIndex = 0;
+                        checkFactoryCode(tb_ItemCode.Text.Trim());
                         break;
 
                     case "SEM BSE & Binarization":
-
-
                         SEMServices sem = new SEMServices();
                         DataTable dtz = sem.LoadDataProcess(tb_ItemCode.Text, tb_Lotno.Text);
                         if (dtz.Rows.Count <= 0)
@@ -309,8 +333,6 @@ namespace OK2SHIP_SMT.UserControls
                             MessageBox.Show($"{tb_ItemCode} {tb_Lotno.Text} không có dữ liệu!");
                             return;
                         }
-
-
                         semServices.JudgementCheck(dtz);
                         dgv_Combobox = new CustomDataGridView(dtz, new Dictionary<string, string[]> { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
                         dgv_Combobox.CellClick += cellContentClick;
@@ -377,6 +399,7 @@ namespace OK2SHIP_SMT.UserControls
             tbl_Function.Hide();
             PROCESS = pROCESS;
             lbHeadername.Text = PROCESS;
+            btn_checkBin.Visible = false;
             switch (this.PROCESS)
             {
                 case "SEM BSE & Binarization":
@@ -418,17 +441,41 @@ namespace OK2SHIP_SMT.UserControls
             }
         }
         private DataGridView dgv_left = new DataGridView();
+        private Button btn_SetupSum = new Button() { Text = "Setup CheckSum", Dock = DockStyle.Fill };
         private void SetUpBarCodeScreen()
         {
-            browseStatusFile = true;
             btn_checkBin.Visible = true;
-          
+            btn_checkBin.Text = "Check SUM";
+
+            browseStatusFile = true;
             lb_headerTable.Text = "Logfile";
             tb_datagridview.ColumnCount = 2;
             tb_datagridview.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-            
-            tb_datagridview.Controls.Add(dgv_left, 1, 0);
+
+            TableLayoutPanel tableLayoutPanel2 = new TableLayoutPanel() { Dock = DockStyle.Fill };
+            tableLayoutPanel2.RowCount = 2;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 50));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            TDMK_Label label = new TDMK_Label() { AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "Check Sum", Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold) };
+            tableLayoutPanel2.Controls.Add(label, 0, 0);
+            tableLayoutPanel2.Controls.Add(dgv_left, 0, 1);
+            tb_datagridview.Controls.Add(tableLayoutPanel2, 1, 0);
             dgv_left.Dock = DockStyle.Fill;
+            ////
+            btn_SetupSum.Click += btn_checkSum_Click;
+            /////
+            TableLayoutPanel tableLayoutPanel = new TableLayoutPanel();
+            // Thiết lập số lượng hàng và cột
+            tableLayoutPanel.RowCount = 2;
+            tableLayoutPanel.ColumnCount = 1; // Chỉ cần 1 cột nếu bạn muốn 2 hàng chiếm toàn bộ chiều rộng
+
+            //// Thiết lập kiểu kích thước hàng
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel.Dock = DockStyle.Fill;
+            tableLayoutPanel.Controls.Add(btnGetData, 0, 0);
+            tableLayoutPanel.Controls.Add(btn_SetupSum, 0, 1);
+            slctn_Location.Panel2.Controls.Add(tableLayoutPanel);
         }
         private bool checkData(string location, string itemCode, string lotNo, string process)
         {
@@ -440,11 +487,11 @@ namespace OK2SHIP_SMT.UserControls
             ///////////////
             // check file location validate
 
-            if (browseStatusFile)
+            if (browseStatusFile && !Directory.Exists(location))
             {
-
+                throw new Exception("Folder not found");
             }
-            if (!browseStatusFile && File.Exists(location))
+            if (!browseStatusFile && !File.Exists(location))
             {
                 throw new Exception("File not found");
             }
@@ -511,7 +558,6 @@ namespace OK2SHIP_SMT.UserControls
         {
             try
             {
-
                 switch (PROCESS)
                 {
                     case "OQC B2B Mating-Unmating":
@@ -537,9 +583,24 @@ namespace OK2SHIP_SMT.UserControls
 
             }
         }
-
+        private void checkFactoryCode(string itemCode)
+        {
+            ///Get EEECode
+            TableOfContentService tableOfContentService = new TableOfContentService();
+            DataTable dtzs = tableOfContentService.getDataTableByItemCode(itemCode);
+            if (dtzs.Rows.Count > 0)
+            {
+                tb_FactoryCode.Text = dtzs.Rows[0]["FactoryCode"].ToString();
+                tb_EEEEECode.Text = dtzs.Rows[0]["EEEECode"].ToString();
+            }
+            else
+            {
+                MessageBox.Show("ItemCode chưa được cài TABLE OF CONTENT");
+            }
+        }
         private void getDataFormFile(string location, string itemCode, string lotNo, string process)
         {
+
             //check input
             location = location.Replace("\r\n", "").Trim();
             DataTable dt = new DataTable();
@@ -552,7 +613,6 @@ namespace OK2SHIP_SMT.UserControls
                         checkData(location, itemCode, lotNo, process);
                         try
                         {
-
                             dt = semServices.SEMProcessRead(location, itemCode, lotNo, false);
                         }
                         catch (Exception ex)
@@ -584,6 +644,8 @@ namespace OK2SHIP_SMT.UserControls
                             throw new Exception($"Chỉ có {dt.Rows.Count} phần tử hãy import đúng dữ liệu");
                         }
                         dataGridView.DataSource = dt;
+                        dataGridView.Columns["ID"].DisplayIndex = 0;
+                        checkFactoryCode(itemCode);
                         break;
                     case "OQC B2B Mating-Unmating":
                         checkData(location, itemCode, lotNo, process);
@@ -606,6 +668,7 @@ namespace OK2SHIP_SMT.UserControls
                 return;
             }
             MessageBox.Show("Lấy dữ liệu thành công");
+
         }
         private CustomDataGridView dgv_Combobox;
 
