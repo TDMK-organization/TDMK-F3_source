@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using TDMK_SQL;
 using System.Data.SqlClient;
 using System.Diagnostics.Eventing.Reader;
+using OK2SHIP_SMT.Services;
 
 namespace Funtion_F3_SMT
 {
@@ -28,7 +29,15 @@ namespace Funtion_F3_SMT
             get { return mode_; }
             set { mode_ = value; }
         }
-
+        public Login()
+        {
+            InitializeComponent();
+            this.admin_mode = notThing;
+        }
+        private void notThing(string str)
+        {
+            // Do nothing
+        }
         public Login(Log_en sender)
         {
 
@@ -56,35 +65,40 @@ namespace Funtion_F3_SMT
 
         private void OK_Click(object sender, EventArgs e)
         {
-            
+
             if (btnLogin.Text == "Login")
-            { 
+            {
+
                 bool login_en = false;
-                if ((txtUsername.Text == "Admin") && (txtPassword.Text == "TDMK"))
-                {
-                    login_en = true;
-                }
-                else
-                {
-                    //DataTable info = TDMK_Code.Datatable_Filter(sql_login, "USerInfo", TDMK_Code.filter_str(new string[] { "User_Name", "User_Password", "Department" }, new string[] { txtUsername.Text, txtPassword.Text, depart }));
-                    //if (info.Rows.Count == 0)
-                    //{
-                    //    login_en = false;
-                    //}
-                    //else
-                    //{
-                    //    login_en = true;
-                    //}
-                }
+                string userName = txtUsername.Text.Trim();
+                string password = txtPassword.Text.Trim();
+                UserSession.Instance.Login(userName, password);
+                login_en = UserSession.Instance.IsLoggedIn;
+                //if ((txtUsername.Text == "Admin") && (txtPassword.Text == "TDMK"))
+                //{
+                //    login_en = true;
+                //}
+                //else
+                //{
+                //    //DataTable info = TDMK_Code.Datatable_Filter(sql_login, "ACCOUNT_USER", TDMK_Code.filter_str(new string[] { "UserName", "Password" }, new string[] { txtUsername.Text, txtPassword.Text }));
+                //    if (info.Rows.Count == 0)
+                //    {
+                //        login_en = false;
+                //    }
+                //    else
+                //    {
+                //        login_en = true;
+                //    }
+                //}
                 if (login_en)
                 {
                     //FindControl fc_btnLogin = new FindControl();
                     //Button btnLogin = (Button)fc_btnLogin.Ctrl(myVar_ECheck.frmMain, "btnLogin");
                     //myVar_ECheck.confirm_mode = true; 
                     //btnLogin.BackColor = Color.GreenYellow; 
-                    
+
                     btnLogin.Text = "Logout";
-                    this.admin_mode("Admin mode"); 
+                    this.admin_mode("Admin mode");
                     this.Hide();
                 }
                 else
@@ -92,7 +106,7 @@ namespace Funtion_F3_SMT
                     MessageBox.Show("Sai mật khẩu!");
                 }
             }
-            else if(btnLogin.Text == "Logout")
+            else if (btnLogin.Text == "Logout")
             {
                 this.admin_mode("LOG IN");
                 this.Hide();
@@ -108,7 +122,7 @@ namespace Funtion_F3_SMT
             {
                 btnLogin.Text = "Logout";
                 txtPassword.Text = "TDMK";
-               
+
             }
             else
             {
@@ -162,9 +176,9 @@ namespace Funtion_F3_SMT
 
         private void txtPassword_TextChanged(object sender, EventArgs e)
         {
-             
+
         }
-             
+
 
         private void txtUsername_TextChanged(object sender, EventArgs e)
         {

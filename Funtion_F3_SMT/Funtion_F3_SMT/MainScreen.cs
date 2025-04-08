@@ -1,4 +1,6 @@
-﻿using System;
+﻿using OK2SHIP_SMT.UserControls;
+using OK2SHIP_SMT.Views;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,15 +14,16 @@ namespace Funtion_F3_SMT
 {
     public partial class MainScreen : Form
     {
+
         public MainScreen()
         {
             InitializeComponent();
         }
-       
+
 
         private void lblExit_Click(object sender, EventArgs e)
         {
-            this. Close();
+            this.Close();
             Application.Exit();
         }
 
@@ -28,9 +31,9 @@ namespace Funtion_F3_SMT
         {
 
         }
-       
 
-      
+
+
 
         private void lblFormatSetup_Click(object sender, EventArgs e)
         {
@@ -39,7 +42,7 @@ namespace Funtion_F3_SMT
             //this.Hide();
         }
 
-     
+
 
         private void lblSearchData_Click(object sender, EventArgs e)
         {
@@ -61,6 +64,36 @@ namespace Funtion_F3_SMT
         private void MainScreen_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            SwitchScreen("Table Of Content");
+        }
+
+        private void SwitchScreen(string process)
+        {
+            try
+            {
+                switch (process)
+                {
+                    case "Table Of Content":
+                        TableOfContent toc = new TableOfContent();
+                        CommonForm frm = new CommonForm("Table Of Content", toc);
+                        frm.Show();
+                        break;
+                    default:
+                        throw new Exception("Process not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+
+            this.Hide();
+
         }
     }
 }

@@ -75,6 +75,7 @@
             this.menuStrip1.Size = new System.Drawing.Size(1324, 32);
             this.menuStrip1.TabIndex = 8;
             this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // mnuProcess
             // 
@@ -90,7 +91,10 @@
             "IQC_PSA_PEELING_COUPON",
             "LINER_PEEL_TEST_ON_PRODUCT",
             "PSA_PEEL_TEST_ON_PRODUCT",
-            "ACF"});
+            "ACF",
+            "SEM BSE & Binarization",
+            "OQC B2B Mating-Unmating",
+            "Bar Code Verification"});
             this.mnuProcess.Name = "mnuProcess";
             this.mnuProcess.Size = new System.Drawing.Size(150, 28);
             this.mnuProcess.Click += new System.EventHandler(this.mnuProcess_Click);

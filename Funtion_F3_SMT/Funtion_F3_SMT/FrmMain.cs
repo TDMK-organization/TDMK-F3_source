@@ -15,11 +15,13 @@ using System.IO;
 using Microsoft.Office.Interop.Excel;
 using Application = System.Windows.Forms.Application;
 using OK2SHIP_SMT;
+using OK2SHIP_SMT.UserControls;
 
 namespace Funtion_F3_SMT
 {
     public partial class FrmMain : Form
     {
+
         public static TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
         SqlConnection sqlcon = null;
         SEI_Lib myCode = new SEI_Lib();
@@ -38,7 +40,7 @@ namespace Funtion_F3_SMT
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
-            //sqlcon = initial_data(myVar.sel_DB, false);
+            //sqlcon = initial_data("OK2SHIP_SMT", false);
 
 
         }
@@ -156,21 +158,38 @@ namespace Funtion_F3_SMT
         private void mnuLoad_Click(object sender, EventArgs e)
         {
             string sheet = mnuProcess.SelectedText;
-            if(sheet == "ACF")
+            this.WindowState = FormWindowState.Maximized;
+            switch (sheet)
             {
-                frm2 = new ACF() { Dock = DockStyle.Fill, TopLevel = false, TopMost = true };
-                this.pMain.Controls.Add(frm2); 
-                frm2.Show();
-                mnuProcess.Enabled = false;
-            }
-            else if (sheet != "")
-            {
-                frm1 = new View_Data_3() { Dock = DockStyle.Fill, TopLevel = false, TopMost = true };
-                this.pMain.Controls.Add(frm1);
-                frm1.sheet_ = sheet;
-               // frm1.admin_mode_ = mnu_Login.Text;
-                frm1.Show();
-                mnuProcess.Enabled = false;
+                case "ACF":
+                    frm2 = new ACF() { Dock = DockStyle.Fill, TopLevel = false, TopMost = true };
+                    this.pMain.Controls.Add(frm2);
+                    frm2.Show();
+                    mnuProcess.Enabled = false;
+                    break;
+                case "SEM BSE & Binarization":
+                    pMain.Controls.Clear();
+                    pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
+                    break;
+                case "OQC B2B Mating-Unmating":
+                    pMain.Controls.Clear();
+                    pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
+                    break;
+                case "Bar Code Verification":
+                    pMain.Controls.Clear();
+                    pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
+                    break;
+                default:
+                    if (sheet != "")
+                    {
+                        frm1 = new View_Data_3() { Dock = DockStyle.Fill, TopLevel = false, TopMost = true };
+                        this.pMain.Controls.Add(frm1);
+                        frm1.sheet_ = sheet;
+                        // frm1.admin_mode_ = mnu_Login.Text;
+                        frm1.Show();
+                        mnuProcess.Enabled = false;
+                    }
+                    break;
             }
         }
 
@@ -226,7 +245,7 @@ namespace Funtion_F3_SMT
         //    {
         //        fr1.mode = false;
         //    }
-             
+
         //    fr1.Show();
 
         //    //if (admin_mode == "Admin mode")
@@ -245,7 +264,12 @@ namespace Funtion_F3_SMT
 
         private void mnu_Login_TextChanged(object sender, EventArgs e)
         {
-           
+
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }

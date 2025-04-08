@@ -403,8 +403,8 @@ namespace Funtion_F3_SMT
             arr_ignored = new string[] { "SHEARTEST", "IQC Liner peeling (Coupon)".Replace(" ", "").ToUpper(), "IQC PSA peeling (Coupon)".Replace(" ", "").ToUpper() };
             arr_onproduct = new string[] { "Liner peel test On product".Replace(" ", "_").ToUpper(), "PSA peel test On product".Replace(" ", "_").ToUpper() };
             arr_comment_2 = new string[] { "Cross section".Replace(" ", "_").ToUpper(), "GAP Connector".Replace(" ", "_").ToUpper() };
-
-            var img = Bitmap.FromFile(Path.Combine(System.Windows.Forms.Application.StartupPath, "Img_null", "Img_null.jpg"));
+            var img = new Bitmap(10, 20);
+            //var img = Bitmap.FromFile(Path.Combine(System.Windows.Forms.Application.StartupPath, "Img_null", "Img_null.jpg"));
             // var img = Bitmap.FromFile(Path.Combine(program_loc, "Img_null", "Img_null.jpg"));
             ImageConverter imgcon = new ImageConverter();
             img_null = (byte[])imgcon.ConvertTo(img, typeof(byte[]));
