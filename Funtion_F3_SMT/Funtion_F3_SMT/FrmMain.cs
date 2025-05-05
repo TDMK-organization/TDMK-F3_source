@@ -23,15 +23,7 @@ namespace Funtion_F3_SMT
     {
 
         public static TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
-        SqlConnection sqlcon = null;
         SEI_Lib myCode = new SEI_Lib();
-        string admin_mode = "LOGIN";
-        View_Data_3 frm1 = null;
-        ACF frm2 = null;
-
-
-
-        Form frm = null;
 
         public FrmMain()
         {
@@ -40,8 +32,6 @@ namespace Funtion_F3_SMT
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
-            //sqlcon = initial_data("OK2SHIP_SMT", false);
-
 
         }
 
@@ -161,8 +151,12 @@ namespace Funtion_F3_SMT
             this.WindowState = FormWindowState.Maximized;
             switch (sheet)
             {
+                case "Environment en-durance":
+                    pMain.Controls.Clear();
+                    pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
+                    break;
                 case "ACF":
-                    frm2 = new ACF() { Dock = DockStyle.Fill, TopLevel = false, TopMost = true };
+                    ACF frm2 = new ACF() { Dock = DockStyle.Fill, TopLevel = false, TopMost = true };
                     this.pMain.Controls.Add(frm2);
                     frm2.Show();
                     mnuProcess.Enabled = false;
@@ -179,10 +173,18 @@ namespace Funtion_F3_SMT
                     pMain.Controls.Clear();
                     pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
                     break;
+                case "Impedance":
+                    pMain.Controls.Clear();
+                    pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
+                    break;
+                case "Thermal cycling, Heat soak, Thermal shock":
+                    pMain.Controls.Clear();
+                    pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
+                    break;
                 default:
                     if (sheet != "")
                     {
-                        frm1 = new View_Data_3() { Dock = DockStyle.Fill, TopLevel = false, TopMost = true };
+                        View_Data_3 frm1 = new View_Data_3() { Dock = DockStyle.Fill, TopLevel = false, TopMost = true };
                         this.pMain.Controls.Add(frm1);
                         frm1.sheet_ = sheet;
                         // frm1.admin_mode_ = mnu_Login.Text;

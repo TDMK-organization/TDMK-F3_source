@@ -14,7 +14,40 @@ namespace OK2SHIP_SMT.Repositories
 {
     static class FileFolderRepository
     {
-       
+        public static bool checkLocationIsValid(string location)
+        {
+            try
+            {
+                // Check if the location exists and is accessible
+                return Directory.Exists(location);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                // Log or handle exceptions if needed
+                return false;
+            }
+        }
+        public static string[] GetFileByExtension(string folderPath, string extension)
+        {
+            // Lấy danh sách các tệp có phần mở rộng cụ thể trong thư mục
+            return Directory.GetFiles(folderPath, $"*{extension}");
+        }
+        public static string GetFileName(string filePath)
+        {
+            // Lấy tên tệp từ đường dẫn
+            return Path.GetFileName(filePath);
+        }
+        public static string GetFileNameWithoutExtension(string filePath)
+        {
+            // Lấy tên tệp không có phần mở rộng từ đường dẫn
+            return Path.GetFileNameWithoutExtension(filePath);
+        }
+        public static string GetFolderName(string filePath)
+        {
+            // Lấy tên thư mục chứa tệp
+            return Path.GetFileName(filePath);
+        }
         public static IList<string> ListAllFileInFolder(string folderPath, string extension)
         {
             List<string> csvFiles = new List<string>();
@@ -68,16 +101,7 @@ namespace OK2SHIP_SMT.Repositories
             }
             return listPicture;
         }
-        /// <summary>
-        /// Lấy tên folder
-        /// </summary>
-        /// <param name="folderPath"></param>
-        /// <returns></returns>
-        public static string GetFolderName(string folderPath)
-        {
-            DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
-            return directoryInfo.Name;
-        }
+
         /// <summary>
         /// Get all picture in many subfolder in folder
         /// </summary>
@@ -139,6 +163,25 @@ namespace OK2SHIP_SMT.Repositories
             }
 
             return dataTable;
+        }
+        public static string[] GetSubFolders(string folderPath)
+        {
+            try
+            {
+                // Lấy danh sách các thư mục con
+                string[] subFolders = Directory.GetDirectories(folderPath);
+                return subFolders;
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                Console.WriteLine($"Thư mục không tồn tại: {ex.Message}");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi lấy thư mục con: {ex.Message}");
+                return null;
+            }
         }
     }
 }

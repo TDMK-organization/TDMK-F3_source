@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
-using TDMK_EPPLUS_7;
 using System.Threading.Tasks;
 using OfficeOpenXml;
 using System.Reflection;
@@ -15,31 +14,73 @@ using System.Drawing.Imaging;
 using OfficeOpenXml.Drawing;
 using OK2SHIP_SMT.Services;
 using System.Data;
-using OfficeOpenXml;
+using OK2SHIP_SMT.Libary;
 namespace OK2SHIP_SMT.Repositories
 {
     class ExportProcess
     {
-
         private string FORMAT_LOACTION = null;
         private string EXPORT_LOACTION = null;
         IniFile TDMK_init = new IniFile();
         private string _EXTENSION = "";
-        public static TDMK_EPPLUS7_lib _EPPLUS_7;
         public ExportProcess(string type = "NPI")
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.LicenseContext = LicenseContext.Commercial;
             //config file
-            string app_path = System.Windows.Forms.Application.StartupPath.Replace("\\VHX-IMADA", "");
+            string app_path = System.Windows.Forms.Application.StartupPath.Replace(@"\FPCA OK2SHIP Auto System\VHX-IMADA", "");
             string config_path = Path.Combine(app_path, "config.ini");
             TDMK_init = new IniFile(config_path);
             FORMAT_LOACTION = TDMK_init.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data\\Format\\{type}";
             EXPORT_LOACTION = TDMK_init.Read("Report_Location", "SMT_Config") + $"\\SEEV Data\\Format\\{type}";
         }
 
-        public ExcelPackage FindFormatBarCode()
+        public void CopyAndInsert(ExcelWorksheet workSheet, string addressRange, ref string addressStart, bool insert = false)
         {
-            return new ExcelPackage($"{FORMAT_LOACTION}\\SEEV-OK2Ship_Format change.xlsm");
+            int rowNum = 1;
+            int colNum = 1;
+            if (addressRange.Contains(":"))
+            {
+                string[] addressRangeList = addressRange.Split(':');
+                int startRow = workSheet.Cells[addressRangeList[0]].End.Row;
+                int endRow = workSheet.Cells[addressRangeList[1]].End.Row;
+                int startCol = workSheet.Cells[addressRangeList[0]].End.Column;
+                int endCol = workSheet.Cells[addressRangeList[1]].End.Column;
+                rowNum = endRow - startRow + 1;
+                colNum = endCol - startCol + 1;
+            }
+
+            if (insert)
+            {
+                workSheet.InsertRow(workSheet.Cells[addressStart].End.Row, rowNum);
+            }
+            string addressInsert = AddColumn(addressStart, colNum);
+
+            //parste value
+            addressInsert = $"{addressStart}:{addressInsert}";
+            workSheet.Cells[addressRange].Copy(workSheet.Cells[addressInsert]);
+
+            //resize
+            int startRowz = workSheet.Cells[addressStart].End.Row;
+            int colRowz = workSheet.Cells[addressRange].Start.Row;
+            for (int i = 0; i <= rowNum; i++)
+            {
+                workSheet.Row(startRowz + i).Height = workSheet.Row(colRowz + i).Height;
+                //workSheet.Row(startRowz + i).StyleID = workSheet.Row(colRowz + i).StyleID;
+                //workSheet.Row(startRowz + i).Style.Font.Bold = workSheet.Row(colRowz + i).Style.Font.Bold;
+                //workSheet.Row(startRowz + i).Style.HorizontalAlignment = workSheet.Row(colRowz + i).Style.HorizontalAlignment;
+                //workSheet.Row(startRowz + i).Style.VerticalAlignment = workSheet.Row(colRowz + i).Style.VerticalAlignment;
+
+            }
+            addressStart = AddRow(addressStart, rowNum);
+        }
+        public string getRangeBaseAddressByCellAddress(ExcelWorksheet worksheet, string address)
+        {
+            ExcelAddress addressEx = worksheet.Cells[address];
+            return worksheet.MergedCells[addressEx.Start.Row, addressEx.Start.Column];
+        }
+        public ExcelPackage OpenFileExcel(string location)
+        {
+            return new ExcelPackage(location);
         }
         public ExcelPackage FindFormatWithItemCode(string itemCode)
         {
@@ -60,7 +101,6 @@ namespace OK2SHIP_SMT.Repositories
                 }
             }
             throw new Exception("Không tìm thấy format File!");
-            return null;
         }
         public static DataRow CloneDataRow(DataRow sourceRow)
         {
@@ -92,27 +132,81 @@ namespace OK2SHIP_SMT.Repositories
                 case "Table of Contents":
                     return FindFormatWithItemCode(itemcode);
                 default:
-                    return null;
+                    return FindFormatWithItemCode(itemcode);
             }
         }
+        public static string ConvertAddressRangeBase(ExcelWorksheet ws, string rangeAddress, string addressSelect)
+        {
+            int rStart = 0, cStart = 0;
+            int rEnd = 0, cEnd = 0;
+            string startAddress = "", endAddress = "";
+            int i = 0;
+            if (rangeAddress.Contains(":"))
+            {
+                throw new Exception("Chưa triển khai convert rangbse");
+            }
+            else if (rangeAddress.Contains("+"))
+            {
+                string[] address = rangeAddress.Split('+');
+                // tìm kiếm địa chỉ đầu và cuối
+                while (string.IsNullOrEmpty(startAddress) || string.IsNullOrEmpty(endAddress))
+                {
+                    if (string.IsNullOrEmpty(startAddress))
+                    {
+                        try
+                        {
+                            startAddress = address[i].Trim();
+                        }
+                        catch { }
+                    }
+                    if (string.IsNullOrEmpty(endAddress))
+                    {
+                        try
+                        {
+                            endAddress = address[address.Length - i].Trim();
+                        }
+                        catch { }
+                    }
+                    i++;
+                }
+                rStart = ws.Cells[startAddress].Start.Row - ws.Cells[addressSelect].Start.Row;
+                cStart = ws.Cells[startAddress].Start.Column - ws.Cells[addressSelect].Start.Column;
+                rEnd = ws.Cells[endAddress].Start.Row - ws.Cells[addressSelect].Start.Row;
+                cEnd = ws.Cells[endAddress].Start.Column - ws.Cells[addressSelect].Start.Column;
+                return $"R[{rStart}]C[{cStart}]:R[{rEnd}]C[{cEnd}]";
+            }
+            else
+            {
+                rStart = ws.Cells[rangeAddress].Start.Row - ws.Cells[addressSelect].Start.Row;
+                cStart = ws.Cells[rangeAddress].Start.Column - ws.Cells[addressSelect].Start.Column;
+                return $"R[{rStart}]C[{cStart}]";
+            }
+            throw new Exception("Eroo");
 
+        }
         public void SaveExcelWorksheet(ExcelPackage excelPackage, string sheetName, string nameFile, string type = "NPI")
         {
-
+            string[] sheetNames = sheetName.Split(':');
             DateTime nowDate = DateTime.Now;
+            IList<ExcelWorksheet> worksheets = new List<ExcelWorksheet>();
             foreach (var item in excelPackage.Workbook.Worksheets)
             {
-                if (!item.Name.Trim().Equals(sheetName))
+
+                if (!sheetNames.Contains(item.Name.Trim()))
                 {
-                    excelPackage.Workbook.Worksheets.Delete(item);
+                    worksheets.Add(item);
                 }
+            }
+            foreach (var item in worksheets)
+            {
+                excelPackage.Workbook.Worksheets.Delete(item);
             }
             //excelPackage.Workbook.Worksheets.Delete("Rev History");
             int month = nowDate.Month;
 
             // Lưu package vào địa chỉ được chỉ định
             string[] str = nameFile.Split('.');
-            string folderName = $"{EXPORT_LOACTION}\\{sheetName}\\THANG {month}\\";
+            string folderName = $"{EXPORT_LOACTION}\\{sheetNames[0]}\\THANG {month}\\";
 
             if (!Directory.Exists(folderName))
             {
@@ -175,7 +269,7 @@ namespace OK2SHIP_SMT.Repositories
                 MemoryStream pictureStream = new MemoryStream(img_data);
                 ExcelPicture excelPicture = wsSheet1.Drawings.AddPicture(pic_name, pictureStream);
                 ExcelWorkbook workbook = wsSheet1.Workbook;
-                decimal maxFontWidth = workbook.MaxFontWidth;
+                decimal maxFontWidth = (decimal)workbook.MaxFontWidth;
                 int num3 = (int)(num2 / 0.75);
                 int num4 = (int)decimal.Truncate((256m * (decimal)num + decimal.Truncate(128m / maxFontWidth)) / 256m * maxFontWidth);
                 int num5 = (int)(0.05 * (double)Math.Min(num3, num4));
@@ -268,10 +362,6 @@ namespace OK2SHIP_SMT.Repositories
                             }
                         }
                     }
-                    if (addressHeader.Count() == colHeader.Count())
-                    {
-                        return addressHeader;
-                    }
 
                 }
             }
@@ -307,6 +397,56 @@ namespace OK2SHIP_SMT.Repositories
             picture.Border.Fill.Color = color;
 
 
+        }
+
+        // Hàm để copy một hàng từ vị trí này sang vị trí khác trong cùng một worksheet
+        public static void CopyRow(ExcelWorksheet worksheet, int sourceRow, int destinationRow)
+        {
+            if (worksheet == null)
+            {
+                throw new ArgumentNullException("worksheet");
+            }
+
+            // Lấy vùng chứa dữ liệu của dòng nguồn
+            ExcelRange sourceRowRange = worksheet.Cells[sourceRow, 1, sourceRow, worksheet.Dimension.End.Column];
+            //Copy dòng
+            worksheet.InsertRow(destinationRow, 1);
+            ExcelRange destinationRowRange = worksheet.Cells[destinationRow, 1, destinationRow, worksheet.Dimension.End.Column];
+            destinationRowRange.Value = sourceRowRange.Value;
+
+            // Bạn có thể muốn copy định dạng, kiểu dữ liệu, v.v.
+            CopyRowFormat(worksheet, sourceRow, destinationRow);
+
+        }
+        static void CopyRowFormat(ExcelWorksheet worksheet, int sourceRow, int destinationRow)
+        {
+            if (worksheet == null)
+            {
+                throw new ArgumentNullException("worksheet");
+            }
+            ExcelRange sourceRowRange = worksheet.Cells[sourceRow, 1, sourceRow, worksheet.Dimension.End.Column];
+            ExcelRange destinationRowRange = worksheet.Cells[destinationRow, 1, destinationRow, worksheet.Dimension.End.Column];
+
+            destinationRowRange.StyleID = sourceRowRange.StyleID;
+            destinationRowRange.Merge = sourceRowRange.Merge;
+            destinationRowRange.Hyperlink = sourceRowRange.Hyperlink;
+            destinationRowRange.Formula = sourceRowRange.Formula;
+            destinationRowRange.FormulaR1C1 = sourceRowRange.FormulaR1C1;
+            destinationRowRange.Value = sourceRowRange.Value;
+            destinationRowRange.RichText.Text = sourceRowRange.RichText.Text;
+            destinationRowRange.Style.Font.Bold = sourceRowRange.Style.Font.Bold;
+            destinationRowRange.Style.Font.Italic = sourceRowRange.Style.Font.Italic;
+            destinationRowRange.Style.Font.UnderLine = sourceRowRange.Style.Font.UnderLine;
+            destinationRowRange.Style.Fill.PatternType = sourceRowRange.Style.Fill.PatternType;
+            destinationRowRange.Style.HorizontalAlignment = sourceRowRange.Style.HorizontalAlignment;
+            destinationRowRange.Style.VerticalAlignment = sourceRowRange.Style.VerticalAlignment;
+            destinationRowRange.Style.WrapText = sourceRowRange.Style.WrapText;
+            destinationRowRange.Style.ShrinkToFit = sourceRowRange.Style.ShrinkToFit;
+            destinationRowRange.Style.Numberformat.Format = sourceRowRange.Style.Numberformat.Format;
+            destinationRowRange.Style.Border.Top.Style = sourceRowRange.Style.Border.Top.Style;
+            destinationRowRange.Style.Border.Bottom.Style = sourceRowRange.Style.Border.Bottom.Style;
+            destinationRowRange.Style.Border.Left.Style = sourceRowRange.Style.Border.Left.Style;
+            destinationRowRange.Style.Border.Right.Style = sourceRowRange.Style.Border.Right.Style;
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Funtion_F3_SMT
             //Application.Run(new Setup_Spec_SMT());
             //Application.Run(new View_Data_3());
             //Application.Run(new  View_Data());
-            Application.Run(new  MainScreen());
+            Application.Run(new MainScreen());
 
 
         }

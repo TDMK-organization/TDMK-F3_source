@@ -39,17 +39,14 @@
     <ApplicationIcon>TDMK.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EPPlus, Version=7.1.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\EPPlus.dll</HintPath>
+    <Reference Include="EPPlus, Version=7.5.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.7.5.3\lib\net462\EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="EPPlus.Interfaces, Version=6.1.1.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\EPPlus.Interfaces.dll</HintPath>
+    <Reference Include="EPPlus.Interfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.Interfaces.8.0.0\lib\net462\EPPlus.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="EPPlus.System.Drawing, Version=6.1.1.0, Culture=neutral, PublicKeyToken=2308d35469c9bac0, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\EPPlus.System.Drawing.dll</HintPath>
+    <Reference Include="EPPlus.System.Drawing, Version=8.0.0.0, Culture=neutral, PublicKeyToken=2308d35469c9bac0, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.System.Drawing.8.0.0\lib\net462\EPPlus.System.Drawing.dll</HintPath>
     </Reference>
     <Reference Include="IniLibs">
       <HintPath>..\..\..\TDMK_source\OK2SHIP_Software_EPPLUS\OK2SHIP_Software\DLLs\IniLibs.dll</HintPath>
@@ -57,17 +54,17 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="office, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="OK2SHIP_Lib">
       <HintPath>..\..\..\TDMK_source\OK2SHIP_Software_EPPLUS\OK2SHIP_Software\DLLs\OK2SHIP_Lib.dll</HintPath>
     </Reference>
     <Reference Include="Patagames.Ocr, Version=4.5.2.461, Culture=neutral, PublicKeyToken=be14d8e1fe46e570, processorArchitecture=MSIL">
-      <HintPath>..\packages\Tesseract.Net.SDK.4.5.411\lib\net461\Patagames.Ocr.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\Patagames.Ocr.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing.Common, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.6.0.0\lib\net461\System.Drawing.Common.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -77,10 +74,6 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TDMK_EPPLUS_7, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\TDMK_source\OK2SHIP_Software_EPPLUS\OK2SHIP_Software\DLLs\TDMK_EPPLUS_7.dll</HintPath>
-    </Reference>
     <Reference Include="TDMK_Image">
       <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\TDMK_Image.dll</HintPath>
     </Reference>
@@ -111,6 +104,7 @@
     </Compile>
     <Compile Include="Funtion_export_file_le_EPPlus.cs" />
     <Compile Include="JudgementProcess.cs" />
+    <Compile Include="Libary\TDMK_EPPLUS.cs" />
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -135,6 +129,7 @@
     <Compile Include="Repositories\DBContext.cs" />
     <Compile Include="Repositories\ExportProcess.cs" />
     <Compile Include="Repositories\FileFolderRepository.cs" />
+    <Compile Include="Repositories\TDMK_BinaryFile.cs" />
     <Compile Include="Select_Image.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -144,7 +139,9 @@
     <Compile Include="Services\BarCodeVertification.cs" />
     <Compile Include="Services\ConverterService.cs" />
     <Compile Include="Services\DictionaryService.cs" />
+    <Compile Include="Services\EEDService.cs" />
     <Compile Include="Services\TableOfContentService.cs" />
+    <Compile Include="Services\TCHSTSService.cs" />
     <Compile Include="Services\TDMK_ImageConverter.cs" />
     <Compile Include="Services\OQCB2BMatingUnmatting.cs" />
     <Compile Include="Services\SEMServices.cs" />
@@ -165,6 +162,18 @@
     <Compile Include="UserControls\DropDown.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UserControls\EditImageView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\EditImageView.Designer.cs">
+      <DependentUpon>EditImageView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Logins\LoginForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\Logins\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PickData.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -183,11 +192,23 @@
     <Compile Include="UserControls\TableOfContent.Designer.cs">
       <DependentUpon>TableOfContent.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\UserDashboard.cs">
+    <Compile Include="UserControls\Logins\UserDashboard.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\UserDashboard.Designer.cs">
+    <Compile Include="UserControls\Logins\UserDashboard.Designer.cs">
       <DependentUpon>UserDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UC_EnvironmentTable.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\UC_EnvironmentTable.Designer.cs">
+      <DependentUpon>UC_EnvironmentTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UC_NewFeature.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\UC_NewFeature.Designer.cs">
+      <DependentUpon>UC_NewFeature.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\CommonForm.cs">
       <SubType>Form</SubType>
@@ -238,6 +259,12 @@
     <EmbeddedResource Include="Setup_sochanlk.resx">
       <DependentUpon>Setup_sochanlk.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\EditImageView.resx">
+      <DependentUpon>EditImageView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\Logins\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControls\PickData.resx">
       <DependentUpon>PickData.cs</DependentUpon>
     </EmbeddedResource>
@@ -247,8 +274,14 @@
     <EmbeddedResource Include="UserControls\TableOfContent.resx">
       <DependentUpon>TableOfContent.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControls\UserDashboard.resx">
+    <EmbeddedResource Include="UserControls\Logins\UserDashboard.resx">
       <DependentUpon>UserDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\UC_EnvironmentTable.resx">
+      <DependentUpon>UC_EnvironmentTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\UC_NewFeature.resx">
+      <DependentUpon>UC_NewFeature.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\CommonForm.resx">
       <DependentUpon>CommonForm.cs</DependentUpon>
@@ -292,15 +325,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="Microsoft.Office.Core">
-      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
-      <VersionMajor>2</VersionMajor>
-      <VersionMinor>8</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
     <COMReference Include="Microsoft.Office.Interop.Excel">
       <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
       <VersionMajor>1</VersionMajor>
@@ -321,9 +345,15 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Logo %282%29.png" />
     <Content Include="TDMK.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\CraftSynth.ImageEditor\CraftSynth.ImageEditor.csproj">
+      <Project>{c2f951d8-2cb6-4ab5-9029-1ee3fcdb910a}</Project>
+      <Name>CraftSynth.ImageEditor</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Tesseract.Net.SDK.4.5.411\build\Tesseract.Net.SDK.targets" Condition="Exists('..\packages\Tesseract.Net.SDK.4.5.411\build\Tesseract.Net.SDK.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -305,6 +305,7 @@
             this.dgv_logfile.RowHeadersVisible = false;
             this.dgv_logfile.Size = new System.Drawing.Size(561, 490);
             this.dgv_logfile.TabIndex = 0;
+            this.dgv_logfile.DataSourceChanged += new System.EventHandler(this.dgv_logfile_DataSourceChanged);
             this.dgv_logfile.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_logfile_CellClick);
             this.dgv_logfile.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_logfile_CellContentClick);
             this.dgv_logfile.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_logfile_CellContentDoubleClick);

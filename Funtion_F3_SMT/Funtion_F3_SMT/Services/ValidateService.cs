@@ -21,6 +21,12 @@ namespace OK2SHIP_SMT.Services
             Regex regex = new Regex("[^a-zA-Z0-9]"); // Tìm ký tự không phải chữ cái hoặc số
             return !regex.IsMatch(str);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static int isDigit(string number)
         {
             if (int.TryParse(number, out int total))
@@ -46,7 +52,28 @@ namespace OK2SHIP_SMT.Services
             }
             return number.ToString();
         }
+        public static bool compareItemCodeLotNo(string icln1, string icln2)
+        {
+            icln1 = icln1.Replace(" ", "");
+            icln2 = icln2.Replace(" ", "");
 
+
+            if (string.IsNullOrEmpty(icln1) || string.IsNullOrEmpty(icln2))
+            {
+                return false; // Một trong hai chuỗi là null hoặc rỗng
+            }
+            string[] str1 = icln1.Split('-');
+            string[] str2 = icln2.Split('-');
+            if(str1.Length != 2 || str2.Length != 2)
+            {
+                return false; // Một trong hai chuỗi không có định dạng hợp lệ
+            }
+
+            string newStr1 = $"{str1[0]}-{lotNoHandle(str1[1])}";
+            string newStr2 = $"{str2[0]}-{lotNoHandle(str2[1])}";
+
+            return newStr1.Equals(newStr2);
+        }
         /// <summary>
         /// Handle lotno
         /// </summary>

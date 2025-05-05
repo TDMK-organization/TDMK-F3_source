@@ -1,4 +1,5 @@
 ﻿using OK2SHIP_SMT.UserControls;
+using OK2SHIP_SMT.UserControls.Logins;
 using OK2SHIP_SMT.Views;
 using System;
 using System.Collections.Generic;
@@ -37,9 +38,10 @@ namespace Funtion_F3_SMT
 
         private void lblFormatSetup_Click(object sender, EventArgs e)
         {
-            //Setup_Spec_SMT frmFormat = new Setup_Spec_SMT();
-            //frmFormat.Show();
-            //this.Hide();
+            UC_NewFeature uC = new UC_NewFeature();
+            CommonForm frm = new CommonForm("Format Setup", uC, true);
+            frm.Show();
+            this.Hide();
         }
 
 
@@ -94,6 +96,13 @@ namespace Funtion_F3_SMT
 
             this.Hide();
 
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            CommonForm frm = new CommonForm("ACCOUNT MANAGER", new UserDashboard());
+            frm.Show();
+            this.Hide();
         }
     }
 }

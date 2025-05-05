@@ -94,7 +94,10 @@
             "ACF",
             "SEM BSE & Binarization",
             "OQC B2B Mating-Unmating",
-            "Bar Code Verification"});
+            "Bar Code Verification",
+            "Thermal cycling, Heat soak, Thermal shock",
+            "Environment en-durance",
+            "Impedance"});
             this.mnuProcess.Name = "mnuProcess";
             this.mnuProcess.Size = new System.Drawing.Size(150, 28);
             this.mnuProcess.Click += new System.EventHandler(this.mnuProcess_Click);

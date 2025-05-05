@@ -16,8 +16,8 @@ namespace OK2SHIP_SMT.Views
     {
         public string PROCESSNAME { get; set; }
         public UserControl UserControl { get; set; }
-        private bool notbackToMenu = false;
-        public CommonForm(string process = null, UserControl uc = null, bool notbackToMenu = false)
+        private bool? notbackToMenu = false;
+        public CommonForm(string process = null, UserControl uc = null, bool? notbackToMenu = false)
         {
             this.notbackToMenu = notbackToMenu;
             if (process != null)
@@ -36,11 +36,19 @@ namespace OK2SHIP_SMT.Views
         #region Event
         private void CommonForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (!notbackToMenu)
+            if (notbackToMenu == null)
+            {
+                return;
+            }
+
+
+            if (notbackToMenu == false)
             {
                 BackToMain();
+                return;
             }
-            //ExitProgram();
+            ExitProgram();
+
         }
 
         private void backToMainMenuToolStripMenuItem_Click(object sender, EventArgs e)
@@ -73,7 +81,7 @@ namespace OK2SHIP_SMT.Views
             this.WindowState = FormWindowState.Maximized;
             userControl.Dock = DockStyle.Fill;
             spc_Main.Panel2.Controls.Add(userControl);
-            
+
         }
 
 

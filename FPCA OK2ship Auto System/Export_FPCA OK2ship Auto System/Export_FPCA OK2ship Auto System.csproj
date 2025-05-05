@@ -81,12 +81,15 @@
     <Compile Include="Repositories\DBContext.cs" />
     <Compile Include="Repositories\ExportProcess.cs" />
     <Compile Include="Repositories\FileFolderRepository.cs" />
+    <Compile Include="Services\EEDService.cs" />
     <Compile Include="Services\OQCB2BMatingUnmatting.cs" />
     <Compile Include="Services\SEMServices.cs" />
     <Compile Include="Services\TableOfContentService.cs" />
+    <Compile Include="Services\TCHSTSService.cs" />
     <Compile Include="Services\TDMK_services\TDMK_ConverterService.cs" />
     <Compile Include="Services\TDMK_services\TDMK_DictionaryService.cs" />
     <Compile Include="Services\TDMK_services\TDMK_ImageConverter.cs" />
+    <Compile Include="Services\TDMK_services\TDMK_ValidateService.cs" />
     <Compile Include="Setup_spec.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -176,9 +179,9 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TDMK_EPPLUS_7.4, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="TDMK_EPPLUS_7, Version=7.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\OldCode\SEEV-F3\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\TDMK_EPPLUS_7.4.dll</HintPath>
+      <HintPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\TDMK_EPPLUS_7.dll</HintPath>
     </Reference>
     <Reference Include="TDMK_Image, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

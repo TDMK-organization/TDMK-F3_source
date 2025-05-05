@@ -14,7 +14,7 @@ namespace OK2SHIP_SMT.Services
         private DBContext _dbContext = new DBContext();
         private static UserSession instance = null;
         private static readonly object padlock = new object();
-        public string Role { get; private set; }
+        public string Role { get; private set; } = "";
         public string Username { get; private set; }
         public string User_ID { get; private set; }
         public bool IsLoggedIn { get; private set; }
@@ -64,9 +64,8 @@ namespace OK2SHIP_SMT.Services
         }
         public int EditingUser(string userName, string password, string user_ID, string role, string active = "ACTIVE")
         {
-            int numChange = 0;
+            //int numChange = 0;
             throw new Exception("Chưa triển khai");
-            return numChange;
         }
         public int CreateUser(string userName, string password, string user_ID, string role = "STAFF", string active = "ACTIVE")
         {

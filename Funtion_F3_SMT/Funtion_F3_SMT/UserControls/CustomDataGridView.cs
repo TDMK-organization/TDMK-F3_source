@@ -13,7 +13,8 @@ namespace OK2SHIP_SMT.UserControls
     public partial class CustomDataGridView : DataGridView
     {
         #region Fields
-        private Dictionary<string, string[]> columnDropdowns;
+
+        public Dictionary<string, string[]> columnDropdowns { get; set; }
         private TextBox editingTextBox;
         private DataTable dtable;
         private readonly Dictionary<string, ContextMenuStrip> headerDropdownMenus = new Dictionary<string, ContextMenuStrip>();
@@ -68,7 +69,7 @@ namespace OK2SHIP_SMT.UserControls
         {
             if (this.DataSource is DataTable dataTable)
             {
-                InitializeColumnsFromDataTable(dtable);
+                InitializeColumnsFromDataTable(dataTable);
                 ReplaceColumns();
             }
         }
@@ -77,16 +78,17 @@ namespace OK2SHIP_SMT.UserControls
         {
             RestoreOldValues();
             //ReplaceColumns();
-            foreach (DataGridViewRow row in this.Rows)
-            {
-                row.Height = 70;
-            }
+            //foreach (DataGridViewRow row in this.Rows)
+            //{
+            //    row.Height = 70;
+            //}
             this.RowsDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             SetupHeaderDropdownMenus();
         }
 
         private void InitializeColumnsFromDataTable(DataTable dataTable)
         {
+
             this.Columns.Clear();
             foreach (DataColumn column in dataTable.Columns)
             {
@@ -98,6 +100,8 @@ namespace OK2SHIP_SMT.UserControls
                     ValueType = column.DataType
                 });
             }
+            //this.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
         }
 
         private void ReplaceColumns()
@@ -119,7 +123,7 @@ namespace OK2SHIP_SMT.UserControls
                     {
                         HeaderText = column.HeaderText,
                         Name = column.Name,
-                        FlatStyle = FlatStyle.Flat,
+                        //FlatStyle = FlatStyle.Flat,
                         DisplayStyle = DataGridViewComboBoxDisplayStyle.ComboBox,
                         DataPropertyName = column.DataPropertyName
                     };

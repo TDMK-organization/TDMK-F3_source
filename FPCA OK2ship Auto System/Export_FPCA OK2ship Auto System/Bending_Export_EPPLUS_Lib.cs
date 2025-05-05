@@ -8,7 +8,6 @@ using System.Data.SqlClient;
 using System.IO;
 using TDMK_SEEV_DLL;
 using TDMK_SQL;
-//using myExcel = Microsoft.Office.Interop.Excel;
 using IniLibs;
 using System.Windows.Forms;
 using TDMK_EPPLUS_7;

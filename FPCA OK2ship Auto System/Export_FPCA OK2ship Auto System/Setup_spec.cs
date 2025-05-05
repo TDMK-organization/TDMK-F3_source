@@ -28,6 +28,7 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using Bending_Export;
 using TDMK_EPPLUS_7;
 using Export_FPCA_OK2ship_Auto_System.Services;
+using Export_FPCA_OK2ship_Auto_System.Repositories;
 
 namespace Export_FPCA_OK2ship_Auto_System
 {
@@ -816,86 +817,123 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         public string lst_spec_peeltest(ExcelWorksheet ws)
         {
-            //  AutoCompleteStringCollection list = new AutoCompleteStringCollection();
-            string lst_spec = "";
-            Dictionary<string, List<string>> dic_spec = new Dictionary<string, List<string>> { };
-            int count_sample = 0;
+            #region Old Code
+            ////  AutoCompleteStringCollection list = new AutoCompleteStringCollection();
+            //string lst_spec = "";
+            //Dictionary<string, List<string>> dic_spec = new Dictionary<string, List<string>> { };
+            //int count_sample = 0;
 
-            for (int i = 1; i < 100; i++)
+            //for (int i = 1; i < 100; i++)
+            //{
+            //    for (int j = 1; j < 5; j++)
+            //    {
+            //        if (myCode.checkDBNull(ws.Cells[i, j].Value).Contains("Sample"))
+            //        {
+            //            while (myCode.checkDBNull(ws.Cells[i, j + count_sample].Value).Contains("Sample"))
+            //            {
+            //                count_sample++;
+            //            }
+            //            lst_spec += count_sample.ToString() + ":";
+
+            //            if (myCode.checkDBNull(ws.Cells[i + 1, j - 1].Value).Contains("ID") || myCode.checkDBNull(ws.Cells[i + 1, j - 2].Value).Contains("ID"))
+            //            {
+            //                lst_spec += "B" + "+";
+
+            //                for (int r_offset = 2; r_offset < 5; r_offset++)
+            //                {
+            //                    if (myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) != "")
+            //                    {
+            //                        lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value).Replace(" ", "") + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
+            //                    }
+            //                }
+
+            //                if (!myCode.checkDBNull(ws.Cells[i + 3, j - 1].Value).Contains("≥"))
+            //                {
+            //                    for (int k = 4; k < 15; k++)
+            //                    {
+            //                        if (myCode.checkDBNull(ws.Cells[i + k, j - 1].Value).Contains("Judgement"))
+            //                        {
+            //                            lst_spec += myCode.checkDBNull(ws.Cells[i + k, j - 1].Value).Split('≥')[1].Split('N')[0].Replace(" ", "") + "+";
+            //                            break;
+            //                        }
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    lst_spec += myCode.checkDBNull(ws.Cells[i + 3, j - 1].Value).Split('≥')[1].Split('N')[0].Replace(" ", "") + "+";
+            //                }
+
+            //                for (int t = 10; t < 16; t++)
+            //                {
+            //                    if (myCode.checkDBNull(ws.Cells[i + t, j + 1].Value).Replace(" ", "").ToUpper().Contains("R(N)"))
+            //                    {
+            //                        string R = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t, j + 2].Value)), 2).ToString();
+            //                        string UCL = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t + 1, j + 2].Value)), 2).ToString();
+            //                        string LCL = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t + 2, j + 2].Value)), 2).ToString();
+
+            //                        lst_spec += R + ";" + UCL + ";" + LCL;
+            //                        break;
+            //                    }
+            //                }
+            //                lst_spec += "_";
+
+            //            }
+            //            else
+            //            {
+            //                lst_spec += "A" + "+";
+
+            //                for (int r_offset = 1; r_offset < 4; r_offset++)
+            //                {
+            //                    if (myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) != "")
+            //                    {
+            //                        lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value).Replace(" ", "") + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
+
+            //                    }
+            //                }
+            //                lst_spec += "_";
+
+            //                break;
+            //            }
+            //        }
+            //    }
+            //}
+            #endregion
+            string str = "";
+            if (ws.Name.ToUpper().Contains("PEEL"))
             {
-                for (int j = 1; j < 5; j++)
-                {
-                    if (myCode.checkDBNull(ws.Cells[i, j].Value).Contains("Sample"))
-                    {
-                        while (myCode.checkDBNull(ws.Cells[i, j + count_sample].Value).Contains("Sample"))
-                        {
-                            count_sample++;
-                        }
-                        lst_spec += count_sample.ToString() + ":";
-
-                        if (myCode.checkDBNull(ws.Cells[i + 1, j - 1].Value).Contains("ID") || myCode.checkDBNull(ws.Cells[i + 1, j - 2].Value).Contains("ID"))
-                        {
-                            lst_spec += "B" + "+";
-
-                            for (int r_offset = 2; r_offset < 5; r_offset++)
-                            {
-                                if (myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) != "")
-                                {
-                                    lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value).Replace(" ", "") + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
-                                }
-                            }
-
-                            if (!myCode.checkDBNull(ws.Cells[i + 3, j - 1].Value).Contains("≥"))
-                            {
-                                for (int k = 4; k < 15; k++)
-                                {
-                                    if (myCode.checkDBNull(ws.Cells[i + k, j - 1].Value).Contains("Judgement"))
-                                    {
-                                        lst_spec += myCode.checkDBNull(ws.Cells[i + k, j - 1].Value).Split('≥')[1].Split('N')[0].Replace(" ", "") + "+";
-                                        break;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                lst_spec += myCode.checkDBNull(ws.Cells[i + 3, j - 1].Value).Split('≥')[1].Split('N')[0].Replace(" ", "") + "+";
-                            }
-
-                            for (int t = 10; t < 16; t++)
-                            {
-                                if (myCode.checkDBNull(ws.Cells[i + t, j + 1].Value).Replace(" ", "").ToUpper().Contains("R(N)"))
-                                {
-                                    string R = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t, j + 2].Value)), 2).ToString();
-                                    string UCL = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t + 1, j + 2].Value)), 2).ToString();
-                                    string LCL = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t + 2, j + 2].Value)), 2).ToString();
-
-                                    lst_spec += R + ";" + UCL + ";" + LCL;
-                                    break;
-                                }
-                            }
-                            lst_spec += "_";
-
-                        }
-                        else
-                        {
-                            lst_spec += "A" + "+";
-
-                            for (int r_offset = 1; r_offset < 4; r_offset++)
-                            {
-                                if (myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) != "")
-                                {
-                                    lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value).Replace(" ", "") + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
-
-                                }
-                            }
-                            lst_spec += "_";
-
-                            break;
-                        }
-                    }
-                }
+                str = "Peeling";
             }
-            return lst_spec;
+            else
+            {
+                str = "Pulling";
+
+            }
+            string findIndex = $"{str} Force";
+            string valueIndex = "";
+            string[] sampleList = new[] { "Sample", findIndex };
+            IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, sampleList);
+            int count_sample = 0;
+            if (dic.TryGetValue("Sample", out string value))
+            {
+                count_sample = value.Trim().Split('-').Count();
+            }
+
+            if (dic.TryGetValue(findIndex, out value))
+            {
+                valueIndex = ws.Cells[value].Text;
+                try
+                {
+                    valueIndex = valueIndex.Split('(')[1].Replace(" ", "").TrimEnd(new[] { ')' });
+                }
+                catch
+                {
+                    valueIndex = "";
+                }
+                //count_sample = value.Trim().Split('-').Count();
+            }
+
+
+            return $"{count_sample}:{valueIndex}";
         }
 
         public string lst_spec_unmating(ExcelWorksheet ws)
@@ -1852,10 +1890,17 @@ namespace Export_FPCA_OK2ship_Auto_System
                             case "OQC_B2B_MATING-UNMATING":
                                 lst_spec = OQCB2BMatingUnmatting.setup_spec(ws);
                                 break;
-
+                            case "THERMAL_CYCLING":
+                            case "THERMAL_SHOCK":
+                            case "HEAT_SOAK_AND_RECOVERY":
+                                lst_spec = TCHSTSService.setup_spec(ws);
+                                break;
+                            case "ENVIRONMENT_EN-DURANCE":
+                                lst_spec = EEDService.SetupSpec(ws);
+                                break;
                             default:
                                 //string str = sheet.Replace(" ", "_").ToUpper();
-                                //Debugger.Break();
+                                Debugger.Break();
                                 break;
                         }
 

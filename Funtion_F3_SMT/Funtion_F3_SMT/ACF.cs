@@ -1,38 +1,22 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿using Funtion_F3_SMT;
+using IniLibs;
+using Microsoft.Office.Core;
+using Microsoft.Office.Interop.Excel;
+using OfficeOpenXml;
+using OK2SHIP_SMT.Libary;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using TDMK_SEEV_DLL;
 using TDMK_SQL;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
-using myExcel = Microsoft.Office.Interop.Excel;
 using DataTable = System.Data.DataTable;
-using Funtion_F3_SMT;
-using System.Security.Policy;
-using Microsoft.Office.Core;
-using Microsoft.SqlServer.Server;
-using OfficeOpenXml;
-using OfficeOpenXml.Drawing;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
-using System.Runtime.InteropServices;
-using TDMK_EPPLUS_7;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.IO.Compression;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using IniLibs;
-using System.Xml;
-
+using myExcel = Microsoft.Office.Interop.Excel;
 
 namespace OK2SHIP_SMT
 {
@@ -40,8 +24,8 @@ namespace OK2SHIP_SMT
     {
 
         public TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
-        //public EPPlus_Lib TDMK_Code2 = new EPPlus_Lib();
-        public TDMK_EPPLUS7_lib TDMK_Code2 = new TDMK_EPPLUS7_lib();
+        //public EPPlus_Lib TDMK_EPPLUS = new EPPlus_Lib();
+     
         public SEI_Lib myCode = new SEI_Lib();
         string admin_mode = "LOGIN";
         public SqlConnection sqlcon = null;
@@ -409,7 +393,7 @@ namespace OK2SHIP_SMT
                 DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, "ACF_WETTING", filter_str).Clone();
                 Dictionary<string, Dictionary<string, string>> dic_spec = new Dictionary<string, Dictionary<string, string>> { };
 
-                ExcelWorkbook wb = TDMK_Code2.open_excel_file(txtLogfile_wetting.Text);
+                ExcelWorkbook wb = TDMK_EPPLUS.open_excel_file(txtLogfile_wetting.Text);
                 foreach (ExcelWorksheet ws in wb.Worksheets)
                 {
                     SortedDictionary<int, string> dic_machine = new SortedDictionary<int, string> { };
@@ -881,9 +865,9 @@ namespace OK2SHIP_SMT
                 }
             }
 
-            lbl_continue:
-             
-            int count_sample = new int[] { count , lst_rghness[0].Count }.Min();
+        lbl_continue:
+
+            int count_sample = new int[] { count, lst_rghness[0].Count }.Min();
 
             for (int m = 0; m < count_sample; m++)
             {
@@ -1576,7 +1560,7 @@ namespace OK2SHIP_SMT
                         string file_format = find_format(data_loc, txtItemCode.Text);
 
                         if (file_format != "")
-                        { 
+                        {
                             string report_folder = Path.Combine(data_loc, "Report", cb_Type.SelectedItem.ToString(), "ACF");
                             if (!System.IO.Directory.Exists(report_folder))
                                 System.IO.Directory.CreateDirectory(report_folder);
@@ -1851,9 +1835,9 @@ namespace OK2SHIP_SMT
             if (tbl_name == "ACF_BONDING")
             {
                 filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Remark" }, new string[] { txtItemCode.Text, txtLotNo.Text, txt_date_peel.Text + "_" + txt_worker_peel.Text + "_" + cb_Type.SelectedItem.ToString() });
-            } 
+            }
 
-            DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, tbl_name, filter_str); 
+            DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, tbl_name, filter_str);
             if (dt_analysis.Rows.Count > 0)
             {
                 int ID = 1;
@@ -2199,7 +2183,7 @@ namespace OK2SHIP_SMT
             {
                 string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode" }, new string[] { txtItemCode.Text });
                 DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, "ACF_Flatness", filter_str).Clone();
-                ExcelWorkbook wb = TDMK_Code2.open_excel_file(txtLogfile_Flatness.Text);
+                ExcelWorkbook wb = TDMK_EPPLUS.open_excel_file(txtLogfile_Flatness.Text);
                 ExcelWorksheet ws = wb.Worksheets[0];
                 for (int i = 1; i < 20; i++)
                 {
@@ -2422,7 +2406,7 @@ namespace OK2SHIP_SMT
                             }
                         }
                         return val;
-                       
+
                     }
                 }
             }
@@ -2457,12 +2441,12 @@ namespace OK2SHIP_SMT
             }
             result = tar_rgn.Address;
             return result;
-        } 
+        }
 
         public byte[] get_image_excel(ExcelWorksheet wrk_sheet)
         {
             Byte[] data = new Byte[0];
-            Image myImg = TDMK_Code2.get_pic(wrk_sheet, "Picture 1");// Clipboard.GetImage();
+            Image myImg = TDMK_EPPLUS.get_pic(wrk_sheet, "Picture 1");// Clipboard.GetImage();
             ImageConverter imgCon = new ImageConverter();
             data = (byte[])imgCon.ConvertTo(myImg, typeof(byte[]));
             return data;
@@ -2489,7 +2473,7 @@ namespace OK2SHIP_SMT
                         {
                             f_na = f_na.Replace(a, "");
                         }
-                    } 
+                    }
 
                     if (!lst_result.ContainsKey(Convert.ToInt32(f_na)))
                     {
@@ -2520,7 +2504,7 @@ namespace OK2SHIP_SMT
                     f_na = f_na.Replace("+", string.Empty).Replace("-", String.Empty);
                     if (myCode.IsNumeric(f_na))
                     {
-                        ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                        ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                         ExcelWorksheet wrksht = wrkbk.Worksheets[0];
 
                         Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -2941,7 +2925,6 @@ namespace OK2SHIP_SMT
             {
                 if (dgv_peel.DataSource != null)
                 {
-                    lbl_create:
                     string report_folder_bonding = Path.Combine(data_loc, "Report", cb_Type.SelectedItem.ToString(), "ACF", "ACF_BONDING");
                     if (!System.IO.Directory.Exists(report_folder_bonding))
                         System.IO.Directory.CreateDirectory(report_folder_bonding);
@@ -2977,7 +2960,7 @@ namespace OK2SHIP_SMT
             }
         }
 
-         
+
         private void btn_export_roughness_Click(object sender, EventArgs e)
         {
             if (dgv_roughness_data.DataSource == null)
@@ -3021,7 +3004,7 @@ namespace OK2SHIP_SMT
                 {
                     myExcel.Workbook wb = TDMK_Code.open_excel_file(export_path, "", "");
                     myExcel.Worksheet ws = wb.Sheets[1];
-                     
+
                     DataTable dt_roughness = (DataTable)dgv_roughness_data.DataSource;
                     if (dt_roughness != null)
                     {
@@ -3247,7 +3230,7 @@ namespace OK2SHIP_SMT
                         {
                             double Sq_val = Convert.ToDouble(myCode.checkDBNull(tar_rgn.Offset[inx, 1].Value));
                             Sq_result[i].Add(Math.Round(Sq_val, 3).ToString());//"#0.##0"
-                        }   
+                        }
                         for (int t = 2; t < 5; t++)
                         {
                             if (myCode.checkDBNull(tar_rgn.Offset[-1, t].Value).Contains("Sdr"))

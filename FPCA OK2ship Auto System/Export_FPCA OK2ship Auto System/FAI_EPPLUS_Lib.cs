@@ -282,7 +282,6 @@ namespace FAI_Export
                             {
                                 LL = TolMin;// (Convert.ToDouble(sv) - Convert.ToDouble(TolMin)).ToString();
                             }
-                            int r_inx = 0;
                             List<string> fai_data_lst = FAI_tbl.AsEnumerable().Select(x => x.Field<string>(t)).Where(x => x != null).ToList();
                             if(fai_data_lst.Count>0)
                             {

@@ -378,7 +378,7 @@ namespace Export_FPCA_OK2ship_Auto_System
 
             sqlcon = Bending_Exp.initial_data("OK2SHIP_SMT", true);
             string app_path = System.Windows.Forms.Application.StartupPath;
-            string config_path = Path.Combine(app_path, "config.ini");
+            string config_path = Path.Combine(app_path.Replace("\\FPCA OK2SHIP Auto System\\Bending_Items",""), "config.ini");
             //app_path = @"\\10.212.6.212\Saomai\QA\TDMK_DATA\Test_Areas\OK2SHIP_SMT\TDMK Program\FPCA OK2SHIP Auto System";
             IniFile za = new IniFile(config_path);
             data_loc = za.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data";

@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace Export_FPCA_OK2ship_Auto_System.Services.TDMK_services
 {
-    public static class ConverterService
+    public static class TDMK_ConverterService
     {
         /// <summary>
         /// Converts a JSON array into a DataTable structure for easier data manipulation.  

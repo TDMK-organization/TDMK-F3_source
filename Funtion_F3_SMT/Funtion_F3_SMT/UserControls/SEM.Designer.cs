@@ -32,6 +32,11 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.lbHeadername = new System.Windows.Forms.Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.tb_EEEEECode = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tb_FactoryCode = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.btn_checkBin = new System.Windows.Forms.Button();
             this.btn_saveData = new System.Windows.Forms.Button();
             this.slCtn_Mode = new System.Windows.Forms.SplitContainer();
@@ -41,7 +46,7 @@
             this.tb_ItemCode = new System.Windows.Forms.TextBox();
             this.lbLotNo = new System.Windows.Forms.Label();
             this.slctn_Location = new System.Windows.Forms.SplitContainer();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.tbl_Loaction = new System.Windows.Forms.TableLayoutPanel();
             this.tb_locationFolder = new System.Windows.Forms.TextBox();
             this.lb_loactionFile = new System.Windows.Forms.Label();
             this.btnGetData = new System.Windows.Forms.Button();
@@ -50,20 +55,17 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.lb_headerTable = new System.Windows.Forms.Label();
             this.tbl_Function = new System.Windows.Forms.TableLayoutPanel();
-            this.btn_LoadData = new System.Windows.Forms.Button();
             this.btn_Export = new System.Windows.Forms.Button();
+            this.btn_LoadData = new System.Windows.Forms.Button();
+            this.tlp_fillter = new System.Windows.Forms.TableLayoutPanel();
             this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.tb_EEEEECode = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tb_FactoryCode = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.slCtn_Mode)).BeginInit();
             this.slCtn_Mode.Panel1.SuspendLayout();
             this.slCtn_Mode.Panel2.SuspendLayout();
@@ -73,7 +75,7 @@
             this.slctn_Location.Panel1.SuspendLayout();
             this.slctn_Location.Panel2.SuspendLayout();
             this.slctn_Location.SuspendLayout();
-            this.tableLayoutPanel3.SuspendLayout();
+            this.tbl_Loaction.SuspendLayout();
             this.tb_datagridview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -81,7 +83,6 @@
             this.splitContainer2.SuspendLayout();
             this.tbl_Function.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
-            this.tableLayoutPanel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -148,6 +149,65 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(628, 65);
             this.tableLayoutPanel2.TabIndex = 1;
+            // 
+            // tableLayoutPanel4
+            // 
+            this.tableLayoutPanel4.ColumnCount = 2;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.22222F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 62.77778F));
+            this.tableLayoutPanel4.Controls.Add(this.tb_EEEEECode, 1, 1);
+            this.tableLayoutPanel4.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.tb_FactoryCode, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.label2, 0, 1);
+            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(394, 0);
+            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.RowCount = 2;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 48.14815F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 51.85185F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(234, 65);
+            this.tableLayoutPanel4.TabIndex = 3;
+            // 
+            // tb_EEEEECode
+            // 
+            this.tb_EEEEECode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tb_EEEEECode.Enabled = false;
+            this.tb_EEEEECode.Location = new System.Drawing.Point(90, 34);
+            this.tb_EEEEECode.Multiline = true;
+            this.tb_EEEEECode.Name = "tb_EEEEECode";
+            this.tb_EEEEECode.Size = new System.Drawing.Size(141, 28);
+            this.tb_EEEEECode.TabIndex = 3;
+            // 
+            // label1
+            // 
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(81, 31);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "FactoryCode";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_FactoryCode
+            // 
+            this.tb_FactoryCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tb_FactoryCode.Enabled = false;
+            this.tb_FactoryCode.Location = new System.Drawing.Point(90, 3);
+            this.tb_FactoryCode.Multiline = true;
+            this.tb_FactoryCode.Name = "tb_FactoryCode";
+            this.tb_FactoryCode.Size = new System.Drawing.Size(141, 25);
+            this.tb_FactoryCode.TabIndex = 1;
+            // 
+            // label2
+            // 
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.Location = new System.Drawing.Point(3, 31);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(81, 34);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "EEEEECode";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btn_checkBin
             // 
@@ -254,7 +314,7 @@
             // 
             // slctn_Location.Panel1
             // 
-            this.slctn_Location.Panel1.Controls.Add(this.tableLayoutPanel3);
+            this.slctn_Location.Panel1.Controls.Add(this.tbl_Loaction);
             // 
             // slctn_Location.Panel2
             // 
@@ -263,20 +323,20 @@
             this.slctn_Location.SplitterDistance = 448;
             this.slctn_Location.TabIndex = 2;
             // 
-            // tableLayoutPanel3
+            // tbl_Loaction
             // 
-            this.tableLayoutPanel3.ColumnCount = 1;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Controls.Add(this.tb_locationFolder, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.lb_loactionFile, 0, 0);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 23.28767F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 76.71233F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(448, 65);
-            this.tableLayoutPanel3.TabIndex = 0;
+            this.tbl_Loaction.ColumnCount = 1;
+            this.tbl_Loaction.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tbl_Loaction.Controls.Add(this.tb_locationFolder, 0, 1);
+            this.tbl_Loaction.Controls.Add(this.lb_loactionFile, 0, 0);
+            this.tbl_Loaction.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tbl_Loaction.Location = new System.Drawing.Point(0, 0);
+            this.tbl_Loaction.Name = "tbl_Loaction";
+            this.tbl_Loaction.RowCount = 2;
+            this.tbl_Loaction.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 23.28767F));
+            this.tbl_Loaction.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 76.71233F));
+            this.tbl_Loaction.Size = new System.Drawing.Size(448, 65);
+            this.tbl_Loaction.TabIndex = 0;
             // 
             // tb_locationFolder
             // 
@@ -323,6 +383,7 @@
             // 
             // tb_datagridview
             // 
+            this.tb_datagridview.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
             this.tb_datagridview.ColumnCount = 1;
             this.tb_datagridview.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tb_datagridview.Controls.Add(this.splitContainer2, 0, 0);
@@ -337,7 +398,7 @@
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer2.Location = new System.Drawing.Point(4, 4);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -351,8 +412,8 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.tbl_Function);
             this.splitContainer2.Panel2.Controls.Add(this.dataGridView);
-            this.splitContainer2.Size = new System.Drawing.Size(1385, 541);
-            this.splitContainer2.SplitterDistance = 33;
+            this.splitContainer2.Size = new System.Drawing.Size(1383, 539);
+            this.splitContainer2.SplitterDistance = 32;
             this.splitContainer2.TabIndex = 1;
             // 
             // lb_headerTable
@@ -361,7 +422,7 @@
             this.lb_headerTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lb_headerTable.Location = new System.Drawing.Point(0, 0);
             this.lb_headerTable.Name = "lb_headerTable";
-            this.lb_headerTable.Size = new System.Drawing.Size(1385, 33);
+            this.lb_headerTable.Size = new System.Drawing.Size(1383, 32);
             this.lb_headerTable.TabIndex = 0;
             this.lb_headerTable.Text = "HeaderTable1";
             this.lb_headerTable.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -370,39 +431,54 @@
             // 
             this.tbl_Function.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.tbl_Function.ColumnCount = 3;
-            this.tbl_Function.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.76453F));
-            this.tbl_Function.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 49.23547F));
-            this.tbl_Function.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 194F));
-            this.tbl_Function.Controls.Add(this.btn_LoadData, 0, 0);
-            this.tbl_Function.Controls.Add(this.btn_Export, 1, 0);
-            this.tbl_Function.Location = new System.Drawing.Point(845, 3);
+            this.tbl_Function.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tbl_Function.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tbl_Function.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tbl_Function.Controls.Add(this.btn_Export, 2, 0);
+            this.tbl_Function.Controls.Add(this.btn_LoadData, 1, 0);
+            this.tbl_Function.Controls.Add(this.tlp_fillter, 0, 0);
+            this.tbl_Function.Location = new System.Drawing.Point(823, 46);
             this.tbl_Function.Name = "tbl_Function";
             this.tbl_Function.RowCount = 1;
-            this.tbl_Function.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tbl_Function.Size = new System.Drawing.Size(528, 59);
+            this.tbl_Function.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tbl_Function.Size = new System.Drawing.Size(512, 55);
             this.tbl_Function.TabIndex = 2;
+            // 
+            // btn_Export
+            // 
+            this.btn_Export.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_Export.Location = new System.Drawing.Point(343, 3);
+            this.btn_Export.Name = "btn_Export";
+            this.btn_Export.Size = new System.Drawing.Size(166, 49);
+            this.btn_Export.TabIndex = 0;
+            this.btn_Export.Text = "Export";
+            this.btn_Export.UseVisualStyleBackColor = true;
+            this.btn_Export.Click += new System.EventHandler(this.btn_Export_Click);
+            this.btn_Export.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btn_Export_MouseDown);
             // 
             // btn_LoadData
             // 
             this.btn_LoadData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_LoadData.Location = new System.Drawing.Point(3, 3);
+            this.btn_LoadData.Location = new System.Drawing.Point(173, 3);
             this.btn_LoadData.Name = "btn_LoadData";
-            this.btn_LoadData.Size = new System.Drawing.Size(163, 53);
+            this.btn_LoadData.Size = new System.Drawing.Size(164, 49);
             this.btn_LoadData.TabIndex = 0;
             this.btn_LoadData.Text = "Load Data";
             this.btn_LoadData.UseVisualStyleBackColor = true;
             this.btn_LoadData.Click += new System.EventHandler(this.btn_LoadData_Click);
             // 
-            // btn_Export
+            // tlp_fillter
             // 
-            this.btn_Export.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_Export.Location = new System.Drawing.Point(172, 3);
-            this.btn_Export.Name = "btn_Export";
-            this.btn_Export.Size = new System.Drawing.Size(158, 53);
-            this.btn_Export.TabIndex = 0;
-            this.btn_Export.Text = "Export";
-            this.btn_Export.UseVisualStyleBackColor = true;
-            this.btn_Export.Click += new System.EventHandler(this.btn_Export_Click);
+            this.tlp_fillter.ColumnCount = 2;
+            this.tlp_fillter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlp_fillter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlp_fillter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlp_fillter.Location = new System.Drawing.Point(3, 3);
+            this.tlp_fillter.Name = "tlp_fillter";
+            this.tlp_fillter.RowCount = 1;
+            this.tlp_fillter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlp_fillter.Size = new System.Drawing.Size(164, 49);
+            this.tlp_fillter.TabIndex = 1;
             // 
             // dataGridView
             // 
@@ -410,67 +486,9 @@
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView.Location = new System.Drawing.Point(0, 0);
             this.dataGridView.Name = "dataGridView";
-            this.dataGridView.Size = new System.Drawing.Size(1385, 504);
+            this.dataGridView.Size = new System.Drawing.Size(1383, 503);
             this.dataGridView.TabIndex = 0;
-            // 
-            // tableLayoutPanel4
-            // 
-            this.tableLayoutPanel4.ColumnCount = 2;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.22222F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 62.77778F));
-            this.tableLayoutPanel4.Controls.Add(this.tb_EEEEECode, 1, 1);
-            this.tableLayoutPanel4.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.tb_FactoryCode, 1, 0);
-            this.tableLayoutPanel4.Controls.Add(this.label2, 0, 1);
-            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(394, 0);
-            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 2;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 48.14815F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 51.85185F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(234, 65);
-            this.tableLayoutPanel4.TabIndex = 3;
-            // 
-            // tb_EEEEECode
-            // 
-            this.tb_EEEEECode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tb_EEEEECode.Enabled = false;
-            this.tb_EEEEECode.Location = new System.Drawing.Point(90, 34);
-            this.tb_EEEEECode.Multiline = true;
-            this.tb_EEEEECode.Name = "tb_EEEEECode";
-            this.tb_EEEEECode.Size = new System.Drawing.Size(141, 28);
-            this.tb_EEEEECode.TabIndex = 3;
-            // 
-            // label1
-            // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 31);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "FactoryCode";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tb_FactoryCode
-            // 
-            this.tb_FactoryCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tb_FactoryCode.Enabled = false;
-            this.tb_FactoryCode.Location = new System.Drawing.Point(90, 3);
-            this.tb_FactoryCode.Multiline = true;
-            this.tb_FactoryCode.Name = "tb_FactoryCode";
-            this.tb_FactoryCode.Size = new System.Drawing.Size(141, 25);
-            this.tb_FactoryCode.TabIndex = 1;
-            // 
-            // label2
-            // 
-            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Location = new System.Drawing.Point(3, 31);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(81, 34);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "EEEEECode";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.dataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellClick);
             // 
             // SEM
             // 
@@ -485,6 +503,8 @@
             this.splitContainer1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel4.ResumeLayout(false);
+            this.tableLayoutPanel4.PerformLayout();
             this.slCtn_Mode.Panel1.ResumeLayout(false);
             this.slCtn_Mode.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.slCtn_Mode)).EndInit();
@@ -495,8 +515,8 @@
             this.slctn_Location.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.slctn_Location)).EndInit();
             this.slctn_Location.ResumeLayout(false);
-            this.tableLayoutPanel3.ResumeLayout(false);
-            this.tableLayoutPanel3.PerformLayout();
+            this.tbl_Loaction.ResumeLayout(false);
+            this.tbl_Loaction.PerformLayout();
             this.tb_datagridview.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -504,8 +524,6 @@
             this.splitContainer2.ResumeLayout(false);
             this.tbl_Function.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
-            this.tableLayoutPanel4.ResumeLayout(false);
-            this.tableLayoutPanel4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -524,7 +542,7 @@
         private System.Windows.Forms.SplitContainer slctn_Location;
         private System.Windows.Forms.Label lb_loactionFile;
         private System.Windows.Forms.TextBox tb_locationFolder;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.TableLayoutPanel tbl_Loaction;
         private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.SplitContainer slCtn_Mode;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
@@ -542,5 +560,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tb_FactoryCode;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TableLayoutPanel tlp_fillter;
     }
 }

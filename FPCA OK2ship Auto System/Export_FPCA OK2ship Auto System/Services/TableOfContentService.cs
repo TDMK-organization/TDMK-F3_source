@@ -111,7 +111,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 }
 
             }
-            string json = ConverterService.DataTableToJson(content);
+            string json = TDMK_ConverterService.DataTableToJson(content);
             row["ContentTable"] = json;
             int changeRow = _dBContext.BuckDataTable(table, _NAMETABLE, new string[] { "ItemCode", "LotNo" }, null, "ID");
             return changeRow;
@@ -233,7 +233,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     // 1. Lấy dữ liệu content
                     string content = row["ContentTable"].ToString();
                     // 2. convert to dataTable
-                    DataTable dt_Content = ConverterService.JsonToDataTable(content);
+                    DataTable dt_Content = TDMK_ConverterService.JsonToDataTable(content);
 
                     if (addressHeader.TryGetValue("Submission", out string addressCol))
                     {
@@ -416,7 +416,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             DataTable dt2 = _dBContext.LoadDataTable("TABLE_OF_CONTENT_SETTING", new string[] { "ItemCode" }, new string[] { itemCode });
             if (dt.Rows.Count <= 0)
             {
-                throw new Exception($"{itemCode} - {lotno} chưa tồn tại dữ liệu");
+                return;
             }
             ExportProcess exportProcess = new ExportProcess();
 
@@ -502,7 +502,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             // 1. Lấy dữ liệu content
             string content = row["ContentTable"].ToString();
             // 2. convert to dataTable
-            DataTable dt_Content = ConverterService.JsonToDataTable(content);
+            DataTable dt_Content = TDMK_ConverterService.JsonToDataTable(content);
 
             if (addressHeader.TryGetValue("Submission", out string addressCol))
             {

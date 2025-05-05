@@ -42,9 +42,8 @@
             this.dgv_View = new System.Windows.Forms.DataGridView();
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabSelFunc = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.lblSetting = new System.Windows.Forms.Label();
-            this.lblType3 = new System.Windows.Forms.Label();
-            this.lblBending = new System.Windows.Forms.Label();
             this.lblFAI = new System.Windows.Forms.Label();
             this.tabExport = new System.Windows.Forms.TabPage();
             this.spMain = new System.Windows.Forms.SplitContainer();
@@ -52,14 +51,16 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btn_convert = new System.Windows.Forms.Button();
-            this.spDataView = new System.Windows.Forms.SplitContainer();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.btn_export = new System.Windows.Forms.Button();
+            this.spDataView = new System.Windows.Forms.SplitContainer();
+            this.lblType3 = new System.Windows.Forms.Label();
+            this.lblBending = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_progress)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_View)).BeginInit();
             this.tabMain.SuspendLayout();
             this.tabSelFunc.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
             this.tabExport.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spMain)).BeginInit();
             this.spMain.Panel1.SuspendLayout();
@@ -72,7 +73,6 @@
             this.spDataView.Panel1.SuspendLayout();
             this.spDataView.Panel2.SuspendLayout();
             this.spDataView.SuspendLayout();
-            this.tableLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbAll
@@ -216,7 +216,7 @@
             this.lbltitle.Font = new System.Drawing.Font("Arial", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbltitle.Location = new System.Drawing.Point(0, 0);
             this.lbltitle.Name = "lbltitle";
-            this.lbltitle.Size = new System.Drawing.Size(794, 52);
+            this.lbltitle.Size = new System.Drawing.Size(517, 52);
             this.lbltitle.TabIndex = 43;
             this.lbltitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lbltitle.Click += new System.EventHandler(this.lbltitle_Click);
@@ -233,7 +233,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(794, 566);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(517, 566);
             this.tableLayoutPanel1.TabIndex = 44;
             // 
             // dgv_View
@@ -246,7 +246,7 @@
             this.dgv_View.ReadOnly = true;
             this.dgv_View.RowHeadersVisible = false;
             this.dgv_View.RowHeadersWidth = 82;
-            this.dgv_View.Size = new System.Drawing.Size(438, 560);
+            this.dgv_View.Size = new System.Drawing.Size(161, 560);
             this.dgv_View.TabIndex = 18;
             this.dgv_View.ColumnHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgv_View_ColumnHeaderMouseDoubleClick);
             // 
@@ -259,7 +259,7 @@
             this.tabMain.Location = new System.Drawing.Point(0, 0);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(1071, 659);
+            this.tabMain.Size = new System.Drawing.Size(890, 756);
             this.tabMain.TabIndex = 45;
             // 
             // tabSelFunc
@@ -269,10 +269,29 @@
             this.tabSelFunc.Location = new System.Drawing.Point(4, 27);
             this.tabSelFunc.Name = "tabSelFunc";
             this.tabSelFunc.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSelFunc.Size = new System.Drawing.Size(1063, 628);
+            this.tabSelFunc.Size = new System.Drawing.Size(882, 725);
             this.tabSelFunc.TabIndex = 0;
             this.tabSelFunc.Text = "Select Function";
             this.tabSelFunc.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 2;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel3.Controls.Add(this.lblSetting, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.lblFAI, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.lblBending, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.lblType3, 1, 1);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.16077F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 49.83923F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(876, 719);
+            this.tableLayoutPanel3.TabIndex = 4;
             // 
             // lblSetting
             // 
@@ -287,34 +306,6 @@
             this.lblSetting.Text = "Setting";
             this.lblSetting.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.lblSetting.Click += new System.EventHandler(this.lblSetting_Click);
-            // 
-            // lblType3
-            // 
-            this.lblType3.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblType3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblType3.Font = new System.Drawing.Font("Arial", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblType3.Image = ((System.Drawing.Image)(resources.GetObject("lblType3.Image")));
-            this.lblType3.Location = new System.Drawing.Point(393, 312);
-            this.lblType3.Name = "lblType3";
-            this.lblType3.Size = new System.Drawing.Size(384, 310);
-            this.lblType3.TabIndex = 2;
-            this.lblType3.Text = "VHX-IMADA";
-            this.lblType3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.lblType3.Click += new System.EventHandler(this.lblType3_Click);
-            // 
-            // lblBending
-            // 
-            this.lblBending.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblBending.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblBending.Font = new System.Drawing.Font("Arial", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBending.Image = ((System.Drawing.Image)(resources.GetObject("lblBending.Image")));
-            this.lblBending.Location = new System.Drawing.Point(393, 0);
-            this.lblBending.Name = "lblBending";
-            this.lblBending.Size = new System.Drawing.Size(384, 312);
-            this.lblBending.TabIndex = 1;
-            this.lblBending.Text = "Bending";
-            this.lblBending.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.lblBending.Click += new System.EventHandler(this.lblBending_Click);
             // 
             // lblFAI
             // 
@@ -336,7 +327,7 @@
             this.tabExport.Location = new System.Drawing.Point(4, 27);
             this.tabExport.Name = "tabExport";
             this.tabExport.Padding = new System.Windows.Forms.Padding(3);
-            this.tabExport.Size = new System.Drawing.Size(1063, 628);
+            this.tabExport.Size = new System.Drawing.Size(786, 628);
             this.tabExport.TabIndex = 1;
             this.tabExport.Text = "Export Data";
             this.tabExport.UseVisualStyleBackColor = true;
@@ -355,7 +346,7 @@
             // spMain.Panel2
             // 
             this.spMain.Panel2.Controls.Add(this.spDataView);
-            this.spMain.Size = new System.Drawing.Size(1057, 622);
+            this.spMain.Size = new System.Drawing.Size(780, 622);
             this.spMain.SplitterDistance = 259;
             this.spMain.TabIndex = 0;
             // 
@@ -418,6 +409,20 @@
             this.btn_convert.UseVisualStyleBackColor = false;
             this.btn_convert.Click += new System.EventHandler(this.btn_convert_Click);
             // 
+            // btn_export
+            // 
+            this.btn_export.BackColor = System.Drawing.Color.MediumAquamarine;
+            this.btn_export.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btn_export.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_export.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_export.Location = new System.Drawing.Point(3, 542);
+            this.btn_export.Name = "btn_export";
+            this.btn_export.Size = new System.Drawing.Size(253, 77);
+            this.btn_export.TabIndex = 42;
+            this.btn_export.Text = "EXPORT";
+            this.btn_export.UseVisualStyleBackColor = false;
+            this.btn_export.Click += new System.EventHandler(this.btn_export_Click);
+            // 
             // spDataView
             // 
             this.spDataView.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -433,48 +438,43 @@
             // spDataView.Panel2
             // 
             this.spDataView.Panel2.Controls.Add(this.tableLayoutPanel1);
-            this.spDataView.Size = new System.Drawing.Size(794, 622);
+            this.spDataView.Size = new System.Drawing.Size(517, 622);
             this.spDataView.SplitterDistance = 52;
             this.spDataView.TabIndex = 45;
             // 
-            // tableLayoutPanel3
+            // lblType3
             // 
-            this.tableLayoutPanel3.ColumnCount = 3;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 276F));
-            this.tableLayoutPanel3.Controls.Add(this.lblSetting, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.lblFAI, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.lblBending, 1, 0);
-            this.tableLayoutPanel3.Controls.Add(this.lblType3, 1, 1);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.16077F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 49.83923F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(1057, 622);
-            this.tableLayoutPanel3.TabIndex = 4;
+            this.lblType3.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblType3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblType3.Font = new System.Drawing.Font("Arial", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblType3.Image = ((System.Drawing.Image)(resources.GetObject("lblType3.Image")));
+            this.lblType3.Location = new System.Drawing.Point(393, 312);
+            this.lblType3.Name = "lblType3";
+            this.lblType3.Size = new System.Drawing.Size(384, 310);
+            this.lblType3.TabIndex = 2;
+            this.lblType3.Text = "VHX-IMADA";
+            this.lblType3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.lblType3.Click += new System.EventHandler(this.lblType3_Click);
             // 
-            // btn_export
+            // lblBending
             // 
-            this.btn_export.BackColor = System.Drawing.Color.MediumAquamarine;
-            this.btn_export.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_export.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_export.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_export.Location = new System.Drawing.Point(3, 542);
-            this.btn_export.Name = "btn_export";
-            this.btn_export.Size = new System.Drawing.Size(253, 77);
-            this.btn_export.TabIndex = 42;
-            this.btn_export.Text = "EXPORT";
-            this.btn_export.UseVisualStyleBackColor = false;
-            this.btn_export.Click += new System.EventHandler(this.btn_export_Click);
+            this.lblBending.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblBending.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblBending.Font = new System.Drawing.Font("Arial", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBending.Image = ((System.Drawing.Image)(resources.GetObject("lblBending.Image")));
+            this.lblBending.Location = new System.Drawing.Point(393, 0);
+            this.lblBending.Name = "lblBending";
+            this.lblBending.Size = new System.Drawing.Size(384, 312);
+            this.lblBending.TabIndex = 1;
+            this.lblBending.Text = "Bending";
+            this.lblBending.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.lblBending.Click += new System.EventHandler(this.lblBending_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1071, 659);
+            this.ClientSize = new System.Drawing.Size(890, 756);
             this.Controls.Add(this.tabMain);
             this.Name = "Form1";
             this.Text = "FPCA OK2SHIP Auto System";
@@ -484,6 +484,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgv_View)).EndInit();
             this.tabMain.ResumeLayout(false);
             this.tabSelFunc.ResumeLayout(false);
+            this.tableLayoutPanel3.ResumeLayout(false);
             this.tabExport.ResumeLayout(false);
             this.spMain.Panel1.ResumeLayout(false);
             this.spMain.Panel2.ResumeLayout(false);
@@ -498,7 +499,6 @@
             this.spDataView.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.spDataView)).EndInit();
             this.spDataView.ResumeLayout(false);
-            this.tableLayoutPanel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -521,8 +521,6 @@
         private System.Windows.Forms.SplitContainer spMain;
         private System.Windows.Forms.SplitContainer spDataView;
         private System.Windows.Forms.Label lblSetting;
-        private System.Windows.Forms.Label lblType3;
-        private System.Windows.Forms.Label lblBending;
         private System.Windows.Forms.Label lblFAI;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -530,6 +528,8 @@
         private System.Windows.Forms.Button btn_convert;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Button btn_export;
+        private System.Windows.Forms.Label lblBending;
+        private System.Windows.Forms.Label lblType3;
     }
 }
 

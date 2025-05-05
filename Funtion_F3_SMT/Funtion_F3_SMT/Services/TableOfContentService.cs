@@ -261,7 +261,7 @@ namespace OK2SHIP_SMT.Services
                             }
                             catch (Exception exz)
                             {
-                                Debugger.Break();
+                                throw exz;
                             }
 
                         }
@@ -284,7 +284,7 @@ namespace OK2SHIP_SMT.Services
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
             DataTable dt = _dBContext.GetTableStructure($"{_NAMETABLE}_SETTING");
             int id = 1;
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.LicenseContext = LicenseContext.Commercial;
             using (ExcelPackage package = new ExcelPackage(location))
             {
                 using (ExcelWorksheet workSheet = package.Workbook.Worksheets[0])
@@ -292,7 +292,7 @@ namespace OK2SHIP_SMT.Services
                     string[] header2 = new[] { "Build" };
                     string[] header = new[] { "Item", "Program Name", "Item Code", "MCO & Revision", "ODB++ & Revision", "Build" };
                     IDictionary<string, string> dic = ExportProcess.FindAddressByText(workSheet, header.Concat(header2).ToArray(), false);
-                    dic.Add("Item Code", dic["Item"].Split('-')[1]);
+                    dic["Item Code"] = dic["Item"].Split('-')[1];
                     dic["Item"] = dic["Item"].Split('-')[0];
                     dic["Build"] = dic["Build"].Split('-')[1];
                     string addressRow = ExportProcess.AddRow(dic["Item"], 1);

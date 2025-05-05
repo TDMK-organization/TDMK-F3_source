@@ -1,19 +1,16 @@
 ﻿using Funtion_F3_SMT;
+using OK2SHIP_SMT.Repositories;
 using OK2SHIP_SMT.Services;
 using OK2SHIP_SMT.ToolBoxs;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using ZedGraph;
 namespace OK2SHIP_SMT.UserControls
 {
     public partial class SEM : UserControl
@@ -21,8 +18,11 @@ namespace OK2SHIP_SMT.UserControls
         private bool browseStatusFile = false;
         private PictureBox pictureBox = new PictureBox();
         public string PROCESS { get; set; }
-        private int MODE = 0, MAX_MODE = 2;
+        private int MODE = 1, MAX_MODE = 2;
         private SEMServices semServices = new SEMServices();
+        UC_EnvironmentTable UC_env = new UC_EnvironmentTable() { Dock = DockStyle.Fill };
+        Dictionary<string, Dictionary<string, DataTable>> dic_UC_Env = new Dictionary<string, Dictionary<string, DataTable>>();
+
         public SEM(string pROCESS)
         {
             InitializeComponent();
@@ -59,18 +59,25 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void btn_checkBin_Click(object sender, EventArgs e)
         {
-            switch (PROCESS)
+            try
             {
-                case "SEM BSE & Binarization":
-                    DataTable dataTable = (DataTable)dgv_Combobox.DataSource;
-                    semServices.JudgementCheck(dataTable);
-                    dgv_Combobox.DataSource = dataTable;
-                    break;
-                case "Bar Code Verification":
-                    DataTable dataTablez = (DataTable)dataGridView.DataSource;
-                    BarCodeVertification barCodeVertification = new BarCodeVertification();
-                    dgv_left.DataSource = barCodeVertification.CheckSum(dataTablez);
-                    break;
+                switch (PROCESS)
+                {
+                    case "SEM BSE & Binarization":
+                        DataTable dataTable = (DataTable)dgv_Combobox.DataSource;
+                        semServices.JudgementCheck(dataTable);
+                        dgv_Combobox.DataSource = dataTable;
+                        break;
+                    case "Bar Code Verification":
+                        DataTable dataTablez = (DataTable)dataGridView.DataSource;
+                        BarCodeVertification barCodeVertification = new BarCodeVertification();
+                        dgv_left.DataSource = barCodeVertification.CheckSum(dataTablez);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}");
             }
         }
         /// <summary>
@@ -89,7 +96,7 @@ namespace OK2SHIP_SMT.UserControls
             else
             {
                 OpenFileDialog fileDialog = new OpenFileDialog();
-                fileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+                fileDialog.Filter = "All files (*.*)|*.*";
                 fileDialog.FilterIndex = 1;
                 fileDialog.RestoreDirectory = true;
                 fileDialog.Title = "Chọn tệp";
@@ -104,15 +111,30 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void btn_GetData_Click(object sender, EventArgs e)
         {
-            getDataFormFile(tb_locationFolder.Text, tb_ItemCode.Text, tb_Lotno.Text, PROCESS);
+            getDataFormFile(tb_locationFolder.Text.Trim(), tb_ItemCode.Text.Trim(), tb_Lotno.Text.Trim(), PROCESS);
         }
         private void btn_checkSum_Click(object sender, EventArgs e)
         {
+
             try
             {
                 string ItemCode = tb_ItemCode.Text.Trim();
-                
-                Debugger.Break();
+                string location = tb_locationFolder.Text.Trim();
+                BarCodeVertification barCodeVertification = new BarCodeVertification();
+                string st = barCodeVertification.GetCheckSumData(location);
+                if (string.IsNullOrEmpty(st))
+                {
+                    throw new Exception("Hãy đặt file phù hợp");
+                }
+                string[] str = st.Split('-');
+                string ItemName = str[0];
+                string FactoryCode = str[1];
+                string ECode = str[2];
+                tb_FactoryCode.Text = FactoryCode;
+                tb_EEEEECode.Text = ECode;
+
+                int num = barCodeVertification.UpdateCodeByItemName(ItemName, FactoryCode, ECode);
+                MessageBox.Show($"Update {num} code với ItemName {ItemName} thành công!");
             }
             catch (Exception ex)
             {
@@ -128,141 +150,93 @@ namespace OK2SHIP_SMT.UserControls
                 login.Show();
                 return;
             }
-            try
-            {
-                switch (this.PROCESS)
-                {
-                    case "SEM BSE & Binarization":
-
-                        DataTable dataTablez = (DataTable)dgv_Combobox.DataSource;
-                        SEMServices sem = new SEMServices();
-                        bool prime = false;
-                        try
-                        {
-                            sem.SaveProcess(dataTablez, prime);
-
-                        }
-                        catch (Exception ex)
-                        {
-                            string[] exStr = ex.Message.Split('-');
-                            bool strz = exStr[0].Trim().Equals("2267");
-                            if (exStr.Length >= 2 && exStr[0].Trim().Equals("2267"))
-                            {
-                                prime = MessageBox.Show("Đã tồn tại SN trong cơ sở dữ liệu bạn có muốn ghi đè", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
-                                if (prime)
-                                {
-                                    sem.SaveProcess(dataTablez, prime);
-                                }
-                            }
-                            else
-                            {
-                                throw ex;
-                            }
-                        }
-                        int i = 1;
-                        foreach (DataRow item in dataTablez.Rows)
-                        {
-                            item["ID"] = i++;
-                            item["Judgement"] = "NG";
-                        }
-                        break;
-                    case "Bar Code Verification":
-                        DataTable dataTable = (DataTable)dataGridView.DataSource;
-                        string itemCode = dataTable.Rows[0]["ItemCode"].ToString(), lotNo = dataTable.Rows[0]["LotNo"].ToString();
-                        BarCodeVertification barCodeVertification = new BarCodeVertification();
-                        try
-                        {
-                            barCodeVertification.SaveProcess(dataTable, false, itemCode, lotNo);
-                        }
-                        catch (SqlException ex)
-                        {
-                            if (ex.Number == 2601) // Lỗi vi phạm ràng buộc khóa chính (SQL Server)
-                            {
-                                DialogResult dr = MessageBox.Show($"Đã tồn tại ItemCode LotNo trong cơ sở dữ liệu", "Thông báo", MessageBoxButtons.YesNoCancel);
-                                if (dr == DialogResult.Yes)
-                                {
-                                    barCodeVertification.SaveProcess(dataTable, true, itemCode, lotNo);
-
-                                }
-                            }
-                            else
-                            {
-                                throw ex;
-                            }
-                        }
-                        break;
-                    case "OQC B2B Mating-Unmating":
-                        DataTable dataTables = new DataTable();
-                        if (dgv_Combobox != null)
-                        {
-                            dataTables = (DataTable)dgv_Combobox.DataSource;
-                        }
-                        if (dataTables.Rows.Count == 0)
-                        {
-                            MessageBox.Show("Không có gì để lưu!");
-                            return;
-                        }
-                        OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting();
-                        try
-                        {
-                            oqc.SaveProcess(dataTables);
-                        }
-                        catch (Exception ex)
-                        {
-                            string[] s = ex.Message.ToString().Split('-');
-                            if (s.Length > 1)
-                            {
-                                DialogResult dialogResult = MessageBox.Show("Dữ liệu thừa bạn có muốn tiếp tục lưu", "Thông báo", MessageBoxButtons.OK);
-                                if (dialogResult == DialogResult.OK)
-                                {
-                                    oqc.SaveProcess(dataTables, true);
-                                }
-                                break;
-                            }
-                            MessageBox.Show($"Có lỗi xảy ra{ex.Message}");
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-
-                MessageBox.Show($"Lỗi quá trình lưu, {ex.Message}");
-                return;
-            }
-            MessageBox.Show("Lưu dữ liệu thành công");
-        }
-
-        private void btn_Export_Click(object sender, EventArgs e)
-        {
             //try
             //{
-
-            string status = "";
             switch (this.PROCESS)
             {
-                case "Bar Code Verification":
-                    status = new BarCodeVertification().Export(tb_ItemCode.Text, tb_Lotno.Text);
-                    break;
-                case "OQC B2B Mating-Unmating":
-                    status = new OQCB2BMatingUnmatting().Export(tb_ItemCode.Text, tb_Lotno.Text);
-                    break;
-                case "SEM BSE & Binarization":
+
+                case "Thermal cycling, Heat soak, Thermal shock":
+                    int res = 0;
+                    TCHSTSService service = new TCHSTSService();
+                    if (CHANGE)
+                    {
+                        MessageBox.Show("Có thay đổi chưa được update!");
+                        return;
+                    }
                     try
                     {
-                        status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, false);
+                        res = service.Save((DataTable)dataGridView.DataSource, false);
                     }
                     catch (Exception ex)
                     {
                         string[] exStr = ex.Message.Split('-');
-                        if (exStr.Count() >= 2 && exStr[0].Trim().Equals("ATPX4869"))
+                        bool strz = exStr[0].Trim().Equals("2267");
+                        if (exStr.Length >= 2 && exStr[0].Trim().Equals("2267"))
                         {
-                            DialogResult dialogResult = MessageBox.Show("Dữ liệu thiếu bạn có muốn tiếp tục xuất dữ liệu", "Thông báo", MessageBoxButtons.YesNoCancel);
-                            if (dialogResult == DialogResult.Yes)
+                            if (MessageBox.Show("Đã tồn tại SN trong cơ sở dữ liệu bạn có muốn ghi đè", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                             {
-                                status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, true);
+                                res = service.Save((DataTable)dataGridView.DataSource, true);
+                            }
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                    MessageBox.Show($"Đã lưu {res} row thành công");
+                    dataGridView.DataSource = new DataTable();
+                    break;
+                case "SEM BSE & Binarization":
+                    DataTable dataTablez = (DataTable)dgv_Combobox.DataSource;
+                    SEMServices sem = new SEMServices();
+                    bool prime = false;
+                    try
+                    {
+                        sem.SaveProcess(dataTablez, prime);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        string[] exStr = ex.Message.Split('-');
+                        bool strz = exStr[0].Trim().Equals("2267");
+                        if (exStr.Length >= 2 && exStr[0].Trim().Equals("2267"))
+                        {
+                            prime = MessageBox.Show("Đã tồn tại SN trong cơ sở dữ liệu bạn có muốn ghi đè", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
+                            if (prime)
+                            {
+                                sem.SaveProcess(dataTablez, prime);
+                            }
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                    int i = 1;
+                    foreach (DataRow item in dataTablez.Rows)
+                    {
+                        item["ID"] = i++;
+                        item["Judgement"] = "NG";
+                    }
+                    break;
+                case "Bar Code Verification":
+                    DataTable dataTable = (DataTable)dataGridView.DataSource;
+                    string itemCode = dataTable.Rows[0]["ItemCode"].ToString(), lotNo = dataTable.Rows[0]["LotNo"].ToString();
+                    BarCodeVertification barCodeVertification = new BarCodeVertification();
+                    try
+                    {
+                        barCodeVertification.SaveProcess(dataTable, false, itemCode, lotNo);
+                        MessageBox.Show("Lưu dữ liệu thành công");
+                    }
+                    catch (SqlException ex)
+                    {
+                        if (ex.Number == 2601) // Lỗi vi phạm ràng buộc khóa chính (SQL Server)
+                        {
+                            DialogResult dr = MessageBox.Show($"Đã tồn tại ItemCode LotNo trong cơ sở dữ liệu", "Thông báo", MessageBoxButtons.YesNoCancel);
+                            if (dr == DialogResult.Yes)
+                            {
+                                barCodeVertification.SaveProcess(dataTable, true, itemCode, lotNo);
+
                             }
                         }
                         else
@@ -271,15 +245,120 @@ namespace OK2SHIP_SMT.UserControls
                         }
                     }
                     break;
+                case "Environment en-durance":
+                    string itemCodez = tb_ItemCode.Text.Trim();
+                    string lotNoz = tb_Lotno.Text.Trim();
+                    DataTable dt = (DataTable)UC_env.dataGridView.DataSource;
+                    Dictionary<string, Dictionary<string, DataTable>> dic = UC_env.dictionary_Data;
+                    EEDService eD = new EEDService();
+                    int resz = 0;
+                    try
+                    {
+                        resz = eD.save(itemCodez, lotNoz, dt, dic);
+                    }
+                    catch (Exception ex)
+                    {
+                        string[] ap = ex.Message.Split('-');
+                        if (ap.Count() > 1 && ap[0].Contains("1234"))
+                        {
+                            resz = eD.save(itemCodez, lotNoz, dt, dic, MessageBox.Show("Đã tồn tại bạn muốn ghi đè?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes);
+                        }
+                    }
+                    MessageBox.Show($"Lưu thành công {resz} row!");
+                    break;
+                case "OQC B2B Mating-Unmating":
+                    DataTable dataTables = new DataTable();
+                    if (dgv_Combobox != null)
+                    {
+                        dataTables = (DataTable)dgv_Combobox.DataSource;
+                    }
+                    if (dataTables.Rows.Count == 0)
+                    {
+                        MessageBox.Show("Không có gì để lưu!");
+                        return;
+                    }
+                    OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting();
+                    try
+                    {
+                        oqc.SaveProcess(dataTables);
+                        MessageBox.Show("Lưu dữ liệu thành công");
+                    }
+                    catch (Exception ex)
+                    {
+                        string[] s = ex.Message.ToString().Split('-');
+                        if (s.Length > 1)
+                        {
+                            DialogResult dialogResult = MessageBox.Show("Dữ liệu thừa bạn có muốn tiếp tục lưu", "Thông báo", MessageBoxButtons.OK);
+                            if (dialogResult == DialogResult.OK)
+                            {
+                                oqc.SaveProcess(dataTables, true);
+                            }
+                            break;
+                        }
+                        MessageBox.Show($"Có lỗi xảy ra{ex.Message}");
+                    }
+                    break;
                 default:
-                    throw new Exception("Process not found");
+                    break;
             }
-            MessageBox.Show(status);
             //}
             //catch (Exception ex)
             //{
-            //    MessageBox.Show(ex.Message);
+            //    MessageBox.Show($"Lỗi quá trình lưu, {ex.Message}");
+            //    return;
             //}
+        }
+
+        private void btn_Export_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string status = "";
+                switch (this.PROCESS)
+                {
+                    case "Environment en-durance":
+                        status = new EEDService().Export(tb_ItemCode.Text, tb_Lotno.Text);
+                        break;
+                    case "Thermal cycling, Heat soak, Thermal shock":
+                        status = new TCHSTSService().Export(tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text);
+                        break;
+                    case "Bar Code Verification":
+                        status = new BarCodeVertification().Export(tb_ItemCode.Text, tb_Lotno.Text);
+                        break;
+                    case "OQC B2B Mating-Unmating":
+                        status = new OQCB2BMatingUnmatting().Export(tb_ItemCode.Text, tb_Lotno.Text);
+                        break;
+                    case "SEM BSE & Binarization":
+                        try
+                        {
+                            status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, false);
+                        }
+                        catch (Exception ex)
+                        {
+                            string[] exStr = ex.Message.Split('-');
+                            if (exStr.Count() >= 2 && exStr[0].Trim().Equals("ATPX4869"))
+                            {
+                                DialogResult dialogResult = MessageBox.Show("Dữ liệu thiếu bạn có muốn tiếp tục xuất dữ liệu", "Thông báo", MessageBoxButtons.YesNoCancel);
+                                if (dialogResult == DialogResult.Yes)
+                                {
+                                    status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, true);
+                                }
+                            }
+                            else
+                            {
+                                throw ex;
+                            }
+                        }
+                        break;
+                    default:
+                        throw new Exception("Process not found");
+                }
+                MessageBox.Show(status);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             return;
         }
         private void btn_switchMode_Click(object sender, EventArgs e)
@@ -317,6 +396,34 @@ namespace OK2SHIP_SMT.UserControls
             {
                 switch (PROCESS)
                 {
+                    case "Environment en-durance":
+                        EEDService EED = new EEDService();
+                        DataTable before = new DataTable();
+                        UC_env.dictionary_Data = EED.Load(tb_ItemCode.Text, tb_Lotno.Text, out before);
+
+                        UC_env.dataGridView.RowTemplate.Height = 300;
+                        UC_env.dataGridView.DataSource = before;
+                        foreach (DataGridViewColumn column in UC_env.dataGridView.Columns)
+                        {
+                            ((DataGridViewImageColumn)UC_env.dataGridView.Columns[column.Name]).ImageLayout = DataGridViewImageCellLayout.Zoom;
+                            ((DataGridViewImageColumn)UC_env.dataGridView.Columns[column.Name]).Width = 500; // Đặt chiều rộng cột
+                        }
+                        UC_env.listBox.Items.Clear();
+                        UC_env.listBox.Items.AddRange(UC_env.dictionary_Data.Keys.ToArray());
+                        //UC_env;
+                        break;
+                    case "Thermal cycling, Heat soak, Thermal shock":
+                        string type = comboBox.Text.ToString().Trim();
+                        TCHSTSService service = new TCHSTSService();
+                        DataTable dtT = service.Load(tb_ItemCode.Text, tb_Lotno.Text, type);
+                        if (dtT.Rows.Count <= 0)
+                        {
+                            MessageBox.Show($"{tb_ItemCode} {tb_Lotno.Text} không có dữ liệu!");
+                            return;
+                        }
+                        dataGridView.DataSource = dtT;
+                        dgv_left.DataSource = new DataTable();
+                        break;
                     case "Bar Code Verification":
                         BarCodeVertification barCodeVertification = new BarCodeVertification();
                         DataTable dtBar = barCodeVertification.LoadProcess(tb_ItemCode.Text, tb_Lotno.Text);
@@ -392,6 +499,10 @@ namespace OK2SHIP_SMT.UserControls
             lb_headerTable.Width = w;
             lb_headerTable.Height = h;
         }
+        TableLayoutPanel sc = new TableLayoutPanel() { BackColor = Color.Aqua, Dock = DockStyle.Fill };
+        DataGridView dataGridViewz = new DataGridView() { Dock = DockStyle.Fill };
+        Button button = new Button();
+        ComboBox comboBox = new ComboBox() { Dock = DockStyle.Fill };
         private void SetUpProcessScreen(string pROCESS)
         {
             btn_checkBin.Hide();
@@ -402,6 +513,47 @@ namespace OK2SHIP_SMT.UserControls
             btn_checkBin.Visible = false;
             switch (this.PROCESS)
             {
+                case "Impedance":
+                    button.BackColor = Color.Green;
+                    button.Dock = DockStyle.Fill;
+                    button.Text = "Load Form F1 DB";
+                    button.Click += ButtonLoadImpedanceFormDB_Click;
+                    tbl_Function.Controls.Remove(tlp_fillter);
+                    tbl_Function.Controls.Add(button, 0, 0);
+                    tb_datagridview.Controls.Remove(tb_datagridview);
+                    break;
+                case "Thermal cycling, Heat soak, Thermal shock":
+
+                    Dictionary<string, string[]> dic = new Dictionary<string, string[]>();
+                    dic.Add("Comestic", new[] { "OK", "NG" });
+                    dgv_left.columnDropdowns = dic;
+                    button.Click += Button_Click;
+                    lb_headerTable.Text = "List LogFile";
+                    tb_datagridview.ColumnCount = 2;
+                    tb_datagridview.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+                    TDMK_Label label = new TDMK_Label() { AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "Detail", Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold) };
+                    TDMK_Label label2 = new TDMK_Label() { AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "MiniTable", Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold) };
+                    TDMK_Label label3 = new TDMK_Label() { AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "Type", Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold) };
+                    dgv_left.CellValueChanged += DGV_LEFT_CHANGE_VALUE_CELL;
+                    sc.RowCount = 5;
+                    sc.Controls.Add(label, 0, 0);
+                    sc.Controls.Add(label2, 0, 3);
+                    sc.Controls.Add(dataGridViewz, 0, 4);
+                    comboBox.Items.AddRange(new object[] { "All", "Thermal Cycling", "Heat Soak", "Thermal Shock" });
+                    tlp_fillter.Controls.Add(label3, 0, 0);
+                    tlp_fillter.Controls.Add(comboBox, 1, 0);
+                    btn_Disable();
+                    sc.Controls.Add(button, 0, 1);
+                    sc.Controls.Add(dgv_left, 0, 2);
+                    sc.RowStyles.Add(new RowStyle(SizeType.Percent, 5));
+                    sc.RowStyles.Add(new RowStyle(SizeType.Percent, 10));
+                    sc.RowStyles.Add(new RowStyle(SizeType.Percent, 45));
+                    sc.RowStyles.Add(new RowStyle(SizeType.Percent, 5));
+                    sc.RowStyles.Add(new RowStyle(SizeType.Percent, 15));
+                    dgv_left.Dock = DockStyle.Fill;
+                    tb_datagridview.Controls.Add(sc, 1, 0);
+
+                    break;
                 case "SEM BSE & Binarization":
                     btn_checkBin.Visible = true;
                     DataTable dtz = new DataTable();
@@ -436,11 +588,31 @@ namespace OK2SHIP_SMT.UserControls
                 case "Bar Code Verification":
                     SetUpBarCodeScreen();
                     break;
+                case "Environment en-durance":
+                    tb_datagridview.Controls.Clear();
+                    tb_datagridview.Controls.Add(UC_env, 0, 0);
+                    break;
                 default:
                     throw new Exception("Process not found");
             }
         }
-        private DataGridView dgv_left = new DataGridView();
+        private void ButtonLoadImpedanceFormDB_Click(object sender, EventArgs e)
+        {
+            Debugger.Break();
+        }
+        private void Button_Click(object sender, EventArgs e)
+        {
+            DataGridViewCell selectedCell = dataGridView.SelectedCells[0];
+            int rowIndex = selectedCell.RowIndex;
+            DataTable dt = (DataTable)dgv_left.DataSource;
+            string json = ConverterService.DataTableToJson(dt);
+            dataGridView.Rows[rowIndex].Cells["DataLog"].Value = json;
+            dgv_left.DataSource = new DataTable();
+            btn_Disable();
+            CHANGE = !CHANGE;
+        }
+
+        private CustomDataGridView dgv_left = new CustomDataGridView(new DataTable(), new Dictionary<string, string[]>());
         private Button btn_SetupSum = new Button() { Text = "Setup CheckSum", Dock = DockStyle.Fill };
         private void SetUpBarCodeScreen()
         {
@@ -477,6 +649,7 @@ namespace OK2SHIP_SMT.UserControls
             tableLayoutPanel.Controls.Add(btn_SetupSum, 0, 1);
             slctn_Location.Panel2.Controls.Add(tableLayoutPanel);
         }
+
         private bool checkData(string location, string itemCode, string lotNo, string process)
         {
             //Check itemcode lotno validate
@@ -487,11 +660,11 @@ namespace OK2SHIP_SMT.UserControls
             ///////////////
             // check file location validate
 
-            if (browseStatusFile && !Directory.Exists(location))
+            if (!browseStatusFile && !Directory.Exists(location))
             {
                 throw new Exception("Folder not found");
             }
-            if (!browseStatusFile && !File.Exists(location))
+            if (browseStatusFile && !File.Exists(location))
             {
                 throw new Exception("File not found");
             }
@@ -520,6 +693,8 @@ namespace OK2SHIP_SMT.UserControls
                         LotNo = LotNo.Split('_')[0];
                     }
                     LotNo = ValidateService.lotNoHandle(LotNo);
+                    break;
+                case "Thermal cycling, Heat soak, Thermal shock":
                     break;
                 case "OQC B2B Mating-Unmating":
                     string[] s = fileName;
@@ -580,7 +755,7 @@ namespace OK2SHIP_SMT.UserControls
             }
             catch (Exception ex)
             {
-
+                MessageBox.Show(ex.Message);
             }
         }
         private void checkFactoryCode(string itemCode)
@@ -606,9 +781,45 @@ namespace OK2SHIP_SMT.UserControls
             DataTable dt = new DataTable();
             try
             {
-
                 switch (process)
                 {
+                    case "Environment en-durance":
+                        UC_env.dataGridView.RowTemplate.Height = 300;
+                        EEDService eEDService = new EEDService();
+                        dic_UC_Env.Clear();
+                        string[] array = eEDService.ReadFile(location, itemCode, lotNo);
+                        foreach (var item in array)
+                        {
+                            DataTable dtz = eEDService.SolveFolder(item, out string processz);
+                            switch (processz)
+                            {
+                                case "LINERTRUOCKEO":
+                                    UC_env.dataGridView.DataSource = dtz;
+                                    break;
+                                case "LINER":
+                                case "PSA":
+                                    eEDService.SolveFolderPSALiner(item, dic_UC_Env);
+                                    break;
+                                default:
+                                    throw new Exception($"Folder {item} không phù hợp!");
+
+                            }
+                        }
+                        UC_env.listBox.Items.Clear();
+                        UC_env.listBox.Items.AddRange(dic_UC_Env.Keys.ToArray());
+                        UC_env.dictionary_Data = dic_UC_Env;
+                        foreach (DataGridViewColumn column in UC_env.dataGridView.Columns)
+                        {
+                            ((DataGridViewImageColumn)UC_env.dataGridView.Columns[column.Name]).ImageLayout = DataGridViewImageCellLayout.Zoom;
+                            ((DataGridViewImageColumn)UC_env.dataGridView.Columns[column.Name]).Width = 500; // Đặt chiều rộng cột
+                        }
+                        break;
+                    case "Thermal cycling, Heat soak, Thermal shock":
+                        TCHSTSService tsNew = new TCHSTSService();
+                        DataTable dts = tsNew.ReadFile(location, itemCode, lotNo, process);
+                        dataGridView.DataSource = dts;
+
+                        break;
                     case "SEM BSE & Binarization":
                         checkData(location, itemCode, lotNo, process);
                         try
@@ -670,7 +881,7 @@ namespace OK2SHIP_SMT.UserControls
             MessageBox.Show("Lấy dữ liệu thành công");
 
         }
-        private CustomDataGridView dgv_Combobox;
+        private CustomDataGridView dgv_Combobox = new CustomDataGridView(new DataTable(), new Dictionary<string, string[]>());
 
         private ToolTip toolTip = new ToolTip();
 
@@ -696,7 +907,121 @@ namespace OK2SHIP_SMT.UserControls
         {
             toolTip.Hide(dgv_Combobox);
         }
+        private void dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            switch (PROCESS)
+            {
+                case "Thermal cycling, Heat soak, Thermal shock":
+                    CellClick_TCHSTS(e.RowIndex, e.ColumnIndex);
+                    break;
+                default:
+                    break;
+            }
+        }
+        private bool CHANGE = false;
+        private void DGV_LEFT_CHANGE_VALUE_CELL(object sender, DataGridViewCellEventArgs e)
+        {
+            btn_Enable();
+        }
+        void btn_Disable()
+        {
+            button.Enabled = false;
+            button.BackColor = Color.Red;
+            button.ForeColor = Color.White;
+            button.Dock = DockStyle.Fill;
+            button.Font = new Font(button.Font.FontFamily, 12);
+            button.Text = "Every change is updated";
+        }
+        void btn_Enable()
+        {
+            CHANGE = true;
+            button.Enabled = true;
+            button.BackColor = Color.Green;
+            button.ForeColor = Color.White;
+            button.Dock = DockStyle.Fill;
+            button.Font = new Font(button.Font.FontFamily, 12);
+            button.Text = "<< -- UPDATE CHANGE";
+        }
+        private void CellClick_TCHSTS(int row, int column)
+        {
+            DataTable dataTable = (DataTable)dataGridView.DataSource;
+            string value;
+            try
+            {
+                value = dataTable.Rows[row]["DataLog"].ToString();
+            }
+            catch
+            {
+                return;
+            }
+            DataTable data = ConverterService.JsonToDataTable(value.Split('@')[0]);
+            DataTable data1 = ConverterService.JsonToDataTable(value.Split('@')[1]);
 
+            dgv_left.DataSource = data1;
+
+            dataGridViewz.DataSource = data;
+            dgv_left.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            DataGridViewColumn columnToMove = dgv_left.Columns["Comestic"];
+
+            // Kiểm tra xem DisplayIndex hiện tại có khác với vị trí mục tiêu không
+            if (columnToMove.DisplayIndex != 3)
+            {
+                int currentDisplayIndex = columnToMove.DisplayIndex;
+                columnToMove.DisplayIndex = 3;
+            }
+            columnToMove = dgv_left.Columns["Function test"];
+            if (columnToMove.DisplayIndex != 4)
+            {
+                int currentDisplayIndex = columnToMove.DisplayIndex;
+                columnToMove.DisplayIndex = 4;
+            }
+            columnToMove = dgv_left.Columns["ID"];
+            if (columnToMove.DisplayIndex != 0)
+            {
+                int currentDisplayIndex = columnToMove.DisplayIndex;
+                columnToMove.DisplayIndex = 00;
+            }
+            columnToMove = dgv_left.Columns["Content"];
+            if (columnToMove.DisplayIndex != 1)
+            {
+                int currentDisplayIndex = columnToMove.DisplayIndex;
+                columnToMove.DisplayIndex = 1;
+            }
+            //Debugger.Break();
+        }
+        private void btn_Export_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                string itemCode = tb_ItemCode.Text.ToString().Trim();
+                string lotNo = tb_Lotno.Text.ToString().Trim();
+                switch (PROCESS)
+                {
+                    case "Thermal cycling, Heat soak, Thermal shock":
+                        if (MessageBox.Show("Bạn muốn export logfile?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            string type = comboBox.Text.ToString().Trim();
+                            TCHSTSService service = new TCHSTSService();
+                            service.ExportLogFile(itemCode, lotNo, type);
+                            MessageBox.Show("Thành Công");
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                #region HIDE
+                COUNTING++;
+                COUNTING = COUNTING % 7;
+                if (COUNTING > 5)
+                {
+                    MessageBox.Show("Đừng thao tác quá nhiều vào nút này :<");
+                }
+                #endregion
+            }
+
+
+        }
+        private int COUNTING = 0;
         private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)

@@ -35,7 +35,6 @@ using System.Drawing.Drawing2D;
 using System.Net.NetworkInformation;
 using System.Diagnostics;
 using Bending_Export;
-using TDMK_EPPLUS_7;
 using System.Drawing.Printing;
 using System.ComponentModel.Design;
 using Patagames.Ocr.InputFilters;
@@ -47,6 +46,7 @@ using System.Runtime.ConstrainedExecution;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using OfficeOpenXml.Style;
 using System.Xml;
+using OK2SHIP_SMT.Libary;
 //using TDMK_EPPLUS_7;
 
 
@@ -58,7 +58,7 @@ namespace Funtion_F3_SMT
         public Bending_Export_Lib Bending_Exp = new Bending_Export_Lib();
         public TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
 
-        public TDMK_EPPLUS7_lib TDMK_Code2 = new TDMK_EPPLUS7_lib();
+        public TDMK_EPPLUS TDMK_EPPLUS = new TDMK_EPPLUS();
 
         public SEI_Lib myCode = new SEI_Lib();
         Funtion_SMT my_SMT = new Funtion_SMT();
@@ -70,7 +70,6 @@ namespace Funtion_F3_SMT
         string[] arr_onproduct = new string[2];
         string[] arr_comment_2 = new string[2];
         string tbl_name_comment3 = "COMMENT_3_NEW";
-        string tbl_name_logfile = "COMMENT_3_LOGFILE";
         string admin_mode = "LOGIN";
         string data_loc = "";
         byte[] img_null = null;
@@ -84,7 +83,6 @@ namespace Funtion_F3_SMT
         bool hide_mode_analysis = true;
         bool judge_all = true;
 
-        string message_error = "";
         int set_chan = 0;
 
 
@@ -392,8 +390,8 @@ namespace Funtion_F3_SMT
             string program_loc = F_export_EPPlus.find_config_path(System.Windows.Forms.Application.StartupPath, "TDMK Program");
             string config_path = Path.Combine(program_loc, "Config.ini");
             TDMK_init = new IniFile(config_path);
-            data_loc = F_export_EPPlus.find_config_path(System.Windows.Forms.Application.StartupPath, "SEEV Data");
-
+            //data_loc = F_export_EPPlus.find_config_path(System.Windows.Forms.Application.StartupPath, "SEEV Data");
+            data_loc = TDMK_init.Read("Format_Folder", "SMT_Config") + "\\SEEV Data";
             server_name = TDMK_init.Read("Server", "SMT_Config");
             server_acc = TDMK_init.Read("Account", "SMT_Config");
             server_pass = TDMK_init.Read("Password", "SMT_Config");
@@ -437,14 +435,14 @@ namespace Funtion_F3_SMT
 
             if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST")
             {
-                txt_setchan.Visible = true; 
+                txt_setchan.Visible = true;
                 lbl_sochan.Visible = true;
             }
             else
             {
                 txt_setchan.Visible = false;
                 lbl_sochan.Visible = false;
-            } 
+            }
             //  data_loc = data_loc.Replace(@"\VHX-IMADA", "");
 
         }
@@ -513,7 +511,7 @@ namespace Funtion_F3_SMT
             //myExcel.Shape cur_image = wrk_sheet.Shapes.Item("Picture 1");
             //cur_image.Copy();
             Byte[] data = new Byte[0];
-            Image myImg = TDMK_Code2.get_pic(wrk_sheet, "Picture 1");
+            Image myImg = TDMK_EPPLUS.get_pic(wrk_sheet, "Picture 1");
             ImageConverter imgCon = new ImageConverter();
             data = (byte[])imgCon.ConvertTo(myImg, typeof(byte[]));
             return data;
@@ -750,7 +748,7 @@ namespace Funtion_F3_SMT
                     if (i < temp_lst.Length)
                     {
                         //myExcel.Application xlsApp = TDMK_Code.StartExcel();
-                        ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                        ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                         ExcelWorksheet wrksht = wrkbk.Worksheets[0];
 
                         Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -793,7 +791,7 @@ namespace Funtion_F3_SMT
 
                 for (int i = 0; i < temp_lst.Length; i++)
                 {
-                    ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                    ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                     ExcelWorksheet wrksht = wrkbk.Worksheets[0];
 
                     Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -866,7 +864,7 @@ namespace Funtion_F3_SMT
 
                 for (int i = 0; i < temp_lst.Length; i++)
                 {
-                    ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                    ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                     ExcelWorksheet wrksht = wrkbk.Worksheets[0];
 
                     Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -939,7 +937,7 @@ namespace Funtion_F3_SMT
             {
                 for (int i = 0; i < temp_lst.Length; i++)
                 {
-                    ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                    ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                     ExcelWorksheet wrksht = wrkbk.Worksheets[0];
 
                     Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -1022,7 +1020,7 @@ namespace Funtion_F3_SMT
                         Dictionary<string, SortedDictionary<int, string>> lst_result = new Dictionary<string, SortedDictionary<int, string>>();
                         for (int i = 0; i < temp_lst.Length; i++)
                         {
-                            ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                            ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                             ExcelWorksheet wrksht = wrkbk.Worksheets[0];
 
                             Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -1073,7 +1071,7 @@ namespace Funtion_F3_SMT
                     {
                         if (i < temp_lst.Length)
                         {
-                            ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                            ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                             ExcelWorksheet wrksht = wrkbk.Worksheets[0];
 
                             Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -1227,7 +1225,7 @@ namespace Funtion_F3_SMT
 
         public DataTable load_data_logfile_onproduct(string in_src, string infor)
         {
-            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode","LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
+            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
             DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, sheet, filter_str).Clone();
             Data_tbl.Columns.Add("Select_Img", typeof(bool));
             Data_tbl.Columns.Add("Select_Grp", typeof(bool));
@@ -2735,7 +2733,7 @@ namespace Funtion_F3_SMT
                             if (i < temp_lst.Length)
                             {
                                 //myExcel.Application xlsApp = TDMK_Code.StartExcel();
-                                ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                                ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                                 ExcelWorksheet wrksht = wrkbk.Worksheets[0];
 
                                 Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -2778,7 +2776,7 @@ namespace Funtion_F3_SMT
                         if (i < temp_lst.Length)
                         {
                             //myExcel.Application xlsApp = TDMK_Code.StartExcel();
-                            ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                            ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                             ExcelWorksheet wrksht = wrkbk.Worksheets[0];
 
                             Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -2909,7 +2907,7 @@ namespace Funtion_F3_SMT
                             Dictionary<string, SortedDictionary<int, string>> lst_result = new Dictionary<string, SortedDictionary<int, string>>();
                             for (int i = 0; i < temp_lst.Length; i++)
                             {
-                                ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                                ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                                 ExcelWorksheet wrksht = wrkbk.Worksheets[0];
                                 Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
                                 data.data_val = get_data_val_comment3(wrksht, "Max");
@@ -2970,7 +2968,7 @@ namespace Funtion_F3_SMT
                             Dictionary<string, SortedDictionary<int, string>> lst_result = new Dictionary<string, SortedDictionary<int, string>>();
                             for (int i = 0; i < temp_lst.Length; i++)
                             {
-                                ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                                ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                                 //ExcelWorksheet wrksht = wrkbk.Worksheets[1];
                                 ExcelWorksheet wrksht = wrkbk.Worksheets[0];
                                 Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -3022,7 +3020,7 @@ namespace Funtion_F3_SMT
                     {
                         if (i < temp_lst.Length)
                         {
-                            ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                            ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                             //ExcelWorksheet wrksht = wrkbk.Worksheets[1];
                             ExcelWorksheet wrksht = wrkbk.Worksheets[0];
                             Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -3081,7 +3079,7 @@ namespace Funtion_F3_SMT
                         Dictionary<string, SortedDictionary<int, string>> lst_result = new Dictionary<string, SortedDictionary<int, string>>();
                         for (int i = 0; i < temp_lst.Length; i++)
                         {
-                            ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                            ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                             //ExcelWorksheet wrksht = wrkbk.Worksheets[1];
                             ExcelWorksheet wrksht = wrkbk.Worksheets[0];
                             Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -3134,7 +3132,7 @@ namespace Funtion_F3_SMT
                         if (i < temp_lst.Length)
                         {
 
-                            ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                            ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                             //ExcelWorksheet wrksht = wrkbk.Worksheets[1];
                             ExcelWorksheet wrksht = wrkbk.Worksheets[0];
                             Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -3245,7 +3243,7 @@ namespace Funtion_F3_SMT
 
                         for (int i = 0; i < temp_lst.Length; i++)
                         {
-                            ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                            ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                             ExcelWorksheet wrksht = wrkbk.Worksheets[0];
 
                             Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
@@ -3300,7 +3298,7 @@ namespace Funtion_F3_SMT
                     {
                         if (i < temp_lst.Length)
                         {
-                            ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                            ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                             ExcelWorksheet wrksht = wrkbk.Worksheets[0];
                             Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
                             data.data_val = get_data_val_comment3(wrksht, "Max");
@@ -3382,7 +3380,7 @@ namespace Funtion_F3_SMT
                         string f_na = Path.GetFileNameWithoutExtension(temp_lst[i].Name).TrimEnd(new char[] { ',', '.', ' ' });
                         if (myCode.IsNumeric(f_na))
                         {
-                            ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                            ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                             ExcelWorksheet wrksht = wrkbk.Worksheets[0];
                             Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
                             data.data_val = get_data_val_comment3(wrksht, "Max");
@@ -3445,7 +3443,7 @@ namespace Funtion_F3_SMT
                 for (int i = 0; i < temp_lst.Length; i++)
                 {
 
-                    ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                    ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                     ExcelWorksheet wrksht = wrkbk.Worksheets[0];
                     Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
                     data.data_val = get_data_val_comment3(wrksht, "Average");
@@ -3551,7 +3549,7 @@ namespace Funtion_F3_SMT
                 for (int i = 0; i < temp_lst.Length; i++)
                 {
 
-                    ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                    ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                     ExcelWorksheet wrksht = wrkbk.Worksheets[0];
                     Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
                     data.data_val = get_data_val_comment3(wrksht, "Average");
@@ -3614,7 +3612,7 @@ namespace Funtion_F3_SMT
                 for (int i = 0; i < temp_lst.Length; i++)
                 {
 
-                    ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                    ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                     ExcelWorksheet wrksht = wrkbk.Worksheets[0];
                     Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
                     data.data_val = get_data_val_comment3(wrksht, "Average");
@@ -3917,7 +3915,7 @@ namespace Funtion_F3_SMT
                     if (i < temp_lst.Length)
                     {
 
-                        ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(temp_lst[i].FullName);
+                        ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(temp_lst[i].FullName);
                         ExcelWorksheet wrksht = wrkbk.Worksheets[0];
                         Funtion_SMT.Peeltest_data data = new Funtion_SMT.Peeltest_data();
                         data.data_val = get_data_val_comment3(wrksht, textfind);
@@ -4500,7 +4498,6 @@ namespace Funtion_F3_SMT
 
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && cb_Type.SelectedIndex != -1)
             {
-
                 lbl_judge.BackColor = Color.Transparent;
                 lbl_judge.Text = "";
                 lbl_judge_logfile.BackColor = Color.Transparent;
@@ -6262,7 +6259,7 @@ namespace Funtion_F3_SMT
 
                         //    }
                         //}
-                    
+
 
                         if (myCode.IsNumeric(val.Split('/')[0].TrimEnd(' ', ';').Split(';').Last()) && myCode.IsNumeric(val.Split('/')[1].TrimEnd(' ', ';').Split(';').Last()))
                         {
@@ -6274,7 +6271,7 @@ namespace Funtion_F3_SMT
                             {
                                 dgv.Rows[i].Cells["Data"].Style.BackColor = Color.Red;
                                 break;
-                            } 
+                            }
                         }
                     }
                 }
@@ -6283,7 +6280,7 @@ namespace Funtion_F3_SMT
                 DataTable Data_tbl = (DataTable)dgv.DataSource;
 
                 List<string> lst_region_db = Data_tbl.AsEnumerable().Select(x => x.Field<string>("Region")).ToList();
-                string msg = "";
+
                 foreach (string reg in region)
                 {
                     if (reg != "")
@@ -6336,8 +6333,8 @@ namespace Funtion_F3_SMT
                                         dv.RowFilter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Region" }, new string[] { txtItemCode.Text, txtLotNo.Text, filter_reg });
                                         int min = new int[] { dv.Count, dgv.Rows.Count - 1 }.Min();
 
-                                       // List<double> lst_1 = new List<double> { };
-                                       // List<double> lst_2 = new List<double> { };
+                                        // List<double> lst_1 = new List<double> { };
+                                        // List<double> lst_2 = new List<double> { };
 
 
                                         for (int inx = 0; inx < min; inx++)
@@ -6800,7 +6797,6 @@ namespace Funtion_F3_SMT
 
         private void btn_load_Click(object sender, EventArgs e)
         {
-            message_error = "";
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && txtOperator.Text != "" && txtLogfile.Text != "" && cb_Type.SelectedIndex != -1)
             {
                 dgv_logfile.DataSource = dgv_Analysis.DataSource = null;
@@ -7443,7 +7439,7 @@ namespace Funtion_F3_SMT
         {
 
             if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST")
-            { 
+            {
                 if (txt_setchan.Text == "0" || !myCode.IsNumeric(txt_setchan.Text))
                 {
                     MessageBox.Show(new Form { TopMost = true }, "Vui lòng nhập số chân linh kiện", "Thông báo");
@@ -7609,7 +7605,7 @@ namespace Funtion_F3_SMT
                         if (dgv_logfile.Columns.Contains("Select"))
                         {
                             int r_inx = e.RowIndex;
-                            Select_Image fr1 = new Select_Image(check_mode, judge_mode, shear_data, setup_sochan) { TopMost = true };
+                            Select_Image fr1 = new Select_Image(check_mode, judge_mode, shear_data, setup_sochan) ;
                             fr1.sheet = sheet;
                             fr1.dt_image_ = (DataTable)dgv_logfile.DataSource;
                             fr1.r_inx_ = r_inx;
@@ -10323,8 +10319,6 @@ namespace Funtion_F3_SMT
 
         public SortedDictionary<int, string> dic_judge_crosscut(int count_sample, DataTable dt_data)
         {
-
-            bool chk = true;
             List<DataTable> lst_Table = new List<DataTable> { };
             Get_ListTable(-1, dt_data, new string[] { "Region" }, ref lst_Table, "Data");
             SortedDictionary<int, string> dic_judge = new SortedDictionary<int, string> { };
@@ -11377,8 +11371,7 @@ namespace Funtion_F3_SMT
                             }
                             if (txt_qty.Text != "")
                             {
-                            lbl_create:
-
+                                //Debugger.Break();
                                 string file_format = find_format(data_loc, txtItemCode.Text);
                                 string f = file_format;
                                 string export_path = "";
@@ -11396,7 +11389,6 @@ namespace Funtion_F3_SMT
                                 }
                                 else if (cb_Type.SelectedItem.ToString() == "NPI")
                                 {
-
                                     if (sheet.Contains("UNMATING") || sheet.Contains("COUPON"))
                                     {
                                         export_path = Path.Combine(report_folder, txt_itemcode_nvl.Text + "-" + txt_lotno_nvl.Text + ".xlsx");
@@ -12954,7 +12946,7 @@ namespace Funtion_F3_SMT
                     str1 = "|" + data1.ToString() + "-" + data2.ToString() + "| > 30\n";
                 }
             }
-             
+
 
             string[] strArray = dt_spec.Rows[0]["Location"].ToString().Split('+')[1].Split('_');
             string str3 = dgv.Rows[r_indx].Cells["Region"].Value.ToString();
@@ -13010,7 +13002,7 @@ namespace Funtion_F3_SMT
                                         double num10 = double.Parse(val.Split('/')[1].Split(';')[1]);
 
                                         str1 += str7 + "\n";
-                                        if (num9 > num7 )
+                                        if (num9 > num7)
                                             str1 += num9.ToString() + " > " + num7.ToString() + "\n";
                                         if (num10 > num7)
                                             str1 += num10.ToString() + " > " + num7.ToString() + "\n";
@@ -13204,9 +13196,8 @@ namespace Funtion_F3_SMT
                 {
                     f_path = f_open.FileName;
 
-                    ExcelWorkbook wrkbk = TDMK_Code2.open_excel_file(f_path);
+                    ExcelWorkbook wrkbk = TDMK_EPPLUS.open_excel_file(f_path);
                     ExcelWorksheet wrksht = wrkbk.Worksheets[0];
-                    string text_find = "";
                     switch (sheet)
                     {
                         case "PEEL_TEST":
@@ -13669,7 +13660,7 @@ namespace Funtion_F3_SMT
 
         private void txt_setchan_TextChanged(object sender, EventArgs e)
         {
-            if(txt_setchan.Text == "0" || !myCode.IsNumeric(txt_setchan.Text))
+            if (txt_setchan.Text == "0" || !myCode.IsNumeric(txt_setchan.Text))
             {
                 txt_setchan.BackColor = Color.Yellow;
             }
@@ -13678,6 +13669,24 @@ namespace Funtion_F3_SMT
                 txt_setchan.BackColor = Color.White;
                 set_chan = int.Parse(txt_setchan.Text);
             }
+        }
+
+        private void dgv_logfile_DataSourceChanged(object sender, EventArgs e)
+        {
+            //DataTable dataTable = (DataTable)dgv_logfile.DataSource;
+            //DataColumn sttColumn = new DataColumn("ID", typeof(int));
+            //dataTable.Columns.Add(sttColumn);
+
+            //// 2. Duyệt qua các dòng và gán giá trị số thứ tự
+            //for (int i = 0; i < dgv_logfile.Rows.Count; i++)
+            //{
+            //    dataTable.Rows[i]["ID"] = i + 1;
+            //}
+            //// Di chuyển cột 'STT' lên index 1
+            //if (dataTable.Columns.Contains("ID"))
+            //{
+            //    dataTable.Columns["ID"].SetOrdinal(1);
+            //}
         }
     }
 

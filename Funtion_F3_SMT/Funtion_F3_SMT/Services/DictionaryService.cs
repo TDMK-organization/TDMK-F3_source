@@ -8,7 +8,17 @@ namespace OK2SHIP_SMT.Services
 {
     public static class DictionaryService
     {
-        
+        public static void AddOrUpdate<TValue>(IDictionary<string, TValue> dic, string key, TValue value)
+        {
+            if (dic.ContainsKey(key))
+            {
+                dic[key] = value;
+            }
+            else
+            {
+                dic.Add(key, value);
+            }
+        }
         public static string GetValueOrNull(IDictionary<string, string> dic, string key)
         {
             if(dic.TryGetValue(key, out string s))

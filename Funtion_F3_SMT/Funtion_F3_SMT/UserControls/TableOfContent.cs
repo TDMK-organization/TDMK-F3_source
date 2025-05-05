@@ -67,7 +67,14 @@ namespace OK2SHIP_SMT.UserControls
                     throw new Exception("Hãy nhập itemName!");
                 }
                 DataTable dataTable = (DataTable)dgv_ItemName.DataSource;
-                dataTable.Rows.Clear();
+                if (dataTable != null)
+                {
+                    dataTable.Rows.Clear();
+                }
+                else
+                {
+                    throw new Exception("Chưa có dataTable");
+                }
                 DataRow dr = dataTable.NewRow();
                 dr["ItemName"] = itemName;
                 dr["ProgramName"] = tb_Program.Text.Trim();
@@ -680,11 +687,11 @@ namespace OK2SHIP_SMT.UserControls
                     int? com = null;
                     if (row["Target date Request"].ToString().Contains("30"))
                     {
-                         com = compareDate(row["Target date Submission"].ToString(), 30);
+                        com = compareDate(row["Target date Submission"].ToString(), 30);
                     }
                     else if (row["Target date Request"].ToString().Contains("5"))
                     {
-                         com = compareDate(row["Target date Submission"].ToString(), 5);
+                        com = compareDate(row["Target date Submission"].ToString(), 5);
                     }
                     string status = "";
                     switch (com)

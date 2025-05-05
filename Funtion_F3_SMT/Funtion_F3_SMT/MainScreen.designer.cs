@@ -74,18 +74,20 @@
             // 
             // button1
             // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.Location = new System.Drawing.Point(37, 264);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(201, 219);
             this.button1.TabIndex = 21;
             this.button1.Text = "Account Manager";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // MainScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(558, 514);
+            this.ClientSize = new System.Drawing.Size(536, 508);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btn_TableOfContent);
             this.Controls.Add(this.lblInputdata);

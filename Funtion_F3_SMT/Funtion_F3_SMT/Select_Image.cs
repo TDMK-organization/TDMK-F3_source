@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -134,7 +135,7 @@ namespace Funtion_F3_SMT
             }
 
             List<byte[]> lst_data_image = new List<byte[]> { };
-            int k = 0;
+
             foreach (string col_name in lst_col)
             {
                 lst_data_image.Add((byte[])dt_image.Rows[r_inx][col_name]);
@@ -207,25 +208,34 @@ namespace Funtion_F3_SMT
             dgv_judgement.DataSource = null;
             if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST")
             {
-              //  lbl_sochan.Enabled = true; 
+                //  lbl_sochan.Enabled = true; 
                 dgv_judgement.Visible = true;
                 lbl_sochan.Visible = true;
                 txt_sochan.Visible = true;
 
-                if(sochan != 0)
+                if (sochan != 0)
                 {
                     txt_sochan.Text = sochan.ToString();
                 }
-               
+
                 DataTable dt_judge = new DataTable();
+                dt_judge.Columns.Add("Mode 1: Solder joint crack");
                 dt_judge.Columns.Add("Mode 2: Pad lift");
+                dt_judge.Columns.Add("Mode 3: Solder joint lift");
+                dt_judge.Columns.Add("Mode 4: Intermetallic break");
                 dt_judge.Columns.Add("Mode 5: Component damage");
+                dt_judge.Columns.Add("Mode 6: Component detached");
+                dt_judge.Columns.Add("Mode 7: Flex torn");
 
                 DataRow dr = dt_judge.NewRow();
-                //dr[0] = "0%";
-                //dr[1] = "0%";
-                dr[0] = dt_image.Rows[r_inx]["Mode 2: Pad lift"];
-                dr[1] = dt_image.Rows[r_inx]["Mode 5: Component damage"];
+
+                dr[0] = dt_image.Rows[r_inx]["Mode 1: Solder joint crack"];
+                dr[1] = dt_image.Rows[r_inx]["Mode 2: Pad lift"];
+                dr[2] = dt_image.Rows[r_inx]["Mode 3: Solder joint lift"];
+                dr[3] = dt_image.Rows[r_inx]["Mode 4: Intermetallic break"];
+                dr[4] = dt_image.Rows[r_inx]["Mode 5: Component damage"];
+                dr[5] = dt_image.Rows[r_inx]["Mode 6: Component detached"];
+                dr[6] = dt_image.Rows[r_inx]["Mode 7: Flex torn"];
 
                 dt_judge.Rows.Add(dr);
                 dgv_judgement.DataSource = dt_judge;
@@ -240,7 +250,8 @@ namespace Funtion_F3_SMT
 
         private void Select_Image_Load(object sender, EventArgs e)
         {
-            var img = Bitmap.FromFile(Path.Combine(System.Windows.Forms.Application.StartupPath, "Img_null", "Img_null.jpg"));
+            Bitmap img = new Bitmap(100, 50, PixelFormat.Format32bppArgb);
+            //var img = Bitmap.FromFile(Path.Combine(System.Windows.Forms.Application.StartupPath, "Img_null", "Img_null.jpg"));
             ImageConverter imgcon = new ImageConverter();
             img_null = (byte[])imgcon.ConvertTo(img, typeof(byte[]));
             if (sheet == "SHEAR_TEST")
@@ -318,7 +329,7 @@ namespace Funtion_F3_SMT
                 btn_next.Enabled = false;
             }
 
-            
+
 
             //if(myCode.IsNumeric(lbl_sochan.Text.Replace("Tổng số chân:", "").Replace(" ", "")))
             //{
@@ -527,21 +538,25 @@ namespace Funtion_F3_SMT
 
         private void dgv_judgement_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if(txt_sochan.Text != "")
+            if (txt_sochan.Text != "")
             {
                 string col_name = dgv_judgement.Columns[e.ColumnIndex].Name;
-                List<string> lst_col_name = new List<string> { "Mode 2: Pad lift", "Mode 5: Component damage" };
+                string row_value = dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+
+                List<string> lst_col_name = new List<string> { "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn" };
                 if (lst_col_name.Contains(col_name))
                 {
-                    dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.White; 
+                    dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.White;
                     double data = 0;
-                    
+
                     if (myCode.IsNumeric(dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString().Replace(" ", "")))
                     {
                         string val_change = dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString().Replace(" ", "");
                         //int b = int.Parse(val_change.Split('/')[1]);
                         if (myCode.IsNumeric(txt_sochan.Text))
+                        {
                             sochan = int.Parse(txt_sochan.Text);
+                        }
                         if (sochan != 0)
                         {
                             int a = int.Parse(val_change);
@@ -577,20 +592,21 @@ namespace Funtion_F3_SMT
                         {
                             dt_image.Rows[r_inx]["Mode 5: Component damage"] = dgv_judgement.Rows[0].Cells[1].Value.ToString();
                         }
-                       
+
                     }
                     else
                     {
                         this.str_judge("");
                     }
-                     
+
                 }
+
             }
             else
             {
                 MessageBox.Show(new Form { TopMost = true }, "Vui lòng nhập tổng số chân", "Thông báo");
             }
-             
+
         }
 
         private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
@@ -605,7 +621,7 @@ namespace Funtion_F3_SMT
 
         private void btn_next_Resize(object sender, EventArgs e)
         {
-            
+
 
         }
 

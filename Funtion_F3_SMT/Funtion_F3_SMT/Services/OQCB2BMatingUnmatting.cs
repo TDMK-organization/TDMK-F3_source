@@ -1,5 +1,6 @@
 ﻿using OfficeOpenXml;
 using OfficeOpenXml.Drawing;
+using OK2SHIP_SMT.Libary;
 using OK2SHIP_SMT.Repositories;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TDMK_EPPLUS_7;
+
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace OK2SHIP_SMT.Services
@@ -27,7 +28,7 @@ namespace OK2SHIP_SMT.Services
 
         public OQCB2BMatingUnmatting()
         {
-            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.Commercial;
 
         }
 
@@ -147,7 +148,7 @@ namespace OK2SHIP_SMT.Services
                     IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, new string[] { "Max" }, true);
                     if (dic.TryGetValue("Max", out string address))
                     {
-                        TDMK_EPPLUS7_lib _lub = new TDMK_EPPLUS7_lib();
+                        TDMK_EPPLUS _lub = new TDMK_EPPLUS();
                         int cell = _lub.Get_Last_Cells_addr(address, worksheet, true);
 
                         string num = (string)worksheet.Cells[worksheet.Cells[address].Start.Row, cell].Value;

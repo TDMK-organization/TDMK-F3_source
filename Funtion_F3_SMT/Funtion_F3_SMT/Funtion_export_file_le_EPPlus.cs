@@ -1,38 +1,41 @@
-﻿using Microsoft.Office.Interop.Excel;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using TDMK_SEEV_DLL;
-using TDMK_SQL;
-using myExcel = Microsoft.Office.Interop.Excel;
-using DataTable = System.Data.DataTable;
-using System.IO;
-using Image = System.Drawing.Image;
-using Microsoft.Office.Core;
-using System.Runtime.InteropServices;
-using System.Drawing;
-using System.Data.SqlClient;
-using OfficeOpenXml.FormulaParsing;
-using OK2SHIP_SMT;
+﻿using Microsoft.Office.Core;
+using Microsoft.Office.Interop.Excel;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing;
+using OfficeOpenXml.FormulaParsing;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
+using OfficeOpenXml.Style;
+using OK2SHIP_SMT;
+using OK2SHIP_SMT.Repositories;
+using OK2SHIP_SMT.Services;
+using Patagames.Ocr.Enums;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Deployment.Application;
+using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using static System.Net.Mime.MediaTypeNames;
-using Patagames.Ocr.Enums;
-using System.Diagnostics.Eventing.Reader;
-using OfficeOpenXml.Style;
-using System.Diagnostics;
-using System.Deployment.Application;
-using System.Xml;
-using System.Collections;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using TDMK_Image;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml;
+using TDMK_Image;
+using TDMK_SEEV_DLL;
+using TDMK_SQL;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using DataTable = System.Data.DataTable;
+using Image = System.Drawing.Image;
+using myExcel = Microsoft.Office.Interop.Excel;
 
 namespace Funtion_F3_SMT
 {
@@ -41,8 +44,7 @@ namespace Funtion_F3_SMT
     {
         public TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
         public SEI_Lib myCode = new SEI_Lib();
-        //public EPPlus_Lib TDMK_Code2 = new EPPlus_Lib();
-        byte[] img_null = null;
+        //public EPPlus_Lib TDMK_EPPLUS = new EPPlus_Lib();
 
         //export cross_section
         public void export_excel_cross_section(ExcelWorksheet ws, string itemcode, string lotno, DataTable Data_tbl, DataTable dt_spec, DataGridView dgv_data, string type, string leader, int count_sample)
@@ -278,7 +280,6 @@ namespace Funtion_F3_SMT
 
         public SortedDictionary<int, string> dic_judge_crosscut(int count_sample, DataTable dt_data, DataGridView dgv_data, ref bool judge_all)
         {
-            bool chk = true;
             List<DataTable> lst_Table = new List<DataTable> { };
             Get_ListTable(-1, dt_data, new string[] { "Region" }, ref lst_Table, "Data");
             SortedDictionary<int, string> dic_judge = new SortedDictionary<int, string> { };
@@ -1311,7 +1312,7 @@ namespace Funtion_F3_SMT
             {
                 ExcelPicture pic = wsSheet1.Drawings.AddPicture(pic_name, ms);//img 
                 ExcelWorkbook wrkbk = wsSheet1.Workbook;
-                decimal mdw = wrkbk.MaxFontWidth;
+                decimal mdw = (decimal)wrkbk.MaxFontWidth;
                 int pixelHeight = (int)(row_h / 0.75);
                 int pixelWidth = (int)decimal.Truncate(((256 * (decimal)col_w + decimal.Truncate(128 / (decimal)mdw)) / 256) * mdw);
                 int offset = (int)(0.05 * Math.Min(pixelHeight, pixelWidth));
@@ -1374,7 +1375,7 @@ namespace Funtion_F3_SMT
             {
                 ExcelPicture pic = wsSheet1.Drawings.AddPicture(pic_name, ms);//img 
                 ExcelWorkbook wrkbk = wsSheet1.Workbook;
-                decimal mdw = wrkbk.MaxFontWidth;
+                decimal mdw = (decimal)wrkbk.MaxFontWidth;
                 int pixelHeight = (int)(row_h / 0.75);
                 int pixelWidth = (int)decimal.Truncate(((256 * (decimal)col_w + decimal.Truncate(128 / (decimal)mdw)) / 256) * mdw);
                 int offset = (int)(0.05 * Math.Min(pixelHeight, pixelWidth));
@@ -1421,7 +1422,7 @@ namespace Funtion_F3_SMT
             {
                 ExcelPicture pic = wsSheet1.Drawings.AddPicture(pic_name, ms);//img
                 ExcelWorkbook wrkbk = wsSheet1.Workbook;
-                decimal mdw = wrkbk.MaxFontWidth;
+                decimal mdw = (decimal)wrkbk.MaxFontWidth;
                 int pixelHeight = (int)(row_h / 0.75);
                 int pixelWidth = (int)decimal.Truncate(((256 * (decimal)col_w + decimal.Truncate(128 / (decimal)mdw)) / 256) * mdw);
                 int offset = (int)(0.05 * Math.Min(pixelHeight, pixelWidth));
@@ -1671,35 +1672,47 @@ namespace Funtion_F3_SMT
                                         {
                                             if (i < tbl_region.Rows.Count)
                                             {
-                                                int min_r = new int[] { count_r_offset, lst_data[i].Split('/')[0].Split(';').Length }.Min();
-                                                offset = min_r;
-                                                lst_1.Add(double.Parse(lst_data[i].Split('/')[0].Split(';')[min_r - 1]));
-                                                lst_2.Add(double.Parse(lst_data[i].Split('/')[1].Split(';')[min_r - 1]));
-
-                                                for (int k = 0; k < min_r; k++)
+                                                try
                                                 {
-                                                    cell_data.Offset(k, i).Value = double.Parse(lst_data[i].Split('/')[0].Split(';')[k]);
-                                                    cell_data.Offset(k, i).Style.Numberformat.Format = "0.00";
-                                                    cell_data.Offset(k + count_r_offset + 1, i).Value = double.Parse(lst_data[i].Split('/')[1].Split(';')[k]);
-                                                    cell_data.Offset(k + count_r_offset + 1, i).Style.Numberformat.Format = "0.00";
+                                                    int a = lst_data[i].Split('/')[0].Split(';').Length;
+                                                    int b = lst_data[i].Split('/')[1].Split(';').Length;
+                                                    string z = lst_data[i].Split('/')[1];
+                                                    int min_r = new int[] { count_r_offset, a, b }.Min();
+
+                                                    offset = min_r;
+                                                    lst_1.Add(double.Parse(lst_data[i].Split('/')[0].Split(';')[min_r - 1]));
+                                                    lst_2.Add(double.Parse(lst_data[i].Split('/')[1].Split(';')[min_r - 1]));
+
+
+                                                    for (int k = 0; k < min_r; k++)
+                                                    {
+                                                        cell_data.Offset(k, i).Value = double.Parse(lst_data[i].Split('/')[0].Split(';')[k]);
+                                                        cell_data.Offset(k, i).Style.Numberformat.Format = "0.00";
+                                                        cell_data.Offset(k + count_r_offset + 1, i).Value = double.Parse(lst_data[i].Split('/')[1].Split(';')[k]);
+                                                        cell_data.Offset(k + count_r_offset + 1, i).Style.Numberformat.Format = "0.00";
+                                                    }
+
+
+                                                    int ID = int.Parse(tbl_region.Rows[i]["ID"].ToString());
+
+                                                    if (dic_judgement.ContainsKey(ID - 1))
+                                                    {
+                                                        if (dic_judgement[ID - 1] == "FAIL")
+                                                        {
+                                                            cell_data.Offset(min_r + count_r_offset + 1, i).Value = "NG";
+
+                                                        }
+                                                        else
+                                                        {
+                                                            cell_data.Offset(min_r + count_r_offset + 1, i).Value = "OK";
+                                                        }
+                                                    }
                                                 }
-
-
-                                                int ID = int.Parse(tbl_region.Rows[i]["ID"].ToString());
-
-                                                if (dic_judgement.ContainsKey(ID - 1))
+                                                catch
                                                 {
-                                                    if (dic_judgement[ID - 1] == "FAIL")
-                                                    {
-                                                        cell_data.Offset(min_r + count_r_offset + 1, i).Value = "NG";
+                                                    throw new Exception("Lỗi dữ liệu đẩy vào hãy kiểm tra lại logfile!");
 
-                                                    }
-                                                    else
-                                                    {
-                                                        cell_data.Offset(min_r + count_r_offset + 1, i).Value = "OK";
-                                                    }
                                                 }
-
                                             }
                                         }
                                         cell_data.Offset(offset + count_r_offset + 1, count_sample).Value = "OK";
@@ -2318,104 +2331,225 @@ namespace Funtion_F3_SMT
 
         public void export_excel_peel_pull_shear(ExcelWorksheet ws, string itemcode, string lotno, string sheet, DataTable Data_tbl, DataTable dt_spec, DataGridView dgv_data, string type, string leader, int count_sample)
         {
-            //Find Dictionary have name column {sample 1} and address
-            Dictionary<string, string> columnSample = new Dictionary<string, string>();
-            Dictionary<string, string> row = new Dictionary<string, string>();
-
-            //Find all header row with string 
-            //Notice: use contain
-            List<string> nameHeaderRow = new List<string> { "STDEV", "CPK", "Min Force (N)", "Max Force (N)", "Average Force (N)", "Picture", "Graph", "Peeling Force", "Judgement peeling force", "Final judgement", "Judgement failure mode", "Solder joint crack", "Pad lift", "Solder joint lift", "Intermetallic break", "Component damage", "Component detached", "Flex torn" };
-            double? peallingValue = -1;
-            for (int i = 1; i <= ws.Dimension.Rows; i++)
+            string testName = "Force!!!!!!!!!!!!!!!", forceName = "Froezzzz";
+            if (ws.Name.Contains("Peel"))
             {
-                for (int j = 1; j <= ws.Dimension.Columns; j++)
+                testName = "Peeling Force";
+                forceName = "Judgement peeling force";
+            }
+            if (ws.Name.Contains("Pull"))
+            {
+                testName = "Pulling Force";
+                forceName = "Judgement pulling force";
+            }
+
+
+            string[] nameAddress = new[] { testName, forceName, "Sample", "STDEV", "CPK", "Min Force (N)", "Max Force (N)", "Average Force (N)", "Picture", "Graph", "Final judgement", "Judgement failure mode", "Solder joint crack", "Pad lift", "Solder joint lift", "Intermetallic break", "Component damage", "Component detached", "Flex torn" };
+            //Find Dictionary have name column {sample 1} and address
+            IDictionary<string, string> addressDic = ExportProcess.FindAddressByText(ws, nameAddress);
+
+            if (addressDic.TryGetValue("Sample", out string address))
+            {
+                if (count_sample != address.Split('-').Count())
                 {
-                    string textValue = ws.Cells[i, j].Text;
-                    if (!string.IsNullOrEmpty(textValue))
+                    if (MessageBox.Show("Số pcs của format không phù hợp bạn có muốn tiếp tục", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.No)
                     {
-                        // If cell is "Sample" then add to columnSample
-                        if (textValue.Contains("Sample"))
-                        {
-                            // this can error with duplicate key if that happen message for SEEV
-                            columnSample.Add(textValue, ws.Cells[i, j].Address);
-                        }
-                        else
-                        {
-                            if (nameHeaderRow.Any(s => textValue.Contains(s)))
-                            {
-                                if (textValue.Contains("Peeling Force"))
-                                {
-                                    peallingValue = GetDecimalFromString(ws.Cells[i, j].Text.Split('(')[1]);
-                                    row.Add("Peeling Force", ws.Cells[i, j].Address);
-                                }
-                                else
-                                {
-                                    row.Add(textValue, ws.Cells[i, j].Address);
-                                }
-                            }
-                        }
+                        return;
                     }
                 }
             }
 
-            // count sample
-            int sampleCount = 1;
-            // max min force
-            double maxForce = int.MinValue, minForce = int.MaxValue, sumForce = 0;
-
-            foreach (DataRow item in Data_tbl.Rows)
+            int rowIndex = 0;
+            string addressForce = "";
+            IList<double> numbers = new List<double>();
+            foreach (string addressCol in address.Split('-'))
             {
-                string sampleCol = $"Sample {sampleCount++}";
+                rowIndex++;
+                int column = ws.Cells[addressCol].End.Column;
+                ///
+                DataRow item = Data_tbl.Rows[rowIndex];
+                if (addressDic.TryGetValue("Picture", out string addressRow))
+                {
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    if (item["Image"] != DBNull.Value && item["Image"] is byte[])
+                    {
+                        InsertPicture_Name(ws, ws.Cells[address], (byte[])item["Image"], $"{rowIndex} - picture");
+                    }
+                }
+                if (addressDic.TryGetValue("Graph", out addressRow))
+                {
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    if (item["Graph"] != DBNull.Value && item["Graph"] is byte[])
+                    {
+                        InsertPicture_Name(ws, ws.Cells[address], (byte[])item["Graph"], $"{rowIndex} - Graph");
+                    }
+                }
+                if (addressDic.TryGetValue(testName, out addressRow))
+                {
+                    addressRow = addressRow.Split('-')[0];
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    addressForce += $" {address} + ";
 
-                // 1.Fill image in format
-                // 1.1. take address
-                string cellPicture = ws.Cells[ws.Cells[row["Picture"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Address;
-                // 1.2. Insert image
-                if (item["Image"] != DBNull.Value && item["Image"] is byte[])
-                {
-                    InsertPicture_Name(ws, ws.Cells[cellPicture], (byte[])item["Image"], $"{sampleCol} - picture");
+                    ws.Cells[address].Value = double.Parse(item["Data"].ToString().Trim());
                 }
-                // 2.Fill Graph in format
-                // 2.1 Take address
-                string cellGraph = ws.Cells[ws.Cells[row["Graph"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Address;
-                // 2.2 Insert Image
-                if (item["Graph"] != DBNull.Value && item["Graph"] is byte[])
-                {
-                    InsertPicture_Name_Graph(ws, ws.Cells[cellGraph], (byte[])item["Graph"], $"{sampleCol} - graph");
-                }
-                //3. Fill data Mode & data + take max min force, solve avegare
 
-                //3.1 Take address data
-                string cellData = ws.Cells[ws.Cells[row["Peeling Force"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Address;
-                //3.2 fill data
-                ws.Cells[cellData].Value = item["Data"];
-                double valueForce = GetDecimalFromString(item["Data"].ToString());
-                //3.3 fill Judgement peeling force	
-                if (GetDecimalFromString(item["Data"].ToString()) < peallingValue)
+
+                string primeMode = "";
+                double maxMode = double.MinValue;
+
+
+                if (addressDic.TryGetValue("Solder joint crack", out addressRow))
                 {
-                    ws.Cells[ws.Cells[row["Judgement peeling force"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Value = "Fail";
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    ws.Cells[address].Value = item["Mode 1: Solder joint crack"];
+                    if (double.TryParse(item["Mode 1: Solder joint crack"].ToString().Trim('%'), out double number))
+                    {
+                        if (number > maxMode)
+                        {
+                            maxMode = number;
+                            primeMode = "Mode #1";
+                        }
+                    }
                 }
-                else
+                if (addressDic.TryGetValue("Pad lift", out addressRow))
                 {
-                    ws.Cells[ws.Cells[row["Judgement peeling force"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Value = "Pass";
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    ws.Cells[address].Value = item["Mode 2: Pad lift"];
+                    if (double.TryParse(item["Mode 2: Pad lift"].ToString().Trim('%'), out double number))
+                    {
+                        if (number > maxMode)
+                        {
+                            maxMode = number;
+                            primeMode = "Mode #2";
+                        }
+                    }
                 }
-                //3.4 Take value max min force
-                maxForce = Math.Max(maxForce, valueForce);
-                minForce = Math.Min(maxForce, valueForce);
-                sumForce += valueForce;
-                //3.5 Fill Mode
-                ws.Cells[ws.Cells[row["Solder joint crack"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Value = item["Mode 1: Solder joint crack"];
-                ws.Cells[ws.Cells[row["Pad lift"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Value = item["Mode 2: Pad lift"];
-                ws.Cells[ws.Cells[row["Solder joint lift"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Value = item["Mode 3: Solder joint lift"];
-                ws.Cells[ws.Cells[row["Intermetallic break"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Value = item["Mode 4: Intermetallic break"];
-                ws.Cells[ws.Cells[row["Component damage"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Value = item["Mode 5: Component damage"];
-                ws.Cells[ws.Cells[row["Component detached"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Value = item["Mode 6: Component detached"];
-                ws.Cells[ws.Cells[row["Flex torn"]].Start.Row, ws.Cells[columnSample[sampleCol]].Start.Column].Value = item["Mode 7: Flex torn"];
+                if (addressDic.TryGetValue("Solder joint lift", out addressRow))
+                {
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    ws.Cells[address].Value = item["Mode 3: Solder joint lift"];
+                    if (double.TryParse(item["Mode 3: Solder joint lift"].ToString().Trim('%'), out double number))
+                    {
+                        if (number > maxMode)
+                        {
+                            maxMode = number;
+                            primeMode = "Mode #3";
+                        }
+                    }
+                }
+                if (addressDic.TryGetValue("Intermetallic break", out addressRow))
+                {
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    ws.Cells[address].Value = item["Mode 4: Intermetallic break"];
+                    if (double.TryParse(item["Mode 4: Intermetallic break"].ToString().Trim('%'), out double number))
+                    {
+                        if (number > maxMode)
+                        {
+                            maxMode = number;
+                            primeMode = "Mode #4";
+                        }
+                    }
+                }
+                if (addressDic.TryGetValue("Component damage", out addressRow))
+                {
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    ws.Cells[address].Value = item["Mode 5: Component damage"];
+                    if (double.TryParse(item["Mode 5: Component damage"].ToString().Trim('%'), out double number))
+                    {
+                        if (number > maxMode)
+                        {
+                            maxMode = number;
+                            primeMode = "Mode #5";
+                        }
+                    }
+                }
+                if (addressDic.TryGetValue("Component detached", out addressRow))
+                {
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    ws.Cells[address].Value = item["Mode 6: Component detached"];
+                    if (double.TryParse(item["Mode 6: Component detached"].ToString().Trim('%'), out double number))
+                    {
+                        if (number > maxMode)
+                        {
+                            maxMode = number;
+                            primeMode = "Mode #6";
+                        }
+                    }
+                }
+                if (addressDic.TryGetValue("Flex torn", out addressRow))
+                {
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    ws.Cells[address].Value = item["Mode 7: Flex torn"];
+                    if (double.TryParse(item["Mode 7: Flex torn"].ToString().Trim('%'), out double number))
+                    {
+                        if (number > maxMode)
+                        {
+                            maxMode = number;
+                            primeMode = "Mode #7";
+                        }
+                    }
+                }
+                //Debugger.Break();
+                double valueForce = double.MinValue;
+
+                if (addressDic.TryGetValue(forceName, out addressRow))
+                {
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+
+                    if (double.TryParse(item["Data"].ToString(), out valueForce))
+                    {
+                        ws.Cells[address].Value = valueForce > 5 ? "Pass" : "NG";
+                    }
+                    numbers.Add(valueForce);
+                }
+                if (addressDic.TryGetValue("Judgement failure mode", out addressRow))
+                {
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    ws.Cells[address].Value = primeMode;
+
+                }
+                if (addressDic.TryGetValue("Final judgement", out addressRow))
+                {
+                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                    if (valueForce > 5 && primeMode.Contains("Mode 1"))
+                    {
+                        ws.Cells[address].Value = "Pass";
+                    }
+                    else
+                    {
+                        ws.Cells[address].Value = "NG";
+
+                    }
+
+                }
+
             }
-            //3.5 Fill max min force + avegare
-            ws.Cells[ws.Cells[row["Max Force (N)"]].Start.Row, ws.Cells[row["Max Force (N)"]].Start.Column + 2].Value = $"{maxForce} Max";
-            ws.Cells[ws.Cells[row["Min Force (N)"]].Start.Row, ws.Cells[row["Min Force (N)"]].Start.Column + 2].Value = minForce;
-            ws.Cells[ws.Cells[row["Average Force (N)"]].Start.Row, ws.Cells[row["Average Force (N)"]].Start.Column + 2].Value = sumForce / (sampleCount - 1);
+            if (addressDic.TryGetValue("Max Force (N)", out string addressRowz))
+            {
+                address = ws.Cells[ws.Cells[addressRowz].End.Row, ws.Cells[addressRowz].End.Column + 2].Address;
+                ws.Cells[address].FormulaR1C1 = $"=MAX({ExportProcess.ConvertAddressRangeBase(ws, addressForce, address)})";
+            }
+            if (addressDic.TryGetValue("Min Force (N)", out addressRowz))
+            {
+                address = ws.Cells[ws.Cells[addressRowz].End.Row, ws.Cells[addressRowz].End.Column + 2].Address;
+                ws.Cells[address].FormulaR1C1 = $"=MIN({ExportProcess.ConvertAddressRangeBase(ws, addressForce, address)})";
+            }
+            if (addressDic.TryGetValue("Average Force (N)", out string addressAverage))
+            {
+                addressAverage = ws.Cells[ws.Cells[addressAverage].End.Row, ws.Cells[addressAverage].End.Column + 2].Address;
+                ws.Cells[addressAverage].FormulaR1C1 = $"=average({ExportProcess.ConvertAddressRangeBase(ws, addressForce, addressAverage)})";
+            }
+
+            if (addressDic.TryGetValue("STDEV", out string addressSTDEV))
+            {
+                addressSTDEV = ws.Cells[ws.Cells[addressSTDEV].End.Row, ws.Cells[addressRowz].End.Column + 2].Address;
+                ws.Cells[addressSTDEV].FormulaR1C1 = $"=STDEV({ExportProcess.ConvertAddressRangeBase(ws, addressForce, addressSTDEV)})";
+                if (addressDic.TryGetValue("CPK", out addressRowz))
+                {
+                    address = ws.Cells[ws.Cells[addressRowz].End.Row, ws.Cells[addressRowz].End.Column + 2].Address;
+                    ws.Cells[address].FormulaR1C1 = $"=({ExportProcess.ConvertAddressRangeBase(ws, addressSTDEV, address)}-{ConverterService.GetNumberFromString(dt_spec.Rows[0]["Location"].ToString())})/(3*{ExportProcess.ConvertAddressRangeBase(ws, addressAverage, address)})";
+                }
+            }
             #region OldCode
             //bool judge_all = true;
             //// Type mass and other
@@ -2676,8 +2810,12 @@ namespace Funtion_F3_SMT
             //    }
             //}
             #endregion
-
-
+        }
+        public static double StandardDeviation(IEnumerable<double> values)
+        {
+            double average = values.Average();
+            double sumOfSquaresOfDifferences = values.Sum(val => Math.Pow(val - average, 2));
+            return Math.Round(Math.Sqrt(sumOfSquaresOfDifferences / (values.Count() - 1)), 2); // Sử dụng (n-1) cho mẫu (sample)
         }
         public static double GetDecimalFromString(string input)
         {
@@ -5257,7 +5395,7 @@ namespace Funtion_F3_SMT
             FileInfo excel_file = new FileInfo(file_name);
             if (File.Exists(file_name))
             {
-                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                ExcelPackage.LicenseContext = LicenseContext.Commercial;
                 myexcel = new ExcelPackage(excel_file);
             }
             return myexcel;
@@ -5278,7 +5416,7 @@ namespace Funtion_F3_SMT
 
             string export_path = System.IO.Path.Combine(report_folder, itemcode + "-" + lotno + ".xlsx");
 
-            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            ExcelPackage.LicenseContext = LicenseContext.Commercial;
             ExcelPackage xlPackage = open_excel(export_path);
             ExcelWorkbook wb_format = xlPackage.Workbook;
 
@@ -5300,7 +5438,7 @@ namespace Funtion_F3_SMT
                 if (!System.IO.Directory.Exists(report_folder))
                     System.IO.Directory.CreateDirectory(report_folder);
 
-                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                ExcelPackage.LicenseContext = LicenseContext.Commercial;
                 sourcePackage = new ExcelPackage(new FileInfo(file_format));
                 report_saved = sourcePackage.Workbook;
                 string _process = process_name.Replace("_", "").Replace("-", "").Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper();
@@ -5337,7 +5475,7 @@ namespace Funtion_F3_SMT
         {
             string export_path = System.IO.Path.Combine(report_folder, itemcode + "-" + lotno + ".xlsx");
 
-            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            ExcelPackage.LicenseContext = LicenseContext.Commercial;
             ExcelPackage xlPackage = open_excel(file_format);
             ExcelWorkbook wb_format = xlPackage.Workbook;
 
@@ -5358,7 +5496,7 @@ namespace Funtion_F3_SMT
                 if (!System.IO.Directory.Exists(report_folder))
                     System.IO.Directory.CreateDirectory(report_folder);
 
-                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                ExcelPackage.LicenseContext = LicenseContext.Commercial;
                 sourcePackage = new ExcelPackage();
                 report_saved = sourcePackage.Workbook;
 
@@ -5530,7 +5668,7 @@ namespace Funtion_F3_SMT
                 if (!System.IO.Directory.Exists(report_folder))
                     System.IO.Directory.CreateDirectory(report_folder);
 
-                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                ExcelPackage.LicenseContext = LicenseContext.Commercial;
                 sourcePackage = new ExcelPackage(new FileInfo(file_format));
                 report_saved = sourcePackage.Workbook;
 
@@ -5582,7 +5720,7 @@ namespace Funtion_F3_SMT
             ExcelWorkbook wb_format = null;
             if (type == "NPI")
             {
-                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                ExcelPackage.LicenseContext = LicenseContext.Commercial;
                 ExcelPackage xlPackage = open_excel(file_format);
                 wb_format = xlPackage.Workbook;
             }
@@ -5627,7 +5765,7 @@ namespace Funtion_F3_SMT
 
                     if (mySheet != "")
                     {
-                        ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                        ExcelPackage.LicenseContext = LicenseContext.Commercial;
                         sourcePackage = new ExcelPackage();
                         report_saved = sourcePackage.Workbook;
 
@@ -5638,7 +5776,7 @@ namespace Funtion_F3_SMT
                 }
                 else if (type.Contains("MASS"))
                 {
-                    ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                    ExcelPackage.LicenseContext = LicenseContext.Commercial;
                     sourcePackage = new ExcelPackage(new FileInfo(file_format));
                     report_saved = sourcePackage.Workbook;
                 }

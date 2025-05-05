@@ -526,7 +526,6 @@ namespace OK2SHIP_SMT.Services
                     }
                     try
                     {
-
                         exportProcess.SaveExcelWorksheet(ex, "SEM BSE & Binarization", $"{itemCode.Trim()}-{lotNo.Trim()}");
                     }
                     catch (Exception exz)

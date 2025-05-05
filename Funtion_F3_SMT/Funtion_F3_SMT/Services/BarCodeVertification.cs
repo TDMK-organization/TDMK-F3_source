@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,12 +34,12 @@ namespace OK2SHIP_SMT.Services
                                       .CopyToDataTable();
                 dataTable.Columns.Add("ID");
                 //convert DateTime
-                dataTable.Columns.Add("Datetime", typeof(DateTime));
+                dataTable.Columns.Add("Datetime", typeof(String));
                 foreach (DataRow row in dataTable.Rows)
                 {
                     if (DateTime.TryParse(row["DateTime"].ToString(), out DateTime dateTimeValue))
                     {
-                        row["Datetime"] = dateTimeValue;
+                        row["Datetime"] = checkDOM(row["Module"].ToString()).ToString("MMM-dd");
                     }
                     else
                     {
@@ -90,7 +92,29 @@ namespace OK2SHIP_SMT.Services
             }
 
         }
-
+        public string GetCheckSumData(string location)
+        {
+            string extension = Path.GetExtension(location);
+            if (!extension.Contains("xlsx"))
+            {
+                Debugger.Break();
+                return "";
+            }
+            ExportProcess exportProcess = new ExportProcess();
+            using (ExcelPackage ex = exportProcess.OpenFileExcel(location))
+            {
+                using (ExcelWorksheet workSheet = ex.Workbook.Worksheets[0])
+                {
+                    string[] strings = { "EEEEEEE code", "Factory code", "Item name" };
+                    IDictionary<string, string> addressDic = ExportProcess.FindAddressByText(workSheet, strings);
+                    string factoryCode = workSheet.Cells[workSheet.Cells[addressDic["Factory code"]].End.Row, workSheet.Cells[addressDic["Factory code"]].End.Column + 2].Text.ToString();
+                    string ECode = workSheet.Cells[workSheet.Cells[addressDic["EEEEEEE code"]].End.Row + 1, workSheet.Cells[addressDic["EEEEEEE code"]].End.Column].Text.ToString();
+                    string addressItem = addressDic["Item name"].Split('-')[1];
+                    string itemName = workSheet.Cells[workSheet.Cells[addressItem].End.Row + 1, workSheet.Cells[addressItem].End.Column].Text.ToString();
+                    return $"{itemName}-{factoryCode}-{ECode}";
+                }
+            }
+        }
         public string Export(string itemCode, string lotNo)
         {
             itemCode = itemCode.Trim();
@@ -129,6 +153,16 @@ namespace OK2SHIP_SMT.Services
                             startS += codeRule.Length;
                         }
                     }
+                    TableOfContentService tbd = new TableOfContentService();
+
+                    DataTable tbc_DT = tbd.getDataTableByItemCode(itemCode);
+                    if (tbc_DT.Rows.Count <= 0)
+                    {
+                        throw new Exception("Chưa có dữ liệu table of content!");
+                    }
+                    string EEEEECode = tbc_DT.Rows[0]["EEEECode"].ToString().TrimEnd('\n').TrimEnd('\r');
+                    string FactoryCode = tbc_DT.Rows[0]["FactoryCode"].ToString();
+
                     foreach (DataRow item in dt.Rows)
                     {
                         i++;
@@ -145,14 +179,15 @@ namespace OK2SHIP_SMT.Services
                             workSheet.Cells[addressz].Value = item["Module"];
                         }
                         string[] bit = JudgeSN(item["Module"].ToString(), listCodeRule);
-                        if (bit.Length == listCodeRule.Count)
-                        {
-                            workSheet.Cells[ExportProcess.AddColumn(addressz, 1)].Value = bit[0];
-                            workSheet.Cells[ExportProcess.AddColumn(addressz, 2)].Value = bit[1];
-                            workSheet.Cells[ExportProcess.AddColumn(addressz, 3)].Value = bit[2];
-                            workSheet.Cells[ExportProcess.AddColumn(addressz, 4)].Value = bit[2];
-                            workSheet.Cells[ExportProcess.AddColumn(addressz, 5)].Value = bit[3];
-                        }
+                        //if (bit.Length == listCodeRule.Count)
+                        //{
+                        string module = item["Module"].ToString();
+                        workSheet.Cells[ExportProcess.AddColumn(addressz, 1)].Value = checkPPP(item["Module"].ToString(), FactoryCode) ? "OK" : "NG";
+                        workSheet.Cells[ExportProcess.AddColumn(addressz, 2)].Value = checkDOM(module) != DateTime.MinValue ? "OK" : "NG";
+                        workSheet.Cells[ExportProcess.AddColumn(addressz, 3)].Value = checkSssss(item["Module"].ToString()) ? "OK" : "NG";
+                        workSheet.Cells[ExportProcess.AddColumn(addressz, 4)].Value = checksSSSS(item["Module"].ToString()) ? "OK" : "NG";
+                        workSheet.Cells[ExportProcess.AddColumn(addressz, 5)].Value = checkEEEE(item["Module"].ToString(), EEEEECode) ? "OK" : "NG";
+                        //}
 
 
                         /// Table 1
@@ -226,6 +261,11 @@ namespace OK2SHIP_SMT.Services
 
         public DataTable CheckSum(DataTable dataTable)
         {
+
+            if(dataTable == null)
+            {
+                return dataTable;
+            }
             if (dataTable.Rows.Count <= 0)
             {
                 throw new Exception("Không có dữ liệu của itemcode này");
@@ -261,7 +301,7 @@ namespace OK2SHIP_SMT.Services
                 if (DateTime.TryParse(item["Datetime"].ToString(), out DateTime date))
                 {
                     row["Datetime"] = item["Datetime"];
-                    row["DOM"] = checkDOM(item["Module"].ToString(), date) ? "OK" : "NG";
+                    row["DOM"] = checkDOM(item["Module"].ToString()) != DateTime.MinValue ? "OK" : "NG";
                 }
 
 
@@ -279,7 +319,14 @@ namespace OK2SHIP_SMT.Services
         }
         private static bool checkSssss(string Module)
         {
-            Module = Module.Trim().Substring(6, 1).Trim();
+            try
+            {
+                Module = Module.Trim().Substring(6, 1).Trim();
+            }
+            catch
+            {
+                return false;
+            }
             if (Module.Length != 1)
             {
                 return false;
@@ -293,7 +340,14 @@ namespace OK2SHIP_SMT.Services
         }
         private static bool checksSSSS(string Module)
         {
-            Module = Module.Trim().Substring(7, 4).Trim();
+            try
+            {
+                Module = Module.Trim().Substring(7, 4).Trim();
+            }
+            catch
+            {
+                return false;
+            }
             if (Module.Length != 4)
             {
                 return false;
@@ -318,7 +372,14 @@ namespace OK2SHIP_SMT.Services
         }
         private static bool checkEEEE(string Module, string code)
         {
-            Module = Module.Trim().Substring(11, 7).Trim();
+            try
+            {
+                Module = Module.Trim().Substring(11).Trim();
+            }
+            catch
+            {
+                return false;
+            }
             code = code.Trim();
             if (Module.Length != 7)
             {
@@ -327,14 +388,21 @@ namespace OK2SHIP_SMT.Services
 
             return code.Equals(Module);
         }
-        private static bool checkDOM(string Module, DateTime dateTimeA)
+        private static DateTime checkDOM(string Module)
         {
             string DOM_DB = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-            Module = Module.Trim().Substring(3, 3).Trim();
+            try
+            {
+                Module = Module.Trim().Substring(3, 3).Trim();
+            }
+            catch
+            {
+                return DateTime.MinValue;
+            }
 
             if (Module.Length != 3)
             {
-                return false;
+                return DateTime.MinValue;
             }
             int D = DOM_DB.IndexOf(Module[0]) * 34 * 34;
             int O = DOM_DB.IndexOf(Module[1]) * 34;
@@ -342,7 +410,7 @@ namespace OK2SHIP_SMT.Services
             int dom_Value = D + O + M;
             DateTime dateTime = intToDate(dom_Value);
 
-            return true;
+            return dateTime;
         }
         public static DateTime intToDate(int n)
         {
@@ -364,6 +432,26 @@ namespace OK2SHIP_SMT.Services
             }
 
             return code.Equals(Module);
+        }
+
+        public int UpdateCodeByItemName(string itemName, string factoryCode, string eCode)
+        {
+            itemName = itemName.Trim();
+            factoryCode = factoryCode.Trim();
+            eCode = eCode.Trim();
+
+            DBContext _db = new DBContext();
+            DataTable dt = _db.LoadDataTable("TABLE_OF_CONTENT_SETTING", new[] { "ItemName" }, new[] { itemName }, new[] { "ItemName", "EEEECode", "FactoryCode" });
+            if(dt.Rows.Count <= 0)
+            {
+                throw new Exception($"Chưa cài đặt table of content itemName {itemName} trên hệ thống!");
+            }
+            foreach (DataRow row in dt.Rows)
+            {
+                row["FactoryCode"] = factoryCode;
+                row["EEEECode"] = eCode;
+            }
+            return _db.Update("TABLE_OF_CONTENT_SETTING", dt, new[] { "ItemName" });
         }
     }
 }
