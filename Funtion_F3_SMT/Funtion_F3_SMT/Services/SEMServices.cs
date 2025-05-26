@@ -416,7 +416,7 @@ namespace OK2SHIP_SMT.Services
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
                                 byte[] imgData = (byte[])dt.Rows[iz]["SEM5K"];
-                                exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData, $"SEM500{iz}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData, $"SEM500{iz}");
                             }
 
 
@@ -430,7 +430,7 @@ namespace OK2SHIP_SMT.Services
                                 for (int i = 0; i < add.Count(); i++)
                                 {
                                     addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[add[i]].Start.Column].Address;
-                                    exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM20025020{i}{iz}");
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM20025020{i}{iz}");
                                 }
                             }
                             if (dic.TryGetValue("SEM 200-300", out addressCol))
@@ -439,7 +439,7 @@ namespace OK2SHIP_SMT.Services
                                 for (int i = 0; i < add.Count(); i++)
                                 {
                                     addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[add[i]].Start.Column].Address;
-                                    exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM200300{i}{iz}");
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM200300{i}{iz}");
                                 }
                             }
 
@@ -449,12 +449,12 @@ namespace OK2SHIP_SMT.Services
                             if (dic.TryGetValue("SEM 500-700", out addressCol))
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700{iz}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700{iz}");
                             }
                             if (dic.TryGetValue("SEM BSE 500-700", out addressCol))
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700BIN{iz}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700BIN{iz}");
                             }
 
                             //Insert Binarization Image
@@ -463,7 +463,7 @@ namespace OK2SHIP_SMT.Services
                             if (dic.TryGetValue("Binarization 2", out addressCol))
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData200bin, $"Bin2001{iz}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData200bin, $"Bin2001{iz}");
                                 ExportProcess.AddBorderToImage(worksheet, $"Bin2001{iz}", Color.Green);
                             }
 
@@ -471,7 +471,7 @@ namespace OK2SHIP_SMT.Services
                             if (dic.TryGetValue("Binarization 3", out addressCol))
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
                                 ExportProcess.AddBorderToImage(worksheet, $"Bin5001{iz}", Color.Green);
                             }
 

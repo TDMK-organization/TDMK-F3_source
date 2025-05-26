@@ -151,9 +151,9 @@ namespace Funtion_F3_SMT
             this.WindowState = FormWindowState.Maximized;
             switch (sheet)
             {
-                case "Environment en-durance":
+                case "Assy Yield":
                     pMain.Controls.Clear();
-                    pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
+                    pMain.Controls.Add(new UC_Assy_Yield() { Dock = DockStyle.Fill });
                     break;
                 case "ACF":
                     ACF frm2 = new ACF() { Dock = DockStyle.Fill, TopLevel = false, TopMost = true };
@@ -161,22 +161,15 @@ namespace Funtion_F3_SMT
                     frm2.Show();
                     mnuProcess.Enabled = false;
                     break;
-                case "SEM BSE & Binarization":
-                    pMain.Controls.Clear();
-                    pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
-                    break;
-                case "OQC B2B Mating-Unmating":
-                    pMain.Controls.Clear();
-                    pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
-                    break;
-                case "Bar Code Verification":
-                    pMain.Controls.Clear();
-                    pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
-                    break;
                 case "Impedance":
                     pMain.Controls.Clear();
-                    pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
+                    pMain.Controls.Add(new UC_Impedance() { Dock = DockStyle.Fill });
                     break;
+                case "SEM BSE & Binarization":
+                case "Environment en-durance":
+                case "OQC B2B Mating-Unmating":
+                case "Bar Code Verification":
+                case "X-Ray picture":
                 case "Thermal cycling, Heat soak, Thermal shock":
                     pMain.Controls.Clear();
                     pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });

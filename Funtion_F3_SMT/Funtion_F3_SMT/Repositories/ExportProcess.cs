@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,11 +9,13 @@ using OfficeOpenXml;
 using System.Reflection;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Drawing.Imaging;
 using OfficeOpenXml.Drawing;
 using OK2SHIP_SMT.Services;
 using System.Data;
 using OK2SHIP_SMT.Libary;
+using System.Text.RegularExpressions;
 namespace OK2SHIP_SMT.Repositories
 {
     class ExportProcess
@@ -31,11 +32,48 @@ namespace OK2SHIP_SMT.Repositories
             string config_path = Path.Combine(app_path, "config.ini");
             TDMK_init = new IniFile(config_path);
             FORMAT_LOACTION = TDMK_init.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data\\Format\\{type}";
-            EXPORT_LOACTION = TDMK_init.Read("Report_Location", "SMT_Config") + $"\\SEEV Data\\Format\\{type}";
+            EXPORT_LOACTION = TDMK_init.Read("Report_Location", "SMT_Config") + $"\\SEEV Data\\Report\\{type}";
+        }
+        public void CopyColumn(ExcelWorksheet worksheet, ExcelRangeBase rangeStart, string address)
+        {
+            worksheet.Cells[rangeStart.Address].Copy(worksheet.Cells[address]);
+            worksheet.Cells[rangeStart.Address].CopyStyles(worksheet.Cells[address]);
+            for (int i = 0; i < rangeStart.Columns; i++)
+            {
+                string add = AddColumn(rangeStart.Address.Split(':')[0], i);
+                int colu = worksheet.Cells[add].Start.Column;
+                int coluz = worksheet.Cells[address].Start.Column + i;
+                worksheet.Column(coluz).Width = worksheet.Column(colu).Width;
+            }
         }
 
+        private static List<int> GetIntegersFromStringRegex(string input)
+        {
+            List<int> integers = new List<int>();
+            MatchCollection matches = Regex.Matches(input, @"\d+"); // @"\d+" matches one or more digits
+
+            foreach (Match match in matches)
+            {
+                if (int.TryParse(match.Value, out int number))
+                {
+                    integers.Add(number);
+                }
+            }
+
+            return integers;
+        }
+        public static int DistanceRow(string address1, string address2)
+        {
+            int s1 = GetIntegersFromStringRegex(address1)[0];
+            int s2 = GetIntegersFromStringRegex(address2)[0];
+            return (s2 - s1);
+        }
         public void CopyAndInsert(ExcelWorksheet workSheet, string addressRange, ref string addressStart, bool insert = false)
         {
+
+            workSheet.InsertRow(workSheet.Cells[addressStart].End.Row, 1);
+            addressStart = AddRow(addressStart, 1);
+
             int rowNum = 1;
             int colNum = 1;
             if (addressRange.Contains(":"))
@@ -53,7 +91,7 @@ namespace OK2SHIP_SMT.Repositories
             {
                 workSheet.InsertRow(workSheet.Cells[addressStart].End.Row, rowNum);
             }
-            string addressInsert = AddColumn(addressStart, colNum);
+            string addressInsert = AddColumn(addressStart, colNum + 2);
 
             //parste value
             addressInsert = $"{addressStart}:{addressInsert}";
@@ -73,9 +111,10 @@ namespace OK2SHIP_SMT.Repositories
             }
             addressStart = AddRow(addressStart, rowNum);
         }
-        public string getRangeBaseAddressByCellAddress(ExcelWorksheet worksheet, string address)
+        public static string getRangeBaseAddressByCellAddress(ExcelWorksheet worksheet, string address)
         {
             ExcelAddress addressEx = worksheet.Cells[address];
+            string z = worksheet.MergedCells[addressEx.Start.Row, addressEx.Start.Column];
             return worksheet.MergedCells[addressEx.Start.Row, addressEx.Start.Column];
         }
         public ExcelPackage OpenFileExcel(string location)
@@ -197,9 +236,9 @@ namespace OK2SHIP_SMT.Repositories
                     worksheets.Add(item);
                 }
             }
-            foreach (var item in worksheets)
+            foreach (ExcelWorksheet item in worksheets)
             {
-                excelPackage.Workbook.Worksheets.Delete(item);
+                excelPackage.Workbook.Worksheets.Delete(item.Name);
             }
             //excelPackage.Workbook.Worksheets.Delete("Rev History");
             int month = nowDate.Month;
@@ -229,7 +268,7 @@ namespace OK2SHIP_SMT.Repositories
 
         }
 
-        public void InsertImageToCell(ExcelWorksheet wsSheet1, ExcelRangeBase tar_rgn, byte[] img_data, string pic_name)
+        public static void InsertImageToCell(ExcelWorksheet wsSheet1, ExcelRangeBase tar_rgn, byte[] img_data, string pic_name)
         {
             using (tar_rgn)
             {
@@ -275,6 +314,7 @@ namespace OK2SHIP_SMT.Repositories
                 int num5 = (int)(0.05 * (double)Math.Min(num3, num4));
                 excelPicture.SetPosition(row2 - 1, num5, column2 - 1, num5);
                 excelPicture.SetSize(num4 - 2 * num5, num3 - 2 * num5);
+                //excelPicture.SetSize(50);
 
             }
         }
@@ -329,9 +369,9 @@ namespace OK2SHIP_SMT.Repositories
         {
             IList<string> colHeaderz = colHeader.ToList();
             IDictionary<string, string> addressHeader = new Dictionary<string, string>();
-            for (int i = 1; i <= workSheet.Dimension.Columns + 1; i++)
+            for (int i = workSheet.Dimension.Start.Column; i <= workSheet.Dimension.End.Column + 1; i++)
             {
-                for (int j = 1; j <= workSheet.Dimension.Rows + 1; j++)
+                for (int j = workSheet.Dimension.Start.Row; j <= workSheet.Dimension.End.Row + 1; j++)
                 {
                     string cellValue = workSheet.Cells[j, i].Text.Trim().Replace("\n", "");
                     if (!string.IsNullOrEmpty(cellValue.ToString()))
@@ -448,5 +488,8 @@ namespace OK2SHIP_SMT.Repositories
             destinationRowRange.Style.Border.Left.Style = sourceRowRange.Style.Border.Left.Style;
             destinationRowRange.Style.Border.Right.Style = sourceRowRange.Style.Border.Right.Style;
         }
+
+
+       
     }
 }

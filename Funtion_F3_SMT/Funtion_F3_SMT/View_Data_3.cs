@@ -47,6 +47,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using OfficeOpenXml.Style;
 using System.Xml;
 using OK2SHIP_SMT.Libary;
+using OK2SHIP_SMT.Services;
 //using TDMK_EPPLUS_7;
 
 
@@ -1444,6 +1445,7 @@ namespace Funtion_F3_SMT
                     {
                         foreach (DirectoryInfo dir_child_2 in dir_child.GetDirectories())
                         {
+                            
                             if (dir_child_2.Name.Replace(" ", "") == "1" || dir_child_2.Name.Replace(" ", "") == "2")
                             {
                                 SortedDictionary<int, SortedDictionary<int, string>> logfile_result1 = new SortedDictionary<int, SortedDictionary<int, string>>();
@@ -1504,6 +1506,10 @@ namespace Funtion_F3_SMT
 
                                 }
                             }
+                            else
+                            {
+                                Debugger.Break();
+                            }
                         }
                     }
                     else
@@ -1519,8 +1525,9 @@ namespace Funtion_F3_SMT
                         Get_Image_Multi_gap(dir_child.FullName, ref Image_result);
                         Get_Image_Multi_gap1(dir_child.FullName, ref Image_result_1);
                         Get_Image_Multi_gap2(dir_child.FullName, ref Image_result_2);
-
+                        List<string> listProductID = GAPConnectorService.Get_ProductID(dir_child.FullName.ToString(), Image_result.Keys.Count(), txtItemCode.Text);
                         int log_inx = 0;
+                       
                         foreach (var log in logfile_result1)
                         {
 
@@ -1561,7 +1568,7 @@ namespace Funtion_F3_SMT
                             }
                             if (data_image != img_null && data_image_1 != img_null && data_image_2 != img_null)
                             {
-                                Data_tbl.Rows.Add(log_inx + 1, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name, log.Key, data_image, data_image_1, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
+                                Data_tbl.Rows.Add(log_inx + 1, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name, log.Key, data_image, data_image_1, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, listProductID[log_inx], true);
                             }
                             log_inx++;
 
@@ -7605,7 +7612,7 @@ namespace Funtion_F3_SMT
                         if (dgv_logfile.Columns.Contains("Select"))
                         {
                             int r_inx = e.RowIndex;
-                            Select_Image fr1 = new Select_Image(check_mode, judge_mode, shear_data, setup_sochan) ;
+                            Select_Image fr1 = new Select_Image(check_mode, judge_mode, shear_data, setup_sochan);
                             fr1.sheet = sheet;
                             fr1.dt_image_ = (DataTable)dgv_logfile.DataSource;
                             fr1.r_inx_ = r_inx;
@@ -13687,6 +13694,11 @@ namespace Funtion_F3_SMT
             //{
             //    dataTable.Columns["ID"].SetOrdinal(1);
             //}
+        }
+
+        private void tableLayoutPanel8_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 

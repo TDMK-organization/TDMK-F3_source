@@ -147,7 +147,7 @@
             this.tdmK_Label4.Name = "tdmK_Label4";
             this.tdmK_Label4.Size = new System.Drawing.Size(577, 49);
             this.tdmK_Label4.TabIndex = 1;
-            this.tdmK_Label4.Text = "BeforeData";
+            this.tdmK_Label4.Text = "Spec";
             this.tdmK_Label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // dataGridView
@@ -161,6 +161,7 @@
             this.dataGridView.Size = new System.Drawing.Size(577, 285);
             this.dataGridView.TabIndex = 0;
             this.dataGridView.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellContentDoubleClick);
+            this.dataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
             // 
             // splitContainer5
             // 
@@ -294,7 +295,7 @@
             this.tdmK_Label2.Name = "tdmK_Label2";
             this.tdmK_Label2.Size = new System.Drawing.Size(493, 40);
             this.tdmK_Label2.TabIndex = 1;
-            this.tdmK_Label2.Text = "Linear Data";
+            this.tdmK_Label2.Text = "Liner Data";
             this.tdmK_Label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // splitContainer8

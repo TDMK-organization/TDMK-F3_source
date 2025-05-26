@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{256C0927-9DE8-44CC-906F-91A0E0058794}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>OK2SHIP_Measurements</RootNamespace>
+    <AssemblyName>OK2SHIP_Measurements%28Ver_08%29</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\TestAreas\TDMK Program\OK2SHIP_Measurements\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>TDMK.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EPPlus, Version=7.1.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\EPPLUS_7_Version\7.0.2\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.Interfaces, Version=6.1.1.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\EPPLUS_7_Version\7.0.2\EPPlus.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.System.Drawing, Version=6.1.1.0, Culture=neutral, PublicKeyToken=2308d35469c9bac0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\EPPLUS_7_Version\7.0.2\EPPlus.System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="IniLibs">
+      <HintPath>..\..\..\..\..\..\TDMK Source Code\TDMK_Library\IniLibs.dll</HintPath>
+    </Reference>
+    <Reference Include="OK2SHIP_Lib">
+      <HintPath>..\..\..\..\..\..\TDMK Source Code\TDMK_Library\OK2SHIP_Lib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TDMK_EPPLUS_7, Version=7.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\TDMK_EPPLUS_7\Using EPPLUS_7 Ver 7.0.2\TDMK_EPPLUS_7.dll</HintPath>
+    </Reference>
+    <Reference Include="TDMK_SEEV_DLL">
+      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\EPPLUS_7\TDMK_SEEV_DLL.dll</HintPath>
+    </Reference>
+    <Reference Include="TDMK_SQL">
+      <HintPath>..\..\..\..\..\..\TDMK Source Code\TDMK_Library\TDMK_SQL.dll</HintPath>
+    </Reference>
+    <Reference Include="ZedGraph">
+      <HintPath>E:\VS2017 IDE\ZedGraph\ZedGraph.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FAI_Data.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FAI_Data.designer.cs">
+      <DependentUpon>FAI_Data.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FAI_Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FAI_Edit.Designer.cs">
+      <DependentUpon>FAI_Edit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FAI_EPPLUS_Lib.cs" />
+    <Compile Include="FindControl.cs" />
+    <Compile Include="FrmIPQC_Man.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmIPQC_Man.designer.cs">
+      <DependentUpon>FrmIPQC_Man.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmFAI_IPQC.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmFAI_IPQC.designer.cs">
+      <DependentUpon>FrmFAI_IPQC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmHistogram.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmHistogram.designer.cs">
+      <DependentUpon>FrmHistogram.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmLogin.designer.cs">
+      <DependentUpon>FrmLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IPQC_LogFile.cs" />
+    <Compile Include="Load_Test_Data.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Load_Test_Data.Designer.cs">
+      <DependentUpon>Load_Test_Data.cs</DependentUpon>
+    </Compile>
+    <Compile Include="myVar.cs" />
+    <Compile Include="OK2SHIP_Measurements.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OK2SHIP_Measurements.Designer.cs">
+      <DependentUpon>OK2SHIP_Measurements.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestFunction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestFunction.Designer.cs">
+      <DependentUpon>TestFunction.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="FAI_Data.resx">
+      <DependentUpon>FAI_Data.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FAI_Edit.resx">
+      <DependentUpon>FAI_Edit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmIPQC_Man.resx">
+      <DependentUpon>FrmIPQC_Man.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmFAI_IPQC.resx">
+      <DependentUpon>FrmFAI_IPQC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmHistogram.resx">
+      <DependentUpon>FrmHistogram.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmLogin.resx">
+      <DependentUpon>FrmLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Load_Test_Data.resx">
+      <DependentUpon>Load_Test_Data.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OK2SHIP_Measurements.resx">
+      <DependentUpon>OK2SHIP_Measurements.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="TestFunction.resx">
+      <DependentUpon>TestFunction.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>9</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TDMK.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

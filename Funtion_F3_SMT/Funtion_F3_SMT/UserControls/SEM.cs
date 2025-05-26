@@ -2,6 +2,7 @@
 using OK2SHIP_SMT.Repositories;
 using OK2SHIP_SMT.Services;
 using OK2SHIP_SMT.ToolBoxs;
+using OK2SHIP_SMT.Views;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,13 +17,13 @@ namespace OK2SHIP_SMT.UserControls
     public partial class SEM : UserControl
     {
         private bool browseStatusFile = false;
+        private bool browseStatusFileZ = false;
+
         private PictureBox pictureBox = new PictureBox();
         public string PROCESS { get; set; }
         private int MODE = 1, MAX_MODE = 2;
         private SEMServices semServices = new SEMServices();
         UC_EnvironmentTable UC_env = new UC_EnvironmentTable() { Dock = DockStyle.Fill };
-        Dictionary<string, Dictionary<string, DataTable>> dic_UC_Env = new Dictionary<string, Dictionary<string, DataTable>>();
-
         public SEM(string pROCESS)
         {
             InitializeComponent();
@@ -154,7 +155,36 @@ namespace OK2SHIP_SMT.UserControls
             //{
             switch (this.PROCESS)
             {
+                case "X-Ray picture":
+                    try
+                    {
 
+                        DataTable dtz = (DataTable)UC_XrayPicture.dataGridView.DataSource;
+                        XRayPictureService x = new XRayPictureService();
+                        try
+                        {
+                            x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text);
+                        }
+                        catch (Exception ex)
+                        {
+                            string[] spt = ex.Message.Split('-');
+                            if (spt[0].Contains("1234") && MessageBox.Show($"{spt[2].Trim()}", "Cảnh báo!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            {
+                                x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text, int.Parse(spt[1]));
+                            }
+                            else
+                            {
+                                throw ex;
+                            }
+                        }
+                        MessageBox.Show("Lưu thành công!");
+                        UC_XrayPicture.ClearData();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                    break;
                 case "Thermal cycling, Heat soak, Thermal shock":
                     int res = 0;
                     TCHSTSService service = new TCHSTSService();
@@ -255,16 +285,27 @@ namespace OK2SHIP_SMT.UserControls
                     try
                     {
                         resz = eD.save(itemCodez, lotNoz, dt, dic);
+                        UC_env.ClearData();
+                        MessageBox.Show($"Lưu thành công {resz} row!");
                     }
                     catch (Exception ex)
                     {
                         string[] ap = ex.Message.Split('-');
                         if (ap.Count() > 1 && ap[0].Contains("1234"))
                         {
-                            resz = eD.save(itemCodez, lotNoz, dt, dic, MessageBox.Show("Đã tồn tại bạn muốn ghi đè?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes);
+                            if (MessageBox.Show("Đã tồn tại bạn muốn ghi đè?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            {
+                                resz = eD.save(itemCodez, lotNoz, dt, dic, int.Parse(ap[1]));
+                                UC_env.ClearData();
+                                MessageBox.Show($"Lưu thành công {resz} row!");
+
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show(ex.Message);
                         }
                     }
-                    MessageBox.Show($"Lưu thành công {resz} row!");
                     break;
                 case "OQC B2B Mating-Unmating":
                     DataTable dataTables = new DataTable();
@@ -316,6 +357,9 @@ namespace OK2SHIP_SMT.UserControls
                 string status = "";
                 switch (this.PROCESS)
                 {
+                    case "X-Ray picture":
+                        status = new XRayPictureService().Export(tb_ItemCode.Text, tb_Lotno.Text);
+                        break;
                     case "Environment en-durance":
                         status = new EEDService().Export(tb_ItemCode.Text, tb_Lotno.Text);
                         break;
@@ -396,20 +440,17 @@ namespace OK2SHIP_SMT.UserControls
             {
                 switch (PROCESS)
                 {
+                    case "X-Ray picture":
+                        XRayPictureService xray = new XRayPictureService();
+                        DataTable xrayData = xray.Load(tb_ItemCode.Text, tb_Lotno.Text);
+                        UC_XrayPicture.setData(xrayData);
+                        break;
                     case "Environment en-durance":
                         EEDService EED = new EEDService();
-                        DataTable before = new DataTable();
-                        UC_env.dictionary_Data = EED.Load(tb_ItemCode.Text, tb_Lotno.Text, out before);
-
-                        UC_env.dataGridView.RowTemplate.Height = 300;
-                        UC_env.dataGridView.DataSource = before;
-                        foreach (DataGridViewColumn column in UC_env.dataGridView.Columns)
-                        {
-                            ((DataGridViewImageColumn)UC_env.dataGridView.Columns[column.Name]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                            ((DataGridViewImageColumn)UC_env.dataGridView.Columns[column.Name]).Width = 500; // Đặt chiều rộng cột
-                        }
-                        UC_env.listBox.Items.Clear();
-                        UC_env.listBox.Items.AddRange(UC_env.dictionary_Data.Keys.ToArray());
+                        DataTable dataTable = new DataTable();
+                        Dictionary<string, Dictionary<string, DataTable>> dic = EED.Load(tb_ItemCode.Text, tb_Lotno.Text, ref dataTable);
+                        UC_env.FillData(dataTable, dic);
+                        MessageBox.Show("Lấy dữ liệu thành công");
                         //UC_env;
                         break;
                     case "Thermal cycling, Heat soak, Thermal shock":
@@ -503,6 +544,7 @@ namespace OK2SHIP_SMT.UserControls
         DataGridView dataGridViewz = new DataGridView() { Dock = DockStyle.Fill };
         Button button = new Button();
         ComboBox comboBox = new ComboBox() { Dock = DockStyle.Fill };
+        UC_XrayPicture UC_XrayPicture = new UC_XrayPicture() { BackColor = Color.Aqua, Dock = DockStyle.Fill };
         private void SetUpProcessScreen(string pROCESS)
         {
             btn_checkBin.Hide();
@@ -513,6 +555,12 @@ namespace OK2SHIP_SMT.UserControls
             btn_checkBin.Visible = false;
             switch (this.PROCESS)
             {
+                case "X-Ray picture":
+                    tb_datagridview.Controls.Clear();
+
+                    tb_datagridview.Controls.Add(UC_XrayPicture);
+
+                    break;
                 case "Impedance":
                     button.BackColor = Color.Green;
                     button.Dock = DockStyle.Fill;
@@ -591,6 +639,8 @@ namespace OK2SHIP_SMT.UserControls
                 case "Environment en-durance":
                     tb_datagridview.Controls.Clear();
                     tb_datagridview.Controls.Add(UC_env, 0, 0);
+                    browseStatusFileZ = false;
+
                     break;
                 default:
                     throw new Exception("Process not found");
@@ -775,7 +825,8 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void getDataFormFile(string location, string itemCode, string lotNo, string process)
         {
-
+            itemCode = itemCode.Trim();
+            lotNo = lotNo.Trim();
             //check input
             location = location.Replace("\r\n", "").Trim();
             DataTable dt = new DataTable();
@@ -783,36 +834,33 @@ namespace OK2SHIP_SMT.UserControls
             {
                 switch (process)
                 {
+                    case "X-Ray picture":
+                        XRayPictureService xRayPictureService = new XRayPictureService();
+                        UC_XrayPicture.setData(xRayPictureService.Read(location, itemCode, lotNo), null);
+                        break;
                     case "Environment en-durance":
-                        UC_env.dataGridView.RowTemplate.Height = 300;
                         EEDService eEDService = new EEDService();
-                        dic_UC_Env.Clear();
+                        var dic = new Dictionary<string, Dictionary<string, DataTable>>();
+                        DataTable spec = new DataTable();
                         string[] array = eEDService.ReadFile(location, itemCode, lotNo);
                         foreach (var item in array)
                         {
                             DataTable dtz = eEDService.SolveFolder(item, out string processz);
                             switch (processz)
                             {
-                                case "LINERTRUOCKEO":
-                                    UC_env.dataGridView.DataSource = dtz;
-                                    break;
                                 case "LINER":
                                 case "PSA":
-                                    eEDService.SolveFolderPSALiner(item, dic_UC_Env);
+                                    eEDService.SolveFolderPSALiner(item, dic, spec);
                                     break;
                                 default:
                                     throw new Exception($"Folder {item} không phù hợp!");
-
                             }
                         }
-                        UC_env.listBox.Items.Clear();
-                        UC_env.listBox.Items.AddRange(dic_UC_Env.Keys.ToArray());
-                        UC_env.dictionary_Data = dic_UC_Env;
-                        foreach (DataGridViewColumn column in UC_env.dataGridView.Columns)
-                        {
-                            ((DataGridViewImageColumn)UC_env.dataGridView.Columns[column.Name]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                            ((DataGridViewImageColumn)UC_env.dataGridView.Columns[column.Name]).Width = 500; // Đặt chiều rộng cột
-                        }
+                        
+                        eEDService.FillProductID(dic, itemCode, lotNo, tb_productID.Text);
+                        UC_env.FillData(spec, dic);
+
+
                         break;
                     case "Thermal cycling, Heat soak, Thermal shock":
                         TCHSTSService tsNew = new TCHSTSService();
@@ -1022,6 +1070,33 @@ namespace OK2SHIP_SMT.UserControls
 
         }
         private int COUNTING = 0;
+
+
+
+        private void tb_productID_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tb_productID_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (!browseStatusFileZ)
+            {
+                FolderBrowserDialog dialog = new FolderBrowserDialog();
+                dialog.ShowDialog();
+            }
+            else
+            {
+                OpenFileDialog fileDialog = new OpenFileDialog();
+                fileDialog.Filter = "All files (*.*)|*.*";
+                fileDialog.FilterIndex = 1;
+                fileDialog.RestoreDirectory = true;
+                fileDialog.Title = "Chọn tệp";
+                fileDialog.ShowDialog();
+                tb_locationFolder.Text = fileDialog.FileName;
+            }
+        }
+
         private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)

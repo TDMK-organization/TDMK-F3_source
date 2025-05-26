@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using IniLibs;
+using OfficeOpenXml;
 using OfficeOpenXml.Drawing;
 using System;
 using System.Collections.Generic;
@@ -86,7 +87,7 @@ namespace OK2SHIP_SMT.Repositories
         /// </summary>
         /// <param name="locationFolder"></param>
         /// <returns></returns>
-        public static IList<KeyValuePair<Image, string>> ListAllPictureInAFolder(string locationFolder)
+        public static IList<KeyValuePair<Image, string>> ListAllPictureInAFolder(string locationFolder, string Extension = null)
         {
             IList<KeyValuePair<Image, string>> listPicture = new List<KeyValuePair<Image, string>>();
             string[] folder = Directory.GetFiles(locationFolder);
@@ -94,9 +95,19 @@ namespace OK2SHIP_SMT.Repositories
             {
                 string[] fileSplit = file.Split('\\');
                 string fileName = fileSplit[fileSplit.Length - 1];
-                if (fileName.Contains(".jpg") || fileName.Contains(".png"))
+                if (Extension == null)
                 {
-                    listPicture.Add(new KeyValuePair<Image, string>(Image.FromFile(file), fileName));
+                    if (fileName.ToLower().Contains(".jpg") || fileName.Contains(".png"))
+                    {
+                        listPicture.Add(new KeyValuePair<Image, string>(Image.FromFile(file), fileName));
+                    }
+                }
+                else
+                {
+                    if (fileName.Contains(Extension))
+                    {
+                        listPicture.Add(new KeyValuePair<Image, string>(Image.FromFile(file), fileName));
+                    }
                 }
             }
             return listPicture;
@@ -133,7 +144,7 @@ namespace OK2SHIP_SMT.Repositories
                     {
                         try
                         {
-                            dataTable.Columns.Add(headers[i]);
+                            dataTable.Columns.Add(headers[i].TrimEnd('"').TrimStart('"'));
                         }
                         catch
                         {
@@ -146,7 +157,10 @@ namespace OK2SHIP_SMT.Repositories
                     {
                         string dataLine = reader.ReadLine();
                         string[] values = dataLine.Split(','); // Giả sử dấu phẩy là dấu phân tách
-
+                        for (int i = 0; i < values.Count(); i++)
+                        {
+                            values[i] = values[i].TrimEnd('"').TrimStart('"');
+                        }
                         dataTable.Rows.Add(values);
                     }
                 }

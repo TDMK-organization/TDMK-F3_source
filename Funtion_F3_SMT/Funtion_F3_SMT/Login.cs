@@ -65,110 +65,68 @@ namespace Funtion_F3_SMT
 
         private void OK_Click(object sender, EventArgs e)
         {
-
-            if (btnLogin.Text == "Login")
+            try
             {
 
-                bool login_en = false;
-                string userName = txtUsername.Text.Trim();
-                string password = txtPassword.Text.Trim();
-                UserSession.Instance.Login(userName, password);
-                login_en = UserSession.Instance.IsLoggedIn;
-                //if ((txtUsername.Text == "Admin") && (txtPassword.Text == "TDMK"))
-                //{
-                //    login_en = true;
-                //}
-                //else
-                //{
-                //    //DataTable info = TDMK_Code.Datatable_Filter(sql_login, "ACCOUNT_USER", TDMK_Code.filter_str(new string[] { "UserName", "Password" }, new string[] { txtUsername.Text, txtPassword.Text }));
-                //    if (info.Rows.Count == 0)
-                //    {
-                //        login_en = false;
-                //    }
-                //    else
-                //    {
-                //        login_en = true;
-                //    }
-                //}
-                if (login_en)
-                {
-                    //FindControl fc_btnLogin = new FindControl();
-                    //Button btnLogin = (Button)fc_btnLogin.Ctrl(myVar_ECheck.frmMain, "btnLogin");
-                    //myVar_ECheck.confirm_mode = true; 
-                    //btnLogin.BackColor = Color.GreenYellow; 
 
-                    btnLogin.Text = "Logout";
-                    this.admin_mode("Admin mode");
+                if (btnLogin.Text == "Login")
+                {
+
+                    bool login_en = false;
+                    string userName = txtUsername.Text.Trim();
+                    string password = txtPassword.Text.Trim();
+                    UserSession.Instance.Login(userName, password);
+                    login_en = UserSession.Instance.IsLoggedIn;
+                    //if ((txtUsername.Text == "Admin") && (txtPassword.Text == "TDMK"))
+                    //{
+                    //    login_en = true;
+                    //}
+                    //else
+                    //{
+                    //    //DataTable info = TDMK_Code.Datatable_Filter(sql_login, "ACCOUNT_USER", TDMK_Code.filter_str(new string[] { "UserName", "Password" }, new string[] { txtUsername.Text, txtPassword.Text }));
+                    //    if (info.Rows.Count == 0)
+                    //    {
+                    //        login_en = false;
+                    //    }
+                    //    else
+                    //    {
+                    //        login_en = true;
+                    //    }
+                    //}
+                    if (login_en)
+                    {
+                        //FindControl fc_btnLogin = new FindControl();
+                        //Button btnLogin = (Button)fc_btnLogin.Ctrl(myVar_ECheck.frmMain, "btnLogin");
+                        //myVar_ECheck.confirm_mode = true; 
+                        //btnLogin.BackColor = Color.GreenYellow; 
+
+                        btnLogin.Text = "Logout";
+                        this.admin_mode("Admin mode");
+                        this.Hide();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Sai mật khẩu!");
+                    }
+                }
+                else if (btnLogin.Text == "Logout")
+                {
+                    this.admin_mode("LOG IN");
                     this.Hide();
                 }
-                else
-                {
-                    MessageBox.Show("Sai mật khẩu!");
-                }
             }
-            else if (btnLogin.Text == "Logout")
+            catch (Exception ex)
             {
-                this.admin_mode("LOG IN");
-                this.Hide();
+                MessageBox.Show(ex.Message);
             }
         }
 
         private void Login_Load(object sender, EventArgs e)
         {
-            //sql_login = myVar.mysqlcon; //myVar_ECheck.frmMain.initial_data("OK2SHIP_Items");
-            rbQA.Checked = true;
 
-            if (mode_)
-            {
-                btnLogin.Text = "Logout";
-                txtPassword.Text = "TDMK";
-
-            }
-            else
-            {
-                btnLogin.Text = "Login";
-            }
         }
 
-        private void rbQA_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rbQA.Checked)
-            {
-                depart = rbQA.Text;
-            }
-        }
 
-        private void rbDE_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rbDE.Checked)
-            {
-                depart = rbDE.Text;
-            }
-        }
-
-        private void rbNPI_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rbNPI.Checked)
-            {
-                depart = rbNPI.Text;
-            }
-        }
-
-        private void rbPro_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rbPro.Checked)
-            {
-                depart = rbPro.Text;
-            }
-        }
-
-        private void rbPE_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rbPE.Checked)
-            {
-                depart = rbPE.Text;
-            }
-        }
         private void Cancel_Click(object sender, EventArgs e)
         {
             this.Hide();

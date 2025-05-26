@@ -112,7 +112,7 @@ namespace OK2SHIP_SMT.Services
                             Double force = ReadFileGraph(item, out image);
                             dataTable.Rows[index]["Graph"] = TDMK_ImageConverter.ImageToByteArray(image, ImageFormat.Jpeg);
                             dataTable.Rows[index]["Force"] = force;
-                         
+
                         }
                     }
                 }
@@ -294,7 +294,7 @@ namespace OK2SHIP_SMT.Services
                 {
                     //string address = exportProcess.FindAddressByText(workSheet, "Bar Code Verification");
                     string[] colHeader = { "Min Force (N)", "Max Force (N)", "Average Force (N)", "Sample 1", "Sample 2", "Sample 3", "Sample 4", "Sample 5", "Sample 6", "Sample 7", "Sample 8", "Sample 9", "Sample 10" };
-                    string[] rowHeader = { "Picture T0", "Picture T30", " Unmating force at T1", "Unmating picture at T1", "Graph unmating at T1", "Failure mode", "Judgement " };
+                    string[] rowHeader = { "Picture T0", "Picture T30", "Unmating force at T1", "Unmating picture at T1", "Graph unmating at T1", "Failure mode", "Judgement" };
                     IDictionary<string, string> addressHeader = DictionaryService.MergeDictionaries<string, string>(ExportProcess.FindAddressByText(workSheet, colHeader.ToArray(), true), ExportProcess.FindAddressByText(workSheet, rowHeader.ToArray()));
 
                     DataTable dataTable = _context.LoadDataTable("OQC_B2B_Mating_Unmating", new string[] { "ItemCode", "lotNo" }, new string[] { itemcode, lotno });
@@ -311,18 +311,18 @@ namespace OK2SHIP_SMT.Services
                         {
                             address = address.Split('-')[0];
                             address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                            exportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0Sample{i}");
+                            ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0Sample{i}");
                         }
                         else
                         {
                             address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                            exportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0Sample{i}");
+                            ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0Sample{i}");
                         }
 
                         //// Insert Image in T0U
                         Image = (byte[])row["T0U"];
                         address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
-                        exportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0USample{i}");
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0USample{i}");
                         //// Insert Image in 30
                         Image = (byte[])row["T30"];
                         address = addressHeader[$"Picture T30"];
@@ -331,11 +331,11 @@ namespace OK2SHIP_SMT.Services
                             address = address.Split('-')[0];
                         }
                         address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                        exportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30Sample{i}");
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30Sample{i}");
                         //// Insert Image in 30U
                         Image = (byte[])row["T30U"];
                         address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
-                        exportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30USample{i}");
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30USample{i}");
                         //// Insert Image in 30
                         Image = (byte[])row["T1"];
                         address = addressHeader[$"Unmating picture at T1"];
@@ -344,16 +344,16 @@ namespace OK2SHIP_SMT.Services
                             address = address.Split('-')[0];
                         }
                         address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                        exportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1Sample{i}");
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1Sample{i}");
                         //// Insert Image in 30U
                         Image = (byte[])row["T1U"];
                         address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
-                        exportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1USample{i}");
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1USample{i}");
                         //// Insert Image in 30
                         Image = (byte[])row["Graph"];
                         address = addressHeader[$"Graph unmating at T1"];
                         address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                        exportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"GraphT1Sample{i}");
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"GraphT1Sample{i}");
                         //// Insert Image in 30
                         if (addressHeader.TryGetValue("Unmating force at T1", out address))
                         {
@@ -375,12 +375,17 @@ namespace OK2SHIP_SMT.Services
                     }
                     addressNum = addressNum.Trim().TrimEnd(',');
                     string addressz = ExportProcess.AddColumn(addressHeader["Min Force (N)"], 1);
-                    workSheet.Cells[addressz].Formula = $"MAX({addressNum})";
+                    int colZ =workSheet.Cells[addressHeader["Unmating force at T1"]].End.Row - workSheet.Cells[addressz].End.Row ;
+                    int ro =  workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column;
+                    workSheet.Cells[addressz].FormulaR1C1 = $"=MIN(R[{colZ}]C:R[{colZ}]C[{ro}])";
                     addressz = ExportProcess.AddColumn(addressHeader["Max Force (N)"], 1);
-                    workSheet.Cells[addressz].Formula = $"MIN({addressNum})";
+                    colZ = workSheet.Cells[addressHeader["Unmating force at T1"]].End.Row - workSheet.Cells[addressz].End.Row ;
+                    ro =  workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column ;
+                    workSheet.Cells[addressz].FormulaR1C1 = $"=MAx(R[{colZ}]C:R[{colZ}]C[{ro}])";
                     addressz = ExportProcess.AddColumn(addressHeader["Average Force (N)"], 1);
-                    workSheet.Cells[addressz].Formula = $"AVERAGE({addressNum})";
-
+                    colZ =  workSheet.Cells[addressHeader["Unmating force at T1"]].End.Row - workSheet.Cells[addressz].End.Row ;
+                    ro =  workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column ;
+                    workSheet.Cells[addressz].FormulaR1C1 = $"=AVERAGE(R[{colZ}]C:R[{colZ}]C[{ro}])";
                     exportProcess.SaveExcelWorksheet(ex, "OQC B2B Mating-Unmating", $"{itemcode.Trim()}-{lotno.Trim()}");
 
                 }

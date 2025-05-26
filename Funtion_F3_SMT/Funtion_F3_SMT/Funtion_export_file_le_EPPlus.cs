@@ -1483,6 +1483,8 @@ namespace Funtion_F3_SMT
         // export GAP connector
         public void export_excel_gap_connector(ExcelWorksheet ws, DataTable Data_tbl, DataTable dt_spec)
         {
+            Debugger.Break();
+            #region OLDCODE
             int col_begin = int.Parse(dt_spec.Rows[0]["Location"].ToString().Split('+')[0]);
             string[] region = dt_spec.Rows[0]["Location"].ToString().Split('+')[1].Split('_');
             int count_sample = int.Parse(dt_spec.Rows[0]["Count_sample"].ToString());
@@ -1680,8 +1682,8 @@ namespace Funtion_F3_SMT
                                                     int min_r = new int[] { count_r_offset, a, b }.Min();
 
                                                     offset = min_r;
-                                                    lst_1.Add(double.Parse(lst_data[i].Split('/')[0].Split(';')[min_r - 1]));
-                                                    lst_2.Add(double.Parse(lst_data[i].Split('/')[1].Split(';')[min_r - 1]));
+                                                    lst_1.Add(double.Parse(lst_data[i].Split('/')[0].Split(';')[min_r]));
+                                                    lst_2.Add(double.Parse(lst_data[i].Split('/')[1].Split(';')[min_r]));
 
 
                                                     for (int k = 0; k < min_r; k++)
@@ -1735,6 +1737,7 @@ namespace Funtion_F3_SMT
                     }
                 }
             }
+            #endregion
         }
         public void export_excel_onproduct(ExcelWorksheet ws, string itemcode, string lotno, string sheet, DataTable Data_all, DataTable dt_spec, DataGridView dgv_data, string type, string leader, int count_sample)
         {

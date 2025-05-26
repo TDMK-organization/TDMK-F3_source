@@ -537,6 +537,7 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void SetUpDataGridView(DataTable datatable = null)
         {
+            tabPage3.Controls.Add(new Packaging() { Dock = DockStyle.Fill});
             //dataGridView.DataSource = datatable;
             //dataGridView.DataSource = tableOfContentService.MakeTable();
         }

@@ -79,7 +79,7 @@ namespace Echeck_LogFile_Process
         private void cbProcess_SelectedIndexChanged(object sender, EventArgs e)
         {
             List<string> cycles_lst = new List<string>();
-            string app_path = Application.StartupPath;
+            string app_path = Application.StartupPath.Replace("\\FPCA OK2SHIP Auto System\\Bending_Items", "");
             string tar_file = Path.Combine(app_path, "Config", cbProcess.Text + ".txt");
             cycles_lst = myCode.read_config_arr(tar_file).ToList();
             cbCycles.Text = "";

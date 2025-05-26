@@ -22,8 +22,17 @@ namespace OK2SHIP_SMT.UserControls
         #endregion
 
         #region Constructor
-        public CustomDataGridView(DataTable dataTable, Dictionary<string, string[]> dropdownItems)
+        public CustomDataGridView(DataTable dataTable = null, Dictionary<string, string[]> dropdownItems = null)
         {
+            if (dataTable == null) { 
+                dataTable = new DataTable();
+            }
+
+            if (dropdownItems == null)
+            {
+                dropdownItems = new Dictionary<string, string[]>();
+            }
+
             columnDropdowns = dropdownItems ?? new Dictionary<string, string[]>();
             dtable = dataTable;
             InitializeComponents();

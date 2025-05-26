@@ -6,6 +6,7 @@ using OK2SHIP_SMT.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -15,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ZedGraph;
+using static System.Resources.ResXFileRef;
 
 namespace OK2SHIP_SMT.Services
 {
@@ -28,7 +30,8 @@ namespace OK2SHIP_SMT.Services
         public string Export(string itemCode, string lotNo)
         {
             DataTable dataTable = new DataTable();
-            Dictionary<string, Dictionary<string, DataTable>> dic = Load(itemCode, lotNo, out dataTable);
+            Dictionary<string, Dictionary<string, DataTable>> dic = Load(itemCode, lotNo, ref dataTable);
+            int sample = 32;
             if (dataTable.Rows.Count < 0)
             {
                 return "Không có dữ liệu của itemcode lotno";
@@ -39,148 +42,210 @@ namespace OK2SHIP_SMT.Services
             {
                 using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, FORMAT_NAME))
                 {
-                    string[] strFind = new[] { "Sample 32", "Flex SN", "CPK", "Liner peeling after ORT test", "PSA peeling after ORT test" };
-                    IDictionary<string, string> addDic = ExportProcess.FindAddressByText(workSheet, strFind, false);
-                    int numCopy = dic.Keys.Count - 1;
-                    string linerAdd = "";
-                    string PSAAdd = "";
-                    for (int i = 0; i < 2; i++)
-                    {
-                        if (addDic.TryGetValue("Sample 32", out string addStart) && addDic.TryGetValue("CPK", out string cpk))
-                        {
-                            addStart = addStart.Split('-')[i];
-                            cpk = cpk.Split('-')[i];
-                            addStart = workSheet.Cells[workSheet.Cells[cpk].End.Row, workSheet.Cells[addStart].End.Column].Address;
-                        }
-                        else
-                        {
-                            throw new Exception("Lost data");
-                        }
-                        if (addDic.TryGetValue("Flex SN", out string addEnd))
-                        {
-                            addEnd = addEnd.Split('-')[i];
-                        }
-                        else
-                        {
-                            throw new Exception("Lost data");
-                        }
-                        switch (i + 1)
-                        {
-                            case 1:
-                                linerAdd = $"{addEnd}:{addStart}";
-                                break;
-                            case 2:
-                                PSAAdd = $"{addEnd}:{addStart}";
-                                break;
-                            default:
-                                throw new Exception("Lost data");
-                        }
-                    }
-                    //PSA
-                    string addressPointer = workSheet.Cells[workSheet.Cells[ExportProcess.AddRow(PSAAdd.Split(':')[1], 2)].End.Row, workSheet.Cells[ExportProcess.AddRow(PSAAdd.Split(':')[0], 2)].End.Column].Address;
-                    workSheet.Cells[ExportProcess.AddRow(PSAAdd.Split(':')[0], 1)].Value = dic.Keys.ToArray()[1];
-                    for (int i = 0; i < numCopy - 1; i++)
-                    {
-                        string point = addressPointer;
-                        exportProcess.CopyAndInsert(workSheet, PSAAdd, ref addressPointer, false);
-                        addressPointer = ExportProcess.AddRow(addressPointer, 2);
-                        workSheet.Cells[ExportProcess.AddRow(point, 1)].Value = dic.Keys.ToArray()[i + 2];
-                    }
+                    string sampleSTR = $"Sample {sample}";
+                    string[] colHeader = new[] { "Liner peeling after ORT test", "PSA peeling after ORT test", sampleSTR, "Flex SN", "CPK" };
+                    IDictionary<string, string> dicHeader = ExportProcess.FindAddressByText(workSheet, colHeader);
 
-                    addressPointer = workSheet.Cells[workSheet.Cells[ExportProcess.AddRow(linerAdd.Split(':')[1], 2)].End.Row, workSheet.Cells[ExportProcess.AddRow(linerAdd.Split(':')[0], 2)].End.Column].Address;
-                    workSheet.Cells[ExportProcess.AddRow(linerAdd.Split(':')[0], 1)].Value = dic.Keys.ToArray()[1];
-                    for (int i = 0; i < numCopy - 1; i++)
+
+                    Dictionary<string, string> dicCol = new Dictionary<string, string>();
+
+                    #region Find area PSA Lineer
+                    foreach (string item in new[] { "Liner peeling after ORT test", "PSA peeling after ORT test" })
                     {
-                        string point = addressPointer;
-                        exportProcess.CopyAndInsert(workSheet, linerAdd, ref addressPointer, true);
-                        addressPointer = ExportProcess.AddRow(addressPointer, 2);
-                        workSheet.Cells[ExportProcess.AddRow(point, 1)].Value = dic.Keys.ToArray()[i + 2];
-                    }
-                    IDictionary<string, string> dicZZ = ExportProcess.FindAddressByText(workSheet, dic.Keys.ToArray());
-                    //DataTable beforeImage = dic["SAMPLE"]["SAMPLE"];
-                    foreach (string tape in dic.Keys)
-                    {
-                        if (!tape.Contains("SAMPLE"))
+                        dicCol.Add(item + "Flex SN", dicHeader[item]);
+                        if (dicHeader.TryGetValue("Flex SN", out string value) && dicHeader.TryGetValue(item, out string valueZ))
                         {
-                            if (dic.TryGetValue(tape, out Dictionary<string, DataTable> valueax))
+                            string[] flexCout = value.Split('-');
+                            int min = int.MaxValue;
+                            foreach (var item1 in flexCout)
                             {
-                                foreach (string area in valueax.Keys)
+                                int z = ExportProcess.DistanceRow(valueZ, item1);
+                                if (z < min && z >= 0)
                                 {
-                                    DataTable data = valueax[area];
-                                    int index = area.Equals("LINER") ? 0 : area.Equals("PSA") ? 1 : -1;
-                                    if (dicZZ.TryGetValue(tape, out string address))
-                                    {
-                                        address = address.Split('-')[index];
-                                        address = ExportProcess.AddRow(ExportProcess.AddColumn(address, 2), 1);
-                                        if (index == 0)
-                                        {
-                                            for (int i = 0; i < dataTable.Columns.Count; i++)
-                                            {
-                                                exportProcess.InsertImageToCell(workSheet, workSheet.Cells[ExportProcess.AddColumn(address, i)], (byte[])dataTable.Rows[0][i], $"beforeImage{i}{area}{tape}");
-                                                exportProcess.InsertImageToCell(workSheet, workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 1), i)], (byte[])data.Rows[i]["Image"], $"after{i}{area}{tape}");
-                                                exportProcess.InsertImageToCell(workSheet, workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 2), i)], (byte[])data.Rows[i]["Graph"], $"graph{i}{area}{tape}");
-                                                if (double.TryParse(data.Rows[i]["Peak"].ToString(), out double peak) && double.TryParse(data.Rows[i]["Average"].ToString(), out double average))
-                                                {
-                                                    workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 3), i)].Value = peak;
-                                                    workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 4), i)].Value = average;
-                                                    workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 5), i)].Value = peak * 1000;
-                                                    workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 6), i)].Value = average * 1000;
-                                                }
-                                                workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 7), i)].Value = data.Rows[i]["Judgement Peeling force"].ToString();
-                                                workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 8), i)].Value = data.Rows[i]["Judgement failure mode"].ToString();
-
-                                            }
-                                        }
-                                        else
-                                        {
-                                            for (int i = 0; i < dataTable.Columns.Count; i++)
-                                            {
-                                                exportProcess.InsertImageToCell(workSheet, workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 0), i)], (byte[])data.Rows[i]["Image"], $"imagePSA{i}{area}{tape}");
-                                                exportProcess.InsertImageToCell(workSheet, workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 1), i)], (byte[])data.Rows[i]["Graph"], $"graphPSA{i}{area}{tape}");
-                                                workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 2), i)].Value = data.Rows[i]["Peak"];
-                                                workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 3), i)].Value = data.Rows[i]["Average"];
-                                                workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 4), i)].Value = data.Rows[i]["Judgement Peeling force"];
-                                                workSheet.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(address, 5), i)].Value = data.Rows[i]["Judgement failure mode"];
-                                            }
-                                        }
-                                    }
-
-
-                                    //Debugger.Break();
+                                    dicCol[item + "Flex SN"] = item1;
+                                    min = z;
                                 }
                             }
+                            if (min == int.MaxValue)
+                            {
+                                return "Lỗi về lấy flex sn";
+                            }
+
                         }
                         else
                         {
-                            Dictionary<string, DataTable> listSample = dic["SAMPLE"];
-                            foreach (string range in listSample.Keys)
+                            return "Không có đủ flexSN";
+                        }
+                        dicCol.Add(item + "CPK", dicHeader[item]);
+                        if (dicHeader.TryGetValue("CPK", out value) && dicHeader.TryGetValue(item, out valueZ))
+                        {
+                            string[] flexCout = value.Split('-');
+                            int min = int.MaxValue;
+                            foreach (var item1 in flexCout)
                             {
-                                int index = range.Equals("LINER") ? 0 : range.Equals("PSA") ? 1 : -1;
-                                foreach (DataRow row in listSample[range].Rows)
+                                int z = ExportProcess.DistanceRow(valueZ, item1);
+                                if (z < min && z >= 0)
                                 {
-                                    string tapez = row["Tape"].ToString();
-                                    if (dicZZ.TryGetValue(tapez, out string address))
-                                    {
-                                        address = ExportProcess.AddRow(address.Split('-')[index], 1);
-                                        address = exportProcess.getRangeBaseAddressByCellAddress(workSheet, address);
-                                        exportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], (byte[])row["Image"], $"sample{tapez}{range}");
-                                        //Debugger.Break();
-                                    }
+                                    dicCol[item + "CPK"] = item1;
+                                    min = z;
                                 }
-
                             }
+                            if (min == int.MaxValue)
+                            {
+                                return "Lỗi về lấy CPK";
+                            }
+
+                        }
+                        else
+                        {
+                            return "Không có đủ CPK";
+                        }
+                        dicCol.Add(item + sampleSTR, dicHeader[item]);
+                        if (dicHeader.TryGetValue(sampleSTR, out value) && dicHeader.TryGetValue(item, out valueZ))
+                        {
+                            string[] flexCout = value.Split('-');
+                            int min = int.MaxValue;
+                            foreach (var item1 in flexCout)
+                            {
+                                int z = ExportProcess.DistanceRow(valueZ, item1);
+                                if (z < min && z >= 0)
+                                {
+                                    dicCol[item + sampleSTR] = item1;
+                                    min = z;
+                                }
+                            }
+                            if (min == int.MaxValue)
+                            {
+                                return "Lỗi về lấy sampleSTR";
+                            }
+
+                        }
+                        else
+                        {
+                            return "Không có đủ sampleSTR";
+                        }
+
+                    }
+                    #endregion
+
+                    #region Copy and paste
+                    string[] countPSA = dataTable.AsEnumerable().Where(row => row.Field<string>("name") == "PSA").Select(row => row.Field<string>("TAPE")).ToArray();
+                    string[] countLiner = dataTable.AsEnumerable().Where(row => row.Field<string>("name") == "LINER").Select(row => row.Field<string>("TAPE")).ToArray();
+
+                    if (dicCol.TryGetValue("PSA peeling after ORT testFlex SN", out string addressFlexSN)
+                        && dicCol.TryGetValue($"PSA peeling after ORT test{sampleSTR}", out string addressSample)
+                        && dicCol.TryGetValue("PSA peeling after ORT testCPK", out string addressCPK))
+                    {
+                        string addressPointer = workSheet.Cells[workSheet.Cells[addressCPK].Start.Row + 1, workSheet.Cells[addressFlexSN].Start.Column].Address;
+
+                        for (int i = 0; i < countPSA.Count() - 1; i++)
+                        {
+                            string point = addressPointer;
+                            if (i == 0)
+                            {
+                                workSheet.Cells[ExportProcess.AddRow(addressFlexSN, 1)].Value = countPSA[countPSA.Count() - 1] + "%PSA";
+                            }
+                            string addressRange = $"{addressFlexSN}:{workSheet.Cells[workSheet.Cells[addressCPK].Start.Row, workSheet.Cells[addressSample].Start.Column].Address}";
+                            exportProcess.CopyAndInsert(workSheet, addressRange, ref addressPointer, true);
+                            workSheet.Cells[ExportProcess.AddRow(point, 2)].Value = countPSA[i] + "%PSA";
+
+                        }
+                    }
+                    if (dicCol.TryGetValue("Liner peeling after ORT testFlex SN", out addressFlexSN)
+                        && dicCol.TryGetValue($"Liner peeling after ORT test{sampleSTR}", out addressSample)
+                        && dicCol.TryGetValue("Liner peeling after ORT testCPK", out addressCPK))
+                    {
+                        string addressPointer = workSheet.Cells[workSheet.Cells[addressCPK].Start.Row + 1, workSheet.Cells[addressFlexSN].Start.Column].Address;
+
+                        for (int i = 0; i < countLiner.Count() - 1; i++)
+                        {
+                            string point = addressPointer;
+                            if (i == 0)
+                            {
+                                workSheet.Cells[ExportProcess.AddRow(addressFlexSN, 1)].Value = countLiner[countLiner.Count() - 1] + "%LINER";
+                            }
+                            string addressRange = $"{addressFlexSN}:{workSheet.Cells[workSheet.Cells[addressCPK].Start.Row, workSheet.Cells[addressSample].Start.Column].Address}";
+                            exportProcess.CopyAndInsert(workSheet, addressRange, ref addressPointer, true);
+                            workSheet.Cells[ExportProcess.AddRow(point, 2)].Value = countLiner[i] + "%LINER";
+
                         }
                     }
 
+                    #endregion
+
+                    #region Fill data
+                    List<string> tapeList = new List<string>();
+                    foreach (string item in countPSA)
+                    {
+                        tapeList.Add(item + "%PSA");
+                    }
+                    foreach (string item in countLiner)
+                    {
+                        tapeList.Add(item + "%LINER");
+                    }
+                    IDictionary<string, string> dicTape = ExportProcess.FindAddressByText(workSheet, tapeList.ToArray());
+
+                    foreach (string item in dicTape.Keys)
+                    {
+                        string tape = item.Split('%')[0];
+                        string name = item.Split('%')[1];
+                        if ((dic[tape]).TryGetValue(name, out DataTable dt))
+                        {
+                            FillDataInTape(workSheet, dt, dataTable, dicTape[item], sample, name, tape);
+                        }
+                    }
+                    #endregion
                     exportProcess.SaveExcelWorksheet(ex, FORMAT_NAME, itemCode, lotNo);
                 }
+
             }
+
             return "Export thành công";
+        }
+        private void FillDataInTape(ExcelWorksheet worksheet, DataTable dataTable, DataTable spec, string address, int sample, string name, string tape)
+        {
+            string addressImageSample = ExportProcess.getRangeBaseAddressByCellAddress(worksheet, ExportProcess.AddRow(address, 1));
+            byte[] imgBck = (byte[])((DataRow)spec.AsEnumerable().FirstOrDefault(row => row.Field<string>("Name") == name && row.Field<string>("TAPE") == tape))["Image Sample"];
+            ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressImageSample], imgBck, $"BACK{tape}-{name}");
+            int id = 0;
+            string sampleAddress = ExportProcess.AddColumn(address, 2);
+            foreach (DataRow dataRow in dataTable.Rows)
+            {
+                if (id >= sample)
+                {
+                    break;
+                }
+                string image = ExportProcess.AddRow(sampleAddress, 1);
+                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[image], (byte[])dataRow["Image"], $"Image{tape}-{name}-{id}");
+                string graph = ExportProcess.AddRow(image, 1);
+                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[graph], (byte[])dataRow["Graph"], $"Graph{tape}-{name}-{id}");
+                string productID = ExportProcess.AddRow(image, -2);
+                worksheet.Cells[productID].Value = dataRow["ProductID"];
+                sampleAddress = ExportProcess.AddColumn(sampleAddress, 1);
+                string peak = ExportProcess.AddRow(graph, 1);
+                worksheet.Cells[peak].Value = dataRow["Peak"];
+                string avz = ExportProcess.AddRow(peak, 1);
+                worksheet.Cells[avz].Value = dataRow["Average"];
+                if (name.Equals("LINER"))
+                {
+                    avz = ExportProcess.AddRow(avz, 1);
+                    worksheet.Cells[avz].Value = double.Parse(dataRow["Peak"].ToString()) * 0.0098;
+                    avz = ExportProcess.AddRow(avz, 1);
+                    worksheet.Cells[avz].Value = double.Parse(dataRow["Average"].ToString()) * 0.0098;
+                }
+                string az = ExportProcess.AddRow(avz, 1);
+
+                worksheet.Cells[az].Value = dataRow["Judgement Peeling force"];
+                az = ExportProcess.AddRow(az, 1);
+                worksheet.Cells[az].Value = dataRow["Judgement failure mode"];
+                id++;
+
+            }
         }
         public bool CheckLoaction(string location, string itemCode, string lotNo)
         {
             location = FileFolderRepository.GetFolderName(location);
-            string[] array = location.Split('-');
+            string[] array = location.Split(new[] { '-', '_' });
             string itemCodeL = $"{array[1]}-{array[2]}";
             try
             {
@@ -216,9 +281,7 @@ namespace OK2SHIP_SMT.Services
                     case "LINER":
                         result.Add(item);
                         break;
-                    case "LINERTRUOCKEO":
-                        result.Add(item);
-                        break;
+                   
                     case "PSA":
                         result.Add(item);
                         break;
@@ -298,28 +361,6 @@ namespace OK2SHIP_SMT.Services
                 //return ;
             }
         }
-        private DataTable SolveBeforeFolder(string location)
-        {
-            DataTable dataTable = new DataTable();
-
-            dataTable.Columns.Add($"Image", typeof(Image));
-
-            dataTable.Rows.Add();
-            IList<KeyValuePair<Image, string>> listImg = FileFolderRepository.ListAllPictureInAFolder(location);
-            var orderList = listImg.OrderBy(x => int.Parse(x.Value.Split('.')[0]));
-            foreach (KeyValuePair<Image, string> item in orderList)
-            {
-                string stt = item.Value.Trim().Split('.')[0].Trim();
-                dataTable.Columns.Add($"Image{stt}", typeof(Image));
-                //ImageFormat format = ImageFormat.Jpeg;
-                //string str = TDMK_ImageConverter.ImageToBase64((Image)item.Key, format);
-                //Image image = TDMK_ImageConverter.Base64ToImage(str);
-                //string strz = TDMK_ImageConverter.ImageToBase64(image, format);
-                dataTable.Rows[0][$"Image{stt}"] = (Image)item.Key;
-            }
-            dataTable.Columns.Remove("Image");
-            return dataTable;
-        }
         public static List<DataTable> SplitDataTableByTape(DataTable sourceTable)
         {
             if (!sourceTable.Columns.Contains("tape"))
@@ -355,9 +396,18 @@ namespace OK2SHIP_SMT.Services
             return resultTables;
         }
         private const string _SAMPLE_DIC = "SAMPLE";
-        public void SolveFolderPSALiner(string location, Dictionary<string, Dictionary<string, DataTable>> dic)
+        public void SolveFolderPSALiner(string location, Dictionary<string, Dictionary<string, DataTable>> dic, DataTable spec)
         {
 
+            if (spec.Columns.Count <= 0)
+            {
+                spec.Columns.Add("TAPE");
+                spec.Columns.Add("Name");
+                spec.Columns.Add("Peak Peeling Force (N)");
+                spec.Columns.Add("Average Peeling Force (N)");
+                spec.Columns.Add($"Image Sample", typeof(Image));
+
+            }
             string result = FileFolderRepository.GetFolderName(location).Replace(" ", "");
             DataTable dataTableLiner = SolveLinerPSAFolder(location);
             IList<DataTable> list = SplitDataTableByTape(dataTableLiner);
@@ -369,10 +419,6 @@ namespace OK2SHIP_SMT.Services
             sample.Columns.Add("Image", typeof(Image));
             sample.Columns.Add("Graph", typeof(Image));
 
-            if (!dic.ContainsKey(_SAMPLE_DIC))
-            {
-                dic.Add(_SAMPLE_DIC, new Dictionary<string, DataTable>());
-            }
 
 
             foreach (var item in list)
@@ -397,34 +443,20 @@ namespace OK2SHIP_SMT.Services
                     }
                 }
 
-                if (dic.TryGetValue(_SAMPLE_DIC, out Dictionary<string, DataTable> dicz))
-                {
-                    string key = result;
-                    if (!dicz.TryGetValue(key, out DataTable dtzs))
-                    {
-                        dicz.Add(key, sample);
-                    }
-                    if (!sample.AsEnumerable().Any(row => row.Field<string>("Tape") == tape))
-                    {
-                        DataRow row = sample.NewRow();
-                        row["STT"] = sample.Rows.Count + 1;
-                        row["Name"] = result;
-                        row["Tape"] = tape;
-                        row["Image"] = ((DataTable)dic[tape][result]).Rows[0]["Image"];
-                        sample.Rows.Add(row);
-                        //dic[_SAMPLE_DIC][key].Merge(row);
-                    }
+                DataRow row = spec.NewRow();
+                row["TAPE"] = tape;
+                row["Name"] = result;
+                row["Image Sample"] = ((DataTable)dic[tape][result]).Rows[0]["Image"];
+                spec.Rows.Add(row);
 
-                }
             }
         }
         public DataTable SolveFolder(string location, out string result)
         {
+
             result = FileFolderRepository.GetFolderName(location).Replace(" ", "");
             switch (result)
             {
-                case "LINERTRUOCKEO":
-                    return SolveBeforeFolder(location);
                 case "LINER":
                 case "PSA":
                     return new DataTable();
@@ -435,278 +467,215 @@ namespace OK2SHIP_SMT.Services
             throw new Exception("Folder này không có dữ liệu khớp");
         }
 
-        public int save(string itemCode, string lotNo, DataTable before, Dictionary<string, Dictionary<string, DataTable>> dic, bool prime = false)
+        public int save(string itemCode, string lotNo, DataTable before, Dictionary<string, Dictionary<string, DataTable>> dic, int prime = -1)
         {
             int res = 0;
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
-            if (!prime)
+            int id = prime;
+            if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
             {
-                if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
-                {
-                    throw new Exception("ItemCode or LotNo is null");
-                }
-                DataTable checker = _dBContext.LoadDataTable(_TABLE_NAME, new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }, new[] { "ID" });
+                throw new Exception("ItemCode or LotNo is null");
+            }
+            if (prime == -1)
+            {
+                DataTable checker = _dBContext.LoadDataTable(_TABLE_NAME, new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }, new[] { "ID", "Data" });
                 if (checker.Rows.Count > 0)
                 {
-                    throw new Exception("1234 - ItemCode and LotNo already exist");
+                    DataRow row = checker.Rows[0];
+                    throw new Exception($"1234 - {row["Data"].ToString().Split('#')[0]} - ItemCode and LotNo already exist");
                 }
             }
-            DataTable dataTableImage = _dBContext.GetTableStructure(_TABLE_NAME + "_IMAGE");
-            int pcs = _dBContext.GetID(_TABLE_NAME + "_IMAGE") + 1;
-            DataTable dataTable = _dBContext.GetTableStructure(_TABLE_NAME);
-            #region Before
-            string resData = "";
-            DataRow rowBefore = dataTableImage.NewRow();
-            for (int i = 1; i < dataTableImage.Columns.Count; i++)
-            {
-                var imz = before.Rows[0][before.Columns[i - 1].ColumnName];
-                if (imz is Image)
-                {
-                    rowBefore[dataTableImage.Columns[i].ColumnName] = TDMK_ImageConverter.ImageToByteArray((Image)imz, ImageFormat.Jpeg);
-                }
-                else
-                {
-                    rowBefore[dataTableImage.Columns[i].ColumnName] = imz;
-                }
-            }
-            rowBefore["ID"] = pcs;
-            resData += $"Before<ImageID: {pcs++}>";
-            dataTableImage.Rows.Add(rowBefore);
+
+            id = _dBContext.GetID(_TABLE_NAME + "_IMG") + 1;
+
+            DataTable imageDT = _dBContext.GetTableStructure(_TABLE_NAME + "_IMG");
+            int area = id;
+            #region before
+            string list = $"{area.ToString()}#" + ConvertDataTable(before, imageDT, ref id, area);
             #endregion
-
-            DataRow dr = dataTable.NewRow();
-            dr["ItemCode"] = itemCode;
-            dr["LotNo"] = lotNo;
-            ///Dictionary<string, Dictionary<string, DataTable>>
-            /// TAPE - PSA/Linar - data
-            foreach (string tape in dic.Keys)
+            #region psa linear
+            foreach (string keyOut in dic.Keys)
             {
-                Dictionary<string, DataTable> dicz = dic[tape];
-                //psa/linar
-                foreach (string item in dicz.Keys)
+                foreach (string keyIn in dic[keyOut].Keys)
                 {
-
-                    DataTable dataTablez = dicz[item];
-                    DataRow imageRow = dataTableImage.NewRow();
-                    DataRow graphRow = dataTableImage.NewRow();
-                    int i = 0;
-                    for (; i < dataTablez.Rows.Count && i < 32; i++)
-                    {
-                        if (!tape.Equals("SAMPLE"))
-                        {
-                            var grimz = dataTablez.Rows[i]["Graph"];
-                            if (grimz is Image)
-                            {
-                                graphRow[dataTableImage.Columns[i + 1]] = TDMK_ImageConverter.ImageToByteArray((Image)dataTablez.Rows[i]["Graph"], ImageFormat.Jpeg);
-                            }
-                            else
-                            {
-                                graphRow[dataTableImage.Columns[i + 1]] = dataTablez.Rows[i]["Graph"];
-
-                            }
-                        }
-                        else
-                        {
-                            Image image = new Bitmap(20, 20);
-                            graphRow[dataTableImage.Columns[i + 1]] = TDMK_ImageConverter.ImageToByteArray((Image)image, ImageFormat.Jpeg);
-
-                        }
-                        var imz = dataTablez.Rows[i]["Image"];
-                        if (imz is Image)
-                        {
-                            imageRow[dataTableImage.Columns[i + 1]] = TDMK_ImageConverter.ImageToByteArray((Image)imz, ImageFormat.Jpeg);
-                        }
-                        else
-                        {
-                            imageRow[dataTableImage.Columns[i + 1]] = imz;
-                        }
-                    }
-                    if (i < 32)
-                    {
-                        for (; i < 32; i++)
-                        {
-                            Image image = new Bitmap(20, 20);
-                            if (tape.Equals("SAMPLE"))
-                            {
-                                imageRow[dataTableImage.Columns[i + 1]] = TDMK_ImageConverter.ImageToByteArray(image, ImageFormat.Jpeg);
-                                graphRow[dataTableImage.Columns[i + 1]] = TDMK_ImageConverter.ImageToByteArray(image, ImageFormat.Jpeg);
-                            }
-                        }
-                    }
-                    imageRow["ID"] = pcs++;
-                    if (!tape.Equals("SAMPLE"))
-                    {
-                        graphRow["ID"] = pcs;
-                        pcs++;
-                    }
-                    dataTablez.Columns.Remove("Image");
-                    dataTablez.Columns.Remove("Graph");
-                    string json = ConverterService.DataTableToJson(dataTablez);
-                    string key = $"&{tape}-{item}<ImageID@ {imageRow["ID"]}-{graphRow["ID"]}; Json@ {json}; Count@ {dataTablez.Rows.Count};>";
-                    dataTableImage.Rows.Add(imageRow);
-                    if (!tape.Equals("SAMPLE"))
-                    {
-                        dataTableImage.Rows.Add(graphRow);
-                    }
-                    resData += key;
+                    DataTable dt = dic[keyOut][keyIn];
+                    list += "#" + $"<{keyOut}%{keyIn}%{ConvertDataTable(dt, imageDT, ref id, area)}>";
                 }
-
             }
-            dr["Data"] = resData;
-            dataTable.Rows.Add(dr);
-            DataTable imageIDLIST = _dBContext.LoadDataTable(_TABLE_NAME, new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }, new[] { "ID", "Data" });
-
-            string[] jsonZ = imageIDLIST.Rows[0]["Data"].ToString().Split('&');
-            IList<string> idList = new List<string>();
-            foreach (var item in jsonZ)
+            #endregion
+            #region Insert environment
+            DataTable DATA = _dBContext.GetTableStructure(_TABLE_NAME);
+            DataRow rowz = DATA.NewRow();
+            rowz["ItemCode"] = itemCode;
+            rowz["LotNo"] = lotNo;
+            rowz["Data"] = list;
+            DATA.Rows.Add(rowz);
+            res += _dBContext.BuckDataTable(imageDT, _TABLE_NAME + "_IMG", new[] { "Area" });
+            res += _dBContext.DeleteData(_TABLE_NAME + "_IMG", "Area", new[] { prime.ToString() });
+            res += _dBContext.BuckDataTable(DATA, _TABLE_NAME, new[] { "ItemCode", "LotNo" }, null, "ID");
+            #endregion
+            return res;
+        }
+        public string ConvertDataTable(DataTable datatable, DataTable dataTableImage, ref int id, int area)
+        {
+            DataTable resDT = new DataTable();
+            //Add Column
+            foreach (DataColumn column in datatable.Columns)
             {
-                if (item.Contains("Before"))
+                if (column.DataType.FullName == "System.Drawing.Image")
                 {
-                    string content = item.Split('<')[1].TrimEnd('>').Trim().Split(':')[1].Trim();
-                    idList.Add(content);
+                    resDT.Columns.Add(column.ColumnName + "&CONVERTER", typeof(string));
+                }
+                else if (column.DataType.FullName == "System.Byte[]")
+                {
+                    resDT.Columns.Add(column.ColumnName + "&CONVERTER", typeof(string));
                 }
                 else
                 {
-                    string content = item.Split('<')[1].TrimEnd('>').Trim().Split(';')[0].Split('@')[1];
-                    foreach (var item1 in content.Split('-'))
-                    {
-                        if (!string.IsNullOrEmpty(item1))
-                        {
-                            idList.Add(item1.Trim());
-                        }
-                    }
+                    resDT.Columns.Add(column.ColumnName, column.DataType);
                 }
             }
-            res += _dBContext.BuckDataTable(dataTable, _TABLE_NAME, new[] { "ItemCode", "LotNo" }, null, "ID");
-            res += _dBContext.DeleteData(_TABLE_NAME, "ID", idList.ToArray());
-            res += _dBContext.SaveDataTable(dataTableImage, _TABLE_NAME + "_IMAGE", null, "ID");
+            //add row
+            foreach (DataRow row in datatable.Rows)
+            {
+                DataRow rowres = resDT.NewRow();
+                foreach (DataColumn col in resDT.Columns)
+                {
+                    if (col.ColumnName.Contains("&CONVERTER"))
+                    {
+                        DataRow newRow = dataTableImage.NewRow();
+                        string colName = col.ColumnName.Replace("&CONVERTER", "");
+                        var image = row[colName];
+                        if (datatable.Columns[colName].DataType.FullName != "System.Byte[]")
+                        {
+                            image = TDMK_ImageConverter.ImageToByteArray((Image)row[colName], ImageFormat.Jpeg);
+
+                        }
+
+                        rowres[col.ColumnName] = id;
+                        newRow["ID"] = id++;
+                        newRow["Image"] = image;
+                        newRow["Area"] = area;
+                        dataTableImage.Rows.Add(newRow);
+                    }
+                    else
+                    {
+                        rowres[col.ColumnName] = row[col.ColumnName];
+                    }
+                }
+                resDT.Rows.Add(rowres);
+            }
+
+            return ConverterService.DataTableToJson(resDT);
+        }
+        public DataTable ConvertDataTable(DataTable datatable, DataTable dataTableImage)
+        {
+            DataTable res = new DataTable();
+            foreach (DataColumn col in datatable.Columns)
+            {
+                if (col.ColumnName.Contains("&CONVERTER"))
+                {
+                    res.Columns.Add(col.ColumnName.Replace("&CONVERTER", ""), typeof(byte[]));
+                }
+                else
+                {
+                    res.Columns.Add(col.ColumnName);
+                }
+            }
+            foreach (DataRow row in datatable.Rows)
+            {
+                DataRow rowZ = res.NewRow();
+                foreach (DataColumn col in datatable.Columns)
+                {
+
+                    if (col.ColumnName.Contains("&CONVERTER"))
+                    {
+                        string name = col.ColumnName.Replace("&CONVERTER", "");
+                        int point = int.Parse(row[col].ToString()) - int.Parse(dataTableImage.Rows[0]["ID"].ToString());
+                        byte[] img = (byte[])dataTableImage.Rows[point]["Image"];
+                        rowZ[name] = img;
+                    }
+                    else
+                    {
+                        rowZ[col.ColumnName] = row[col.ColumnName];
+                    }
+                }
+                res.Rows.Add(rowZ);
+            }
 
             return res;
         }
-
-        public Dictionary<string, Dictionary<string, DataTable>> Load(string itemCode, string lotNo, out DataTable before)
+        public Dictionary<string, Dictionary<string, DataTable>> Load(string itemCode, string lotNo, ref DataTable before)
         {
-            before = new DataTable();
-            Dictionary<string, Dictionary<string, DataTable>> dic = new Dictionary<string, Dictionary<string, DataTable>>();
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
-            DataTable dt = _dBContext.LoadDataTable(_TABLE_NAME, new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
-            if (dt.Rows.Count <= 0)
+            if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
             {
-                throw new Exception("Không có dữ liệu");
+                throw new Exception("ItemCode or LotNo is null");
             }
-            string json = dt.Rows[0]["Data"].ToString();
-            string[] process = json.Split('&');
-            foreach (var item in process)
+            DataTable table = _dBContext.LoadDataTable(_TABLE_NAME, new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
+            if (table.Rows.Count <= 0)
             {
-                if (item.Contains('<'))
+                throw new Exception("Không có dữ liệu của itemcode lotno");
+            }
+            string[] json = table.Rows[0]["Data"].ToString().Trim().Split('#');
+            string area = json[0];
+            DataTable tableImage = _dBContext.LoadDataTable(_TABLE_NAME + "_IMG", new[] { "Area" }, new[] { area }, new[] { "ID", "Image" });
+            before = ConvertDataTable(ConverterService.JsonToDataTable(json[1]), tableImage);
+
+            Dictionary<string, Dictionary<string, DataTable>> dic = new Dictionary<string, Dictionary<string, DataTable>>();
+            for (int i = 2; i < json.Count(); i++)
+            {
+                string[] bson = json[i].Replace("<", "").Replace(">", "").Split('%');
+                string tape = bson[0];
+                string name = bson[1];
+                DataTable item = ConvertDataTable(ConverterService.JsonToDataTable(bson[2]), tableImage);
+                if (dic.TryGetValue(tape, out Dictionary<string, DataTable> jtem))
                 {
-
-                    string pro = item.Split('<')[0];
-                    switch (pro)
-                    {
-                        case "Before":
-                            string proc = item.Split('<')[1];
-                            string id = proc.Split(':')[1].TrimEnd('>').Trim();
-                            DataTable image = _dBContext.LoadDataTable(_TABLE_NAME + "_IMAGE", new[] { "ID" }, new[] { id });
-                            image.Columns.Remove("ID");
-                            before = image;
-                            break;
-
-                        default:
-                            string key = pro.Split('-')[0];
-                            string tape = pro.Split('-')[1];
-                            if (dic.TryGetValue(key, out Dictionary<string, DataTable> valueax))
-                            {
-
-                                if (!valueax.TryGetValue(tape, out DataTable data))
-                                {
-                                    valueax.Add(tape, MakeAgainDT(item.Split('<')[1].TrimEnd('>')));
-                                }
-                            }
-                            else
-                            {
-                                Dictionary<string, DataTable> dicz = new Dictionary<string, DataTable>();
-                                DataTable dz = MakeAgainDT(item.Split('<')[1].TrimEnd('>'));
-                                dicz.Add(tape, dz);
-                                dic.Add(key, dicz);
-                            }
-                            break;
-                    }
-                }
-            }
-            return dic;
-        }
-
-        private DataTable MakeAgainDT(string v)
-        {
-            DataTable imageDT = new DataTable();
-            DataTable imageDT1 = new DataTable();
-            DataTable result = new DataTable();
-            int pcs = 0;
-            string[] bson = v.Split(';');
-            foreach (var item in bson)
-            {
-                string process = item.Split('@')[0].Trim();
-                switch (process)
-                {
-                    case "Count":
-                        pcs = int.Parse(item.Split('@')[1].Trim());
-                        break;
-                    case "ImageID":
-                        string id = item.Split('@')[1].Trim();
-                        string id1 = id.Split('-')[0];
-                        string id2 = id.Split('-')[1];
-                        imageDT = _dBContext.LoadDataTable(_TABLE_NAME + "_IMAGE", new[] { "ID" }, new[] { id1 });
-
-                        if (!string.IsNullOrEmpty(id2))
-                        {
-                            imageDT1 = _dBContext.LoadDataTable(_TABLE_NAME + "_IMAGE", new[] { "ID" }, new[] { id2 });
-                            imageDT1.Columns.Remove("ID");
-                        }
-
-                        imageDT.Columns.Remove("ID");
-                        break;
-                    case "Json":
-                        string json = item.Split('@')[1].Trim();
-                        result = ConverterService.JsonToDataTable(json);
-                        break;
-                }
-            }
-            result.Columns.Add("Image", typeof(byte[]));
-            result.Columns.Add("Graph", typeof(byte[]));
-            if (imageDT.Rows.Count <= 0)
-            {
-                return result;
-            }
-            List<DataRow> list = new List<DataRow>();
-            for (int i = 0; i < pcs; i++)
-            {
-                DataRow row = result.Rows[i];
-                if (i < 32)
-                {
-                    row["Image"] = (byte[])imageDT.Rows[0][result.Rows.IndexOf(row)];
-                    if (imageDT1.Rows.Count > 0)
-                    {
-                        row["Graph"] = (byte[])imageDT1.Rows[0][result.Rows.IndexOf(row)];
-                    }
-
+                    jtem.Add(name, item);
                 }
                 else
                 {
-                    list.Add(row);
+                    Dictionary<string, DataTable> zdic = new Dictionary<string, DataTable>();
+                    zdic.Add(name, item);
+                    dic.Add(tape, zdic);
                 }
             }
-            if (list != null)
-            {
 
-                foreach (var item in list)
+
+            return dic;
+        }
+
+        public void FillProductID(Dictionary<string, Dictionary<string, DataTable>> dic, string itemCode, string lotNo, string location)
+        {
+            if (string.IsNullOrEmpty(location.Trim()))
+            {
+                return;
+            }
+            ProductIDService productIDService = new ProductIDService(itemCode, lotNo, location, new[] { "ORT", "environment" }, new[] { "LINER", "PSA" });
+            Dictionary<string, string> diczz = productIDService._listFile;
+
+            foreach (Dictionary<string, DataTable> dicz in dic.Values)
+            {
+                foreach (var item in dicz)
                 {
-                    result.Rows.Remove(item);
+                    if (diczz.TryGetValue(item.Key, out string locationz))
+                    {
+                        List<string> _PRODUCT_ID = productIDService.getListProductID(locationz);
+                        item.Value.Columns.Add("ProductID");
+                        foreach (DataRow row in item.Value.Rows)
+                        {
+                            if (_PRODUCT_ID.Count > 0)
+                            {
+                                row["ProductID"] = _PRODUCT_ID[0];
+                                _PRODUCT_ID.Remove(_PRODUCT_ID[0]);
+                            }
+
+                        }
+                    }
                 }
             }
-            return result;
         }
     }
 }

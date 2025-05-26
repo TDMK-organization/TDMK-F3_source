@@ -1,0 +1,604 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>VHX-IMADA(Ver_4.7)</name>
+    </assembly>
+    <members>
+        <member name="F:OK2SHIP_SMT.ACF.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.ACF.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.ACF.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.Repositories.DBContext.Update(System.String,System.Data.DataTable,System.String[])">
+            <summary>
+            Hàm update
+            Cột nào update phải giữ nguyên
+            nếu giá trị là "" thì vẫn update
+            nếu giá trị là null thì không update
+            </summary>
+            <param name="TableName"></param>
+            <param name="dt_set"></param>
+            <param name="listColCondition"></param>
+            <param name="valueCondition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OK2SHIP_SMT.Repositories.DBContext.BuckDataTable(System.Data.DataTable,System.String,System.String[],System.String[],System.String)">
+            <summary>
+            
+            </summary>
+            <param name="dataTable">Dữ liệu cần luuw</param>
+            <param name="TableSql">Bảng sẽ lưu</param>
+            <param name="colCompare">cột mình sẽ so sánh để thay thế</param>
+            <param name="mappingColName">cột trong sql để mình so sánh</param>
+            <param name="colID">Đánh dấu cột id</param>
+            <returns></returns>
+        </member>
+        <member name="M:OK2SHIP_SMT.Repositories.ExportProcess.FindAddressByText(OfficeOpenXml.ExcelWorksheet,System.String,System.String)">
+            
+            Not Fix
+        </member>
+        <member name="M:OK2SHIP_SMT.Repositories.ExportProcess.FindAddressByText(OfficeOpenXml.ExcelWorksheet,System.String[],System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="workSheet"></param>
+            <param name="colHeader"></param>
+            <param name="eq"></param>
+            <returns>text with value is list of address of column</returns>
+        </member>
+        <member name="M:OK2SHIP_SMT.Repositories.FileFolderRepository.ListAllPictureInAFolder(System.String,System.String)">
+            <summary>
+            Get picture in a folder
+            </summary>
+            <param name="locationFolder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OK2SHIP_SMT.Repositories.FileFolderRepository.ListAllPictureInFolder(System.String)">
+            <summary>
+            Get all picture in many subfolder in folder
+            </summary>
+            <param name="location"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OK2SHIP_SMT.Services.ArtistFramerService.LoadImageFromFile(System.String)">
+            <summary>
+            Tải một hình ảnh từ đường dẫn file đã cho.
+            </summary>
+            <param name="imagePath">Đường dẫn đầy đủ đến file ảnh.</param>
+            <returns>Đối tượng Image nếu thành công, ngược lại là null.</returns>
+        </member>
+        <member name="M:OK2SHIP_SMT.Services.ArtistFramerService.SaveImageToFile(System.Drawing.Image,System.String,System.Drawing.Imaging.ImageFormat)">
+            <summary>
+            Lưu một đối tượng Image vào một file với định dạng cụ thể.
+            </summary>
+            <param name="imageToSave">Đối tượng Image cần lưu.</param>
+            <param name="filePath">Đường dẫn đầy đủ nơi bạn muốn lưu file ảnh.</param>
+            <param name="format">Định dạng ảnh (ví dụ: Jpeg, Png, Bmp).</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.Services.ConverterService.JsonToDataTable(System.String,System.Boolean)">
+            <summary>
+            Converts a JSON array into a DataTable structure for easier data manipulation.  
+            </summary>
+            <param name="json">The input string containing JSON data to be converted into a DataTable.</param>
+            <returns>Returns a DataTable populated with data from the JSON array or null if the input is invalid.</returns>
+        </member>
+        <member name="M:OK2SHIP_SMT.Services.ConverterService.DataTableToJson(System.Data.DataTable,System.Boolean)">
+            <summary>
+             
+            </summary>
+            <param name="datatable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OK2SHIP_SMT.Services.SEMServices.SaveProcess(System.Data.DataTable,System.Boolean)">
+            <summary>
+            Save process to database
+            </summary>
+            <param name="dataTable">dữ liệu</param>
+            <param name="prime">Xác nhận ghi đè dữ liệu</param>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:OK2SHIP_SMT.Services.UserSession.ListOfUser">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.Security.Authentication.AuthenticationException"></exception>
+            <exception cref="T:System.Exception"></exception>
+        </member>
+        <member name="M:OK2SHIP_SMT.Services.ValidateService.isDigit(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="number"></param>
+            <returns></returns>
+            <exception cref="T:System.Exception"></exception>
+        </member>
+        <member name="M:OK2SHIP_SMT.Services.ValidateService.lotNoHandle(System.String)">
+            <summary>
+            Handle lotno
+            </summary>
+            <param name="lotno"></param>
+            <returns></returns>
+        </member>
+        <member name="F:OK2SHIP_SMT.Setup_sochanlk.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.Setup_sochanlk.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.Setup_sochanlk.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.ToolBoxs.TDMK_Button.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.ToolBoxs.TDMK_Button.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.ToolBoxs.TDMK_Button.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.Logins.LoginForm.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.Logins.LoginForm.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.Logins.LoginForm.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.Logins.UC_Information.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.Logins.UC_Information.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.Logins.UC_Information.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.Logins.UserDashboard.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.Logins.UserDashboard.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.Logins.UserDashboard.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.Packaging.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.Packaging.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.Packaging.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.PickData.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.PickData.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.PickData.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.SEM.tb_loactionFolder_MouseDoubleClick(System.Object,System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Open browser dialog
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.SEM.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.SEM.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.SEM.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.TableOfContent.compareDate(System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="date">date form</param>
+            <param name="num"> after send (area)</param>
+            <returns>
+            1: bigger
+            0, -1: in area 
+            -1: smaller
+            </returns>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.TableOfContent.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.TableOfContent.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.TableOfContent.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.UC_Assy_Yield.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.UC_Assy_Yield.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.UC_Assy_Yield.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.UC_EnvironmentTable.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.UC_EnvironmentTable.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.UC_EnvironmentTable.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.UC_Impedance.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.UC_Impedance.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.UC_Impedance.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.UC_NewFeature.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.UC_NewFeature.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.UC_NewFeature.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.UserControls.UC_XrayPicture.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.UC_XrayPicture.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.UserControls.UC_XrayPicture.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.Views.CommonForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.Views.CommonForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.Views.CommonForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:OK2SHIP_SMT.Views.NormalForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:OK2SHIP_SMT.Views.NormalForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:OK2SHIP_SMT.Views.NormalForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:OK2SHIP_SMT.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:OK2SHIP_SMT.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:OK2SHIP_SMT.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:OK2SHIP_SMT.Properties.Resources.Logo__2_">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="F:Funtion_F3_SMT.FrmMain.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Funtion_F3_SMT.FrmMain.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Funtion_F3_SMT.FrmMain.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Funtion_F3_SMT.Login.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Funtion_F3_SMT.Login.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Funtion_F3_SMT.Login.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Funtion_F3_SMT.MainScreen.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Funtion_F3_SMT.MainScreen.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Funtion_F3_SMT.MainScreen.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Funtion_F3_SMT.ImageDetail.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Funtion_F3_SMT.ImageDetail.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Funtion_F3_SMT.ImageDetail.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Funtion_F3_SMT.Program.Main">
+            <summary>
+            The main entry point for the application.
+            </summary>
+        </member>
+        <member name="F:Funtion_F3_SMT.Select_Image.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Funtion_F3_SMT.Select_Image.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Funtion_F3_SMT.Select_Image.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Funtion_F3_SMT.UserControls.DropDown.#ctor(System.String)">
+            <summary>
+            Constructor with placeholder
+            </summary>
+            <param name="placeHolder">string of placeholder</param>
+        </member>
+        <member name="M:Funtion_F3_SMT.UserControls.DropDown.Constructor">
+            <summary>
+            Constructor all
+            </summary>
+        </member>
+        <member name="M:Funtion_F3_SMT.UserControls.DropDown.DropDown_DropDownClosed(System.Object,System.EventArgs)">
+            <summary>
+            When dropdown closed
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Funtion_F3_SMT.UserControls.DropDown.DropDown_Click(System.Object,System.EventArgs)">
+            <summary>
+            Event when dropdown clicked
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Funtion_F3_SMT.UserControls.DropDown.DropDown_SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            Event when dropdown selected index changed
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:Funtion_F3_SMT.View_Data_3.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Funtion_F3_SMT.View_Data_3.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Funtion_F3_SMT.View_Data_3.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Funtion_F3_SMT.View_detail_Image.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Funtion_F3_SMT.View_detail_Image.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Funtion_F3_SMT.View_detail_Image.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+    </members>
+</doc>

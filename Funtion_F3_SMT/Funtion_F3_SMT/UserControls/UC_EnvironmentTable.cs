@@ -25,11 +25,46 @@ namespace OK2SHIP_SMT.UserControls
             InitializeComponent();
             setupInit();
         }
+        public void ClearData()
+        {
+            DataTable dt = new DataTable();
+            psaList.DataSource = dt;
+            linearList.DataSource = dt;
+            dictionary_Data = new Dictionary<string, Dictionary<string, DataTable>>();
+            dataGridView.DataSource = dt;
+            pictureBox.Image = null;
+            listBox.Items.Clear();
 
+
+        }
+        public void FillData(DataTable dataTable = null, Dictionary<string, Dictionary<string, DataTable>> dictionary = null)
+        {
+            ClearData();
+            dataGridView.RowTemplate.Height = 150;
+
+            if (dataTable != null)
+            {
+                dataGridView.DataSource = dataTable;
+            }
+            if (dictionary != null)
+            {
+                dictionary_Data = dictionary;
+                listBox.Items.AddRange(dictionary.Keys.ToArray());
+            }
+            foreach (DataGridViewColumn column in dataGridView.Columns)
+            {
+                if (dataGridView.Columns[column.Name] is DataGridViewImageColumn)
+                {
+                    ((DataGridViewImageColumn)dataGridView.Columns[column.Name]).ImageLayout = DataGridViewImageCellLayout.Zoom;
+                    ((DataGridViewImageColumn)dataGridView.Columns[column.Name]).Width = 250; // Đặt chiều rộng cột
+                }
+            }
+        }
         private void dataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             DataGridView dataGridView = (DataGridView)sender;
             object dataSource = dataGridView.DataSource;
+
             displayImage((DataTable)dataSource, e);
         }
 
@@ -47,13 +82,15 @@ namespace OK2SHIP_SMT.UserControls
                 Image imageData = TDMK_ImageConverter.ByteArrayToImage((byte[])sender.Rows[row][col]);
                 pictureBox.Image = imageData;
             }
-            if (sender.Columns.Contains("Name") && listBox.SelectedItem.ToString().Contains("SAMPLE"))
+            if (sender.Columns.Contains("Image Sample"))
             {
                 DataRow rowz = sender.Rows[row];
                 memory = $"{rowz["Name"]}-{rowz["Tape"]}-{row}";
+                btn_editImage.Enabled = true;
             }
             else
             {
+                btn_editImage.Enabled = false;
                 memory = "";
             }
             btn_editImage.Text = $"Edit Image {memory}";
@@ -62,6 +99,7 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void setupInit()
         {
+            //dataGridView.CellContentDoubleClick += dataGridView_CellContentDoubleClick;
             linearList.CellContentDoubleClick += dataGridView_CellContentDoubleClick;
             psaList.CellContentDoubleClick += dataGridView_CellContentDoubleClick;
             splitLinear.Panel2.Controls.Add(linearList);
@@ -71,6 +109,8 @@ namespace OK2SHIP_SMT.UserControls
         private void listBox_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+            Dictionary<string, string[]> keyValuePairs = new Dictionary<string, string[]>();
+            keyValuePairs.Add("Judgement failure mode", new[] { "No adhesive stick on liner" });
             ListBox listBox = (ListBox)sender;
             if (listBox.SelectedIndex != -1) // Check if an item is selected
             {
@@ -85,10 +125,12 @@ namespace OK2SHIP_SMT.UserControls
                     string Linear = "LINER";
                     if (dic.TryGetValue(PSA_str, out DataTable dt))
                     {
+                        psaList.columnDropdowns = keyValuePairs;
                         psaList.DataSource = dt;
                     }
                     if (dic.TryGetValue(Linear, out DataTable dtz))
                     {
+                        linearList.columnDropdowns = keyValuePairs;
                         linearList.DataSource = dtz;
                     }
                 }
@@ -98,20 +140,71 @@ namespace OK2SHIP_SMT.UserControls
 
         private void btn_editImage_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(memory) && memory.Contains('-'))
+            //if (!string.IsNullOrEmpty(memory) && memory.Contains('-'))
+            //{
+            //    string[] str = memory.Split('-');
+            //    string name = str[0], tape = str[1], row = str[2];
+            //    var image = ((DataTable)dataGridView.DataSource).Rows[int.Parse(row)]["Image Sample"];
+            //    bool prime = false;
+            //    if (image is byte[])
+            //    {
+            //        prime = true;
+            //        image = TDMK_ImageConverter.ByteArrayToImage((byte[])image);
+            //    }
+            //    EditImageView edit = new EditImageView((Image)image);
+            //    Form dialog = new CommonForm("", edit, null);
+            //    dialog.ShowDialog();
+            //    if (!edit.save_status)
+            //    {
+            //        return;
+            //    }
+            //    if (prime)
+            //    {
+            //        image = TDMK_ImageConverter.ImageToByteArray(edit.image, ImageFormat.Jpeg);
+            //    }
+            //    else
+            //    {
+            //        image = edit.image;
+            //    }
+            //    ((DataTable)dataGridView.DataSource).Rows[int.Parse(row)]["Image Sample"] = image;
+            //    pictureBox.Image = edit.image;
+            //}
+        }
+
+        private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+
+            if (e.ColumnIndex == 3 || e.ColumnIndex == 2)
             {
-                string[] str = memory.Split('-');
-                string name = str[0], tape = str[1], row = str[2];
-                Image image = TDMK_ImageConverter.ByteArrayToImage((byte[])((DataTable)dictionary_Data["SAMPLE"][name]).Rows[int.Parse(row)]["Image"]);
-                EditImageView edit = new EditImageView(image);
-                Form dialog = new CommonForm("", edit, null);
-                dialog.ShowDialog();
-                if(!edit.save_status)
+                DataTable dt = (DataTable)((DataGridView)sender).DataSource;
+                string value = dt.Rows[e.RowIndex][e.ColumnIndex].ToString().Replace(" ", "");
+                string start = "", end = "";
+                foreach (char c in value)
                 {
-                    return;
+                    if (int.TryParse($"{c}", out int r))
+                    {
+                        start += c;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                ((DataTable)dictionary_Data["SAMPLE"][name]).Rows[int.Parse(row)]["Image"] = TDMK_ImageConverter.ImageToByteArray(edit.image, ImageFormat.Jpeg);
-                pictureBox.Image = edit.image;
+                int i = value.Length - 1;
+                while (i >= 0)
+                {
+                    char c = value[i];
+                    if (int.TryParse($"{c}", out int r))
+                    {
+                        end = c + end;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                    i--;
+                }
+                dt.Rows[e.RowIndex][e.ColumnIndex] = $"({start}~{end}N)";
             }
         }
     }

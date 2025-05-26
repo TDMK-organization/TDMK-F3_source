@@ -2463,7 +2463,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                 //    txtFormat.Text = Path.Combine(data_loc, "Format");
                 //}
             }
-
+            txtFormat.Enabled = true;
         }
 
         private void btn_filter_Click(object sender, EventArgs e)

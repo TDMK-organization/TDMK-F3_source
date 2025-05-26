@@ -176,6 +176,7 @@
             // 
             this.txtFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFormat.Enabled = false;
             this.txtFormat.Location = new System.Drawing.Point(85, 77);
             this.txtFormat.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtFormat.Multiline = true;

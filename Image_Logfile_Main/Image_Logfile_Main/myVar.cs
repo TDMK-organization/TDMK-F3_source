@@ -277,7 +277,7 @@ namespace VHX
         {
             SqlConnection _sqlcon_OK2SHIP;
             string app_path = Application.StartupPath;
-            string config_file = Path.Combine(app_path, "Config", "config.txt");
+            string config_file = Path.Combine(app_path.Replace("\\FPCA OK2SHIP Auto System\\VHX-IMADA", ""), "Config.ini");
             string[] my_config = myCode.read_config_arr(config_file);
 
             foreach (string c in my_config)

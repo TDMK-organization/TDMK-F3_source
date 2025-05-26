@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>OK2SHIP</RootNamespace>
     <AssemblyName>Image_Logfile_Main%28Ver08.1%29</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\TestAreas\Image_Logfile_Main\</OutputPath>
+    <OutputPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,42 +40,42 @@
   <ItemGroup>
     <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\AForge.dll</HintPath>
+      <HintPath>..\..\DDLS\AForge.dll</HintPath>
     </Reference>
     <Reference Include="AForge.Video, Version=2.2.5.0, Culture=neutral, PublicKeyToken=cbfb6e07d173c401, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\AForge.Video.dll</HintPath>
+      <HintPath>..\..\DDLS\AForge.Video.dll</HintPath>
     </Reference>
     <Reference Include="AForge.Video.DirectShow, Version=2.2.5.0, Culture=neutral, PublicKeyToken=61ea4348d43881b7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\AForge.Video.DirectShow.dll</HintPath>
+      <HintPath>..\..\DDLS\AForge.Video.DirectShow.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus, Version=7.0.2.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\EPPlus.dll</HintPath>
+      <HintPath>..\..\DDLS\EPPlus.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus.Interfaces">
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\EPPlus.Interfaces.dll</HintPath>
+      <HintPath>..\..\DDLS\EPPlus.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus.System.Drawing">
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\EPPlus.System.Drawing.dll</HintPath>
+      <HintPath>..\..\DDLS\EPPlus.System.Drawing.dll</HintPath>
     </Reference>
     <Reference Include="ExcelDataReader">
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\ExcelDataReader.dll</HintPath>
+      <HintPath>..\..\DDLS\ExcelDataReader.dll</HintPath>
     </Reference>
     <Reference Include="ExcelDataReader.DataSet">
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\ExcelDataReader.DataSet.dll</HintPath>
+      <HintPath>..\..\DDLS\ExcelDataReader.DataSet.dll</HintPath>
     </Reference>
     <Reference Include="IniLibs">
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\IniLibs.dll</HintPath>
+      <HintPath>..\..\DDLS\IniLibs.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="OK2SHIP_Lib">
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\OK2SHIP_Lib.dll</HintPath>
+      <HintPath>..\..\DDLS\OK2SHIP_Lib.dll</HintPath>
     </Reference>
     <Reference Include="Resize_Lib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\Resize_Lib.dll</HintPath>
+      <HintPath>..\..\DDLS\Resize_Lib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -91,22 +91,22 @@
     <Reference Include="System.Xml" />
     <Reference Include="TDMK_EPPLUS_7, Version=7.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\TDMK_EPPLUS_7.dll</HintPath>
+      <HintPath>..\..\DDLS\TDMK_EPPLUS_7.dll</HintPath>
     </Reference>
     <Reference Include="TDMK_Image">
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\TDMK_Image.dll</HintPath>
+      <HintPath>..\..\DDLS\TDMK_Image.dll</HintPath>
     </Reference>
     <Reference Include="TDMK_SEEV_DLL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\TDMK_SEEV_DLL.dll</HintPath>
+      <HintPath>..\..\DDLS\TDMK_SEEV_DLL.dll</HintPath>
     </Reference>
     <Reference Include="TDMK_SQL, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\TDMK_SQL.dll</HintPath>
+      <HintPath>..\..\DDLS\TDMK_SQL.dll</HintPath>
     </Reference>
     <Reference Include="ZedGraph, Version=5.1.2.878, Culture=neutral, PublicKeyToken=02a83cbd123fcd60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\TDMK_group\Source Code\Image_Logfile_Main\Image_Logfile_Main\Library\ZedGraph.dll</HintPath>
+      <HintPath>..\..\DDLS\ZedGraph.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

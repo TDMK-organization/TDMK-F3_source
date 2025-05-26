@@ -17,7 +17,95 @@ namespace OK2SHIP_SMT.Services
 
     public static class ConverterService
     {
+        public static DataTable ConvertDataTableImage(DataTable datatable, DataTable dataTableImage)
+        {
+            DataTable res = new DataTable();
+            foreach (DataColumn col in datatable.Columns)
+            {
+                if (col.ColumnName.Contains("&CONVERTER"))
+                {
+                    res.Columns.Add(col.ColumnName.Replace("&CONVERTER", ""), typeof(byte[]));
+                }
+                else
+                {
+                    res.Columns.Add(col.ColumnName);
+                }
+            }
+            foreach (DataRow row in datatable.Rows)
+            {
+                DataRow rowZ = res.NewRow();
+                foreach (DataColumn col in datatable.Columns)
+                {
 
+                    if (col.ColumnName.Contains("&CONVERTER"))
+                    {
+                        string name = col.ColumnName.Replace("&CONVERTER", "");
+                        int point = int.Parse(row[col].ToString()) - 1;
+                        byte[] img = (byte[])dataTableImage.Rows[point]["Image"];
+                        rowZ[name] = img;
+                    }
+                    else
+                    {
+                        rowZ[col.ColumnName] = row[col.ColumnName];
+                    }
+                }
+                res.Rows.Add(rowZ);
+            }
+
+            return res;
+        }
+        public static string ConvertDataTableImage(DataTable datatable, DataTable dataTableImage, ref int id, Guid area)
+        {
+            DataTable resDT = new DataTable();
+            //Add Column
+            foreach (DataColumn column in datatable.Columns)
+            {
+                if (column.DataType.FullName == "System.Drawing.Image")
+                {
+                    resDT.Columns.Add(column.ColumnName + "&CONVERTER", typeof(string));
+                }
+                else if (column.DataType.FullName == "System.Byte[]")
+                {
+                    resDT.Columns.Add(column.ColumnName + "&CONVERTER", typeof(string));
+                }
+                else
+                {
+                    resDT.Columns.Add(column.ColumnName, column.DataType);
+                }
+            }
+            //add row
+            foreach (DataRow row in datatable.Rows)
+            {
+                DataRow rowres = resDT.NewRow();
+                foreach (DataColumn col in resDT.Columns)
+                {
+                    if (col.ColumnName.Contains("&CONVERTER"))
+                    {
+                        DataRow newRow = dataTableImage.NewRow();
+                        string colName = col.ColumnName.Replace("&CONVERTER", "");
+                        var image = row[colName];
+                        if (datatable.Columns[colName].DataType.FullName != "System.Byte[]")
+                        {
+                            image = TDMK_ImageConverter.ImageToByteArray((Image)row[colName], ImageFormat.Jpeg);
+
+                        }
+
+                        rowres[col.ColumnName] = id;
+                        newRow["ID"] = id++;
+                        newRow["Image"] = image;
+                        newRow["Area"] = area;
+                        dataTableImage.Rows.Add(newRow);
+                    }
+                    else
+                    {
+                        rowres[col.ColumnName] = row[col.ColumnName];
+                    }
+                }
+                resDT.Rows.Add(rowres);
+            }
+
+            return DataTableToJson(resDT);
+        }
         public static int GetNumberFromString(string str)
         {
             Match match = Regex.Match(str, @"\d+"); // Matches one or more digits

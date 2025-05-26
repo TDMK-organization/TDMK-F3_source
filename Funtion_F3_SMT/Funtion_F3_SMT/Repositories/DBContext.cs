@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -20,8 +21,12 @@ namespace OK2SHIP_SMT.Repositories
         IniFile TDMK_init;
 
         private TDMK_SQL_Lib TDMK_SQL = new TDMK_SQL_Lib();
-        public DBContext()
+        public DBContext(string catalog = null)
         {
+            if (catalog == null)
+            {
+                catalog = "OK2SHIP_SMT";
+            }
             //config file
             string app_path = System.Windows.Forms.Application.StartupPath;
             //app_path = @"\\10.212.6.212\Saomai\QA\TDMK_DATA\Test_Areas\FPCA OK2SHIP Auto System(temp2)\VHX-IMADA";
@@ -33,10 +38,16 @@ namespace OK2SHIP_SMT.Repositories
             string server_name = TDMK_init.Read("Server", "SMT_Config");
             string server_acc = TDMK_init.Read("Account", "SMT_Config");
             string server_pass = TDMK_init.Read("Password", "SMT_Config");
-            SqlConnection = initial_data($"Data Source={server_name};Initial Catalog=OK2SHIP_SMT;User ID={server_acc};Password='{server_pass}';Encrypt=True;TrustServerCertificate=True;");
+            SqlConnection = initial_data($";Connection Timeout=6000;Data Source={server_name};Initial Catalog={catalog};User ID={server_acc};Password='{server_pass}';Encrypt=True;TrustServerCertificate=True;");
             ///////////////////////
-            SqlConnection.Open();
-
+            try
+            {
+                SqlConnection.Open();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi kết nối sql: {ex.Message}");
+            }
         }
         /// <summary>
         /// Hàm update
@@ -112,6 +123,22 @@ namespace OK2SHIP_SMT.Repositories
             }
 
         }
+        public int InsertImageAndGetId(byte[] image, string tableName)
+        {
+            int newImageId = GetID(tableName) + 1;
+            string query = @"
+            INSERT INTO [dbo].[PACKAGING_IMAGE] (ID, Image )
+            VALUES (@ID, @Image);";
+
+            using (SqlCommand command = new SqlCommand(query, SqlConnection))
+            {
+                command.Parameters.AddWithValue("@ID", newImageId);
+                command.Parameters.Add("@Image", SqlDbType.VarBinary, -1).Value = image;
+                command.ExecuteScalar();
+            }
+            return newImageId;
+        }
+
         public DataTable GetTableStructure(string tableName)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP (0) * FROM [{tableName}]", SqlConnection))
@@ -220,7 +247,10 @@ namespace OK2SHIP_SMT.Repositories
         /// <returns></returns>
         public int BuckDataTable(DataTable dataTable, string TableSql, string[] colCompare, string[] mappingColName = null, string colID = null)
         {
-
+            if(dataTable.Rows.Count <= 0)
+            {
+                return 0;
+            }
             int id = GetID(TableSql) + 1;
             if (colID != null)
             {
@@ -253,24 +283,43 @@ namespace OK2SHIP_SMT.Repositories
                 }
                 try
                 {
-                    foreach (DataRow row in dataTable.Rows)
+
+                    //foreach (DataRow row in dataTable.Rows)
+                    //{
+                    //    using (SqlCommand command = new SqlCommand())
+                    //    {
+                    //        command.Connection = SqlConnection;
+                    //        command.Transaction = transaction;
+                    //        command.CommandText = GenerateInsertCommand(dataTable, TableSql);
+
+                    //        // Thêm tham số cho từng cột
+                    //        foreach (DataColumn column in dataTable.Columns)
+                    //        {
+                    //            command.Parameters.AddWithValue("@" + column.ColumnName.Replace("-", ""), row[column.ColumnName] ?? DBNull.Value);
+                    //        }
+
+                    //        command.ExecuteNonQuery();
+                    //    }
+                    //}
+                    using (SqlBulkCopy bulkCopy = new SqlBulkCopy(SqlConnection, SqlBulkCopyOptions.Default, transaction))
                     {
-                        using (SqlCommand command = new SqlCommand())
+
+                        // Đặt tên bảng đích trong cơ sở dữ liệu
+                        bulkCopy.DestinationTableName = TableSql;
+
+                        // Thiết lập thời gian chờ (nếu cần)
+                        bulkCopy.BulkCopyTimeout = 600; // Ví dụ: 60 giây
+
+                        // Map các cột từ DataTable đến các cột trong bảng SQL Server
+                        foreach (DataColumn col in dataTable.Columns)
                         {
-                            command.Connection = SqlConnection;
-                            command.Transaction = transaction;
-                            command.CommandText = GenerateInsertCommand(dataTable, TableSql);
-
-                            // Thêm tham số cho từng cột
-                            foreach (DataColumn column in dataTable.Columns)
-                            {
-                                command.Parameters.AddWithValue("@" + column.ColumnName.Replace("-", ""), row[column.ColumnName] ?? DBNull.Value);
-                            }
-
-                            command.ExecuteNonQuery();
+                            bulkCopy.ColumnMappings.Add(col.ColumnName, col.ColumnName);
                         }
-                    }
 
+                        // Thực hiện bulk insert
+                        bulkCopy.WriteToServer(dataTable);
+
+                    }
                     transaction.Commit();
                     return dataTable.Rows.Count;
                 }
@@ -282,6 +331,43 @@ namespace OK2SHIP_SMT.Repositories
                 }
             }
         }
+        public static void InsertDataTableBatch(string connectionString, string tableName, DataTable dataTable)
+        {
+            // Kiểm tra xem DataTable có dữ liệu hay không
+            if (dataTable == null || dataTable.Rows.Count == 0)
+            {
+                Console.WriteLine("DataTable không có dữ liệu để insert.");
+                return;
+            }
+
+            // Tạo đối tượng SqlBulkCopy
+            using (SqlBulkCopy bulkCopy = new SqlBulkCopy(connectionString))
+            {
+                try
+                {
+                    // Đặt tên bảng đích trong cơ sở dữ liệu
+                    bulkCopy.DestinationTableName = tableName;
+
+                    // Thiết lập thời gian chờ (nếu cần)
+                    // Map các cột từ DataTable đến các cột trong bảng SQL Server
+                    // Quan trọng: Tên cột trong DataTable phải trùng với tên cột trong bảng SQL Server
+                    foreach (DataColumn col in dataTable.Columns)
+                    {
+                        bulkCopy.ColumnMappings.Add(col.ColumnName, col.ColumnName);
+                    }
+
+                    // Thực hiện bulk insert
+                    bulkCopy.WriteToServer(dataTable);
+
+                    Console.WriteLine($"Đã insert thành công {dataTable.Rows.Count} bản ghi vào bảng '{tableName}'.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Lỗi trong quá trình bulk insert: {ex.Message}");
+                }
+            }
+        }
+
         public string[] checkListIsExist(string[] listCheck, string TabltName, string colname)
         {
             if (listCheck == null || listCheck.Count() == 0)
@@ -354,22 +440,26 @@ namespace OK2SHIP_SMT.Repositories
 
             return rowsAffected;
         }
-        public int SaveDataTable(DataTable dataTable, string TableSql, string[] mappingColName = null, string colID = "Id")
+        public int SaveDataTable(DataTable dataTable, string TableSql, string[] mappingColName = null, string colID = "NONE")
         {
-            int id = -1;
-            try
+            if (!colID.Equals("NONE"))
             {
-                id = GetID(TableSql, colID) + 1;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            if (id != -1)
-            {
-                foreach (DataRow row in dataTable.Rows)
+
+                int id = -1;
+                try
                 {
-                    row[colID] = id++;
+                    id = GetID(TableSql, colID) + 1;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                if (id != -1)
+                {
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        row[colID] = id++;
+                    }
                 }
             }
             using (SqlTransaction transaction = SqlConnection.BeginTransaction())

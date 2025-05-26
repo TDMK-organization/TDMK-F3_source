@@ -1,0 +1,310 @@
+﻿using OfficeOpenXml;
+using OK2SHIP_SMT.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Security.Authentication;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OK2SHIP_SMT.Services
+{
+    public class PackagingService
+    {
+        private DBContext _dbContext = new DBContext();
+        private string _NAMETABLE = "PACKAGING";
+        public DataTable CreateDataImage()
+        {
+            return _dbContext.GetTableStructure(_NAMETABLE);
+        }
+        public static DataTable createDataVote()
+        {
+            string[] name = new[] { "1. Any Tray deformation",
+                                    "2. Any flex damage ",
+                                    "3. Any Flex out of tray/package ",
+                                    "4. Any component/glue damage, crack..",
+                                    "5. Any Flex fail of function test",
+                                    "6. Any liner drop, line partially peel" };
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("Name");
+            dataTable.Columns.Add("Result");
+            foreach (string item in name)
+            {
+                DataRow row = dataTable.NewRow();
+                row["Name"] = item;
+                dataTable.Rows.Add(row);
+            }
+            return dataTable;
+        }
+        public int Save(string itemCode, Dictionary<string, KeyValuePair<Dictionary<string, Image>, string>> keyValuePairs, bool prime)
+        {
+            itemCode = itemCode.Trim();
+            if (string.IsNullOrEmpty(itemCode))
+            {
+                throw new ArgumentException("Item code cannot be null or empty.");
+            }
+            if (keyValuePairs == null || keyValuePairs.Count == 0)
+            {
+                throw new ArgumentException("KeyValuePairs cannot be null or empty.");
+            }
+            if (UserSession.Instance.IsLoggedIn == false)
+            {
+                throw new AuthenticationException("User is not logged in.");
+            }
+            DataTable dataTable = new DataTable();
+            if (prime == false)
+            {
+                dataTable = _dbContext.LoadDataTable($"{_NAMETABLE}_LOGFILE", new[] { "ItemCode" }, new[] { itemCode });
+                if (dataTable.Rows.Count > 0)
+                {
+                    throw new Exception($"1234 - Item code {itemCode} already exists in the database.");
+                }
+            }
+            else
+            {
+                dataTable = _dbContext.GetTableStructure($"{_NAMETABLE}_LOGFILE");
+            }
+            int area = 0;
+            foreach (string item in keyValuePairs.Keys)
+            {
+                string shippingTo = item.Split('_')[0].Trim();
+                string trayCode = item.Split('_')[1].Trim();
+                DataRow row = dataTable.NewRow();
+                row["ItemCode"] = itemCode;
+                row["ShippingTo"] = shippingTo;
+                row["TrayCode"] = trayCode;
+                row["Data"] = keyValuePairs[item].Value;
+
+                foreach (string item1 in keyValuePairs[item].Key.Keys)
+                {
+                    string key = "";
+                    switch (item1)
+                    {
+                        case "1":
+                            key = "FlexTop";
+                            break;
+                        case "2":
+                            key = "FlexBottom";
+                            break;
+                        case "3":
+                            key = "Tray";
+                            break;
+                        case "4":
+                            key = "TrayAL";
+                            break;
+                        case "5":
+                            key = "ALBag";
+                            break;
+                        case "6":
+                            key = "CartonBox";
+                            break;
+                    }
+                    byte[] image = TDMK_ImageConverter.ImageToByteArray(keyValuePairs[item].Key[item1], ImageFormat.Png);
+
+                    int id = _dbContext.InsertImageAndGetId(image, $"{_NAMETABLE}_IMAGE");
+                    row[key] = id;
+                }
+                dataTable.Rows.Add(row);
+            }
+            _dbContext.DeleteData($"{_NAMETABLE}_LOGFILE", "ItemCode", new[] { itemCode });
+            return _dbContext.BuckDataTable(dataTable, $"{_NAMETABLE}_LOGFILE", new[] { "ItemCode" }, null, "ID");
+        }
+        public DataTable Load(string itemCode)
+        {
+            itemCode = itemCode.Trim();
+            if (string.IsNullOrEmpty(itemCode))
+            {
+                throw new ArgumentException("Item code cannot be null or empty.");
+            }
+
+            DataTable dataTable = _dbContext.LoadDataTable("PackagingLogWithImages", new[] { "ItemCode" }, new[] { itemCode });
+            return dataTable;
+        }
+        public Dictionary<string, KeyValuePair<Dictionary<string, Image>, string>> LoadDictionary(string itemCode)
+        {
+            Dictionary<string, KeyValuePair<Dictionary<string, Image>, string>> result = new Dictionary<string, KeyValuePair<Dictionary<string, Image>, string>>();
+            DataTable dataTable = Load(itemCode);
+            if (dataTable.Rows.Count == 0)
+            {
+                throw new Exception($"Item code {itemCode} not found in the database.");
+            }
+            foreach (DataRow row in dataTable.Rows)
+            {
+                string shippingTo = row["ShippingTo"].ToString().Trim();
+                string trayCode = row["TrayCode"].ToString().Trim();
+                string data = row["LogData"].ToString();
+                Dictionary<string, Image> images = new Dictionary<string, Image>();
+                try
+                {
+                    images.Add("1", TDMK_ImageConverter.ByteArrayToImage((byte[])row["FlexTopImage"]));
+                }
+                catch { }
+                try
+                {
+
+                    images.Add("2", TDMK_ImageConverter.ByteArrayToImage((byte[])row["FlexBottomImage"]));
+                }
+                catch { }
+                try
+                {
+                    images.Add("3", TDMK_ImageConverter.ByteArrayToImage((byte[])row["TrayImage"]));
+                }
+                catch
+                {
+                }
+                try
+                {
+                    images.Add("4", TDMK_ImageConverter.ByteArrayToImage((byte[])row["TrayALImage"]));
+
+                }
+                catch
+                {
+
+                }
+                try
+                {
+
+                    images.Add("5", TDMK_ImageConverter.ByteArrayToImage((byte[])row["ALBagsImage"]));
+                }
+                catch
+                {
+
+                }
+                try
+                {
+
+                    images.Add("6", TDMK_ImageConverter.ByteArrayToImage((byte[])row["CartonBoxImage"]));
+                }
+                catch
+                {
+
+                }
+                result.Add($"{shippingTo}_{trayCode}", new KeyValuePair<Dictionary<string, Image>, string>(images, data));
+            }
+            return result;
+        }
+
+
+
+        public void ExportToExcel(string itemCode, bool prime)
+        {
+            DataTable dataTable = Load(itemCode);
+            if (dataTable.Rows.Count == 0)
+            {
+                throw new Exception($"Item code {itemCode} not found in the database.");
+            }
+            ExportProcess exportProcess = new ExportProcess();
+            using (ExcelPackage package = exportProcess.FindFormatProcess("PAKAGING", itemCode, ""))
+            {
+                using (ExcelWorksheet worksheet = exportProcess.FindSheet(package, "Packaging"))
+                {
+                    string[] name = new[] { "Packing Ship", "Picture", "6. Any liner drop" };
+                    IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, name);
+                    string startAddress = $"{dic["Packing Ship"]}:{worksheet.Cells[worksheet.Cells[dic["6. Any liner drop"]].End.Row, worksheet.Cells[dic["Picture"]].End.Column]}";
+                    string PasteAddress = dic["Packing Ship"];
+                    for (int i = 0; i < dataTable.Rows.Count - 1; i++)
+                    {
+                        PasteAddress = ExportProcess.AddColumn(PasteAddress, 3);
+                        exportProcess.CopyColumn(worksheet, worksheet.Cells[startAddress], PasteAddress);
+                    }
+                    name = new[] { "Packing Ship", "Picture", "1. Any Tray deformation" };
+                    dic = ExportProcess.FindAddressByText(worksheet, name);
+
+                    for (int i = 0; i < dic["Picture"].Split('-').Count(); i++)
+                    {
+                        DataRow row = dataTable.Rows[i];
+                        string address = dic["Packing Ship"].Split('-')[i];
+                        string value = worksheet.Cells[address].Text;
+                        value = value.Replace("{tray code}", row["TrayCode"].ToString().Trim());
+                        value = value.Replace("{packing ship}", row["ShippingTo"].ToString().Trim());
+                        worksheet.Cells[address].Value = value;
+                        address = dic["Picture"].Split('-')[i];
+                        while (true)
+                        {
+                            address = ExportProcess.AddColumn(ExportProcess.AddRow(address, 1), -1);
+                            value = worksheet.Cells[address].Text;
+                            if (string.IsNullOrEmpty(value))
+                            {
+                                break;
+                            }
+                            address = ExportProcess.AddColumn(address, 1);
+                            if (value.Contains("Flex") && value.Contains("Top") && value.Contains("side"))
+                            {
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["FlexTopImage"], $"FlexTopImage{i}");
+                            }
+                            else if (value.Contains("Flex") && value.Contains("Bottom") && value.Contains("side"))
+                            {
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["FlexBottomImage"], $"FlexBottomImage{i}");
+                            }
+                            else if (value.Contains("Tray") && !value.Contains("AL"))
+                            {
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["TrayImage"], $"Tray{i}");
+                            }
+                            else if (value.Contains("Tray") && value.Contains("AL") && value.Contains("bag"))
+                            {
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["TrayALImage"], $"TrayAL{i}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["TrayALImage"], $"ALBAG{i}");
+                            }
+                            else if (value.Contains("Carton Box"))
+                            {
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["CartonBoxImage"], $"CartonBox{i}");
+                            }
+                            else { break; }
+
+
+                        }
+                        DataTable JsonZ = ConverterService.JsonToDataTable(row["LogData"].ToString());
+                        int iz = 0;
+                        address = ExportProcess.AddColumn(dic["1. Any Tray deformation"].Split('-')[i], 1);
+                        while (true)
+                        {
+                            var zs = worksheet.Cells[address].Value;
+                            if (zs == null || string.IsNullOrEmpty(zs.ToString()))
+                            {
+                                break;
+                            }
+                            worksheet.Cells[address].Value = JsonZ.Rows[iz]["Result"];
+                            address = ExportProcess.AddRow(address, 1);
+                        }
+                    }
+                    exportProcess.SaveExcelWorksheet(package, "Packaging", $"{itemCode}-packaging");
+                }
+            }
+        }
+
+        public Dictionary<string, KeyValuePair<Dictionary<string, Image>, string>> GetData(string location, string itemCode)
+        {
+            Dictionary<string, KeyValuePair<Dictionary<string, Image>, string>> _diz = new Dictionary<string, KeyValuePair<Dictionary<string, Image>, string>>();
+            itemCode = itemCode.Trim();
+            string foldername = FileFolderRepository.GetFolderName(location);
+            if (!foldername.Equals(itemCode))
+            {
+                throw new Exception("Không match itemcode");
+            }
+            string[] st = FileFolderRepository.GetSubFolders(location);
+            foreach (string item in st)
+            {
+                string z = FileFolderRepository.GetFolderName(item).Split('_')[0].Trim();
+                string z2 = FileFolderRepository.GetFolderName(item).Split('_')[1].Trim();
+                IList<KeyValuePair<Image, string>> list = FileFolderRepository.ListAllPictureInAFolder(item);
+                Dictionary<string, Image> dic = new Dictionary<string, Image>();
+                foreach (var image in list)
+                {
+                    if (dic.Keys.Count() > 5)
+                    {
+                        break;
+                    }
+                    dic.Add((dic.Keys.Count() + 1).ToString(), image.Key);
+                }
+                string zq = "[{\"Name\":\"1. Any Tray deformation\",\"Result\":\"\"},{\"Name\":\"2. Any flex damage \",\"Result\":\"\"},{\"Name\":\"3. Any Flex out of tray/package \",\"Result\":\"\"},{\"Name\":\"4. Any component/glue damage, crack..\",\"Result\":\"\"},{\"Name\":\"5. Any Flex fail of function test\",\"Result\":\"\"},{\"Name\":\"6. Any liner drop, line partially peel\",\"Result\":\"\"}]";
+                KeyValuePair<Dictionary<string, Image>, string> values = new KeyValuePair<Dictionary<string, Image>, string>(dic, zq);
+                _diz.Add($"{z}_{z2}", values);
+            }
+            return _diz;
+        }
+    }
+}
