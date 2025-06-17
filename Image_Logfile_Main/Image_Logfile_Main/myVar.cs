@@ -282,21 +282,21 @@ namespace VHX
 
             foreach (string c in my_config)
             {
-                if (c.Contains("Server"))
+                if (c.Contains("Server") && string.IsNullOrEmpty(server_name))
                 {
-                    server_name = c.Split(':')[1].Trim();
+                    server_name = c.Split('=')[1].Trim();
                 }
-                if (c.Contains("Account"))
+                if (c.Contains("Account") && string.IsNullOrEmpty(server_acc))
                 {
-                    server_acc = c.Split(':')[1].Trim();
+                    server_acc = c.Split('=')[1].Trim();
                 }
-                if (c.Contains("Password"))
+                if (c.Contains("Password") && string.IsNullOrEmpty(server_pass))
                 {
-                    server_pass = c.Split(':')[1].Trim();
+                    server_pass = c.Split('=')[1].Trim();
                 }
-                if (c.Contains("Data_Location"))
+                if (c.Contains("Data_Location") && string.IsNullOrEmpty(data_loc))
                 {
-                    data_loc = c.Split('#')[1].Trim();
+                    data_loc = c.Split('=')[1].Trim();
                 }
             }
             if (sa_en)
