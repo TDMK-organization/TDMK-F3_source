@@ -99,6 +99,8 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void setupInit()
         {
+            psaList.CellPainting += dataGridView_CellPainting;
+            linearList.CellPainting += dataGridView_CellPainting;
             //dataGridView.CellContentDoubleClick += dataGridView_CellContentDoubleClick;
             linearList.CellContentDoubleClick += dataGridView_CellContentDoubleClick;
             psaList.CellContentDoubleClick += dataGridView_CellContentDoubleClick;
@@ -137,75 +139,67 @@ namespace OK2SHIP_SMT.UserControls
 
             }
         }
+        Form dialog = new Form();
+        private void btn_close_Click(object sender, EventArgs e)
+        {
+            dialog.Hide();
+        }
 
         private void btn_editImage_Click(object sender, EventArgs e)
         {
-            //if (!string.IsNullOrEmpty(memory) && memory.Contains('-'))
-            //{
-            //    string[] str = memory.Split('-');
-            //    string name = str[0], tape = str[1], row = str[2];
-            //    var image = ((DataTable)dataGridView.DataSource).Rows[int.Parse(row)]["Image Sample"];
-            //    bool prime = false;
-            //    if (image is byte[])
-            //    {
-            //        prime = true;
-            //        image = TDMK_ImageConverter.ByteArrayToImage((byte[])image);
-            //    }
-            //    EditImageView edit = new EditImageView((Image)image);
-            //    Form dialog = new CommonForm("", edit, null);
-            //    dialog.ShowDialog();
-            //    if (!edit.save_status)
-            //    {
-            //        return;
-            //    }
-            //    if (prime)
-            //    {
-            //        image = TDMK_ImageConverter.ImageToByteArray(edit.image, ImageFormat.Jpeg);
-            //    }
-            //    else
-            //    {
-            //        image = edit.image;
-            //    }
-            //    ((DataTable)dataGridView.DataSource).Rows[int.Parse(row)]["Image Sample"] = image;
-            //    pictureBox.Image = edit.image;
-            //}
+            if (!string.IsNullOrEmpty(memory) && memory.Contains('-'))
+            {
+                string[] str = memory.Split('-');
+                string name = str[0], tape = str[1], row = str[2];
+                var image = ((DataTable)dataGridView.DataSource).Rows[int.Parse(row)]["Image Sample"];
+                bool prime = false;
+                if (image is byte[])
+                {
+                    prime = true;
+                    image = TDMK_ImageConverter.ByteArrayToImage((byte[])image);
+                }
+                EditImageView edit = new EditImageView((Image)image, btn_close_Click);
+                dialog = new CommonForm("", edit, null);
+                dialog.ShowDialog();
+                if (!edit.save_status)
+                {
+                    return;
+                }
+                if (prime)
+                {
+                    image = TDMK_ImageConverter.ImageToByteArray(edit.image, ImageFormat.Jpeg);
+                }
+                else
+                {
+                    image = edit.image;
+                }
+                ((DataTable)dataGridView.DataSource).Rows[int.Parse(row)]["Image Sample"] = image;
+                pictureBox.Image = edit.image;
+            }
         }
 
         private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
 
-            if (e.ColumnIndex == 3 || e.ColumnIndex == 2)
-            {
-                DataTable dt = (DataTable)((DataGridView)sender).DataSource;
-                string value = dt.Rows[e.RowIndex][e.ColumnIndex].ToString().Replace(" ", "");
-                string start = "", end = "";
-                foreach (char c in value)
+        }
+
+        private void splitPSA_Panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void dataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.Value != null)
+                if (e.Value.ToString().Contains("Fail"))
                 {
-                    if (int.TryParse($"{c}", out int r))
-                    {
-                        start += c;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    e.CellStyle.BackColor = Color.Red;
                 }
-                int i = value.Length - 1;
-                while (i >= 0)
-                {
-                    char c = value[i];
-                    if (int.TryParse($"{c}", out int r))
-                    {
-                        end = c + end;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                    i--;
-                }
-                dt.Rows[e.RowIndex][e.ColumnIndex] = $"({start}~{end}N)";
-            }
+        }
+
+        private void dataGridView_CellLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            //Debugger.Break();
         }
     }
 }

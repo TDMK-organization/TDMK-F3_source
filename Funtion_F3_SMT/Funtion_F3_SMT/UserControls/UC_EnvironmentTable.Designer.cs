@@ -161,6 +161,7 @@
             this.dataGridView.Size = new System.Drawing.Size(577, 285);
             this.dataGridView.TabIndex = 0;
             this.dataGridView.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellContentDoubleClick);
+            this.dataGridView.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellLeave);
             this.dataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
             // 
             // splitContainer5
@@ -254,6 +255,7 @@
             // splitPSA.Panel2
             // 
             this.splitPSA.Panel2.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.splitPSA.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitPSA_Panel2_Paint);
             this.splitPSA.Size = new System.Drawing.Size(496, 293);
             this.splitPSA.SplitterDistance = 43;
             this.splitPSA.TabIndex = 0;

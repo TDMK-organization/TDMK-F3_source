@@ -31,7 +31,7 @@
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tp_AccountManager = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.listAccount = new System.Windows.Forms.DataGridView();
+            this.tdmK_Label1 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
@@ -39,24 +39,26 @@
             this.button3 = new System.Windows.Forms.Button();
             this.btn_Create = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.tp_EditProfile = new System.Windows.Forms.TabPage();
-            this.tdmK_Label1 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.btn_Search = new System.Windows.Forms.Button();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.listAccount = new System.Windows.Forms.DataGridView();
+            this.tp_EditProfile = new System.Windows.Forms.TabPage();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabControl.SuspendLayout();
             this.tp_AccountManager.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listAccount)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listAccount)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl
             // 
             this.tabControl.Controls.Add(this.tp_AccountManager);
             this.tabControl.Controls.Add(this.tp_EditProfile);
+            this.tabControl.Controls.Add(this.tabPage1);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
@@ -93,14 +95,17 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1237, 578);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // listAccount
+            // tdmK_Label1
             // 
-            this.listAccount.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.listAccount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listAccount.Location = new System.Drawing.Point(3, 3);
-            this.listAccount.Name = "listAccount";
-            this.listAccount.Size = new System.Drawing.Size(914, 441);
-            this.listAccount.TabIndex = 0;
+            this.tdmK_Label1.AutoSize = true;
+            this.tdmK_Label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Label1.Location = new System.Drawing.Point(314, 0);
+            this.tdmK_Label1.Name = "tdmK_Label1";
+            this.tdmK_Label1.Size = new System.Drawing.Size(920, 76);
+            this.tdmK_Label1.TabIndex = 1;
+            this.tdmK_Label1.Text = "List Account";
+            this.tdmK_Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel2
             // 
@@ -113,7 +118,7 @@
             this.tableLayoutPanel2.Controls.Add(this.btn_Create, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.button2, 0, 1);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 78);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 79);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 6;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
@@ -122,7 +127,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(305, 497);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(305, 496);
             this.tableLayoutPanel2.TabIndex = 2;
             // 
             // button6
@@ -131,7 +136,7 @@
             this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button6.Location = new System.Drawing.Point(3, 413);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(299, 81);
+            this.button6.Size = new System.Drawing.Size(299, 80);
             this.button6.TabIndex = 5;
             this.button6.Text = "Delete Account";
             this.button6.UseVisualStyleBackColor = true;
@@ -192,28 +197,6 @@
             this.button2.Text = "Edit Account";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // tp_EditProfile
-            // 
-            this.tp_EditProfile.Location = new System.Drawing.Point(4, 22);
-            this.tp_EditProfile.Name = "tp_EditProfile";
-            this.tp_EditProfile.Padding = new System.Windows.Forms.Padding(3);
-            this.tp_EditProfile.Size = new System.Drawing.Size(1243, 584);
-            this.tp_EditProfile.TabIndex = 1;
-            this.tp_EditProfile.Text = "Edit Profile";
-            this.tp_EditProfile.UseVisualStyleBackColor = true;
-            // 
-            // tdmK_Label1
-            // 
-            this.tdmK_Label1.AutoSize = true;
-            this.tdmK_Label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.tdmK_Label1.Location = new System.Drawing.Point(314, 0);
-            this.tdmK_Label1.Name = "tdmK_Label1";
-            this.tdmK_Label1.Size = new System.Drawing.Size(920, 75);
-            this.tdmK_Label1.TabIndex = 1;
-            this.tdmK_Label1.Text = "List Account";
-            this.tdmK_Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 2;
@@ -226,13 +209,13 @@
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(305, 69);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(305, 70);
             this.tableLayoutPanel3.TabIndex = 3;
             // 
             // btn_Search
             // 
             this.btn_Search.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_Search.Location = new System.Drawing.Point(237, 37);
+            this.btn_Search.Location = new System.Drawing.Point(237, 38);
             this.btn_Search.Name = "btn_Search";
             this.btn_Search.Size = new System.Drawing.Size(65, 29);
             this.btn_Search.TabIndex = 0;
@@ -246,13 +229,42 @@
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel4.Controls.Add(this.listAccount, 0, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(314, 78);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(314, 79);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 2;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(920, 497);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(920, 496);
             this.tableLayoutPanel4.TabIndex = 4;
+            // 
+            // listAccount
+            // 
+            this.listAccount.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.listAccount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listAccount.Location = new System.Drawing.Point(3, 3);
+            this.listAccount.Name = "listAccount";
+            this.listAccount.Size = new System.Drawing.Size(914, 440);
+            this.listAccount.TabIndex = 0;
+            // 
+            // tp_EditProfile
+            // 
+            this.tp_EditProfile.Location = new System.Drawing.Point(4, 22);
+            this.tp_EditProfile.Name = "tp_EditProfile";
+            this.tp_EditProfile.Padding = new System.Windows.Forms.Padding(3);
+            this.tp_EditProfile.Size = new System.Drawing.Size(1243, 584);
+            this.tp_EditProfile.TabIndex = 1;
+            this.tp_EditProfile.Text = "Edit Profile";
+            this.tp_EditProfile.UseVisualStyleBackColor = true;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(1243, 584);
+            this.tabPage1.TabIndex = 2;
+            this.tabPage1.Text = "DataBaseTool";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // UserDashboard
             // 
@@ -265,10 +277,10 @@
             this.tp_AccountManager.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listAccount)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.listAccount)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -291,5 +303,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Button btn_Search;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.TabPage tabPage1;
     }
 }

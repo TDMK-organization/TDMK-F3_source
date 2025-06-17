@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\TestAreas\TDMK Program\Bending Items\</OutputPath>
+    <OutputPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\Bending_Items\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -208,6 +208,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="TDMK.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+    <Folder Include="Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

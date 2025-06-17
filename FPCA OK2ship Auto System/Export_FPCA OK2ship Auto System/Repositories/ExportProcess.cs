@@ -1,45 +1,123 @@
-﻿using TDMK_EPPLUS_7;
-using IniLibs;
+﻿using IniLibs;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using System.Text;
-
 using System.Threading.Tasks;
 using OfficeOpenXml;
 using System.Reflection;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Drawing.Imaging;
 using OfficeOpenXml.Drawing;
 using System.Data;
-using OfficeOpenXml;
-namespace Export_FPCA_OK2ship_Auto_System.Repositories
+using System.Text.RegularExpressions;
+namespace Export_FPCA_OK2ship_Auto_System
 {
     class ExportProcess
     {
-
         private string FORMAT_LOACTION = null;
         private string EXPORT_LOACTION = null;
         IniFile TDMK_init = new IniFile();
         private string _EXTENSION = "";
-        public static TDMK_EPPLUS7_lib _EPPLUS_7;
         public ExportProcess(string type = "NPI")
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.LicenseContext = LicenseContext.Commercial;
             //config file
-            string app_path = System.Windows.Forms.Application.StartupPath;
+            string app_path = System.Windows.Forms.Application.StartupPath.Replace(@"\FPCA OK2SHIP Auto System\VHX-IMADA", "");
             string config_path = Path.Combine(app_path, "config.ini");
             TDMK_init = new IniFile(config_path);
             FORMAT_LOACTION = TDMK_init.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data\\Format\\{type}";
-            EXPORT_LOACTION = TDMK_init.Read("Report_Location", "SMT_Config") + $"\\SEEV Data\\Format\\{type}";
+            EXPORT_LOACTION = TDMK_init.Read("Report_Location", "SMT_Config") + $"\\SEEV Data\\Report\\{type}";
+        }
+        public void CopyColumn(ExcelWorksheet worksheet, ExcelRangeBase rangeStart, string address)
+        {
+            worksheet.Cells[rangeStart.Address].Copy(worksheet.Cells[address]);
+            worksheet.Cells[rangeStart.Address].CopyStyles(worksheet.Cells[address]);
+            for (int i = 0; i < rangeStart.Columns; i++)
+            {
+                string add = AddColumn(rangeStart.Address.Split(':')[0], i);
+                int colu = worksheet.Cells[add].Start.Column;
+                int coluz = worksheet.Cells[address].Start.Column + i;
+                worksheet.Column(coluz).Width = worksheet.Column(colu).Width;
+            }
         }
 
-        public ExcelPackage FindFormatBarCode()
+        private static List<int> GetIntegersFromStringRegex(string input)
         {
-            return new ExcelPackage($"{FORMAT_LOACTION}\\SEEV-OK2Ship_Format change.xlsm");
+            List<int> integers = new List<int>();
+            MatchCollection matches = Regex.Matches(input, @"\d+"); // @"\d+" matches one or more digits
+
+            foreach (Match match in matches)
+            {
+                if (int.TryParse(match.Value, out int number))
+                {
+                    integers.Add(number);
+                }
+            }
+
+            return integers;
+        }
+        public static int DistanceRow(string address1, string address2)
+        {
+            int s1 = GetIntegersFromStringRegex(address1)[0];
+            int s2 = GetIntegersFromStringRegex(address2)[0];
+            return (s2 - s1);
+        }
+        public void CopyAndInsert(ExcelWorksheet workSheet, string addressRange, ref string addressStart, bool insert = false)
+        {
+
+            workSheet.InsertRow(workSheet.Cells[addressStart].End.Row, 1);
+            addressStart = AddRow(addressStart, 1);
+
+            int rowNum = 1;
+            int colNum = 1;
+            if (addressRange.Contains(":"))
+            {
+                string[] addressRangeList = addressRange.Split(':');
+                int startRow = workSheet.Cells[addressRangeList[0]].End.Row;
+                int endRow = workSheet.Cells[addressRangeList[1]].End.Row;
+                int startCol = workSheet.Cells[addressRangeList[0]].End.Column;
+                int endCol = workSheet.Cells[addressRangeList[1]].End.Column;
+                rowNum = endRow - startRow + 1;
+                colNum = endCol - startCol + 1;
+            }
+
+            if (insert)
+            {
+                workSheet.InsertRow(workSheet.Cells[addressStart].End.Row, rowNum);
+            }
+            string addressInsert = AddColumn(addressStart, colNum + 2);
+
+            //parste value
+            addressInsert = $"{addressStart}:{addressInsert}";
+            workSheet.Cells[addressRange].Copy(workSheet.Cells[addressInsert]);
+
+            //resize
+            int startRowz = workSheet.Cells[addressStart].End.Row;
+            int colRowz = workSheet.Cells[addressRange].Start.Row;
+            for (int i = 0; i <= rowNum; i++)
+            {
+                workSheet.Row(startRowz + i).Height = workSheet.Row(colRowz + i).Height;
+                //workSheet.Row(startRowz + i).StyleID = workSheet.Row(colRowz + i).StyleID;
+                //workSheet.Row(startRowz + i).Style.Font.Bold = workSheet.Row(colRowz + i).Style.Font.Bold;
+                //workSheet.Row(startRowz + i).Style.HorizontalAlignment = workSheet.Row(colRowz + i).Style.HorizontalAlignment;
+                //workSheet.Row(startRowz + i).Style.VerticalAlignment = workSheet.Row(colRowz + i).Style.VerticalAlignment;
+
+            }
+            addressStart = AddRow(addressStart, rowNum);
+        }
+        public static string getRangeBaseAddressByCellAddress(ExcelWorksheet worksheet, string address)
+        {
+            ExcelAddress addressEx = worksheet.Cells[address];
+            string z = worksheet.MergedCells[addressEx.Start.Row, addressEx.Start.Column];
+            return worksheet.MergedCells[addressEx.Start.Row, addressEx.Start.Column];
+        }
+        public ExcelPackage OpenFileExcel(string location)
+        {
+            return new ExcelPackage(location);
         }
         public ExcelPackage FindFormatWithItemCode(string itemCode)
         {
@@ -60,7 +138,6 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
                 }
             }
             throw new Exception("Không tìm thấy format File!");
-            return null;
         }
         public static DataRow CloneDataRow(DataRow sourceRow)
         {
@@ -78,7 +155,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
 
             return Path.GetExtension(filePath);
         }
-        
+
         public ExcelPackage FindFormatProcess(string process, string itemcode, string lotno)
         {
             switch (process)
@@ -92,27 +169,81 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
                 case "Table of Contents":
                     return FindFormatWithItemCode(itemcode);
                 default:
-                    return null;
+                    return FindFormatWithItemCode(itemcode);
             }
         }
+        public static string ConvertAddressRangeBase(ExcelWorksheet ws, string rangeAddress, string addressSelect)
+        {
+            int rStart = 0, cStart = 0;
+            int rEnd = 0, cEnd = 0;
+            string startAddress = "", endAddress = "";
+            int i = 0;
+            if (rangeAddress.Contains(":"))
+            {
+                throw new Exception("Chưa triển khai convert rangbse");
+            }
+            else if (rangeAddress.Contains("+"))
+            {
+                string[] address = rangeAddress.Split('+');
+                // tìm kiếm địa chỉ đầu và cuối
+                while (string.IsNullOrEmpty(startAddress) || string.IsNullOrEmpty(endAddress))
+                {
+                    if (string.IsNullOrEmpty(startAddress))
+                    {
+                        try
+                        {
+                            startAddress = address[i].Trim();
+                        }
+                        catch { }
+                    }
+                    if (string.IsNullOrEmpty(endAddress))
+                    {
+                        try
+                        {
+                            endAddress = address[address.Length - i].Trim();
+                        }
+                        catch { }
+                    }
+                    i++;
+                }
+                rStart = ws.Cells[startAddress].Start.Row - ws.Cells[addressSelect].Start.Row;
+                cStart = ws.Cells[startAddress].Start.Column - ws.Cells[addressSelect].Start.Column;
+                rEnd = ws.Cells[endAddress].Start.Row - ws.Cells[addressSelect].Start.Row;
+                cEnd = ws.Cells[endAddress].Start.Column - ws.Cells[addressSelect].Start.Column;
+                return $"R[{rStart}]C[{cStart}]:R[{rEnd}]C[{cEnd}]";
+            }
+            else
+            {
+                rStart = ws.Cells[rangeAddress].Start.Row - ws.Cells[addressSelect].Start.Row;
+                cStart = ws.Cells[rangeAddress].Start.Column - ws.Cells[addressSelect].Start.Column;
+                return $"R[{rStart}]C[{cStart}]";
+            }
+            throw new Exception("Eroo");
 
+        }
         public void SaveExcelWorksheet(ExcelPackage excelPackage, string sheetName, string nameFile, string type = "NPI")
         {
-            
+            string[] sheetNames = sheetName.Split(':');
             DateTime nowDate = DateTime.Now;
+            IList<ExcelWorksheet> worksheets = new List<ExcelWorksheet>();
             foreach (var item in excelPackage.Workbook.Worksheets)
             {
-                if (!item.Name.Trim().Equals(sheetName))
+
+                if (!sheetNames.Contains(item.Name.Trim()))
                 {
-                    excelPackage.Workbook.Worksheets.Delete(item);
+                    worksheets.Add(item);
                 }
+            }
+            foreach (ExcelWorksheet item in worksheets)
+            {
+                excelPackage.Workbook.Worksheets.Delete(item.Name);
             }
             //excelPackage.Workbook.Worksheets.Delete("Rev History");
             int month = nowDate.Month;
 
             // Lưu package vào địa chỉ được chỉ định
             string[] str = nameFile.Split('.');
-            string folderName = $"{EXPORT_LOACTION}\\{sheetName}\\THANG {month}\\";
+            string folderName = $"{EXPORT_LOACTION}\\{sheetNames[0]}\\THANG {month}\\";
 
             if (!Directory.Exists(folderName))
             {
@@ -135,7 +266,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
 
         }
 
-        public void InsertImageToCell(ExcelWorksheet wsSheet1, ExcelRangeBase tar_rgn, byte[] img_data, string pic_name)
+        public static void InsertImageToCell(ExcelWorksheet wsSheet1, ExcelRangeBase tar_rgn, byte[] img_data, string pic_name)
         {
             using (tar_rgn)
             {
@@ -181,6 +312,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
                 int num5 = (int)(0.05 * (double)Math.Min(num3, num4));
                 excelPicture.SetPosition(row2 - 1, num5, column2 - 1, num5);
                 excelPicture.SetSize(num4 - 2 * num5, num3 - 2 * num5);
+                //excelPicture.SetSize(50);
 
             }
         }
@@ -194,7 +326,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
                     return sheet;
                 }
             }
-                throw new Exception("Không tìm thấy sheet kiểm tra lại tên sheet");
+            throw new Exception("Không tìm thấy sheet kiểm tra lại tên sheet");
         }
         ///
         ///Not Fix
@@ -235,42 +367,44 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
         {
             IList<string> colHeaderz = colHeader.ToList();
             IDictionary<string, string> addressHeader = new Dictionary<string, string>();
-            for (int i = 1; i <= workSheet.Dimension.Columns + 1; i++)
+            for (int i = workSheet.Dimension.Start.Column; i <= workSheet.Dimension.End.Column + 1; i++)
             {
-                for (int j = 1; j <= workSheet.Dimension.Rows + 1; j++)
+                for (int j = workSheet.Dimension.Start.Row; j <= workSheet.Dimension.End.Row + 1; j++)
                 {
-
-                    foreach (string str in colHeaderz)
+                    string cellValue = workSheet.Cells[j, i].Text.Trim().Replace("\n", "");
+                    if (!string.IsNullOrEmpty(cellValue.ToString()))
                     {
-                        string strz = str.Trim().Replace("\n", "");
-                        bool prime = false;
-                        if (eq)
+                        foreach (string str in colHeaderz)
                         {
-                            prime = workSheet.Cells[j, i].Text.Equals(str);
-                        }
-                        else
-                        {
-                            prime = workSheet.Cells[j, i].Text.Contains(str);
-                        }
-                        if (prime)
-                        {
-                            if (addressHeader.TryGetValue(strz, out string value))
+                            string strz = str.Trim().Replace("\n", "");
+                            bool prime = false;
+                            if (eq)
                             {
-                                // update value
-                                addressHeader[strz] = addressHeader[strz] + "-" + workSheet.Cells[j, i].Address;
+                                prime = cellValue.Equals(str);
                             }
                             else
                             {
-                                addressHeader.Add(strz, workSheet.Cells[j, i].Address);
+                                prime = cellValue.Contains(str);
                             }
-                            break;
+                            if (prime)
+                            {
+                                if (addressHeader.TryGetValue(strz, out string value))
+                                {
+                                    // update value
+                                    addressHeader[strz] = addressHeader[strz] + "-" + workSheet.Cells[j, i].Address;
+                                }
+                                else
+                                {
+                                    addressHeader.Add(strz, workSheet.Cells[j, i].Address);
+                                }
+                            }
                         }
                     }
+
                 }
             }
             return addressHeader;
         }
-
         public static void AddBorderToImage(ExcelWorksheet worksheet, string imageName, Color color, int size = 1, eLineStyle styleLine = eLineStyle.Solid)
         {
 
@@ -301,5 +435,58 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
 
 
         }
+
+        // Hàm để copy một hàng từ vị trí này sang vị trí khác trong cùng một worksheet
+        public static void CopyRow(ExcelWorksheet worksheet, int sourceRow, int destinationRow)
+        {
+            if (worksheet == null)
+            {
+                throw new ArgumentNullException("worksheet");
+            }
+
+            // Lấy vùng chứa dữ liệu của dòng nguồn
+            ExcelRange sourceRowRange = worksheet.Cells[sourceRow, 1, sourceRow, worksheet.Dimension.End.Column];
+            //Copy dòng
+            worksheet.InsertRow(destinationRow, 1);
+            ExcelRange destinationRowRange = worksheet.Cells[destinationRow, 1, destinationRow, worksheet.Dimension.End.Column];
+            destinationRowRange.Value = sourceRowRange.Value;
+
+            // Bạn có thể muốn copy định dạng, kiểu dữ liệu, v.v.
+            CopyRowFormat(worksheet, sourceRow, destinationRow);
+
+        }
+        static void CopyRowFormat(ExcelWorksheet worksheet, int sourceRow, int destinationRow)
+        {
+            if (worksheet == null)
+            {
+                throw new ArgumentNullException("worksheet");
+            }
+            ExcelRange sourceRowRange = worksheet.Cells[sourceRow, 1, sourceRow, worksheet.Dimension.End.Column];
+            ExcelRange destinationRowRange = worksheet.Cells[destinationRow, 1, destinationRow, worksheet.Dimension.End.Column];
+
+            destinationRowRange.StyleID = sourceRowRange.StyleID;
+            destinationRowRange.Merge = sourceRowRange.Merge;
+            destinationRowRange.Hyperlink = sourceRowRange.Hyperlink;
+            destinationRowRange.Formula = sourceRowRange.Formula;
+            destinationRowRange.FormulaR1C1 = sourceRowRange.FormulaR1C1;
+            destinationRowRange.Value = sourceRowRange.Value;
+            destinationRowRange.RichText.Text = sourceRowRange.RichText.Text;
+            destinationRowRange.Style.Font.Bold = sourceRowRange.Style.Font.Bold;
+            destinationRowRange.Style.Font.Italic = sourceRowRange.Style.Font.Italic;
+            destinationRowRange.Style.Font.UnderLine = sourceRowRange.Style.Font.UnderLine;
+            destinationRowRange.Style.Fill.PatternType = sourceRowRange.Style.Fill.PatternType;
+            destinationRowRange.Style.HorizontalAlignment = sourceRowRange.Style.HorizontalAlignment;
+            destinationRowRange.Style.VerticalAlignment = sourceRowRange.Style.VerticalAlignment;
+            destinationRowRange.Style.WrapText = sourceRowRange.Style.WrapText;
+            destinationRowRange.Style.ShrinkToFit = sourceRowRange.Style.ShrinkToFit;
+            destinationRowRange.Style.Numberformat.Format = sourceRowRange.Style.Numberformat.Format;
+            destinationRowRange.Style.Border.Top.Style = sourceRowRange.Style.Border.Top.Style;
+            destinationRowRange.Style.Border.Bottom.Style = sourceRowRange.Style.Border.Bottom.Style;
+            destinationRowRange.Style.Border.Left.Style = sourceRowRange.Style.Border.Left.Style;
+            destinationRowRange.Style.Border.Right.Style = sourceRowRange.Style.Border.Right.Style;
+        }
+
+
+
     }
 }

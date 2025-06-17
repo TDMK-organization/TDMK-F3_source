@@ -87,7 +87,7 @@ namespace OK2SHIP_SMT.UserControls
             }
             catch (AuthenticationException ex)
             {
-                MessageBox.Show("Hãy đăng nhập ngay!");
+                MessageBox.Show($"Hãy đăng nhập ngay!, {ex.Message}");
             }
             catch (Exception ex)
             {

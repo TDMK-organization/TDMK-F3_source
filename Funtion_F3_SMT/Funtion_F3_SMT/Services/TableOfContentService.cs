@@ -41,7 +41,7 @@ namespace OK2SHIP_SMT.Services
             dataTable = _dBContext.LoadDataTableOfPath(_NAMETABLE, filter, value, selectedCol, pageNumber, pageSize, orderBy);
             return dataTable;
         }
-        
+
         public DataTable getTableOfContent(string itemCode, string lotNo)
         {
             DataTable dataTable = new DataTable();
@@ -66,7 +66,7 @@ namespace OK2SHIP_SMT.Services
             string[] textRow4 = new string[] { "", "", "NA", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "NA", "NA" };
             string[] textRow5 = new string[] { "", "", "NA", "32", "32", "10", "10", "10", "10", "10", "10", "45", "45", "45", "5", "10", "45", "20", "20", "20", "32", "5", "5", "5", "32", "5", "NA", "NA" };
             string[] naList = new[] { "Click Ratio", "E75 IO Mating/Unmating test", "Shear Force test for BGA Component", "Mic peeling force test" };
-            string[] naList2 = new[] { "Thermal stress","Hotbar loop test" };
+            string[] naList2 = new[] { "Thermal stress", "Hotbar loop test" };
             for (int i = 0; i < textRow.Length; i++)
             {
                 var row = dataTable.NewRow();
@@ -84,7 +84,7 @@ namespace OK2SHIP_SMT.Services
                 {
                     row["Target date Submission"] = "N/A(No Hot Bar)";
                 }
-                if(row["Target date Request"].Equals("Prior to ship") && string.IsNullOrEmpty(row["Target date Submission"].ToString()))
+                if (row["Target date Request"].Equals("Prior to ship") && string.IsNullOrEmpty(row["Target date Submission"].ToString()))
                 {
                     row["Target date Submission"] = date;
                 }
@@ -290,11 +290,10 @@ namespace OK2SHIP_SMT.Services
                 using (ExcelWorksheet workSheet = package.Workbook.Worksheets[0])
                 {
                     string[] header2 = new[] { "Build" };
-                    string[] header = new[] { "Item", "Program Name", "Item Code", "MCO & Revision", "ODB++ & Revision", "Build" };
-                    IDictionary<string, string> dic = ExportProcess.FindAddressByText(workSheet, header.Concat(header2).ToArray(), false);
+                    string[] header = new[] { "Item", "Program Name", "Item Code", "MCO & Revision", "ODB++ & Revision" };
+                    IDictionary<string, string> dic = DictionaryService.MergeDictionaries(ExportProcess.FindAddressByText(workSheet, header.ToArray(), false), ExportProcess.FindAddressByText(workSheet, header2.ToArray(), true));
                     dic["Item Code"] = dic["Item"].Split('-')[1];
                     dic["Item"] = dic["Item"].Split('-')[0];
-                    dic["Build"] = dic["Build"].Split('-')[1];
                     string addressRow = ExportProcess.AddRow(dic["Item"], 1);
 
                     while (!string.IsNullOrEmpty(workSheet.Cells[addressRow].Text.Trim()))
@@ -337,14 +336,30 @@ namespace OK2SHIP_SMT.Services
 
         public int SaveDataItemName(DataTable dataTable, bool prime)
         {
+
             if (!prime)
             {
                 List<string> list = dataTable.AsEnumerable().Select(row => row.Field<string>("ItemCode")).ToList();
                 // Kiểm tra xem có ItemCode nào đã tồn tại hay chưa
                 string[] str = _dBContext.checkListIsExist(list.ToArray(), _NAMETABLE + "_SETTING", "ItemCode");
+
                 // Nếu có trả về thông báo cho người dùng xác nhận
                 if (str.Count() > 0)
                 {
+                    string[] strZ = _dBContext.checkListIsExist(list.ToArray(), _NAMETABLE + "_SETTING", "ItemCode", "EEEECode");
+                    for (int i = 0; i < dataTable.Rows.Count; i++)
+                    {
+                        try
+                        {
+
+                            dataTable.Rows[i]["EEEECode"] = strZ[i];
+                        }
+                        catch
+                        {
+                            dataTable.Rows[i]["EEEECode"] = "";
+
+                        }
+                    }
                     throw new Exception($"1234 - các item đã tồn tại: {string.Join("','", str)}");
                 }
             }
@@ -355,7 +370,7 @@ namespace OK2SHIP_SMT.Services
             }
 
             // Nếu không thì lưu vào datatable
-            return _dBContext.SaveDataTable(dataTable, _NAMETABLE + "_SETTING");
+            return _dBContext.SaveDataTable(dataTable, _NAMETABLE + "_SETTING", null, "Id");
         }
 
         public List<string> GetListItemCodeByItemName(string itemName, DataTable dtz = null)

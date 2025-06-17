@@ -48,6 +48,7 @@ using OfficeOpenXml.Style;
 using System.Xml;
 using OK2SHIP_SMT.Libary;
 using OK2SHIP_SMT.Services;
+using ZedGraph;
 //using TDMK_EPPLUS_7;
 
 
@@ -93,6 +94,7 @@ namespace Funtion_F3_SMT
         public View_Data_3()
         {
             InitializeComponent();
+            checkSession();
         }
 
 
@@ -1434,6 +1436,21 @@ namespace Funtion_F3_SMT
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
             DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, "GAP_CONNECTOR", filter_str).Clone();
             Data_tbl.Columns.Add("Select", typeof(bool));
+            bool primePID = false;
+            Dictionary<string, List<string>> listProductID = new Dictionary<string, List<string>>();
+            try
+            {
+                listProductID = GAPConnectorService.Get_ProductID(textBox1.Text.ToString(), txtItemCode.Text, txtLotNo.Text);
+                if (listProductID.Count > 0)
+                {
+                    Data_tbl.Columns.Add("ProductID");
+                    primePID = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
 
             DirectoryInfo tar_parent = new DirectoryInfo(in_src);
             DirectoryInfo[] arr_dir_child = tar_parent.GetDirectories();
@@ -1442,76 +1459,76 @@ namespace Funtion_F3_SMT
                 if (dir_child.Name.ToUpper().Contains("GAP"))
                 {
                     if (dir_child.GetDirectories().Length > 0)
-                    {
                         foreach (DirectoryInfo dir_child_2 in dir_child.GetDirectories())
                         {
-                            
-                            if (dir_child_2.Name.Replace(" ", "") == "1" || dir_child_2.Name.Replace(" ", "") == "2")
                             {
-                                SortedDictionary<int, SortedDictionary<int, string>> logfile_result1 = new SortedDictionary<int, SortedDictionary<int, string>>();
-                                SortedDictionary<int, SortedDictionary<int, string>> logfile_result2 = new SortedDictionary<int, SortedDictionary<int, string>>();
 
-                                Get_logfile_Multi_GAP1(dir_child_2.FullName, ref logfile_result1);
-                                Get_logfile_Multi_GAP2(dir_child_2.FullName, ref logfile_result2);
-                                SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                                SortedDictionary<int, byte[]> Image_result_1 = new SortedDictionary<int, byte[]>();
-                                SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
-                                Get_Image_Multi_gap(dir_child_2.FullName, ref Image_result);
-                                Get_Image_Multi_gap1(dir_child_2.FullName, ref Image_result_1);
-                                Get_Image_Multi_gap2(dir_child_2.FullName, ref Image_result_2);
-
-                                int log_inx = 0;
-                                foreach (var log in logfile_result1)
+                                if (dir_child_2.Name.Replace(" ", "") == "1" || dir_child_2.Name.Replace(" ", "") == "2")
                                 {
+                                    SortedDictionary<int, SortedDictionary<int, string>> logfile_result1 = new SortedDictionary<int, SortedDictionary<int, string>>();
+                                    SortedDictionary<int, SortedDictionary<int, string>> logfile_result2 = new SortedDictionary<int, SortedDictionary<int, string>>();
 
-                                    byte[] data_image = img_null;
-                                    if (Image_result.ContainsKey(log.Key))
-                                    {
-                                        data_image = Image_result[log.Key];
-                                    }
+                                    Get_logfile_Multi_GAP1(dir_child_2.FullName, ref logfile_result1);
+                                    Get_logfile_Multi_GAP2(dir_child_2.FullName, ref logfile_result2);
+                                    SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
+                                    SortedDictionary<int, byte[]> Image_result_1 = new SortedDictionary<int, byte[]>();
+                                    SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                                    Get_Image_Multi_gap(dir_child_2.FullName, ref Image_result);
+                                    Get_Image_Multi_gap1(dir_child_2.FullName, ref Image_result_1);
+                                    Get_Image_Multi_gap2(dir_child_2.FullName, ref Image_result_2);
 
-                                    byte[] data_image_1 = img_null;
-                                    if (Image_result_1.ContainsKey(log.Key))
+                                    int log_inx = 0;
+                                    foreach (var log in logfile_result1)
                                     {
-                                        data_image_1 = Image_result_1[log.Key];
-                                    }
 
-                                    byte[] data_image_2 = img_null;
-                                    if (Image_result_2.ContainsKey(log.Key))
-                                    {
-                                        data_image_2 = Image_result_2[log.Key];
-                                    }
+                                        byte[] data_image = img_null;
+                                        if (Image_result.ContainsKey(log.Key))
+                                        {
+                                            data_image = Image_result[log.Key];
+                                        }
 
-                                    string data = "";
-                                    foreach (var log_val in log.Value)
-                                    {
-                                        data += log_val.Value + " ; ";
-                                    }
+                                        byte[] data_image_1 = img_null;
+                                        if (Image_result_1.ContainsKey(log.Key))
+                                        {
+                                            data_image_1 = Image_result_1[log.Key];
+                                        }
 
-                                    if (logfile_result2.ContainsKey(log.Key))
-                                    {
-                                        SortedDictionary<int, string> log2 = logfile_result2[log.Key];
-                                        data += "/";
-                                        foreach (var log_val in log2)
+                                        byte[] data_image_2 = img_null;
+                                        if (Image_result_2.ContainsKey(log.Key))
+                                        {
+                                            data_image_2 = Image_result_2[log.Key];
+                                        }
+
+                                        string data = "";
+                                        foreach (var log_val in log.Value)
                                         {
                                             data += log_val.Value + " ; ";
                                         }
-                                    }
-                                    if (data_image != img_null && data_image_1 != img_null && data_image_2 != img_null)
-                                    {
-                                        Data_tbl.Rows.Add(log_inx + 1, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name + "_" + dir_child_2.Name, log.Key, data_image, data_image_1, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
-                                    }
 
-                                    log_inx++;
+                                        if (logfile_result2.ContainsKey(log.Key))
+                                        {
+                                            SortedDictionary<int, string> log2 = logfile_result2[log.Key];
+                                            data += "/";
+                                            foreach (var log_val in log2)
+                                            {
+                                                data += log_val.Value + " ; ";
+                                            }
+                                        }
+                                        if (data_image != img_null && data_image_1 != img_null && data_image_2 != img_null)
+                                        {
+                                            Data_tbl.Rows.Add(log_inx + 1, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name + "_" + dir_child_2.Name, log.Key, data_image, data_image_1, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
+                                        }
 
+                                        log_inx++;
+
+                                    }
+                                }
+                                else
+                                {
+                                    Debugger.Break();
                                 }
                             }
-                            else
-                            {
-                                Debugger.Break();
-                            }
                         }
-                    }
                     else
                     {
                         SortedDictionary<int, SortedDictionary<int, string>> logfile_result1 = new SortedDictionary<int, SortedDictionary<int, string>>();
@@ -1525,9 +1542,8 @@ namespace Funtion_F3_SMT
                         Get_Image_Multi_gap(dir_child.FullName, ref Image_result);
                         Get_Image_Multi_gap1(dir_child.FullName, ref Image_result_1);
                         Get_Image_Multi_gap2(dir_child.FullName, ref Image_result_2);
-                        List<string> listProductID = GAPConnectorService.Get_ProductID(dir_child.FullName.ToString(), Image_result.Keys.Count(), txtItemCode.Text);
                         int log_inx = 0;
-                       
+
                         foreach (var log in logfile_result1)
                         {
 
@@ -1568,7 +1584,20 @@ namespace Funtion_F3_SMT
                             }
                             if (data_image != img_null && data_image_1 != img_null && data_image_2 != img_null)
                             {
-                                Data_tbl.Rows.Add(log_inx + 1, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name, log.Key, data_image, data_image_1, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, listProductID[log_inx], true);
+                                string GAP = dir_child.Name.ToString().Replace("GAP", "").Trim();
+                                if (primePID)
+                                {
+                                    string productid = "";
+                                    if (listProductID[GAP].Count > log_inx)
+                                    {
+                                        productid = listProductID[GAP][log_inx];
+                                    }
+                                    Data_tbl.Rows.Add(log_inx + 1, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name, log.Key, data_image, data_image_1, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true, productid);
+                                }
+                                else
+                                {
+                                    Data_tbl.Rows.Add(log_inx + 1, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name, log.Key, data_image, data_image_1, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
+                                }
                             }
                             log_inx++;
 
@@ -2034,6 +2063,74 @@ namespace Funtion_F3_SMT
 
                 sort_table_crosssection(Data_tbl, ref sort_dt);
 
+            }
+
+            // kiểm tra PRODUCT ID
+            Debugger.Break();
+            try
+            {
+
+                ProductIDService productService = new ProductIDService(txtItemCode.Text, txtLotNo.Text, textBox1.Text, new[] { "IPQC", "Xsection", "B2B" }, new[] { txtItemCode.Text });
+                if (productService._listFile.TryGetValue(txtItemCode.Text, out string location))
+                {
+                    List<string> list = productService.getListProductID(location);
+                    if (list.Count > 0)
+                    {
+                        sort_dt.Columns.Add("ProductID");
+                        int i = 0;
+                        Dictionary<string, string> dic = new Dictionary<string, string>();
+                        foreach (DataRow row in sort_dt.Rows)
+                        {
+                            string r = "";
+                            if (int.TryParse(row["Sample"].ToString(), out int sam))
+                            {
+                                switch (row["Region"])
+                                {
+                                    case "NGANG":
+                                    case "TRUNGANG_P":
+                                    case "TRUNGANG_T":
+                                        if (sam < 10)
+                                        {
+                                            r = $"NPT<10{sam}";
+                                        }
+                                        if (sam > 10)
+                                        {
+                                            r = $"NPT>10{sam}";
+                                        }
+                                        break;
+                                    case "TRU_T":
+                                    case "DOC_T":
+                                        r = $"TRUDOC_T{sam}";
+                                        break;
+                                    case "TRU_P":
+                                    case "DOC_P":
+                                        r = $"TRUDOC_P{sam}";
+                                        break;
+
+
+                                }
+
+                            }
+                            if (dic.TryGetValue(r, out string PID))
+                            {
+
+                            }
+                            else
+                            {
+                                if (i < list.Count)
+                                {
+                                    dic.Add(r, list[i]);
+                                    PID = list[i++];
+                                }
+                            }
+                            row["ProductID"] = PID;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi không tìm thấy file productID");
             }
             return sort_dt;
         }
@@ -2940,7 +3037,7 @@ namespace Funtion_F3_SMT
                                 byte[] img = dic_image[k];
                                 byte[] graph = data.Value.grap_data;
                                 string val = data.Value.data_val;
-                                Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, "1", data.Key, img, graph, val, "100%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
+                                Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, "1", data.Key, img, graph, val, "0.00%", "0.00%", "0.00%", "0.00%", "100%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                                 ID++;
                                 k++;
                             }
@@ -3002,7 +3099,7 @@ namespace Funtion_F3_SMT
                                 byte[] img = dic_image[k];
                                 byte[] graph = data.Value.grap_data;
                                 string val = data.Value.data_val;
-                                Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, tar_d.Name, data.Key, img, graph, val, "100%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
+                                Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, tar_d.Name, data.Key, img, graph, val, "0.00%", "0.00%", "0.00%", "0.00%", "100%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                                 ID++;
                                 k++;
                             }
@@ -3179,7 +3276,7 @@ namespace Funtion_F3_SMT
             }
         }
 
-        public DataTable load_data_logfile_Peel_Pull(string in_src, string tb_name, string infor)
+        public DataTable load_data_logfile_Peel_Pull(string in_src, string tb_name, string infor, string locationProductID = null)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
             DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, tb_name, filter_str).Clone();
@@ -3220,6 +3317,40 @@ namespace Funtion_F3_SMT
             else
             {
                 load_peelpull(tar_parent, infor, in_src, ref Data_tbl);
+            }
+            if (!string.IsNullOrEmpty(locationProductID))
+            {
+                string find = "";
+                switch (sheet)
+                {
+                    case "MATING_PULL_TEST":
+                        find = "Pulling_Test";
+                        break;
+                    case "PEEL_TEST":
+                        find = "Peeling";
+                        break;
+                }
+
+                try
+                {
+                    ProductIDService productIDService = new ProductIDService(txtItemCode.Text, txtLotNo.Text, locationProductID, new[] { find }, new[] { txtItemCode.Text.Trim() });
+                    List<string> list = productIDService.getListProductID(productIDService._listFile[txtItemCode.Text]);
+                    if (list.Count > 0)
+                    {
+                        Data_tbl.Columns.Add("ProductID");
+                    }
+                    // Debugger.Break();
+                    //Data_tbl.Columns.Add("ProductID");
+                    for (int i = 0; i < list.Count(); i++)
+                    {
+                        Data_tbl.Rows[i]["ProductID"] = list[i];
+                    }
+
+                }
+                catch
+                {
+                    MessageBox.Show("Không tìm thấy productID");
+                }
             }
 
             return Data_tbl;
@@ -3900,7 +4031,25 @@ namespace Funtion_F3_SMT
                     sample++;
                 }
             }
-
+            ProductIDService productIDService = new ProductIDService(txtItemCode.Text, txtLotNo.Text, textBox1.Text, new[] { "OQC", "B2B", "Shearing" }, new[] { txtItemCode.Text });
+            if (productIDService._listFile.Count > 0)
+            {
+                Data_tbl.Columns.Add("ProductID");
+                int i = 0;
+                List<string> listPID = productIDService.getListProductID(productIDService._listFile[txtItemCode.Text]);
+                foreach (string item in listPID)
+                {
+                    try
+                    {
+                        Data_tbl.Rows[i]["ProductID"] = item;
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                    i++;
+                }
+            }
             return Data_tbl;
         }
 
@@ -4235,7 +4384,7 @@ namespace Funtion_F3_SMT
                         }
                         else
                         {
-                            if (admin_mode == "Admin mode")
+                            if (UserSession.Instance.IsLoggedIn)
                             {
                                 dic_graph.Add(indx_grp, i);
                                 indx_grp++;
@@ -4255,7 +4404,7 @@ namespace Funtion_F3_SMT
 
                 if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST")
                 {
-                    dt = ((DataTable)dgv_logfile.DataSource).AsDataView().ToTable(false, new string[] { "ID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Graph", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                    dt = ((DataTable)dgv_logfile.DataSource).AsDataView().ToTable(false, new string[] { "ID", "ProductID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Graph", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
                 }
                 else
                 {
@@ -4279,10 +4428,11 @@ namespace Funtion_F3_SMT
                             //dr[k] = dt.Rows[i - 1][k].ToString();
                             dr[k] = dt.Rows[dic_img[i]][k].ToString();
                         }
-                        dr[5] = i;
-                        dr[6] = dt.Rows[dic_img[i]][6];
-                        dr[7] = dt.Rows[dic_graph[i]][7];
-                        dr[8] = dt.Rows[dic_graph[i]][8].ToString();
+                        dr["Sample"] = i;
+                        dr["Region"] = dt.Rows[dic_img[i]]["Region"];
+                        dr["Image"] = dt.Rows[dic_img[i]]["Image"];
+                        dr["Graph"] = dt.Rows[dic_graph[i]]["Graph"];
+                        dr["Data"] = dt.Rows[dic_graph[i]]["Data"].ToString();
 
                     }
                     dt_select.Rows.Add(dr);
@@ -4337,7 +4487,6 @@ namespace Funtion_F3_SMT
                 {
                     if (sheet == "CROSS_SECTION" || sheet == "GAP_CONNECTOR")
                     {
-                        int col = dgv_logfile.Columns.Count;
                         DataTable dt_select = ((DataTable)dgv_logfile.DataSource).Clone();
                         if (dt_select.Columns.Contains("Select"))
                         {
@@ -4355,22 +4504,35 @@ namespace Funtion_F3_SMT
                                 {
                                     DataRow row = dv[inx].Row;
                                     int i = dt_logfile.Rows.IndexOf(row);
-                                    bool checkedCell = (bool)dgv_logfile.Rows[i].Cells[col - 1].Value;
+                                    bool checkedCell = (bool)dgv_logfile.Rows[i].Cells["Select"].Value;
+                                    DataTable dataTable = (DataTable)dgv_logfile.DataSource;
                                     if (checkedCell == true)
                                     {
                                         if (dgv_logfile.Rows[i].Cells["Data"].Style.BackColor != Color.Red)
                                         {
                                             DataRow dr = dt_select.NewRow();
                                             dr["ID"] = ID;
-                                            dr[5] = inx + 1;
-                                            for (int k = 1; k < dgv_logfile.Columns.Count - 1; k++)
+                                            dr["Region"] = dataTable.Rows[i]["Region"];
+                                            dr["ItemCode"] = dataTable.Rows[i]["ItemCode"];
+                                            dr["LotNo"] = dataTable.Rows[i]["LotNo"];
+                                            dr["Sheet"] = dataTable.Rows[i]["Sheet"];
+                                            dr["Sample"] = dataTable.Rows[i]["Sample"];
+                                            try
                                             {
-                                                if (k != 5)
-                                                {
-                                                    dr[k] = dgv_logfile.Rows[i].Cells[k].Value;
-                                                }
+
+                                                dr["Image"] = dataTable.Rows[i]["Image"];
+                                            }
+                                            catch
+                                            {
 
                                             }
+                                            dr["Image1"] = dataTable.Rows[i]["Image1"];
+                                            dr["Image2"] = dataTable.Rows[i]["Image2"];
+                                            dr["Data"] = dataTable.Rows[i]["Data"];
+                                            dr["Operator"] = dataTable.Rows[i]["Operator"];
+                                            dr["Time_Update"] = dataTable.Rows[i]["Time_Update"];
+                                            dr["Remark"] = dataTable.Rows[i]["Remark"];
+                                            dr["ProductID"] = dataTable.Rows[i]["ProductID"];
                                             dt_select.Rows.Add(dr);
                                             ID++;
 
@@ -4500,7 +4662,7 @@ namespace Funtion_F3_SMT
             }
         }
 
-        private void btnLoađB_Click(object sender, EventArgs e)
+        private void btnLoadB_Click(object sender, EventArgs e)
         {
 
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && cb_Type.SelectedIndex != -1)
@@ -4527,6 +4689,19 @@ namespace Funtion_F3_SMT
 
 
                 DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet, filter_str);
+
+                string sheetZ = sheet;
+                string itemCode = txtItemCode.Text;
+                string lotNo = txtLotNo.Text;
+                try
+                {
+                    ProductIDService.FillProductID(dt_analysis, itemCode, lotNo, sheetZ);
+                }
+                catch
+                {
+
+                }
+
                 int st = 1;
                 foreach (DataRow dr in dt_analysis.Rows)
                 {
@@ -6804,6 +6979,7 @@ namespace Funtion_F3_SMT
 
         private void btn_load_Click(object sender, EventArgs e)
         {
+
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && txtOperator.Text != "" && txtLogfile.Text != "" && cb_Type.SelectedIndex != -1)
             {
                 dgv_logfile.DataSource = dgv_Analysis.DataSource = null;
@@ -6859,18 +7035,45 @@ namespace Funtion_F3_SMT
                             switch (sheet)
                             {
                                 case "PEEL_TEST":
-                                    dt_load = load_data_logfile_Peel_Pull(f_folder, "PEEL_TEST", infor);
-                                    Data_tbl = dt_load.AsDataView().ToTable(false, new string[] { "ID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Select_Img", "Graph", "Select_Grp", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                                    dt_load = load_data_logfile_Peel_Pull(f_folder, "PEEL_TEST", infor, textBox1.Text);
+                                    if (dt_load.Columns.Contains("ProductID"))
+                                    {
+
+                                        Data_tbl = dt_load.AsDataView().ToTable(false, new string[] { "ID", "ProductID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Select_Img", "Graph", "Select_Grp", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                                    }
+                                    else
+                                    {
+
+                                        Data_tbl = dt_load.AsDataView().ToTable(false, new string[] { "ID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Select_Img", "Graph", "Select_Grp", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                                    }
                                     break;
 
                                 case "MATING_PULL_TEST":
-                                    dt_load = load_data_logfile_Peel_Pull(f_folder, "MATING_PULL_TEST", infor);
-                                    Data_tbl = dt_load.AsDataView().ToTable(false, new string[] { "ID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Select_Img", "Graph", "Select_Grp", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                                    dt_load = load_data_logfile_Peel_Pull(f_folder, "MATING_PULL_TEST", infor, textBox1.Text);
+                                    if (dt_load.Columns.Contains("ProductID"))
+                                    {
+
+                                        Data_tbl = dt_load.AsDataView().ToTable(false, new string[] { "ID", "ProductID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Select_Img", "Graph", "Select_Grp", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                                    }
+                                    else
+                                    {
+
+                                        Data_tbl = dt_load.AsDataView().ToTable(false, new string[] { "ID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Select_Img", "Graph", "Select_Grp", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                                    }
                                     break;
 
                                 case "SHEAR_TEST":
                                     dt_load = load_data_logfile_sheartest(f_folder, infor);
-                                    Data_tbl = dt_load.AsDataView().ToTable(false, new string[] { "ID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Select_Img", "Graph", "Select_Grp", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                                    if (dt_load.Columns.Contains("ProductID"))
+                                    {
+                                        Data_tbl = dt_load.AsDataView().ToTable(false, new string[] { "ID", "ProductID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Select_Img", "Graph", "Select_Grp", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+
+                                    }
+                                    else
+                                    {
+
+                                        Data_tbl = dt_load.AsDataView().ToTable(false, new string[] { "ID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Select_Img", "Graph", "Select_Grp", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                                    }
                                     break;
 
                                 case "IQC_UNMATING_PULL_TEST":
@@ -7028,7 +7231,7 @@ namespace Funtion_F3_SMT
                         {
                             if (MessageBox.Show(new Form { TopMost = true }, "Dữ liệu đã tồn tại. Bạn có muốn thay thế toàn bộ dữ liệu ?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
-                                if (admin_mode == "Admin mode")
+                                if (UserSession.Instance.IsLoggedIn == true)
                                 {
                                     chk = true;
                                     goto lbl_getdata;
@@ -7513,6 +7716,23 @@ namespace Funtion_F3_SMT
                                     dr[0] = i;
                                     i++;
                                 }
+                                if (tbl_data_analysis.Columns.Contains("ProductID"))
+                                {
+                                    string str = ProductIDService.ConverterProductID(tbl_data_analysis);
+                                    string itemCode = txtItemCode.Text;
+                                    string lotNo = txtLotNo.Text;
+                                    string process = sheet;
+                                    try
+                                    {
+                                        ProductIDService.InsertProductID(itemCode, lotNo, process, str);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        MessageBox.Show($" {ex.Message}", "Lưu productID thất bại", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        return;
+                                    }
+                                    tbl_data_analysis.Columns.Remove("ProductID");
+                                }
                                 BatchBulkCopy(sqlcon, tbl_data_analysis, sheet);
 
                                 int st = 1;
@@ -7533,7 +7753,7 @@ namespace Funtion_F3_SMT
                             {
                                 if (MessageBox.Show(new Form { TopMost = true }, "Dữ liệu ngoài chuẩn. Bạn có muốn tiếp tục lưu không ?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
                                 {
-                                    if (admin_mode == "Admin mode")
+                                    if (UserSession.Instance.IsLoggedIn)
                                     {
                                         chk = true;
                                         goto save_lbl;
@@ -7565,7 +7785,7 @@ namespace Funtion_F3_SMT
                     {
                         if (MessageBox.Show(new Form { TopMost = true }, "Dữ liệu đã tồn tại. Bạn có muốn thay thế không", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
-                            if (admin_mode == "Admin mode")
+                            if (UserSession.Instance.IsLoggedIn)
                             {
                                 TDMK_Code.Delelte_FilteredItem_arr(sheet, sqlcon, filter_str);
                                 //   TDMK_Code.Delelte_FilteredItem_arr(sheet + "_LOGFILE", sqlcon, filter_str);
@@ -7597,6 +7817,10 @@ namespace Funtion_F3_SMT
                         }
                     }
                 }
+            }
+            else
+            {
+                MessageBox.Show("Chưa cài format!");
             }
         }
 
@@ -11164,7 +11388,7 @@ namespace Funtion_F3_SMT
             {
                 if (dgv_Analysis.DataSource == null)
                 {
-                    btnLoađB.PerformClick();
+                    btnLoadb.PerformClick();
                 }
                 if (cb_Type.SelectedIndex != -1)
                 {
@@ -11330,7 +11554,7 @@ namespace Funtion_F3_SMT
             {
                 if (dgv_Analysis.DataSource == null)
                 {
-                    btnLoađB.PerformClick();
+                    btnLoadb.PerformClick();
                 }
                 if (cb_Type.SelectedIndex != -1)
                 {
@@ -11363,6 +11587,14 @@ namespace Funtion_F3_SMT
                         }
 
                         DataTable Data_all = TDMK_Code.Datatable_Filter(sqlcon, sheet, filter_str);
+                        try
+                        {
+                            ProductIDService.FillProductID(Data_all, txtItemCode.Text, txtLotNo.Text, sheet);
+                        }
+                        catch
+                        {
+
+                        }
                         if (Data_all.Rows.Count > 0)
                         {
                             int st = 1;
@@ -11409,6 +11641,7 @@ namespace Funtion_F3_SMT
                                 }
                                 if (file_format != "")
                                 {
+
                                     F_export_EPPlus.export_new_viewdata3(file_format, report_folder, export_path, txtItemCode.Text, txtLotNo.Text, cb_Type.SelectedItem.ToString(), Data_all, dt_spec, sheet, dgv_Analysis, txtOperator.Text, int.Parse(txt_qty.Text));
 
                                 }
@@ -11577,7 +11810,6 @@ namespace Funtion_F3_SMT
             txtLogfile.Text = "";
             txt_qty.Text = "";
             cb_Type.SelectedIndex = -1;
-            txtOperator.Text = "";
             txt_ItemName.Text = "";
             txt_line.Text = "";
             txt_ca.Text = "";
@@ -11594,21 +11826,35 @@ namespace Funtion_F3_SMT
             lbl_judge.BackColor = Color.Transparent;
             txt_selected.Text = "";
         }
-
-        private void lbl_Login_Click(object sender, EventArgs e)
+        private void checkSession()
         {
-            Login fr1 = new Login(Setmode);
-            if (lbl_Login.Text == "Admin mode")
+            if (UserSession.Instance.IsLoggedIn)
             {
-                fr1.mode = true;
+                txtOperator.Text = UserSession.Instance.User_ID;
+                lbl_Login.Text = "Logout";
+                lbl_Login.ForeColor = Color.Red;
             }
             else
             {
-                fr1.mode = false;
 
+                lbl_Login.ForeColor = Color.Blue;
+                lbl_Login.Text = "Login";
+                txtOperator.Text = "";
             }
+        }
+        private void lbl_Login_Click(object sender, EventArgs e)
+        {
+            if (UserSession.Instance.IsLoggedIn)
+            {
+                UserSession.Instance.Logout();
+            }
+            else
+            {
+                Login fr1 = new Login(Setmode);
+                fr1.ShowDialog();
+            }
+            checkSession();
 
-            fr1.Show();
         }
 
 
@@ -13675,6 +13921,14 @@ namespace Funtion_F3_SMT
             {
                 txt_setchan.BackColor = Color.White;
                 set_chan = int.Parse(txt_setchan.Text);
+                DataTable dataTable = (DataTable)dgv_logfile.DataSource;
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    if (row["Mode 1: Solder joint crack"].ToString().Contains("100%"))
+                    {
+                        row["Mode 1: Solder joint crack"] = $"100% ({set_chan}/{set_chan})";
+                    }
+                }
             }
         }
 
@@ -13699,6 +13953,17 @@ namespace Funtion_F3_SMT
         private void tableLayoutPanel8_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void textBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "All files (*.*)|*.*";
+            fileDialog.FilterIndex = 1;
+            fileDialog.RestoreDirectory = true;
+            fileDialog.Title = "Chọn tệp";
+            fileDialog.ShowDialog();
+            textBox1.Text = fileDialog.FileName;
         }
     }
 

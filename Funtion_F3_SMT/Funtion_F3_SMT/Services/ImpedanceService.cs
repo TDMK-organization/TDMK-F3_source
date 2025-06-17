@@ -162,9 +162,11 @@ namespace OK2SHIP_SMT.Services
         }
         private static DataTable ChangeItemCodeLotNo(DataTable dataTable, string itemCode, string lotNo = null)
         {
-            foreach (DataRow row in dataTable.Rows) {
+            foreach (DataRow row in dataTable.Rows)
+            {
                 row["ItemCode"] = itemCode;
-                if (lotNo != null) {
+                if (lotNo != null)
+                {
                     row["LotNo"] = lotNo;
                 }
             }
@@ -233,11 +235,11 @@ namespace OK2SHIP_SMT.Services
             {
                 using (ExcelWorksheet worksheet = exportProcess.FindSheet(ex, "Impedance"))
                 {
-                    string[] header = new[] { "Actual Impedance", "Actual Trace width (A)", "Picture", "Impedance -" };
+                    string[] header = new[] { "Actual Impedance", "Picture", "Impedance -" };
                     IDictionary<string, string> _dic = ExportProcess.FindAddressByText(worksheet, header, true);
 
                     #region Image
-                    string[] headerZ = new[] { "Sample 1", "Sample 2", "Sample 3" };
+                    string[] headerZ = new[] { "Sample 1", "Sample 2", "Sample 3", "Actual Trace width" };
                     IDictionary<string, string> _dicZ = ExportProcess.FindAddressByText(worksheet, headerZ, false);
 
                     if (dic.TryGetValue("IMPEDANCE_GRAPH", out DataTable dataTable))
@@ -251,7 +253,8 @@ namespace OK2SHIP_SMT.Services
                             {
                                 if (address.Split('-').Count() >= 2)
                                 {
-                                    address = ExportProcess.AddRow(address.Split('-')[1], 1);
+
+                                    address = ExportProcess.AddRow(address.Split('-')[1], 2);
 
                                     ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[ExportProcess.getRangeBaseAddressByCellAddress(worksheet, address)], image, $"{Guid.NewGuid()}");
                                 }
@@ -270,8 +273,8 @@ namespace OK2SHIP_SMT.Services
                                 if (address.Split('-').Count() >= 2)
                                 {
                                     address = ExportProcess.AddRow(address.Split('-')[0], 1);
-
-                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[ExportProcess.getRangeBaseAddressByCellAddress(worksheet, address)], image, $"{Guid.NewGuid()}");
+                                    var z = worksheet.Cells[ExportProcess.getRangeBaseAddressByCellAddress(worksheet, address)];
+                                    ExportProcess.InsertImageToCell(worksheet, z, image, $"{Guid.NewGuid()}");
                                 }
                             }
                         }
@@ -309,7 +312,7 @@ namespace OK2SHIP_SMT.Services
 
                     if (dic.TryGetValue("TRACEWIDTH_VAL", out DataTable dataTableZ1))
                     {
-                        if (_dic.TryGetValue("Actual Trace width (A)", out string address))
+                        if (_dicZ.TryGetValue("Actual Trace width", out string address))
                         {
                             address = address.Split('-')[0];
                             int i = 0;
@@ -361,7 +364,7 @@ namespace OK2SHIP_SMT.Services
                     {
                         throw new Exception("Worksheet lỗi");
                     }
-                    string[] healder = new[] { "Sample 1", "Sample 2", "Sample 3" };
+                    string[] healder = new[] { "Sample 1", "Sample 2", "Sample 3", "Actual Impedance", "Sample No.", "Actual Trace width (A)" };
                     IDictionary<string, string> addressDIC = ExportProcess.FindAddressByText(worksheet, healder);
                     Dictionary<string, byte[]> imageList = new Dictionary<string, byte[]>();
                     foreach (var picture in worksheet.Drawings)
@@ -395,6 +398,10 @@ namespace OK2SHIP_SMT.Services
                                 row["Remark"] = "GET FORM CHECKSHEET";
                                 _dic["IMPEDANCE_GRAPH"].Rows.Add(row);
                             }
+                            else
+                            {
+
+                            }
                             if (imageList.TryGetValue(az[0], out value))
                             {
                                 DataRow row = ((DataTable)_dic["TRACEWIDTH_IMAGE"]).NewRow();
@@ -411,7 +418,58 @@ namespace OK2SHIP_SMT.Services
                             }
                         }
                     }
-                    Debugger.Break();
+                    bool prime = false;
+                    if (addressDIC.TryGetValue("Actual Impedance", out string add))
+                    {
+                        string[] zHealder = new[] { "IMPEDANCE_VAL" };
+                        int j = 0;
+                        foreach (string address in add.Split('-'))
+                        {
+                            string addressZZ = address;
+
+                            int i = 1;
+                            while (true)
+                            {
+                                addressZZ = ExportProcess.AddRow(addressZZ, 1);
+                                if (worksheet.Cells[addressZZ] != null && !string.IsNullOrEmpty(worksheet.Cells[addressZZ].Text))
+                                {
+                                    if (double.TryParse(worksheet.Cells[addressZZ].Text, out double data))
+                                    {
+                                        //string sampeAdd = worksheet.Cells[worksheet.Cells[addressZZ].End.Row, worksheet.Cells[addressDIC["Sample No."].Split('-')[j]].End.Column].Address;
+                                        //if (string.IsNullOrEmpty(worksheet.Cells[sampeAdd].Text))
+                                        //{
+                                        //    break;
+                                        //}
+                                        DataRow row = ((DataTable)_dic[zHealder[0]]).NewRow();
+                                        row["ID"] = i;
+                                        row["ItemCode"] = itemCode;
+                                        row["LotNo"] = lotNo;
+                                        row["Pcs_No"] = i++;
+                                        row["Region"] = j + (j > 0 ? 0 : 1);
+                                        row["Data"] = data;
+                                        row["Zone"] = "Patern";
+                                        row["Remark"] = "GET FORM EXCEL";
+                                        _dic["IMPEDANCE_VAL"].Rows.Add(row);
+                                    }
+                                    else
+                                    {
+                                        data = 0;
+                                    }
+
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+
+                            j++;
+                            if (j == 1)
+                            {
+                                j++;
+                            }
+                        }
+                    }
                 }
             }
             return _dic;

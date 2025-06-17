@@ -6,19 +6,19 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TDMK_EPPLUS_7;
 using TDMK_SEEV_DLL;
 using TDMK_SQL;
 using OK2SHIP_Lib;
 using System.Drawing;
 using System.Windows.Forms;
+using Export_FPCA_OK2ship_Auto_System.Libary;
 namespace FAI_Export
 {
     public class FAI_EPPLUS_Lib
     {
         TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
         SEI_Lib myCode = new SEI_Lib();
-        TDMK_EPPLUS7_lib Excel_Lib = new TDMK_EPPLUS7_lib();
+        TDMK_EPPLUS Excel_Lib = new TDMK_EPPLUS();
         TDMK_OK2SHIP TDMK_OK2SHIP = new TDMK_OK2SHIP();
         public Dictionary<string, DataTable> Export_FAI_Batch(SqlConnection sqlcon, string tar_ItemCode, string tar_LotNo, string format_type)
         {

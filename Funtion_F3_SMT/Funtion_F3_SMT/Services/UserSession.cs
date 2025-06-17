@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace OK2SHIP_SMT.Services
 {
@@ -21,10 +22,18 @@ namespace OK2SHIP_SMT.Services
         public bool IsLoggedIn { get; private set; }
         private const string ADMIN_USERNAME = "TDMK_ADMIN";
         private const string ADMIN_PASSWORD = "qwer";
+
         private UserSession()
         {
             // Constructor private để ngăn việc tạo instance từ bên ngoài
             IsLoggedIn = false;
+#if DEBUG
+            Role = "admin";
+            Username = "TDMK_ADMIN";
+            IsLoggedIn = true;
+            User_ID = "ADMIN";
+#endif
+
         }
 
         public static UserSession Instance
@@ -51,19 +60,20 @@ namespace OK2SHIP_SMT.Services
                 IsLoggedIn = true;
                 User_ID = "ADMIN";
             }
-            else if(username == ADMIN_USERNAME)
+            else if (username == ADMIN_USERNAME)
             {
                 throw new Exception("Sai mật khẩu");
             }
             else
             {
-                DataTable dt = _dbContext.LoadDataTable(_NAMETABLE, new[] { "UserName", "Password" }, new[] { username, password }, new[] { "UserName", "Role", "IsActive" });
+                DataTable dt = _dbContext.LoadDataTable(_NAMETABLE, new[] { "UserName", "Password" }, new[] { username, password }, new[] { "User_ID", "UserName", "Role", "IsActive" });
                 if (dt.Rows.Count > 0)
                 {
                     DataRow row = dt.Rows[0];
                     Role = row["Role"].ToString();
                     Username = row["UserName"].ToString();
                     IsLoggedIn = row["IsActive"].ToString() == "1";
+                    User_ID = row["User_ID"].ToString();
                 }
                 else
                 {
@@ -119,7 +129,7 @@ namespace OK2SHIP_SMT.Services
                 throw new AuthenticationException("Chỉ có admin mới có quyền xem danh sách người dùng.");
             }
             DataTable dt = _dbContext.LoadDataTable(_NAMETABLE, null, null);
-           
+
             if (dt == null)
             {
                 throw new Exception("Không thể tải danh sách người dùng.");

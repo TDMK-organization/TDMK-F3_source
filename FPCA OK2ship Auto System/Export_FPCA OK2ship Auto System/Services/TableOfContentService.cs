@@ -22,7 +22,36 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
         {
 
         }
-
+        public DataTable getDataTableByItemCode(string itemCode, DataTable dtz = null)
+        {
+            DataTable dt = new DataTable();
+            itemCode = itemCode.Trim();
+            if (string.IsNullOrEmpty(itemCode))
+            {
+                throw new Exception("Hãy nhập itemCode");
+            }
+            if (dtz != null)
+            {
+                foreach (DataRow row in dtz.Rows)
+                {
+                    if (row.Field<string>("ItemCode") == itemCode)
+                    {
+                        DataRow newRow = ExportProcess.CloneDataRow(row);
+                        dt.Rows.Add(newRow);
+                    }
+                }
+            }
+            else
+            {
+                dt = _dBContext.LoadDataTable(_NAMETABLE + "_SETTING", new[] { "ItemCode" }, new[] { itemCode });
+            }
+            int id = 1;
+            foreach (DataRow row in dt.Rows)
+            {
+                row["Id"] = id++;
+            }
+            return dt;
+        }
         public bool checkItemCodeLotNo(string itemcode, string lotno)
         {
             if (string.IsNullOrEmpty(itemcode) || string.IsNullOrEmpty(lotno))

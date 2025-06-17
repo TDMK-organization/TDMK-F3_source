@@ -32,7 +32,7 @@ namespace OK2SHIP_SMT.Services
 
         }
 
-        public DataTable ProcessRead(string location, string itemCode, string lotNo)
+        public DataTable ProcessRead(string location, string itemCode, string lotNo, string productIDLocation)
         {
             DataTable dataTable = new DataTable();
             string[] files = Directory.GetDirectories(location);
@@ -121,6 +121,30 @@ namespace OK2SHIP_SMT.Services
             foreach (DataRow item in dataTable.Rows)
             {
                 item["Id"] = iz++;
+            }
+            productIDLocation = productIDLocation.Trim();
+            try
+            {
+
+                if (!string.IsNullOrEmpty(productIDLocation))
+                {
+                    ProductIDService productID = new ProductIDService(itemCode, lotNo, productIDLocation, new[] { "OQC", "B2B", "Matting", "Un-Matting" }, new[] { itemCode });
+                    IList<string> list = productID.getListProductID(productID._listFile[itemCode]);
+                    int iZ = 0;
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        if (iZ < list.Count)
+                        {
+                            row["ProductID"] = list[iZ];
+                            iZ++;
+                        }
+                    }
+
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Kiểm tra lại product ID");
             }
             //Debugger.Break();
             return dataTable;
@@ -293,8 +317,8 @@ namespace OK2SHIP_SMT.Services
                 using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, "OQC B2B Mating-Unmating"))
                 {
                     //string address = exportProcess.FindAddressByText(workSheet, "Bar Code Verification");
-                    string[] colHeader = { "Min Force (N)", "Max Force (N)", "Average Force (N)", "Sample 1", "Sample 2", "Sample 3", "Sample 4", "Sample 5", "Sample 6", "Sample 7", "Sample 8", "Sample 9", "Sample 10" };
-                    string[] rowHeader = { "Picture T0", "Picture T30", "Unmating force at T1", "Unmating picture at T1", "Graph unmating at T1", "Failure mode", "Judgement" };
+                    string[] colHeader = { "Flex SN", "Min Force (N)", "Max Force (N)", "Average Force (N)", "Sample 1", "Sample 2", "Sample 3", "Sample 4", "Sample 5", "Sample 6", "Sample 7", "Sample 8", "Sample 9", "Sample 10" };
+                    string[] rowHeader = { "Picture T0", "Picture T30", "Unmating force", "Picture T1", "Graph unmating at T1", "Failure mode", "Judgement" };
                     IDictionary<string, string> addressHeader = DictionaryService.MergeDictionaries<string, string>(ExportProcess.FindAddressByText(workSheet, colHeader.ToArray(), true), ExportProcess.FindAddressByText(workSheet, rowHeader.ToArray()));
 
                     DataTable dataTable = _context.LoadDataTable("OQC_B2B_Mating_Unmating", new string[] { "ItemCode", "lotNo" }, new string[] { itemcode, lotno });
@@ -306,6 +330,11 @@ namespace OK2SHIP_SMT.Services
                         //// cho vào T0
                         byte[] Image = (byte[])row["T0"];
                         //adress T0
+                        if (addressHeader.TryGetValue("Flex SN", out string ValueZZ))
+                        {
+                            string addZ = workSheet.Cells[workSheet.Cells[ValueZZ].Start.Row, workSheet.Cells[col].Start.Column].Address;
+                            workSheet.Cells[addZ].Value = row["ProductID"];
+                        }
                         string address = addressHeader[$"Picture T0"];
                         if (address.Contains("-"))
                         {
@@ -338,7 +367,7 @@ namespace OK2SHIP_SMT.Services
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30USample{i}");
                         //// Insert Image in 30
                         Image = (byte[])row["T1"];
-                        address = addressHeader[$"Unmating picture at T1"];
+                        address = addressHeader[$"Picture T1"];
                         if (address.Contains("-"))
                         {
                             address = address.Split('-')[0];
@@ -355,7 +384,7 @@ namespace OK2SHIP_SMT.Services
                         address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"GraphT1Sample{i}");
                         //// Insert Image in 30
-                        if (addressHeader.TryGetValue("Unmating force at T1", out address))
+                        if (addressHeader.TryGetValue("Unmating force", out address))
                         {
                             address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
                             double num = (double)row["Force"];
@@ -374,18 +403,28 @@ namespace OK2SHIP_SMT.Services
                         i++;
                     }
                     addressNum = addressNum.Trim().TrimEnd(',');
-                    string addressz = ExportProcess.AddColumn(addressHeader["Min Force (N)"], 1);
-                    int colZ =workSheet.Cells[addressHeader["Unmating force at T1"]].End.Row - workSheet.Cells[addressz].End.Row ;
-                    int ro =  workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column;
-                    workSheet.Cells[addressz].FormulaR1C1 = $"=MIN(R[{colZ}]C:R[{colZ}]C[{ro}])";
-                    addressz = ExportProcess.AddColumn(addressHeader["Max Force (N)"], 1);
-                    colZ = workSheet.Cells[addressHeader["Unmating force at T1"]].End.Row - workSheet.Cells[addressz].End.Row ;
-                    ro =  workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column ;
-                    workSheet.Cells[addressz].FormulaR1C1 = $"=MAx(R[{colZ}]C:R[{colZ}]C[{ro}])";
-                    addressz = ExportProcess.AddColumn(addressHeader["Average Force (N)"], 1);
-                    colZ =  workSheet.Cells[addressHeader["Unmating force at T1"]].End.Row - workSheet.Cells[addressz].End.Row ;
-                    ro =  workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column ;
-                    workSheet.Cells[addressz].FormulaR1C1 = $"=AVERAGE(R[{colZ}]C:R[{colZ}]C[{ro}])";
+                    if (addressHeader.TryGetValue("Min Force (N)", out string addressz))
+                    {
+                        addressz = ExportProcess.AddColumn(addressz, 1);
+                        int colZ = workSheet.Cells[addressHeader["Unmating force"]].End.Row - workSheet.Cells[addressz].End.Row;
+                        int ro = workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column;
+                        workSheet.Cells[addressz].FormulaR1C1 = $"=MIN(R[{colZ}]C:R[{colZ}]C[{ro}])";
+                    }
+                    if (addressHeader.TryGetValue("Max Force (N)", out addressz))
+                    {
+                        addressz = ExportProcess.AddColumn(addressHeader["Max Force (N)"], 1);
+                        int colZ = workSheet.Cells[addressHeader["Unmating force"]].End.Row - workSheet.Cells[addressz].End.Row;
+                        int ro = workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column;
+                        workSheet.Cells[addressz].FormulaR1C1 = $"=MAX(R[{colZ}]C:R[{colZ}]C[{ro}])";
+                    }
+                    if (addressHeader.TryGetValue("Max Force (N)", out addressz))
+                    {
+                        addressz = ExportProcess.AddColumn(addressHeader["Average Force (N)"], 1);
+                        int colZ = workSheet.Cells[addressHeader["Unmating force"]].End.Row - workSheet.Cells[addressz].End.Row;
+                        int ro = workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column;
+                        workSheet.Cells[addressz].FormulaR1C1 = $"=AVERAGE(R[{colZ}]C:R[{colZ}]C[{ro}])";
+                    }
+
                     exportProcess.SaveExcelWorksheet(ex, "OQC B2B Mating-Unmating", $"{itemcode.Trim()}-{lotno.Trim()}");
 
                 }

@@ -68,7 +68,6 @@ namespace OK2SHIP_SMT.Services
             {
                 dataTable = _dbContext.GetTableStructure($"{_NAMETABLE}_LOGFILE");
             }
-            int area = 0;
             foreach (string item in keyValuePairs.Keys)
             {
                 string shippingTo = item.Split('_')[0].Trim();

@@ -43,7 +43,7 @@ namespace OK2SHIP_SMT.UserControls
                 tb_ODB.Text = dataRow["ODBRevision"].ToString();
                 tb_buildconfig.Text = dataRow["Build"].ToString();
                 tb_xOut.Text = dataRow["XOUTRate"].ToString();
-                tb_EECODE.Text = "-";
+                tb_EECODE.Text = dataRow["EEEECode"].ToString();
                 dataGridView.DataSource = tableOfContentService.MakeTable(dtp_send.Text);
                 checkTAR();
             }
@@ -83,7 +83,6 @@ namespace OK2SHIP_SMT.UserControls
                 dr["Build"] = tb_Buildz.Text.Trim();
                 dr["XOUTRate"] = tb_xoutz.Text.Trim();
                 dr["ShippingFrom"] = tb_shippingz.Text.Trim();
-                dr["EEEECode"] = tb_EEEECode.Text.Trim();
                 dr["FactoryCode"] = tb_FactoryCode.Text.Trim();
                 foreach (var item in listItemCode)
                 {
@@ -241,7 +240,6 @@ namespace OK2SHIP_SMT.UserControls
             tb_MCORe.Text = row["MCORevision"].ToString();
             tb_Program.Text = row["ProgramName"].ToString();
             tb_ItemName.Text = row["ItemName"].ToString();
-            tb_EEEECode.Text = row["EEEECode"].ToString();
             tb_FactoryCode.Text = row["FactoryCode"].ToString();
             getItemCodeByItemName(tb_ItemName.Text);
         }
@@ -537,7 +535,7 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void SetUpDataGridView(DataTable datatable = null)
         {
-            tabPage3.Controls.Add(new Packaging() { Dock = DockStyle.Fill});
+            tabPage3.Controls.Add(new Packaging() { Dock = DockStyle.Fill });
             //dataGridView.DataSource = datatable;
             //dataGridView.DataSource = tableOfContentService.MakeTable();
         }
@@ -707,6 +705,30 @@ namespace OK2SHIP_SMT.UserControls
                             break;
                     }
                     row["Status"] = status;
+                    if (new[] { "Heat Soak and Recovery", "Thermal Cycling", "Thermal shock", "Bending after thermal cycling", "Bending after heat soak " }.Contains(row["Test"].ToString().Trim()))
+                    {
+                        row["Status"] = "On going";
+                    }
+                }
+
+            }
+        }
+
+        private void dtp_send_ValueChanged(object sender, EventArgs e)
+        {
+            DataTable dt = (DataTable)dataGridView.DataSource;
+            if (dt == null)
+            {
+                return;
+            }
+
+            string str = dtp_send.Text;
+            foreach (DataRow row in dt.Rows)
+            {
+                string z = row["Target date Request"].ToString();
+                if (row["Target date Request"].ToString().Contains("Prior to ship") && !row["Target date Submission"].ToString().Contains("NA"))
+                {
+                    row["Target date Submission"] = str;
                 }
             }
         }

@@ -469,7 +469,11 @@ namespace OK2SHIP_SMT.UserControls
                         BarCodeVertification barCodeVertification = new BarCodeVertification();
                         DataTable dtBar = barCodeVertification.LoadProcess(tb_ItemCode.Text, tb_Lotno.Text);
                         dataGridView.DataSource = dtBar;
-                        dataGridView.Columns["ID"].DisplayIndex = 0;
+                        if (dataGridView.Columns.Contains("ID"))
+                        {
+
+                            dataGridView.Columns["ID"].DisplayIndex = 0;
+                        }
                         checkFactoryCode(tb_ItemCode.Text.Trim());
                         break;
 
@@ -583,6 +587,9 @@ namespace OK2SHIP_SMT.UserControls
                     TDMK_Label label2 = new TDMK_Label() { AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "MiniTable", Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold) };
                     TDMK_Label label3 = new TDMK_Label() { AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "Type", Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold) };
                     dgv_left.CellValueChanged += DGV_LEFT_CHANGE_VALUE_CELL;
+                    dgv_left.CellPainting += dataGridView1_CellPaintingZ;
+                    dgv_left.CellFormatting += dataGridView_CellFormatting;
+
                     sc.RowCount = 5;
                     sc.Controls.Add(label, 0, 0);
                     sc.Controls.Add(label2, 0, 3);
@@ -646,6 +653,52 @@ namespace OK2SHIP_SMT.UserControls
                     throw new Exception("Process not found");
             }
         }
+        bool IsTheSameCellValue(int column, int row)
+        {
+
+            DataGridViewCell cell1 = dgv_left[column, row];
+            DataGridViewCell cell2 = dgv_left[column, row - 1];
+            if (cell1.Value == null || cell2.Value == null)
+            {
+                return false;
+            }
+
+            return cell1.Value.ToString() == cell2.Value.ToString();
+        }
+        private void dataGridView1_CellPaintingZ(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
+            if (e.RowIndex < 1 || e.ColumnIndex < 1)
+                return;
+            if (dgv_left.Columns[e.ColumnIndex].Name.Equals("ID") || dgv_left.Columns[e.ColumnIndex].Name.Equals("UUT"))
+            {
+                if (IsTheSameCellValue(e.ColumnIndex, e.RowIndex))
+                {
+                    e.AdvancedBorderStyle.Top = DataGridViewAdvancedCellBorderStyle.None;
+                }
+                else
+                {
+                    e.AdvancedBorderStyle.Top = dataGridView.AdvancedCellBorderStyle.Top;
+
+                }
+            }
+            else
+            {
+                e.AdvancedBorderStyle.Top = dataGridView.AdvancedCellBorderStyle.Top;
+
+            }
+
+        }
+        private void dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex == 0)
+                return;
+            if ((dgv_left.Columns[e.ColumnIndex].Name.Equals("ID") || dgv_left.Columns[e.ColumnIndex].Name.Equals("UUT")) && IsTheSameCellValue(e.ColumnIndex, e.RowIndex))
+            {
+                e.CellStyle.ForeColor = Color.White;
+                e.FormattingApplied = true;
+            }
+        }
         private void ButtonLoadImpedanceFormDB_Click(object sender, EventArgs e)
         {
             Debugger.Break();
@@ -655,7 +708,8 @@ namespace OK2SHIP_SMT.UserControls
             DataGridViewCell selectedCell = dataGridView.SelectedCells[0];
             int rowIndex = selectedCell.RowIndex;
             DataTable dt = (DataTable)dgv_left.DataSource;
-            string json = ConverterService.DataTableToJson(dt);
+            DataTable z = (DataTable)dataGridViewz.DataSource;
+            string json = $"{ConverterService.DataTableToJson(z)} @{ConverterService.DataTableToJson(dt)}";
             dataGridView.Rows[rowIndex].Cells["DataLog"].Value = json;
             dgv_left.DataSource = new DataTable();
             btn_Disable();
@@ -842,29 +896,63 @@ namespace OK2SHIP_SMT.UserControls
                         EEDService eEDService = new EEDService();
                         var dic = new Dictionary<string, Dictionary<string, DataTable>>();
                         DataTable spec = new DataTable();
+                        DataTable spec_log = eEDService.GetSpec(itemCode);
+                        int pcs = -1;
+                        bool prime = false;
+                        if (spec_log.Rows.Count <= 0)
+                        {
+                            prime = MessageBox.Show("Chưa có spec bạn có muốn tiếp tục!", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes;
+                        }
+                        else
+                        {
+                            prime = true;
+                        }
+                        if (prime == false)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            if (!int.TryParse(spec_log.Rows[0]["Count_Sample"].ToString(), out pcs))
+                            {
+                                pcs = -1;
+                            }
+
+                        }
                         string[] array = eEDService.ReadFile(location, itemCode, lotNo);
                         foreach (var item in array)
                         {
-                            DataTable dtz = eEDService.SolveFolder(item, out string processz);
+                            eEDService.SolveFolder(item, out string processz);
                             switch (processz)
                             {
                                 case "LINER":
                                 case "PSA":
-                                    eEDService.SolveFolderPSALiner(item, dic, spec);
+                                    eEDService.SolveFolderPSALiner(item, dic, spec, processz, pcs);
                                     break;
                                 default:
                                     throw new Exception($"Folder {item} không phù hợp!");
                             }
                         }
-                        
-                        eEDService.FillProductID(dic, itemCode, lotNo, tb_productID.Text);
+                        try
+                        {
+                            eEDService.FillProductID(dic, itemCode, lotNo, tb_productID.Text);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        if (spec_log.Rows.Count > 0)
+                        {
+                            eEDService.FillSpec(spec_log, spec);
+                            eEDService.CheckSpec(spec, dic);
+                        }
                         UC_env.FillData(spec, dic);
 
 
                         break;
                     case "Thermal cycling, Heat soak, Thermal shock":
                         TCHSTSService tsNew = new TCHSTSService();
-                        DataTable dts = tsNew.ReadFile(location, itemCode, lotNo, process);
+                        DataTable dts = tsNew.ReadFile(location, itemCode, lotNo, process, tb_productID.Text);
                         dataGridView.DataSource = dts;
 
                         break;
@@ -909,7 +997,8 @@ namespace OK2SHIP_SMT.UserControls
                     case "OQC B2B Mating-Unmating":
                         checkData(location, itemCode, lotNo, process);
                         OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting();
-                        dt = oqc.ProcessRead(location, itemCode, lotNo);
+                        dt = oqc.ProcessRead(location, itemCode, lotNo, tb_productID.Text);
+
                         dgv_Combobox = new CustomDataGridView(dt, new Dictionary<string, string[]> { { "FailureMode", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
                         dgv_Combobox.CellClick += cellContentClick;
                         splitContainer2.Panel2.Controls.Clear();
@@ -1002,40 +1091,47 @@ namespace OK2SHIP_SMT.UserControls
             {
                 return;
             }
+            string[] z = value.Split('@');
             DataTable data = ConverterService.JsonToDataTable(value.Split('@')[0]);
-            DataTable data1 = ConverterService.JsonToDataTable(value.Split('@')[1]);
+            DataTable data1 = new DataTable();
+            if (value.Split('@').Count() > 1)
+            {
+                data1 = ConverterService.JsonToDataTable(value.Split('@')[1]);
+            }
 
             dgv_left.DataSource = data1;
 
             dataGridViewz.DataSource = data;
             dgv_left.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             DataGridViewColumn columnToMove = dgv_left.Columns["Comestic"];
-
-            // Kiểm tra xem DisplayIndex hiện tại có khác với vị trí mục tiêu không
-            if (columnToMove.DisplayIndex != 3)
+            if (columnToMove != null)
             {
-                int currentDisplayIndex = columnToMove.DisplayIndex;
-                columnToMove.DisplayIndex = 3;
+                // Kiểm tra xem DisplayIndex hiện tại có khác với vị trí mục tiêu không
+                if (columnToMove.DisplayIndex != 3)
+                {
+                    int currentDisplayIndex = columnToMove.DisplayIndex;
+                    columnToMove.DisplayIndex = 3;
+                }
+                columnToMove = dgv_left.Columns["Function test"];
+                if (columnToMove.DisplayIndex != 4)
+                {
+                    int currentDisplayIndex = columnToMove.DisplayIndex;
+                    columnToMove.DisplayIndex = 4;
+                }
+                columnToMove = dgv_left.Columns["ID"];
+                if (columnToMove.DisplayIndex != 0)
+                {
+                    int currentDisplayIndex = columnToMove.DisplayIndex;
+                    columnToMove.DisplayIndex = 00;
+                }
+                columnToMove = dgv_left.Columns["Content"];
+                if (columnToMove.DisplayIndex != 1)
+                {
+                    int currentDisplayIndex = columnToMove.DisplayIndex;
+                    columnToMove.DisplayIndex = 1;
+                }
+                //Debugger.Break();
             }
-            columnToMove = dgv_left.Columns["Function test"];
-            if (columnToMove.DisplayIndex != 4)
-            {
-                int currentDisplayIndex = columnToMove.DisplayIndex;
-                columnToMove.DisplayIndex = 4;
-            }
-            columnToMove = dgv_left.Columns["ID"];
-            if (columnToMove.DisplayIndex != 0)
-            {
-                int currentDisplayIndex = columnToMove.DisplayIndex;
-                columnToMove.DisplayIndex = 00;
-            }
-            columnToMove = dgv_left.Columns["Content"];
-            if (columnToMove.DisplayIndex != 1)
-            {
-                int currentDisplayIndex = columnToMove.DisplayIndex;
-                columnToMove.DisplayIndex = 1;
-            }
-            //Debugger.Break();
         }
         private void btn_Export_MouseDown(object sender, MouseEventArgs e)
         {

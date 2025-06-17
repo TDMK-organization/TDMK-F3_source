@@ -46,9 +46,13 @@
             this.tb_ItemCode = new System.Windows.Forms.TextBox();
             this.lbLotNo = new System.Windows.Forms.Label();
             this.slctn_Location = new System.Windows.Forms.SplitContainer();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.tbl_Loaction = new System.Windows.Forms.TableLayoutPanel();
             this.tb_locationFolder = new System.Windows.Forms.TextBox();
             this.lb_loactionFile = new System.Windows.Forms.Label();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.tb_productID = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.btnGetData = new System.Windows.Forms.Button();
             this.btn_switchMode = new System.Windows.Forms.Button();
             this.tb_datagridview = new System.Windows.Forms.TableLayoutPanel();
@@ -59,10 +63,6 @@
             this.btn_LoadData = new System.Windows.Forms.Button();
             this.tlp_fillter = new System.Windows.Forms.TableLayoutPanel();
             this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.tb_productID = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -79,7 +79,12 @@
             this.slctn_Location.Panel1.SuspendLayout();
             this.slctn_Location.Panel2.SuspendLayout();
             this.slctn_Location.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
             this.tbl_Loaction.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
             this.tb_datagridview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -87,11 +92,6 @@
             this.splitContainer2.SuspendLayout();
             this.tbl_Function.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
-            this.splitContainer3.Panel1.SuspendLayout();
-            this.splitContainer3.Panel2.SuspendLayout();
-            this.splitContainer3.SuspendLayout();
-            this.tableLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -191,6 +191,7 @@
             // label1
             // 
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(81, 37);
@@ -211,6 +212,7 @@
             // label2
             // 
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(3, 37);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(81, 40);
@@ -289,6 +291,7 @@
             // lbItemCode
             // 
             this.lbItemCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbItemCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbItemCode.Location = new System.Drawing.Point(3, 0);
             this.lbItemCode.Name = "lbItemCode";
             this.lbItemCode.Size = new System.Drawing.Size(61, 37);
@@ -308,6 +311,7 @@
             // lbLotNo
             // 
             this.lbLotNo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbLotNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbLotNo.Location = new System.Drawing.Point(3, 37);
             this.lbLotNo.Name = "lbLotNo";
             this.lbLotNo.Size = new System.Drawing.Size(61, 40);
@@ -331,6 +335,24 @@
             this.slctn_Location.Size = new System.Drawing.Size(567, 77);
             this.slctn_Location.SplitterDistance = 448;
             this.slctn_Location.TabIndex = 2;
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.tbl_Loaction);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.tableLayoutPanel3);
+            this.splitContainer3.Size = new System.Drawing.Size(448, 77);
+            this.splitContainer3.SplitterDistance = 36;
+            this.splitContainer3.TabIndex = 1;
             // 
             // tbl_Loaction
             // 
@@ -360,12 +382,50 @@
             // lb_loactionFile
             // 
             this.lb_loactionFile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lb_loactionFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lb_loactionFile.Location = new System.Drawing.Point(3, 0);
             this.lb_loactionFile.Name = "lb_loactionFile";
             this.lb_loactionFile.Size = new System.Drawing.Size(442, 8);
             this.lb_loactionFile.TabIndex = 0;
             this.lb_loactionFile.Text = "Raw Data";
             this.lb_loactionFile.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 1;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Controls.Add(this.tb_productID, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.label3, 0, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 23.28767F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 76.71233F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(448, 37);
+            this.tableLayoutPanel3.TabIndex = 1;
+            // 
+            // tb_productID
+            // 
+            this.tb_productID.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tb_productID.Location = new System.Drawing.Point(3, 11);
+            this.tb_productID.Multiline = true;
+            this.tb_productID.Name = "tb_productID";
+            this.tb_productID.Size = new System.Drawing.Size(442, 23);
+            this.tb_productID.TabIndex = 5;
+            this.tb_productID.TextChanged += new System.EventHandler(this.tb_productID_TextChanged);
+            this.tb_productID.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.tb_productID_MouseDoubleClick);
+            // 
+            // label3
+            // 
+            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(3, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(442, 8);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Product ID";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnGetData
             // 
@@ -499,60 +559,6 @@
             this.dataGridView.TabIndex = 0;
             this.dataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellClick);
             // 
-            // splitContainer3
-            // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Name = "splitContainer3";
-            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer3.Panel1
-            // 
-            this.splitContainer3.Panel1.Controls.Add(this.tbl_Loaction);
-            // 
-            // splitContainer3.Panel2
-            // 
-            this.splitContainer3.Panel2.Controls.Add(this.tableLayoutPanel3);
-            this.splitContainer3.Size = new System.Drawing.Size(448, 77);
-            this.splitContainer3.SplitterDistance = 36;
-            this.splitContainer3.TabIndex = 1;
-            // 
-            // tableLayoutPanel3
-            // 
-            this.tableLayoutPanel3.ColumnCount = 1;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Controls.Add(this.tb_productID, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.label3, 0, 0);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 23.28767F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 76.71233F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(448, 37);
-            this.tableLayoutPanel3.TabIndex = 1;
-            // 
-            // tb_productID
-            // 
-            this.tb_productID.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tb_productID.Location = new System.Drawing.Point(3, 11);
-            this.tb_productID.Multiline = true;
-            this.tb_productID.Name = "tb_productID";
-            this.tb_productID.Size = new System.Drawing.Size(442, 23);
-            this.tb_productID.TabIndex = 5;
-            this.tb_productID.TextChanged += new System.EventHandler(this.tb_productID_TextChanged);
-            this.tb_productID.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.tb_productID_MouseDoubleClick);
-            // 
-            // label3
-            // 
-            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label3.Location = new System.Drawing.Point(3, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(442, 8);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Product ID";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // SEM
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -578,8 +584,14 @@
             this.slctn_Location.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.slctn_Location)).EndInit();
             this.slctn_Location.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
             this.tbl_Loaction.ResumeLayout(false);
             this.tbl_Loaction.PerformLayout();
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
             this.tb_datagridview.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -587,12 +599,6 @@
             this.splitContainer2.ResumeLayout(false);
             this.tbl_Function.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
-            this.splitContainer3.Panel1.ResumeLayout(false);
-            this.splitContainer3.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
-            this.splitContainer3.ResumeLayout(false);
-            this.tableLayoutPanel3.ResumeLayout(false);
-            this.tableLayoutPanel3.PerformLayout();
             this.ResumeLayout(false);
 
         }

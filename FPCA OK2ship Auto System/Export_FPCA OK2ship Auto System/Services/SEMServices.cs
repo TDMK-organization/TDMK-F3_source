@@ -353,12 +353,15 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             int count = _context.BuckDataTable(dataTable, "SEM_BSE_Binarization_Logfile", new string[] { "ItemCode", "LotNo" }, null, "Id");
 
         }
-        public static void Export(SqlConnection sql,ExcelWorksheet worksheet, string itemCode, string lotNo)
+        public static void Export(SqlConnection sql, ExcelWorksheet worksheet, string itemCode, string lotNo)
         {
             DBContext _context = new DBContext(sql);
             DataTable dt = _context.LoadDataTable("SEM_BSE_Binarization_Logfile", new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotNo });
             int countData = dt.Rows.Count;
-            ExportProcess exportProcess = new ExportProcess();
+
+
+
+
             string[] colName = new string[] { "SEM BSE 500-700", "SEM 500-700", "Sample", "Binarization", "% Black", "Judgement Level", "SEM 200-250", "SEM 200-300", "SEM 5000", "Binarization Check  Results", "Min", "Max", "Aver" };
             IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, colName, true);
 
@@ -395,7 +398,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     {
                         addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
                         byte[] imgData = (byte[])dt.Rows[iz]["SEM5K"];
-                        exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData, $"SEM500{iz}");
+                        ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData, $"SEM500{iz}");
                     }
 
 
@@ -409,7 +412,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         for (int i = 0; i < add.Count(); i++)
                         {
                             addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[add[i]].Start.Column].Address;
-                            exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM20025020{i}{iz}");
+                            ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM20025020{i}{iz}");
                         }
                     }
                     if (dic.TryGetValue("SEM 200-300", out addressCol))
@@ -418,7 +421,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         for (int i = 0; i < add.Count(); i++)
                         {
                             addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[add[i]].Start.Column].Address;
-                            exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM200300{i}{iz}");
+                            ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM200300{i}{iz}");
                         }
                     }
 
@@ -428,12 +431,12 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     if (dic.TryGetValue("SEM 500-700", out addressCol))
                     {
                         addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                        exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700{iz}");
+                        ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700{iz}");
                     }
                     if (dic.TryGetValue("SEM BSE 500-700", out addressCol))
                     {
                         addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                        exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700BIN{iz}");
+                        ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700BIN{iz}");
                     }
 
                     //Insert Binarization Image
@@ -442,7 +445,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     if (dic.TryGetValue("Binarization 2", out addressCol))
                     {
                         addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                        exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData200bin, $"Bin2001{iz}");
+                        ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData200bin, $"Bin2001{iz}");
                         ExportProcess.AddBorderToImage(worksheet, $"Bin2001{iz}", Color.Green);
                     }
 
@@ -450,7 +453,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     if (dic.TryGetValue("Binarization 3", out addressCol))
                     {
                         addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                        exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
+                        ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
                         ExportProcess.AddBorderToImage(worksheet, $"Bin5001{iz}", Color.Green);
                     }
 
@@ -570,7 +573,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
                                 byte[] imgData = (byte[])dt.Rows[iz]["SEM5K"];
-                                exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData, $"SEM500{iz}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData, $"SEM500{iz}");
                             }
 
 
@@ -584,7 +587,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                                 for (int i = 0; i < add.Count(); i++)
                                 {
                                     addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[add[i]].Start.Column].Address;
-                                    exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM20025020{i}{iz}");
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM20025020{i}{iz}");
                                 }
                             }
                             if (dic.TryGetValue("SEM 200-300", out addressCol))
@@ -593,7 +596,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                                 for (int i = 0; i < add.Count(); i++)
                                 {
                                     addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[add[i]].Start.Column].Address;
-                                    exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM200300{i}{iz}");
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData250, $"SEM200300{i}{iz}");
                                 }
                             }
 
@@ -603,12 +606,12 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             if (dic.TryGetValue("SEM 500-700", out addressCol))
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700{iz}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700{iz}");
                             }
                             if (dic.TryGetValue("SEM BSE 500-700", out addressCol))
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700BIN{iz}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700BIN{iz}");
                             }
 
                             //Insert Binarization Image
@@ -617,7 +620,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             if (dic.TryGetValue("Binarization 2", out addressCol))
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData200bin, $"Bin2001{iz}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData200bin, $"Bin2001{iz}");
                                 ExportProcess.AddBorderToImage(worksheet, $"Bin2001{iz}", Color.Green);
                             }
 
@@ -625,7 +628,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             if (dic.TryGetValue("Binarization 3", out addressCol))
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                exportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
                                 ExportProcess.AddBorderToImage(worksheet, $"Bin5001{iz}", Color.Green);
                             }
 
@@ -695,7 +698,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 
         public static string setup_spec(ExcelWorksheet worksheet)
         {
-       
+
             return "";
         }
     }

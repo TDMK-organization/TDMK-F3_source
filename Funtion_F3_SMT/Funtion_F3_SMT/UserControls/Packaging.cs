@@ -171,9 +171,10 @@ namespace OK2SHIP_SMT.UserControls
             string name = ((PictureBox)sender).Name.ToString();
             if (_image.TryGetValue($"{name[10]}", out Image image))
             {
-                using (ArtistFramerService edit = new ArtistFramerService((Image)image))
+                using (EditorForm edit = new EditorForm((Image)image))
                 {
-                    _image[$"{name[10]}"] = edit.Image;
+                    edit.ShowDialog();
+                    _image[$"{name[10]}"] = edit._image;
                     FillImage();
                 }
 

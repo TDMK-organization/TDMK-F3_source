@@ -1,4 +1,4 @@
-﻿using TDMK_EPPLUS_7;
+﻿
 using Bending_Export;
 using FAI_Export;
 using OK2SHIP_Lib;
@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TDMK_SEEV_DLL;
 using TDMK_SQL;
+using Export_FPCA_OK2ship_Auto_System.Libary;
 
 namespace Export_FPCA_OK2ship_Auto_System
 {
@@ -22,7 +23,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         public Bending_Export_EPPLUS_Lib Bending_Exp = new Bending_Export_EPPLUS_Lib();
         public TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
         public SEI_Lib myCode = new SEI_Lib();
-        public TDMK_EPPLUS7_lib TDMK_Code2 = new TDMK_EPPLUS7_lib();
+        public TDMK_EPPLUS TDMK_Code2 = new TDMK_EPPLUS();
         public TDMK_OK2SHIP myCode2 = new TDMK_OK2SHIP();
         FAI_EPPLUS_Lib FAI_lib = new FAI_EPPLUS_Lib();
         public SqlConnection sqlcon = null;

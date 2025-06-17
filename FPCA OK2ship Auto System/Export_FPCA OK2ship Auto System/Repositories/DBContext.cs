@@ -27,7 +27,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
             //config file
             string app_path = System.Windows.Forms.Application.StartupPath;
             //app_path = @"\\10.212.6.212\Saomai\QA\TDMK_DATA\Test_Areas\FPCA OK2SHIP Auto System(temp2)\VHX-IMADA";
-            string config_path = Path.Combine(app_path, "Config.ini");
+            string config_path = Path.Combine(app_path.Replace("\\FPCA OK2SHIP Auto System", ""), "Config.ini");
             //string config_path = Path.Combine(app_path.Replace(@"\VHX-IMADA", ""), "Config.ini");
             TDMK_init = new IniFile(config_path);
             //data_loc = TDMK_init.Read("Format_Folder", "SMT_Config");
@@ -272,7 +272,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
                 for (int i = 0; i < conditionValue.Count(); i++)
                 {
                     query += $" {conditionColumn} = '{conditionValue[i].Trim()}'";
-                    if(i != conditionValue.Count() - 1)
+                    if (i != conditionValue.Count() - 1)
                     {
                         query += " OR ";
                     }
@@ -387,7 +387,66 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
             return dataTable;
 
         }
+        /// <summary>
+        /// Hàm update
+        /// Cột nào update phải giữ nguyên
+        /// nếu giá trị là "" thì vẫn update
+        /// nếu giá trị là null thì không update
+        /// </summary>
+        /// <param name="TableName"></param>
+        /// <param name="dt_set"></param>
+        /// <param name="listColCondition"></param>
+        /// <param name="valueCondition"></param>
+        /// <returns></returns>
+        public int Update(string TableName, DataTable dt_set, string[] nameColCondition)
+        {
 
+            // Tạo câu lệnh SQL UPDATE
+            List<string> listColCondition = new List<string>();
+            foreach (DataRow row in dt_set.Rows)
+            {
+                string st = $"WHEN ";
+                foreach (var item in nameColCondition)
+                {
+                    st += $" {item} = '{row[item]}' THEN  ";
+                }
+                listColCondition.Add(st);
+            }
+
+            string commandText = $"UPDATE [{TableName}] SET ";
+            int c = 0;
+            foreach (DataColumn Column in dt_set.Columns)
+            {
+                if (nameColCondition.Contains(Column.ColumnName))
+                {
+
+                }
+                else
+                {
+                    commandText += $"{Column} = CASE ";
+                    int i = 0;
+                    foreach (DataRow row in dt_set.Rows)
+                    {
+                        commandText += $"{listColCondition[i]} '{row[Column]}'";
+                    }
+                    commandText += $" ELSE {Column} END ";
+                    c++;
+                    if (dt_set.Columns.Count - 1 != c)
+                    {
+                        commandText += " , ";
+                    }
+                }
+
+            }
+            using (SqlCommand command = new SqlCommand($"{commandText}", SqlConnection))
+            {
+                if (SqlConnection.State != ConnectionState.Open)
+                {
+                    SqlConnection.Open();
+                }
+                return command.ExecuteNonQuery();
+            }
+        }
         public DataTable LoadDataTableOfPath(string tableName, string[] colName, string[] valueName, string[] selectColumn = null, int pageNumber = 1, int pageSize = 20, string[] orderBy = null)
         {
             DataTable dataTable = new DataTable();

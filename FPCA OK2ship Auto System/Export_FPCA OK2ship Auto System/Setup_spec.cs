@@ -26,16 +26,18 @@ using OK2SHIP_SMT;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using Bending_Export;
-using TDMK_EPPLUS_7;
 using Export_FPCA_OK2ship_Auto_System.Services;
 using Export_FPCA_OK2ship_Auto_System.Repositories;
+using IniLibs;
+using Export_FPCA_OK2ship_Auto_System.Libary;
+
 
 namespace Export_FPCA_OK2ship_Auto_System
 {
     public partial class Setup_Spec_SMT : Form
     {
         public TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
-        public TDMK_EPPLUS7_lib TDMK_Code2 = new TDMK_EPPLUS7_lib();
+        public TDMK_EPPLUS TDMK_Code2 = new TDMK_EPPLUS();
         // public EPPlus_Lib TDMK_Code2 = new EPPlus_Lib();
         public SEI_Lib myCode = new SEI_Lib();
         public SqlConnection sqlcon = null;
@@ -45,6 +47,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         public SqlConnection sqlcon_F1 = null;
         public Bending_Export_Lib Bending_Exp = new Bending_Export_Lib();
 
+        IniFile TDMK_init = new IniFile();
 
         public Setup_Spec_SMT()
         {
@@ -59,8 +62,10 @@ namespace Export_FPCA_OK2ship_Auto_System
             sqlcon = Bending_Exp.initial_data("OK2SHIP_SMT", true);
             // data_loc = Bending_Exp.format_folder;
             //data_loc = System.Windows.Forms.Application.StartupPath;
-            data_loc = Bending_Exp.find_config_path(app_path, "SEEV Data");
-            txtFormat.Text = Path.Combine(data_loc, "Format");
+            data_loc = Bending_Exp.find_config_path(app_path.Replace("\\FPCA OK2SHIP Auto System", ""), "SEEV Data");
+            string config_path = Path.Combine(app_path.Replace("\\FPCA OK2SHIP Auto System", ""), "config.ini");
+            TDMK_init = new IniFile(config_path);
+            txtFormat.Text = TDMK_init.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data";
 
             cbAll.Checked = true;
             for (int i = 0; i < cbl_sheet.Items.Count; i++)
@@ -977,78 +982,12 @@ namespace Export_FPCA_OK2ship_Auto_System
         public string lst_spec_sheartest(ExcelWorksheet ws)
         {
             //  AutoCompleteStringCollection list = new AutoCompleteStringCollection();
-            string lst_spec = "";
+         
             Dictionary<string, List<string>> dic_spec = new Dictionary<string, List<string>> { };
-            int count_sample = 0;
-
-            for (int i = 1; i < 100; i++)
-            {
-                for (int j = 1; j < 5; j++)
-                {
-                    if (myCode.checkDBNull(ws.Cells[i, j].Value).Contains("Sample"))
-                    {
-                        while (myCode.checkDBNull(ws.Cells[i, j + count_sample].Value).Contains("Sample"))
-                        {
-                            count_sample++;
-                        }
-                        lst_spec += count_sample.ToString() + ":";
-
-                        if (myCode.checkDBNull(ws.Cells[i + 1, j - 1].Value).Contains("ID"))
-                        {
-                            lst_spec += "B" + "+";
-
-                            for (int r_offset = 2; r_offset < 5; r_offset++)
-                            {
-                                if (myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) != "")
-                                {
-                                    lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value).Replace(" ", "") + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
-
-                                }
-                            }
-
-
-                            for (int t = 10; t < 16; t++)
-                            {
-                                if (myCode.checkDBNull(ws.Cells[i + t, j + 1].Value).Replace(" ", "").Contains("R(Kgf)"))
-                                {
-                                    string R = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t, j + 2].Value)), 2).ToString();
-                                    string UCL = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t + 1, j + 2].Value)), 2).ToString();
-                                    string LCL = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t + 2, j + 2].Value)), 2).ToString();
-
-
-                                    lst_spec += R + ";" + UCL + ";" + LCL;
-                                    break;
-                                }
-                            }
-                            lst_spec += "_";
-
-                        }
-                        else
-                        {
-                            lst_spec += "A" + "+";
-
-                            for (int r_offset = 1; r_offset < 3; r_offset++)
-                            {
-                                if (myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) != "")
-                                {
-                                    lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value).Replace(" ", "") + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
-
-                                }
-                            }
-
-                            if (myCode.checkDBNull(ws.Cells[i + 4, j - 1].Value) != "")
-                            {
-                                lst_spec += myCode.checkDBNull(ws.Cells[i + 4, j - 1].Value).Replace(" ", "") + ";" + (i + 3).ToString() + ";" + (j - 1).ToString() + "+";
-
-                            }
-                            lst_spec += "_";
-
-                            break;
-                        }
-                    }
-                }
-            }
-            return lst_spec;
+            IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[] {"Sample", "Shear Force"} );
+            int count_sample = dic["Sample"].Split('-').Count();
+            
+            return $"{count_sample}:{ws.Cells[dic["Shear Force"].Split('-')[1]].Text}";
         }
 
         public string lst_spec_cross_section_old(myExcel.Worksheet ws)
@@ -1809,7 +1748,7 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         public void setup_format_commet3(string file_format, string ItemCode)
         {
-            ExcelWorkbook wb = TDMK_Code2.open_excel_file(file_format);
+            ExcelWorkbook wb = TDMK_EPPLUS.open_excel_file(file_format);
             string lst_sheet_notfound = "";
 
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { ItemCode, cb_Type.SelectedItem.ToString() });
@@ -1900,7 +1839,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                 break;
                             default:
                                 //string str = sheet.Replace(" ", "_").ToUpper();
-                                Debugger.Break();
+                                //Debugger.Break();
                                 break;
                         }
 
@@ -1955,7 +1894,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                 {
                     if (format_path != "")
                     {
-                        ExcelWorkbook wb = TDMK_Code2.open_excel_file(format_path);
+                        ExcelWorkbook wb = TDMK_EPPLUS.open_excel_file(format_path);
                         DataTable cur_dt = Load_Spec_fromFile(sqlcon, wb, ItemCode, new List<string> { "*.xlsx", "*.xlsm" }, cb_Type.SelectedItem.ToString());
                         Save_FAI_Spec(cur_dt, ItemCode, sqlcon, cb_Type.SelectedItem.ToString());
                     }
@@ -1970,7 +1909,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                     if (format_path != "")
                     {
 
-                        ExcelWorkbook wb = TDMK_Code2.open_excel_file(format_path);
+                        ExcelWorkbook wb = TDMK_EPPLUS.open_excel_file(format_path);
 
                         string[] arr_diff = { "SHEARTEST", "IQC Liner peeling (Coupon)".Replace(" ", "").ToUpper(), "IQC PSA peeling (Coupon)".Replace(" ", "").ToUpper() };
                         string[] arr_onproduct = { "Liner peel test (On product)".Replace(" ", "").ToUpper(), "PSA peel test (On product)".Replace(" ", "").ToUpper() };
@@ -2050,7 +1989,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                         string format_path_ACF_mass = find_format_mass(Path.Combine(file_format, "ACF", "ACF_BONDING"), txtItemCode.Text);
                         if (format_path_ACF_mass != "")
                         {
-                            ExcelWorkbook wb = TDMK_Code2.open_excel_file(format_path_ACF_mass);
+                            ExcelWorkbook wb = TDMK_EPPLUS.open_excel_file(format_path_ACF_mass);
                             ExcelWorksheet ws = wb.Worksheets[0];
                             DataRow dr = dt_spec.NewRow();
                             string lst_spec = lst_spec_ACF_mass(ws);
@@ -2437,7 +2376,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         {
             if (cb_Type.SelectedIndex != -1)
             {
-                txtFormat.Text = Path.Combine(data_loc, "Format", cb_Type.SelectedItem.ToString());
+                txtFormat.Text = Path.Combine(txtFormat.Text, "Format", cb_Type.SelectedItem.ToString());
 
                 if (cb_Type.SelectedItem.ToString() == "MASS" || cb_Type.SelectedItem.ToString() == "Other")
                 {

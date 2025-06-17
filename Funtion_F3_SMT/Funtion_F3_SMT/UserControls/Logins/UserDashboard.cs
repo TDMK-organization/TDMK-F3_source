@@ -21,6 +21,7 @@ namespace OK2SHIP_SMT.UserControls.Logins
         public UserDashboard()
         {
             InitializeComponent();
+            tabPage1.Controls.Add(new DatabaseTool());
             CheckState();
         }
         private void CheckState()

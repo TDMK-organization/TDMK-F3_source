@@ -15,36 +15,77 @@ namespace OK2SHIP_SMT.Services
 
         private string _NAMETABLE = "PRODUCT_ID";
         public Dictionary<string, string> _listFile { get; set; } = new Dictionary<string, string>();
-
+        private DBContext _dbContext = new DBContext();
         public ProductIDService(string itemCode, string lotno, string location, string[] listCompareCommon, string[] listCompare)
         {
-            List<string> list = FileFolderRepository.GetFileByExtension(location, ".csv").ToList();
-            foreach (string item in list)
+            if (!location.Contains(".csv"))
             {
-                bool prime = true;
-                string fileName = FileFolderRepository.GetFileNameWithoutExtension(item).ToUpper();
-                foreach (string com in listCompareCommon)
+                if (!FileFolderRepository.checkLocationIsValid(location))
                 {
-                    if (!fileName.Contains(com.ToUpper()) || !ContainItemCode(itemCode, lotno, fileName))
-                    {
-                        prime = false;
-                        break;
-                    }
+                    throw new Exception("File không tồn tại");
                 }
-                if (prime)
+                List<string> list = FileFolderRepository.GetFileByExtension(location, ".csv").ToList();
+                foreach (string item in list)
                 {
-                    foreach (string rieng in listCompare)
+                    bool prime = true;
+                    string fileName = FileFolderRepository.GetFileNameWithoutExtension(item).ToUpper();
+                    foreach (string com in listCompareCommon)
                     {
-                        if (item.Contains(rieng) && !_listFile.TryGetValue(rieng, out string value))
+                        if (!fileName.Contains(com.ToUpper()) || !ContainItemCode(itemCode, lotno, fileName))
                         {
-                            _listFile.Add(rieng, item);
+                            prime = false;
                             break;
+                        }
+                    }
+                    if (prime)
+                    {
+                        foreach (string rieng in listCompare)
+                        {
+                            if (item.ToUpper().Contains(rieng.ToUpper()) && !_listFile.TryGetValue(rieng, out string value))
+                            {
+                                _listFile.Add(rieng, item);
+                                break;
+                            }
                         }
                     }
                 }
             }
+            else
+            {
+                _listFile.Add(itemCode, location);
+            }
         }
+        public static int InsertProductID(string itemCode, string lotNo, string process, string content)
+        {
+            itemCode = itemCode.Trim();
+            lotNo = lotNo.Trim();
+            DBContext _dbContext = new DBContext();
+            DataTable dataTable = _dbContext.GetTableStructure("PRODUCT_ID");
+            DataRow row = dataTable.NewRow();
+            row["ID"] = _dbContext.GetID("PRODUCT_ID") + 1;
+            row["ItemCode"] = itemCode;
+            row["LotNo"] = lotNo;
+            row["ProductIDList"] = content;
+            row["Process"] = process;
+            dataTable.Rows.Add(row);
+            return _dbContext.BuckDataTable(dataTable, "PRODUCT_ID", new[] { "ItemCode", "LotNo", "Process" });
+        }
+        public static string ConverterProductID(DataTable dataTable, string idCol = "ID")
+        {
+            if (!dataTable.Columns.Contains("ProductID"))
+            {
+                throw new Exception("Datatable không có product ID");
+            }
+            List<string> list = new List<string>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                string item = $"{row["ID"]} - {row["ProductID"]}";
+                list.Add(item);
+            }
+            return String.Join(",", list); ;
 
+        }
+        //public static void ConvertterProudctID(DataTable dataTable, string itemCode, string lotNo, string process, )
         public bool ContainItemCode(string itemCode, string lotNo, string fileName)
         {
             string part = fileName.Split('_')[0].Replace("00000B", "_");
@@ -139,6 +180,34 @@ namespace OK2SHIP_SMT.Services
                 throw new Exception("Không có dữ liệu");
             }
             return dataTable;
+        }
+
+        public static void FillProductID(DataTable dt_analysis, string itemCode, string lotNo, string process)
+        {
+            itemCode = itemCode.Trim();
+            lotNo = lotNo.Trim();
+            DBContext _db = new DBContext();
+            DataTable dataTable = _db.LoadDataTable("PRODUCT_ID", new[] { "ItemCode", "LotNo", "Process" }, new[] { itemCode, lotNo, process });
+            if (dataTable.Rows.Count <= 0)
+            {
+                throw new Exception("Không tồn tại product ID của sheet này!");
+            }
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            string[] content = dataTable.Rows[0]["ProductIDList"].ToString().Split(',');
+            foreach (string item in content)
+            {
+                string id = item.Split('-')[0].Trim();
+                string productID = item.Split('-')[1].Trim();
+                dic.Add(id, productID);
+            }
+            dt_analysis.Columns.Add("ProductID");
+            foreach (DataRow row in dt_analysis.Rows)
+            {
+                if (dic.TryGetValue(row["ID"].ToString(), out string productID))
+                {
+                    row["ProductID"] = productID;
+                }
+            }
         }
     }
 }

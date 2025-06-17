@@ -7,6 +7,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -240,106 +241,190 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
             return dt;
         }
-
-        public string Export(string itemCode, string lotNo)
+        private static string switchType(string nameType)
+        {
+            nameType = nameType.Trim();
+            switch (nameType)
+            {
+                case "All":
+                    return "*";
+                case "TS":
+                    return "Thermal Shock";
+                case "HS":
+                    return "Heat Soak and Recovery";
+                case "TC":
+                    return "Thermal Cycling";
+                case "Thermal Shock":
+                    return "TS";
+                case "Heat Soak and Recovery":
+                    return "HS";
+                case "Thermal Cycling":
+                    return "TC";
+                default:
+                    return "";
+            }
+        }
+        public void Export(ExcelWorksheet workSheet, string itemCode, string lotNo, string type)
         {
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
-            string messsage = "";
-            DataTable dt = _dbContext.LoadDataTable(NAME_TABLE_SQL, new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
+            type = switchType(type.Trim());
+            DataTable dt = new DataTable();
+            if (type.Equals("*"))
+            {
+
+                dt = _dbContext.LoadDataTable(NAME_TABLE_SQL, new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
+            }
+            else
+            {
+                dt = _dbContext.LoadDataTable(NAME_TABLE_SQL, new[] { "ItemCode", "LotNo", "Type" }, new[] { itemCode, lotNo, type });
+            }
             if (dt.Rows.Count == 0)
             {
                 throw new Exception("Không có dữ liệu");
             }
             string processMulti = "";
             ExportProcess exportProcess = new ExportProcess();
-            using (ExcelPackage ex = exportProcess.FindFormatProcess(NAME_TABLE_SQL, itemCode, lotNo))
+
+            //exportProcess.FindSheet(ex, "Thermal Shock");
+
+            foreach (DataRow item in dt.Rows)
             {
-                ExcelWorksheet workSheet = null;
-                //exportProcess.FindSheet(ex, "Thermal Shock");
-
-                foreach (DataRow item in dt.Rows)
+                string process = item["Type"].ToString().Trim();
+                string[] headerCol = null;
+                switch (process)
                 {
-                    string process = item["Type"].ToString().Trim();
-                    string[] headerCol = null;
-                    switch (process)
+                    case "TS":
+                        process = "Thermal Shock";
+                        headerCol = HEADERROWTS;
+                        break;
+                    case "TC":
+                        process = "Thermal Cycling";
+                        headerCol = HEADERROWTC;
+                        break;
+                    case "HS":
+                        process = "Heat Soak and Recovery";
+                        headerCol = HEADERROWHS;
+                        break;
+                    default:
+                        throw new Exception("Lỗi type");
+                }
+                processMulti += $"{process}:";
+
+                // find col
+                IDictionary<string, string> dic = ExportProcess.FindAddressByText(workSheet, headerCol.Concat(new[] { "Flex SN" }).ToArray());
+                string json = item["DataLog"].ToString().Split('@')[1];
+                DataTable dataTable = TDMK_ConverterService.JsonToDataTable(json);
+                int pcs = 45, bf = 0, at1 = 0, at2 = 0, at3 = 0, at4 = 0, at5 = 0;
+                foreach (DataRow rowz in dataTable.Rows)
+                {
+
+                    int colPlus = 0;
+                    string procz = rowz["Content"].ToString();
+                    switch (procz)
                     {
-                        case "TS":
-                            process = "Thermal Shock";
-                            headerCol = HEADERROWTS;
+                        case "Before":
+                            colPlus = bf++;
                             break;
-                        case "TC":
-                            process = "Thermal Cycling";
-                            headerCol = HEADERROWTC;
+                        case "After 100 hours":
+                        case "After 100 cycles":
+                            colPlus = at1++;
                             break;
-                        case "HS":
-                            process = "Heat Soak and Recovery";
-                            headerCol = HEADERROWHS;
+                        case "After 200 hours":
+                        case "After 200 cycles":
+                            colPlus = at2++;
                             break;
-                        default:
-                            throw new Exception("Lỗi type");
+                        case "After 300 hours":
+                        case "After 300 cycles":
+                            colPlus = at3++;
+                            break;
+                        case "After 400 hours":
+                        case "After 400 cycles":
+                            colPlus = at4++;
+                            break;
+                        case "After 500 hours":
+                        case "After 500 cycles":
+                            colPlus = at5++;
+                            break;
                     }
-                    workSheet = exportProcess.FindSheet(ex, process);
-                    processMulti += $"{process}:";
-
-                    // find col
-                    IDictionary<string, string> dic = ExportProcess.FindAddressByText(workSheet, headerCol.Concat(new[] { "Flex SN" }).ToArray());
-                    string json = item["DataLog"].ToString();
-                    DataTable dataTable = TDMK_ConverterService.JsonToDataTable(json);
-                    int pcs = 45, bf = 0, at1 = 0, at2 = 0, at3 = 0, at4 = 0, at5 = 0;
-                    foreach (DataRow rowz in dataTable.Rows)
+                    if (colPlus < pcs)
                     {
-                        int colPlus = 0;
-                        string procz = rowz["Content"].ToString();
-                        switch (procz)
+                        if (dic.TryGetValue("Flex SN", out string snz))
                         {
-                            case "Before":
-                                colPlus = bf++;
-                                break;
-                            case "After 100 hours":
-                            case "After 100 cycles":
-                                colPlus = at1++;
-                                break;
-                            case "After 200 hours":
-                            case "After 200 cycles":
-                                colPlus = at2++;
-                                break;
-                            case "After 300 hours":
-                            case "After 300 cycles":
-                                colPlus = at3++;
-                                break;
-                            case "After 400 hours":
-                            case "After 400 cycles":
-                                colPlus = at4++;
-                                break;
-                            case "After 500 hours":
-                            case "After 500 cycles":
-                                colPlus = at5++;
-                                break;
-                        }
-                        if (colPlus < pcs)
-                        {
-                            if (dic.TryGetValue(procz, out string address))
+                            snz = ExportProcess.AddColumn(snz, colPlus + 1);
+                            if (string.IsNullOrEmpty(rowz["UUT"].ToString()))
                             {
-                                //Comestic
-                                address = ExportProcess.AddColumn(address, colPlus + 2);
-                                workSheet.Cells[address].Value = rowz["Comestic"];
-
-                                //Function test
-                                address = ExportProcess.AddRow(address, 1);
-                                workSheet.Cells[address].Value = rowz["Function test"];
-
+                                throw new Exception("Kiểm tra lại data không có Flex SN");
+                            }
+                            if (string.IsNullOrEmpty(workSheet.Cells[snz].Text))
+                            {
+                                workSheet.Cells[snz].Value = rowz["UUT"];
+                            }
+                            else
+                            {
+                                if (!rowz["UUT"].ToString().Contains(workSheet.Cells[snz].Text))
+                                {
+                                    throw new Exception("không trùng flex sn");
+                                }
                             }
                         }
-
-
+                        if (dic.TryGetValue(procz, out string address))
+                        {
+                            //Comestic
+                            address = ExportProcess.AddColumn(address, colPlus + 2);
+                            workSheet.Cells[address].Value = rowz["Comestic"];
+                            //if (rowz["Comestic"] != null)
+                            //{
+                            //    string z = rowz["Comestic"].ToString();
+                            //    if (rowz["Comestic"].ToString().Contains("OK"))
+                            //    {
+                            //        Color col = System.Drawing.ColorTranslator.FromHtml("#B7DEE8");
+                            //        workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.CornflowerBlue);
+                            //    }
+                            //    if (rowz["Comestic"].ToString().Contains("OK"))
+                            //    {
+                            //        Color col = System.Drawing.ColorTranslator.FromHtml("#B7DEE8");
+                            //        workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.CornflowerBlue);
+                            //    }
+                            //    if (string.IsNullOrEmpty(rowz["Comestic"].ToString()))
+                            //    {
+                            //        Color col = System.Drawing.ColorTranslator.FromHtml("#B7DEE8");
+                            //        workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.CornflowerBlue);
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    Color col = System.Drawing.ColorTranslator.FromHtml("#B7DEE8");
+                            //    workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.CornflowerBlue);
+                            //}
+                            //Function test
+                            address = ExportProcess.AddRow(address, 1);
+                            workSheet.Cells[address].Value = rowz["Function test"];
+                            //if (rowz["Function test"] != null)
+                            //{
+                            //    if (rowz["Function test"].ToString().ToLower().Contains("pass"))
+                            //    {
+                            //        workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.Green);
+                            //    }
+                            //    if (rowz["Function test"].ToString().ToLower().Contains("fail"))
+                            //    {
+                            //        workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                            //}
+                        }
                     }
-                }
-                exportProcess.SaveExcelWorksheet(ex, processMulti.TrimEnd(':'), $"{itemCode.Trim()}-{lotNo.Trim()}");
 
+
+                }
             }
-            return "Export succesfully!";
+
+
         }
+
 
         public static string setup_spec(ExcelWorksheet ws)
         {

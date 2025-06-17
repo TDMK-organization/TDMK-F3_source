@@ -108,13 +108,13 @@ namespace OK2SHIP_SMT.Services
         }
         public static int GetNumberFromString(string str)
         {
-            Match match = Regex.Match(str, @"\d+"); // Matches one or more digits
+            Match match = Regex.Match(str, @"\d+");
 
             if (match.Success)
             {
                 if (int.TryParse(match.Value, out int number))
                 {
-                    return number; // Output: 5
+                    return number; 
                 }
                 else
                 {

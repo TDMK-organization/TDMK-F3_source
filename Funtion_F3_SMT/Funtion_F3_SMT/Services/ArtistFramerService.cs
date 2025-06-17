@@ -18,21 +18,21 @@ namespace OK2SHIP_SMT.Services
         public ArtistFramerService(Image image)
         {
             Image = image;
-            Location = System.Windows.Forms.Application.StartupPath + $"\\PICTURE\\{Guid.NewGuid()}.png";
+            //Location = System.Windows.Forms.Application.StartupPath + $"\\PICTURE\\{Guid.NewGuid()}.png";
 
-            SaveImage();
+            //SaveImage();
             OpenMainFormWithAddress();
 
         }
 
         private void OpenMainFormWithAddress()
         {
-            using (SPixel.MainForm mainForm = new SPixel.MainForm(Location))
-            {
-                mainForm.ShowDialog();
-                Image = mainForm.bitmap;
-                //Image = LoadImageFromFile(Location);
-            }
+            //using (SPixel.MainForm mainForm = new SPixel.MainForm(Location))
+            //{
+            //    mainForm.ShowDialog();
+            //    Image = mainForm.bitmap;
+            //    //Image = LoadImageFromFile(Location);
+            //}
         }
 
 

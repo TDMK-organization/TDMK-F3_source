@@ -1,11 +1,14 @@
 ﻿using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using OK2SHIP_SMT.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,7 +29,7 @@ namespace OK2SHIP_SMT.Services
         }
         #endregion
         #region Methods
-        public DataTable ReadFile(string location, string itemCode, string lotNo, string type)
+        public DataTable ReadFile(string location, string itemCode, string lotNo, string type, string PIDLocation)
         {
             if (string.IsNullOrEmpty(location.Trim()))
             {
@@ -34,9 +37,16 @@ namespace OK2SHIP_SMT.Services
             }
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
+            bool prime = false;
+            PIDLocation = PIDLocation.Trim();
             DataTable dataTable = new DataTable();
             dataTable = _dbContext.GetTableStructure(NAME_TABLE_SQL);
-
+            if (!string.IsNullOrEmpty(PIDLocation))
+            {
+                ProductIDService productID = new ProductIDService(itemCode, lotNo, PIDLocation, new[] { "Copy" }, new[] { "Thermal cycling", "Heat Soak", "Thermal shock" });
+                Debugger.Break();
+                prime = productID._listFile.Count > 0;
+            }
             string[] dict = FileFolderRepository.GetSubFolders(location);
             foreach (var item in dict)
             {
@@ -46,7 +56,6 @@ namespace OK2SHIP_SMT.Services
 
                     string zone;
                     string folderName = nameItem.Split('.')[1].Trim();
-
                     switch (folderName)
                     {
                         case "TS":
@@ -77,6 +86,10 @@ namespace OK2SHIP_SMT.Services
                                 dr["Type"] = switchType(zone);
                                 DataTable newDt = new DataTable();
                                 DataTable dt = SolveFile(fileLocation[0], zone, out newDt);
+                                if (prime)
+                                {
+                                    
+                                }
                                 dr["DataLog"] = $"{ConverterService.DataTableToJson(newDt)}@{ConverterService.DataTableToJson(dt)}";
                                 dataTable.Rows.Add(dr);
                             }
@@ -111,7 +124,7 @@ namespace OK2SHIP_SMT.Services
                     return "";
             }
         }
-        private string[] HEADERROWTS = new[] { "Before", "After 100 hours", "After 200 hours" };
+        private string[] HEADERROWTS = new[] { "Before", "After 100 cycles", "After 200 cycles" };
         private string[] HEADERROWHS = new[] { "Before", "After 100 hours", "After 200 hours", "After 300 hours", "After 400 hours", "After 500 hours" };
         private string[] HEADERROWTC = new[] { "Before", "After 100 cycles", "After 200 cycles", "After 300 cycles", "After 400 cycles", "After 500 cycles" };
         private DataTable SolveFile(string location, string zone, out DataTable tableResult)
@@ -219,8 +232,39 @@ namespace OK2SHIP_SMT.Services
             logfile.Rows.Remove(logfile.Rows[2]);
             logfile.Rows.Remove(logfile.Rows[1]);
             logfile.Rows.Remove(logfile.Rows[0]);
-
-            return logfile;
+            DataTable dataTable = logfile.Clone();
+            Dictionary<string, List<DataRow>> dic = new Dictionary<string, List<DataRow>>();
+            foreach (DataRow row in logfile.Rows)
+            {
+                DataRow rowZ = dataTable.NewRow();
+                foreach (DataColumn item in dataTable.Columns)
+                {
+                    rowZ[item.ColumnName] = row[item.ColumnName];
+                }
+                rowZ["UUT"] = rowZ["UUT"].ToString().ToUpper();
+                string id = rowZ["UUT"].ToString();
+                if (dic.TryGetValue(id, out List<DataRow> rowz))
+                {
+                    rowz.Add(rowZ);
+                }
+                else
+                {
+                    List<DataRow> list = new List<DataRow>();
+                    list.Add(rowZ);
+                    dic.Add(id, list);
+                }
+            }
+            int iZ = 1;
+            foreach (string key in dic.Keys)
+            {
+                foreach (DataRow row in dic[key])
+                {
+                    row["ID"] = iZ;
+                    dataTable.Rows.Add(row);
+                }
+                iZ++;
+            }
+            return dataTable;
         }
         private bool FunctionTest(DataRow rowSampleMax, DataRow rowSampleMin, DataRow rowValue, int n)
         {
@@ -319,8 +363,7 @@ namespace OK2SHIP_SMT.Services
             }
             else
             {
-
-                dt = _dbContext.LoadDataTable(NAME_TABLE_SQL, new[] { "ItemCode", "LotNo", "Type" }, new[] { itemCode, lotNo , type });
+                dt = _dbContext.LoadDataTable(NAME_TABLE_SQL, new[] { "ItemCode", "LotNo", "Type" }, new[] { itemCode, lotNo, type });
             }
             if (dt.Rows.Count == 0)
             {
@@ -364,6 +407,7 @@ namespace OK2SHIP_SMT.Services
                     int pcs = 45, bf = 0, at1 = 0, at2 = 0, at3 = 0, at4 = 0, at5 = 0;
                     foreach (DataRow rowz in dataTable.Rows)
                     {
+
                         int colPlus = 0;
                         string procz = rowz["Content"].ToString();
                         switch (procz)
@@ -394,16 +438,72 @@ namespace OK2SHIP_SMT.Services
                         }
                         if (colPlus < pcs)
                         {
+                            if (dic.TryGetValue("Flex SN", out string snz))
+                            {
+                                snz = ExportProcess.AddColumn(snz, colPlus + 1);
+                                if (string.IsNullOrEmpty(rowz["UUT"].ToString()))
+                                {
+                                    throw new Exception("Kiểm tra lại data không có Flex SN");
+                                }
+                                if (string.IsNullOrEmpty(workSheet.Cells[snz].Text))
+                                {
+                                    workSheet.Cells[snz].Value = rowz["UUT"];
+                                }
+                                else
+                                {
+                                    if (!rowz["UUT"].ToString().Contains(workSheet.Cells[snz].Text))
+                                    {
+                                        throw new Exception("không trùng flex sn");
+                                    }
+                                }
+                            }
                             if (dic.TryGetValue(procz, out string address))
                             {
                                 //Comestic
                                 address = ExportProcess.AddColumn(address, colPlus + 2);
                                 workSheet.Cells[address].Value = rowz["Comestic"];
-
+                                //if (rowz["Comestic"] != null)
+                                //{
+                                //    string z = rowz["Comestic"].ToString();
+                                //    if (rowz["Comestic"].ToString().Contains("OK"))
+                                //    {
+                                //        Color col = System.Drawing.ColorTranslator.FromHtml("#B7DEE8");
+                                //        workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.CornflowerBlue);
+                                //    }
+                                //    if (rowz["Comestic"].ToString().Contains("OK"))
+                                //    {
+                                //        Color col = System.Drawing.ColorTranslator.FromHtml("#B7DEE8");
+                                //        workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.CornflowerBlue);
+                                //    }
+                                //    if (string.IsNullOrEmpty(rowz["Comestic"].ToString()))
+                                //    {
+                                //        Color col = System.Drawing.ColorTranslator.FromHtml("#B7DEE8");
+                                //        workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.CornflowerBlue);
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    Color col = System.Drawing.ColorTranslator.FromHtml("#B7DEE8");
+                                //    workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.CornflowerBlue);
+                                //}
                                 //Function test
                                 address = ExportProcess.AddRow(address, 1);
                                 workSheet.Cells[address].Value = rowz["Function test"];
-
+                                //if (rowz["Function test"] != null)
+                                //{
+                                //    if (rowz["Function test"].ToString().ToLower().Contains("pass"))
+                                //    {
+                                //        workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.Green);
+                                //    }
+                                //    if (rowz["Function test"].ToString().ToLower().Contains("fail"))
+                                //    {
+                                //        workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    workSheet.Cells[address].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                //}
                             }
                         }
 
@@ -418,7 +518,7 @@ namespace OK2SHIP_SMT.Services
 
         public void ExportLogFile(string itemCode, string lotNo, string type)
         {
-            
+
             return;
         }
         #endregion

@@ -27,6 +27,7 @@ namespace OK2SHIP_SMT.Services
                 foreach (string extension in imageExtensions)
                 {
                     string[] files = Directory.GetFiles(dir, $"*{extension}");
+
                     foreach (string file in files)
                     {
                         try
@@ -135,7 +136,7 @@ namespace OK2SHIP_SMT.Services
 
                 if (table.Rows.Count > 0)
                 {
-                    throw new Exception("12344-Cảnh báo TDMK"); 
+                    throw new Exception("12344-Cảnh báo TDMK");
                 }
             }
             DataTable dt = new DataTable();
@@ -178,6 +179,7 @@ namespace OK2SHIP_SMT.Services
                         IList<string[]> listBlack = new List<string[]>();
                         string[] files = Directory.GetFiles(subz, "*.csv");
                         DataTable dtBlack = FileFolderRepository.ConvertCsvToDataTable(files[0]);
+                        dtBlack = dtBlack.AsEnumerable().OrderBy(row => int.Parse(row.Field<string>("Sample Name").ToString().Split('-')[0].Replace("PT", "").Trim())).CopyToDataTable();
                         dataBlack.Add(s + "-CONVERTED", dtBlack);
                     }
                 }

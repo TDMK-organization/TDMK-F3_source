@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -11,8 +12,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Interop;
 using TDMK_SEEV_DLL;
 using TDMK_SQL;
+using static Funtion_F3_SMT.Select_Image;
 using DataTable = System.Data.DataTable;
 
 namespace Funtion_F3_SMT
@@ -211,11 +214,11 @@ namespace Funtion_F3_SMT
                 //  lbl_sochan.Enabled = true; 
                 dgv_judgement.Visible = true;
                 lbl_sochan.Visible = true;
-                txt_sochan.Visible = true;
+                sumChan.Visible = true;
 
                 if (sochan != 0)
                 {
-                    txt_sochan.Text = sochan.ToString();
+                    sumChan.Text = sochan.ToString();
                 }
 
                 DataTable dt_judge = new DataTable();
@@ -244,7 +247,7 @@ namespace Funtion_F3_SMT
             {
                 dgv_judgement.Visible = false;
                 lbl_sochan.Visible = false;
-                txt_sochan.Visible = false;
+                sumChan.Visible = false;
             }
         }
 
@@ -352,9 +355,18 @@ namespace Funtion_F3_SMT
             }
 
         }
-
+        private void UpdateData()
+        {
+            DataTable dataTable = (DataTable)dgv_judgement.DataSource;
+         
+            foreach(DataColumn col in dataTable.Columns)
+            {
+                dt_image.Rows[r_inx][col.ColumnName] = dataTable.Rows[0][col];
+            }
+        }
         private void btn_next_Click(object sender, EventArgs e)
         {
+            UpdateData();
             btn_prev.Enabled = true;
             btn_next.Enabled = true;
             if (r_inx < dt_image.Rows.Count - 1)
@@ -421,6 +433,8 @@ namespace Funtion_F3_SMT
 
         private void btn_prev_Click(object sender, EventArgs e)
         {
+
+            UpdateData();
             btn_prev.Enabled = true;
             btn_next.Enabled = true;
             if (r_inx > 0)
@@ -538,75 +552,28 @@ namespace Funtion_F3_SMT
 
         private void dgv_judgement_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (txt_sochan.Text != "")
+            if (sumChan.Text != "")
             {
-                string col_name = dgv_judgement.Columns[e.ColumnIndex].Name;
-                string row_value = dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
-
-                List<string> lst_col_name = new List<string> { "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn" };
-                if (lst_col_name.Contains(col_name))
+                int col = e.ColumnIndex;
+                int row = e.RowIndex;
+                string value = dgv_judgement.Rows[row].Cells[col].Value.ToString();
+                if (double.TryParse(value, out double num) && num > 0)
                 {
-                    dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.White;
-                    double data = 0;
-
-                    if (myCode.IsNumeric(dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString().Replace(" ", "")))
+                    if (!(value.Contains("%") && value.Contains("(")))
                     {
-                        string val_change = dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString().Replace(" ", "");
-                        //int b = int.Parse(val_change.Split('/')[1]);
-                        if (myCode.IsNumeric(txt_sochan.Text))
-                        {
-                            sochan = int.Parse(txt_sochan.Text);
-                        }
-                        if (sochan != 0)
-                        {
-                            int a = int.Parse(val_change);
-                            int b = sochan;
-                            data = Math.Round((double)a / b, 4);
-
-                            if (data <= 1)
-                            {
-                                dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = (data * 100).ToString() + "%" + "( " + a + "/" + b + " )";
-                            }
-                            else
-                            {
-                                dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Red;
-                            }
-                        }
-                    }
-                    else if (!dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString().Contains("%"))
-                    {
-                        dgv_judgement.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Red;
-                        MessageBox.Show(new Form { TopMost = true }, "Nhập sai định dạng !\nChỉ nhập số chân lỗi.", "Thông báo");
-                    }
-
-                    if (dgv_judgement.Rows[0].Cells[0].Style.BackColor != Color.Red && dgv_judgement.Rows[0].Cells[1].Style.BackColor != Color.Red)
-                    {
-                        this.str_judge(r_inx.ToString() + "_" + dgv_judgement.Rows[0].Cells[0].Value.ToString() + "_" + dgv_judgement.Rows[0].Cells[1].Value.ToString());
-
-
-                        if (dgv_judgement.Rows[0].Cells[0].Value.ToString().Contains("%"))
-                        {
-                            dt_image.Rows[r_inx]["Mode 2: Pad lift"] = dgv_judgement.Rows[0].Cells[0].Value.ToString();
-                        }
-                        if (dgv_judgement.Rows[0].Cells[1].Value.ToString().Contains("%"))
-                        {
-                            dt_image.Rows[r_inx]["Mode 5: Component damage"] = dgv_judgement.Rows[0].Cells[1].Value.ToString();
-                        }
-
-                    }
-                    else
-                    {
-                        this.str_judge("");
+                        dgv_judgement.Rows[row].Cells[col].Value = $"{(num * 100 / (double)sochan).ToString("#.##")}%({num}/{sochan})";
+                        Calculate();
                     }
 
                 }
-
+                else
+                {
+                    if (!value.Contains("%") || !value.Contains("("))
+                    {
+                        dgv_judgement.Rows[row].Cells[col].Value = $"0.00%(0/{sochan})";
+                    }
+                }
             }
-            else
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Vui lòng nhập tổng số chân", "Thông báo");
-            }
-
         }
 
         private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
@@ -627,21 +594,60 @@ namespace Funtion_F3_SMT
 
         private void txt_sochan_Validated(object sender, EventArgs e)
         {
-            if (myCode.IsNumeric(txt_sochan.Text))
+            if (myCode.IsNumeric(sumChan.Text))
             {
-                this.s_chan(int.Parse(txt_sochan.Text));
+                this.s_chan(int.Parse(sumChan.Text));
             }
         }
 
         private void txt_sochan_TextChanged(object sender, EventArgs e)
         {
-            if (!myCode.IsNumeric(txt_sochan.Text))
+            if (!myCode.IsNumeric(sumChan.Text))
             {
-                txt_sochan.BackColor = Color.Yellow;
+                sumChan.BackColor = Color.Yellow;
             }
             else
             {
-                txt_sochan.BackColor = Color.White;
+                sumChan.BackColor = Color.White;
+            }
+            string st = sumChan.Text;
+            if (!string.IsNullOrEmpty(st))
+            {
+
+            }
+        }
+
+        private void dgv_judgement_DataSourceChanged(object sender, EventArgs e)
+        {
+            Calculate();
+        }
+        private void Calculate()
+        {
+            int sum = 0;
+            DataTable dataTable = (DataTable)dgv_judgement.DataSource;
+            if (dgv_judgement.DataSource != null)
+            {
+                foreach (DataColumn col in dataTable.Columns)
+                {
+                    string value = dataTable.Rows[0][col].ToString();
+                    if (value.Contains("/") || value.Contains('('))
+                    {
+                        string z = value.Split('/')[0].Split('(')[1];
+                        if (int.TryParse(z, out int res))
+                        {
+                            sum += res;
+                        }
+                    }
+                }
+            }
+            sumChan.Text = sum.ToString();
+            if (sum > sochan || sum < sochan)
+            {
+                sumChan.BackColor = Color.Red;
+            }
+            else
+            {
+                sumChan.BackColor = Color.Green;
             }
         }
     }

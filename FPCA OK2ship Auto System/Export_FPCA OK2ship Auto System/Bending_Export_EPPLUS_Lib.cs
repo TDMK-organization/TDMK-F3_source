@@ -10,16 +10,16 @@ using TDMK_SEEV_DLL;
 using TDMK_SQL;
 using IniLibs;
 using System.Windows.Forms;
-using TDMK_EPPLUS_7;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Drawing;
+using Export_FPCA_OK2ship_Auto_System.Libary;
 
 namespace Bending_Export
 {
     public class Bending_Export_EPPLUS_Lib
     {
-        public TDMK_EPPLUS7_lib Excel_Lib = new TDMK_EPPLUS7_lib();
+        public TDMK_EPPLUS Excel_Lib = new TDMK_EPPLUS();
         public TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
         SEI_Lib myCode = new SEI_Lib();
 
@@ -288,7 +288,7 @@ namespace Bending_Export
                 string tar_wrksht_name = "";
                 if (format_type == "NPI")
                 {
-                    report_wrk = Excel_Lib.open_excel_file(format_file);
+                    report_wrk = TDMK_EPPLUS.open_excel_file(format_file);
                     foreach (ExcelWorksheet sht in report_wrk.Worksheets)
                     {
                         if (remove_special_char(sht.Name.ToUpper(), reject_char_lst) == remove_special_char(format_name.ToUpper(), reject_char_lst))
@@ -300,7 +300,7 @@ namespace Bending_Export
                 }
                 else
                 {
-                    report_wrk = Excel_Lib.open_excel_file(format_file);
+                    report_wrk = TDMK_EPPLUS.open_excel_file(format_file);
                     foreach (ExcelWorksheet sht in report_wrk.Worksheets)
                     {
                         if (remove_special_char(sht.Name, reject_char_lst) == remove_special_char("Bending < 10%", reject_char_lst))
@@ -408,7 +408,7 @@ namespace Bending_Export
                         NET_rgn.Offset(i, 0).Value = Net_name[i];
                     }
                     string last_cycle_addr = data_addr_lst.LastOrDefault();
-                    TDMK_EPPLUS7_lib.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
+                    TDMK_EPPLUS.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
                     int col_num = Cur_Cells_info.col_qty;
                     int total_col_num = tar_wrksht.Cells[last_cycle_addr].Start.Column + col_num - 1;
                     int r_off = Net_name.Count - 1;
@@ -532,7 +532,7 @@ namespace Bending_Export
                 NET_rgn.Offset(i, 0).Value = Net_name[i];
             }
             string last_cycle_addr = data_addr_lst.LastOrDefault();
-            TDMK_EPPLUS7_lib.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
+            TDMK_EPPLUS.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
             int col_num = Cur_Cells_info.col_qty;
             int total_col_num = tar_wrksht.Cells[last_cycle_addr].Start.Column + col_num - 1;
             int r_off = Net_name.Count - 1;
@@ -576,7 +576,7 @@ namespace Bending_Export
                 if (format_type == "NPI")
                 {
                     find_cycle_key = "Sample";
-                    report_wrk = Excel_Lib.open_excel_file(format_file);
+                    report_wrk = TDMK_EPPLUS.open_excel_file(format_file);
                     foreach (ExcelWorksheet sht in report_wrk.Worksheets)
                     {
                         if (remove_special_char(sht.Name, reject_char_lst) == remove_special_char(process_name, reject_char_lst))
@@ -588,7 +588,7 @@ namespace Bending_Export
                 }
                 else
                 {
-                    report_wrk = Excel_Lib.open_excel_file(format_file);
+                    report_wrk = TDMK_EPPLUS.open_excel_file(format_file);
                     foreach (ExcelWorksheet sht in report_wrk.Worksheets)
                     {
                         if (remove_special_char(sht.Name, reject_char_lst) == remove_special_char("Bending < 10%", reject_char_lst))
@@ -768,7 +768,7 @@ namespace Bending_Export
                             NET_rgn.Offset(i, 0).Value = NET_name[i];
                         }
                         string last_cycle_addr = cycle_data_addr_lst.LastOrDefault().Value;
-                        TDMK_EPPLUS7_lib.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
+                        TDMK_EPPLUS.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
                         int col_num = Cur_Cells_info.col_qty;
                         int total_col_num = tar_wrksht.Cells[last_cycle_addr].Start.Column + col_num - 1;
                         int r_off = NET_name.Count - 1;
@@ -1003,7 +1003,7 @@ namespace Bending_Export
                     NET_rgn.Offset(i, 0).Value = Net_name[i];
                 }
                 string last_cycle_addr = data_addr_lst.LastOrDefault();
-                TDMK_EPPLUS7_lib.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
+                TDMK_EPPLUS.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
                 int col_num = Cur_Cells_info.col_qty;
                 int total_col_num = tar_wrksht.Cells[last_cycle_addr].Start.Column + col_num - 1;
                 int r_off = Net_name.Count - 1;
@@ -1191,7 +1191,7 @@ namespace Bending_Export
                         NET_rgn.Offset(i, 0).Value = NET_name[i];
                     }
                     string last_cycle_addr = cycle_data_addr_lst.LastOrDefault().Value;
-                    TDMK_EPPLUS7_lib.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
+                    TDMK_EPPLUS.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
                     int col_num = Cur_Cells_info.col_qty;
                     int total_col_num = tar_wrksht.Cells[last_cycle_addr].Start.Column + col_num - 1;
                     int r_off = NET_name.Count - 1;
@@ -1288,7 +1288,7 @@ namespace Bending_Export
                 NET_rgn.Offset(i, 0).Value = Net_name[i];
             }
             string last_cycle_addr = data_addr_lst.LastOrDefault();
-            TDMK_EPPLUS7_lib.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
+            TDMK_EPPLUS.MergeAreas_Info Cur_Cells_info = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[last_cycle_addr]);
             int col_num = Cur_Cells_info.col_qty;
             int total_col_num = tar_wrksht.Cells[last_cycle_addr].Start.Column + col_num - 1;
             int r_off = Net_name.Count - 1;

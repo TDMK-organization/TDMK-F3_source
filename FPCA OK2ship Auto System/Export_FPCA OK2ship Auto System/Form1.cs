@@ -13,10 +13,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TDMK_SEEV_DLL;
-using TDMK_SQL;
-using static System.Collections.Specialized.BitVector32;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 using myExcel = Microsoft.Office.Interop.Excel;
 using DataTable = System.Data.DataTable;
 using Image = System.Drawing.Image;
@@ -26,19 +22,12 @@ using FAI_Export;
 using OK2SHIP_Lib;
 using System.Diagnostics;
 using OfficeOpenXml;
-using OK2SHIP_SMT;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.ComTypes;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
-using System.Collections;
-using System.Runtime.Remoting.Contexts;
-using System.Xml.Linq;
-using System.Security.Authentication.ExtendedProtection;
-using OfficeOpenXml.Utils.TypeConversion;
-using System.Runtime.ConstrainedExecution;
+
 using IniLibs;
 using Export_FPCA_OK2ship_Auto_System.Services;
-using TDMK_EPPLUS_7;
+using Export_FPCA_OK2ship_Auto_System.Libary;
+using TDMK_SQL;
+
 
 
 namespace Export_FPCA_OK2ship_Auto_System
@@ -49,7 +38,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         public Bending_Export_EPPLUS_Lib Bending_Exp = new Bending_Export_EPPLUS_Lib();
         public TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
         public SEI_Lib myCode = new SEI_Lib();
-        public TDMK_EPPLUS_7.TDMK_EPPLUS7_lib TDMK_Code2 = new TDMK_EPPLUS7_lib();
+        public TDMK_EPPLUS TDMK_Code2 = new TDMK_EPPLUS();
         public SqlConnection sqlcon = null;
         public string data_loc = "";
         public Funtion_export_FPCA F_expNPI = new Funtion_export_FPCA();
@@ -378,7 +367,7 @@ namespace Export_FPCA_OK2ship_Auto_System
 
             sqlcon = Bending_Exp.initial_data("OK2SHIP_SMT", true);
             string app_path = System.Windows.Forms.Application.StartupPath;
-            string config_path = Path.Combine(app_path.Replace("\\FPCA OK2SHIP Auto System\\Bending_Items",""), "config.ini");
+            string config_path = Path.Combine(app_path.Replace("\\FPCA OK2SHIP Auto System", ""), "config.ini");
             //app_path = @"\\10.212.6.212\Saomai\QA\TDMK_DATA\Test_Areas\OK2SHIP_SMT\TDMK Program\FPCA OK2SHIP Auto System";
             IniFile za = new IniFile(config_path);
             data_loc = za.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data";
@@ -720,10 +709,11 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                     }
 
-                    MessageBox.Show(new Form { TopMost = true }, "Đang xuất báo cáo. Vui lòng đợi!", "Thông báo", MessageBoxButtons.OK);
+                    //MessageBox.Show(new Form { TopMost = true }, "Đang xuất báo cáo. Vui lòng đợi!", "Thông báo", MessageBoxButtons.OK);
 
                     lst_sheet_export = new List<string> { };
-                    string[] skipSheet = new[] { "Coverpage", "Rev History", "User Guideline", "Low CPK Action", "Declaration", "Table of ContentsTable of Contents", "Deviation summary", "Assy Yield", "OQC Test", "ORT-Assy", "Thermal Cycling", "Thermal Shock", "Electrical", "Impedance", "Switch Quality", "Bar Code Verification", "Packaging", "Process flow", "Process Comparison", "Heat Soak and Recovery" };
+                    string[] skipSheet = new[] { "Coverpage", "Process Comparison", "Mishandling test", "Rev History", "User Guideline", "Low CPK Action", "Declaration", "Deviation summary", "OQC Test", "ORT-Assy", "Electrical", "Switch Quality", "Process flow", "Process Comparison" };
+
                     foreach (string sheet in cbl_sheet.CheckedItems)
                     {
                         if (!skipSheet.Contains(sheet))
@@ -855,14 +845,38 @@ namespace Export_FPCA_OK2ship_Auto_System
                                         }
 
                                         break;
+                                    case "Packaging":
+                                        new PackagingService().ExportToExcel(ws, txtItemCode.Text.Trim());
+                                        break;
+                                    case "Impedance":
+                                        new ImpedanceService().Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                        break;
                                     case "SEM BSE & Binarization":
                                         SEMServices.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
                                         break;
                                     case "OQC B2B Mating-Unmating":
                                         OQCB2BMatingUnmatting.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
                                         break;
+                                    //case 
                                     case "Table of Contents":
                                         TableOfContentService.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                        break;
+                                    case "Environment en-durance":
+                                        new EEDService(sqlcon).Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                        break;
+                                    case "Assy Yield":
+                                        new AssyYieldService(sqlcon).Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                        break;
+                                    case "Bar Code Verification":
+                                        new BarCodeVertification().Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                        break;
+                                    case "Thermal Cycling":
+                                    case "Thermal Shock":
+                                    case "Heat Soak and Recovery":
+                                        new TCHSTSService().Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim(), mySheet);
+                                        break;
+                                    case "X-Ray picture":
+                                        new XRayPictureService().Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
                                         break;
                                     default:
                                         string str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
@@ -943,7 +957,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                             }
                                             if (sheet == "GAP_CONNECTOR")
                                             {
-                                                F_expNPI.export_excel_gap_connector(ws, Data_all, dt_spec, ref export_ok);
+                                                new GAPConnectorService().Export(ws, Data_all, dt_spec);
                                             }
                                             else if (sheet == "CROSS_SECTION")
                                             {
@@ -1238,10 +1252,10 @@ namespace Export_FPCA_OK2ship_Auto_System
             List<string> auto_lst = new List<string>();// { "FAI", "SPC", "CPK", "IPQC", "Recycle", "Materials", "Coverpage", "User Guidelines", "Declaration and Contents" };
             auto_lst = lst_auto;
             List<string> lst_checked_manual = new List<string>();
-            //foreach (string sheet in cbl_sheet_manual.CheckedItems)
-            //{
-            //    lst_checked_manual.Add(sheet.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
-            //}
+            foreach (string sheet in cbl_sheet.CheckedItems)
+            {
+                lst_checked_manual.Add(sheet.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
+            }
             List<string> lst_ignore = new List<string>() { "Thermal Cycling", "Thermal Shock", "Heat Soak and Recovery" };
 
             foreach (ExcelWorksheet wrksheet in myWrkbook.Worksheets)
@@ -1256,6 +1270,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                         string f_sheet = Path.GetFileName(c).Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper();
                         if (f_sheet.Contains(sel_tbl.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper().Trim()))
                         {
+                            int iz = TDMK_Code.check_exist_list_index(f_sheet, auto_lst);
+                            int izz = TDMK_Code.check_exist_list_index(f_sheet, lst_checked_manual);
                             if (TDMK_Code.check_exist_list_index(f_sheet, auto_lst) == -1 && TDMK_Code.check_exist_list_index(f_sheet, lst_checked_manual) != -1) //new version: if (TDMK_Code.check_exist_list_index(c, ignoredList) != -1)
                             {
                                 string[] list_file = Directory.GetFiles(c, "*.xlsx").Where(s => s.Contains(tar_file_name)).ToArray();
@@ -1264,7 +1280,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                     try
                                     {
                                         ExcelWorksheet mywrksheet = myWrkbook.Worksheets[sel_tbl];
-                                        ExcelWorkbook sel_wrkbook = TDMK_Code2.open_excel_file(list_file[0]);
+                                        ExcelWorkbook sel_wrkbook = TDMK_EPPLUS.open_excel_file(list_file[0]);
                                         ExcelWorksheet sel_wrksheet = sel_wrkbook.Worksheets[0];
                                         myWrkbook.Worksheets.Delete(sel_tbl);
                                         var c1 = myWrkbook.Worksheets.Add(sel_tbl, sel_wrksheet);

@@ -21,6 +21,174 @@ namespace OK2SHIP_SMT.Repositories
         IniFile TDMK_init;
 
         private TDMK_SQL_Lib TDMK_SQL = new TDMK_SQL_Lib();
+        /// <summary>
+        /// Tạo một bảng mới trong database MSSQL với tên được cung cấp và cấu trúc cơ bản.
+        /// Lưu ý: Hàm này tạo một cấu trúc bảng mẫu. Để tạo bảng với cấu trúc tùy chỉnh,
+        /// bạn cần truyền vào định nghĩa cột dưới dạng tham số.
+        /// </summary>
+        /// <param name="connectionString">Chuỗi kết nối đến cơ sở dữ liệu MSSQL.</param>
+        /// <param name="tableName">Tên của bảng mới muốn tạo.</param>
+        /// <param name="schemaName">Tên của schema mà bảng sẽ thuộc về (mặc định là 'dbo').</param>
+        /// <returns>True nếu bảng được tạo thành công, False nếu có lỗi hoặc bảng đã tồn tại.</returns>
+        /// <exception cref="SqlException">Ném ra nếu có lỗi xảy ra trong quá trình thực thi SQL.</exception>
+        /// <exception cref="Exception">Ném ra cho các lỗi khác.</exception>
+        //public bool CreateNewTable(string tableName, string schemaName = "dbo")
+        //{
+        //    // Kiểm tra xem bảng đã tồn tại chưa để tránh lỗi
+        //    if (DoesTableExist(tableName, schemaName))
+        //    {
+        //        Console.WriteLine($"Bảng '{schemaName}.{tableName}' đã tồn tại. Không tạo lại.");
+        //        return false;
+        //    }
+
+        //    // Định nghĩa cấu trúc bảng mẫu.
+        //    // Bạn có thể tùy chỉnh các cột ở đây hoặc truyền chúng vào như một tham số phức tạp hơn.
+        //    string createTableSql = $@"
+        //    CREATE TABLE [{schemaName}].[{tableName}] (
+        //        Id INT PRIMARY KEY IDENTITY(1,1),
+        //        Name NVARCHAR(255) NOT NULL,
+        //        Description NVARCHAR(MAX) NULL,
+        //        CreatedAt DATETIME DEFAULT GETDATE()
+        //    );";
+
+        //    try
+        //    {
+        //        // Thực thi lệnh CREATE TABLE
+        //        ExecuteNonQueryCommand(createTableSql);
+        //        Console.WriteLine($"Bảng '{schemaName}.{tableName}' đã được tạo thành công.");
+        //        return true;
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        Console.WriteLine($"Lỗi SQL khi tạo bảng '{schemaName}.{tableName}': {ex.Message}");
+        //        throw; // Ném lại lỗi để caller có thể xử lý
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Đã xảy ra lỗi chung khi tạo bảng '{schemaName}.{tableName}': {ex.Message}");
+        //        throw; // Ném lại lỗi
+        //    }
+        //}
+        public bool DoesColumnExist(string tableName, string columnName, string schemaName = "dbo")
+        {
+            // Sử dụng INFORMATION_SCHEMA.COLUMNS vì nó chuẩn ANSI SQL và dễ đọc
+            string checkSql = @"
+            SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = @SchemaName
+            AND TABLE_NAME = @TableName
+            AND COLUMN_NAME = @ColumnName;";
+
+            // Hoặc có thể dùng sys.columns cho SQL Server-specific nếu cần:
+            // string checkSql = @"
+            //     SELECT COUNT(*)
+            //     FROM sys.columns AS C
+            //     INNER JOIN sys.tables AS T ON C.object_id = T.object_id
+            //     INNER JOIN sys.schemas AS S ON T.schema_id = S.schema_id
+            //     WHERE S.name = @SchemaName
+            //     AND T.name = @TableName
+            //     AND C.name = @ColumnName;";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+            new SqlParameter("@SchemaName", SqlDbType.NVarChar, 128) { Value = schemaName },
+            new SqlParameter("@TableName", SqlDbType.NVarChar, 128) { Value = tableName },
+            new SqlParameter("@ColumnName", SqlDbType.NVarChar, 128) { Value = columnName }
+            };
+
+            try
+            {
+                DataTable result = ExecuteSqlToDataTable(checkSql);
+
+                // Kiểm tra kết quả: nếu Count > 0 thì cột tồn tại
+                if (result != null && result.Rows.Count > 0)
+                {
+                    return Convert.ToInt32(result.Rows[0][0]) > 0;
+                }
+                return false; // Không có dòng nào hoặc DataTable rỗng
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi kiểm tra sự tồn tại của cột '{columnName}' trong bảng '{tableName}' (schema '{schemaName}'): {ex.Message}");
+                throw; // Ném lại lỗi để xử lý ở tầng cao hơn
+            }
+        }
+
+        public bool DoesTableExist(string tableName, string schemaName = "dbo")
+        {
+            // Sử dụng INFORMATION_SCHEMA.TABLES vì nó chuẩn ANSI SQL và dễ đọc
+            string checkSql = @"
+            SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_SCHEMA = @SchemaName
+            AND TABLE_NAME = @TableName;";
+
+            // Có thể dùng sys.tables cho SQL Server-specific nếu cần:
+            // string checkSql = @"
+            //     SELECT COUNT(*)
+            //     FROM sys.tables AS T
+            //     INNER JOIN sys.schemas AS S ON T.schema_id = S.schema_id
+            //     WHERE S.name = @SchemaName
+            //     AND T.name = @TableName;";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+            new SqlParameter("@SchemaName", SqlDbType.NVarChar, 128) { Value = schemaName }, // Kích thước schema_name
+            new SqlParameter("@TableName", SqlDbType.NVarChar, 128) { Value = tableName }   // Kích thước table_name
+            };
+
+            try
+            {
+                DataTable result = ExecuteSqlToDataTable(checkSql);
+
+                // Kiểm tra kết quả: nếu Count > 0 thì bảng tồn tại
+                if (result != null && result.Rows.Count > 0)
+                {
+                    return Convert.ToInt32(result.Rows[0][0]) > 0;
+                }
+                return false; // Không có dòng nào hoặc DataTable rỗng
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi kiểm tra sự tồn tại của bảng '{tableName}' trong schema '{schemaName}': {ex.Message}");
+                throw; // Ném lại lỗi để xử lý ở tầng cao hơn
+            }
+        }
+        public DataTable ExecuteSqlToDataTable(string sqlQueryOrCommand)
+        {
+            DataTable dataTable = new DataTable();
+
+            // Sử dụng 'using' statement để đảm bảo các đối tượng được giải phóng đúng cách
+
+            using (SqlCommand command = new SqlCommand(sqlQueryOrCommand, SqlConnection))
+            {
+
+                try
+                {
+
+                    // SqlDataAdapter dùng để điền dữ liệu từ SqlCommand vào DataTable
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                    {
+                        adapter.Fill(dataTable); // Điền dữ liệu vào DataTable
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    // Xử lý lỗi SQL cụ thể
+                    Console.WriteLine($"Lỗi SQL xảy ra: {ex.Message}");
+                    throw; // Ném lại lỗi để caller có thể xử lý
+                }
+                catch (Exception ex)
+                {
+                    // Xử lý các lỗi chung khác
+                    Console.WriteLine($"Đã xảy ra lỗi: {ex.Message}");
+                    throw; // Ném lại lỗi
+                }
+            }
+
+            return dataTable;
+        }
+
         public DBContext(string catalog = null)
         {
             if (catalog == null)
@@ -247,7 +415,7 @@ namespace OK2SHIP_SMT.Repositories
         /// <returns></returns>
         public int BuckDataTable(DataTable dataTable, string TableSql, string[] colCompare, string[] mappingColName = null, string colID = null)
         {
-            if(dataTable.Rows.Count <= 0)
+            if (dataTable.Rows.Count <= 0)
             {
                 return 0;
             }
@@ -301,7 +469,7 @@ namespace OK2SHIP_SMT.Repositories
                     //        command.ExecuteNonQuery();
                     //    }
                     //}
-                    using (SqlBulkCopy bulkCopy = new SqlBulkCopy(SqlConnection, SqlBulkCopyOptions.Default, transaction))
+                    using (SqlBulkCopy bulkCopy = new SqlBulkCopy(SqlConnection, SqlBulkCopyOptions.Default | SqlBulkCopyOptions.FireTriggers, transaction))
                     {
 
                         // Đặt tên bảng đích trong cơ sở dữ liệu
@@ -368,14 +536,16 @@ namespace OK2SHIP_SMT.Repositories
             }
         }
 
-        public string[] checkListIsExist(string[] listCheck, string TabltName, string colname)
+        public string[] checkListIsExist(string[] listCheck, string TabltName, string colname, string selectColumn = "")
         {
             if (listCheck == null || listCheck.Count() == 0)
             {
                 return null; // Return empty list if input is empty or null
             }
             string itemCodeList = string.Join("','", listCheck);
-            string sql = $"SELECT ItemCode FROM {TabltName} WHERE ItemCode IN ('{itemCodeList}')";
+            string join = string.Join(",", new[] {colname, selectColumn} );
+            join = join.Trim().TrimEnd(',');
+            string sql = $"SELECT {join} FROM {TabltName} WHERE {colname} IN ('{itemCodeList}')";
             List<string> existingItemCodes = new List<string>();
 
             try
@@ -386,7 +556,9 @@ namespace OK2SHIP_SMT.Repositories
                     {
                         while (reader.Read())
                         {
-                            existingItemCodes.Add(reader.GetString(0)); // Assuming ItemCode is the first column and a string
+                            string z = reader.GetValue(join.Split(',').Count() - 1).ToString();
+                            
+                            existingItemCodes.Add(z); // Assuming ItemCode is the first column and a string
                         }
                     }
                 }
