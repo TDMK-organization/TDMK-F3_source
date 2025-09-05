@@ -387,9 +387,16 @@ namespace Funtion_F3_SMT
             //    frm.ShowDialog();
             //}
         }
-
+        private bool _PRIME_PEEL_TEST = false;
         private void View_Data_3_Load(object sender, EventArgs e)
         {
+            if (sheet.Equals("PEEL_TEST WITHOUT SUS"))
+            {
+                sheet = "PEEL_TEST";
+                _PRIME_PEEL_TEST = true;
+            }
+
+            //Debugger.Break();
             string program_loc = F_export_EPPlus.find_config_path(System.Windows.Forms.Application.StartupPath, "TDMK Program");
             string config_path = Path.Combine(program_loc, "Config.ini");
             TDMK_init = new IniFile(config_path);
@@ -525,7 +532,15 @@ namespace Funtion_F3_SMT
             List<byte[]> lst_grp = new List<byte[]> { };
             foreach (myExcel.Shape cur_image in wrk_sheet.Shapes)
             {
-                cur_image.Copy();
+                try
+                {
+
+                    cur_image.Copy();
+                }
+                catch
+                {
+
+                }
                 Byte[] data = new Byte[0];
                 Image myImg = Clipboard.GetImage();
                 ImageConverter imgCon = new ImageConverter();
@@ -534,7 +549,11 @@ namespace Funtion_F3_SMT
                 Bitmap bmp;
                 using (var ms = new MemoryStream(data))
                 {
+
+
                     bmp = new Bitmap(ms);
+
+
                 }
 
                 string val = Extract_data(bmp);
@@ -2069,7 +2088,22 @@ namespace Funtion_F3_SMT
             Debugger.Break();
             try
             {
+                DataTable dtZ = sort_dt;
+                string region = "";
+                int iz = 1;
+                foreach (DataRow row in dtZ.Rows)
+                {
+                    if (region.Contains(row["Region"].ToString()))
+                    {
 
+                    }
+                    else
+                    {
+                        region = row["Region"].ToString();
+                        iz = 1;
+                    }
+                    row["Sample"] = iz++;
+                }
                 ProductIDService productService = new ProductIDService(txtItemCode.Text, txtLotNo.Text, textBox1.Text, new[] { "IPQC", "Xsection", "B2B" }, new[] { txtItemCode.Text });
                 if (productService._listFile.TryGetValue(txtItemCode.Text, out string location))
                 {
@@ -2089,41 +2123,55 @@ namespace Funtion_F3_SMT
                                     case "NGANG":
                                     case "TRUNGANG_P":
                                     case "TRUNGANG_T":
-                                        if (sam < 10)
+                                        if (sam <= 20)
                                         {
-                                            r = $"NPT<10{sam}";
-                                        }
-                                        if (sam > 10)
-                                        {
-                                            r = $"NPT>10{sam}";
+                                            if (sam <= 10)
+                                            {
+                                                r = $"NPT<10{sam}";
+                                            }
+                                            if (sam > 10)
+                                            {
+                                                r = $"NPT>10{sam}";
+                                            }
                                         }
                                         break;
                                     case "TRU_T":
                                     case "DOC_T":
-                                        r = $"TRUDOC_T{sam}";
+                                        if (sam <= 10)
+                                        {
+                                            r = $"TRUDOC_T{sam}";
+                                        }
                                         break;
                                     case "TRU_P":
                                     case "DOC_P":
-                                        r = $"TRUDOC_P{sam}";
+                                        if (sam <= 10)
+                                        {
+                                            r = $"TRUDOC_P{sam}";
+                                        }
+                                        break;
+                                    default:
+                                        Debugger.Break();
                                         break;
 
-
                                 }
 
                             }
-                            if (dic.TryGetValue(r, out string PID))
+                            if (!string.IsNullOrEmpty(r))
                             {
-
-                            }
-                            else
-                            {
-                                if (i < list.Count)
+                                if (dic.TryGetValue(r, out string PID))
                                 {
-                                    dic.Add(r, list[i]);
-                                    PID = list[i++];
+
                                 }
+                                else
+                                {
+                                    if (i < list.Count)
+                                    {
+                                        dic.Add(r, list[i]);
+                                        PID = list[i++];
+                                    }
+                                }
+                                row["ProductID"] = PID;
                             }
-                            row["ProductID"] = PID;
                         }
                     }
                 }
@@ -3154,7 +3202,7 @@ namespace Funtion_F3_SMT
                         byte[] img = dic_image[k];
                         byte[] graph = data.Value.grap_data;
                         string val = data.Value.data_val;
-                        Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, 1, data.Key, img, graph, val, "100%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
+                        Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, 1, data.Key, img, graph, val, "0.00%", "0.00%", "0.00%", "0.00%", "100%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                         ID++;
                         k++;
                     }
@@ -3324,10 +3372,13 @@ namespace Funtion_F3_SMT
                 switch (sheet)
                 {
                     case "MATING_PULL_TEST":
-                        find = "Pulling_Test";
+                        find = "Pulling";
                         break;
                     case "PEEL_TEST":
                         find = "Peeling";
+                        break;
+                    case "PEEL_TEST_WITHOUT_SUS":
+                        find = "without SUS";
                         break;
                 }
 
@@ -3976,7 +4027,7 @@ namespace Funtion_F3_SMT
                         byte[] img = data.Value.image_data;
                         byte[] graph = data.Value.grap_data;
                         string val = data.Value.data_val;
-                        Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, tar_d.Name, sample, img, graph, val, "100%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
+                        Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, tar_d.Name, sample, img, graph, val, "0.00%", "0.00%", "0.00%", "0.00%", "100%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                         ID++;
                         sample++;
                     }
@@ -4026,29 +4077,36 @@ namespace Funtion_F3_SMT
                     byte[] img = data.Value.image_data;
                     byte[] graph = data.Value.grap_data;
                     string val = data.Value.data_val;
-                    Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, "1", sample, img, graph, val, "100%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
+                    Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, "1", sample, img, graph, val, "0.00%", "0.00%", "0.00%", "0.00%", "100%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                     ID++;
                     sample++;
                 }
             }
-            ProductIDService productIDService = new ProductIDService(txtItemCode.Text, txtLotNo.Text, textBox1.Text, new[] { "OQC", "B2B", "Shearing" }, new[] { txtItemCode.Text });
-            if (productIDService._listFile.Count > 0)
+            try
             {
-                Data_tbl.Columns.Add("ProductID");
-                int i = 0;
-                List<string> listPID = productIDService.getListProductID(productIDService._listFile[txtItemCode.Text]);
-                foreach (string item in listPID)
+                ProductIDService productIDService = new ProductIDService(txtItemCode.Text, txtLotNo.Text, textBox1.Text, new[] { "OQC", "B2B", "Shearing" }, new[] { txtItemCode.Text });
+                if (productIDService._listFile.Count > 0)
                 {
-                    try
+                    Data_tbl.Columns.Add("ProductID");
+                    int i = 0;
+                    List<string> listPID = productIDService.getListProductID(productIDService._listFile[txtItemCode.Text]);
+                    foreach (string item in listPID)
                     {
-                        Data_tbl.Rows[i]["ProductID"] = item;
+                        try
+                        {
+                            Data_tbl.Rows[i]["ProductID"] = item;
+                        }
+                        catch
+                        {
+                            break;
+                        }
+                        i++;
                     }
-                    catch
-                    {
-                        break;
-                    }
-                    i++;
                 }
+            }
+            catch
+            {
+                MessageBox.Show("ProductID: Không lấy được PID");
             }
             return Data_tbl;
         }
@@ -4404,7 +4462,15 @@ namespace Funtion_F3_SMT
 
                 if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST")
                 {
-                    dt = ((DataTable)dgv_logfile.DataSource).AsDataView().ToTable(false, new string[] { "ID", "ProductID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Graph", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                    DataTable z = (DataTable)dgv_logfile.DataSource;
+                    if (z.Columns.Contains("ProductID"))
+                    {
+                        dt = ((DataTable)dgv_logfile.DataSource).AsDataView().ToTable(false, new string[] { "ID", "ProductID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Graph", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                    }
+                    else
+                    {
+                        dt = ((DataTable)dgv_logfile.DataSource).AsDataView().ToTable(false, new string[] { "ID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Graph", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
+                    }
                 }
                 else
                 {
@@ -4688,9 +4754,9 @@ namespace Funtion_F3_SMT
                 }
 
 
-                DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet, filter_str);
+                DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), filter_str);
 
-                string sheetZ = sheet;
+                string sheetZ = sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "");
                 string itemCode = txtItemCode.Text;
                 string lotNo = txtLotNo.Text;
                 try
@@ -5142,7 +5208,7 @@ namespace Funtion_F3_SMT
                         string type = spec_region.Split('+')[0];
                         if (type == "A")
                         {
-                            string spec_max = spec_region.Split('+')[3].Split(';')[0].Replace(" ", "").Replace("(gf)", "").Replace("(N)", "");
+                            string spec_max = spec_region.Split('+')[2].Split(';')[0].Replace(" ", "").Replace("(gf)", "").Replace("(N)", "");
                             string ll_max = "";
                             string ul_max = "";
                             string ll_ave = "";
@@ -6979,7 +7045,6 @@ namespace Funtion_F3_SMT
 
         private void btn_load_Click(object sender, EventArgs e)
         {
-
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && txtOperator.Text != "" && txtLogfile.Text != "" && cb_Type.SelectedIndex != -1)
             {
                 dgv_logfile.DataSource = dgv_Analysis.DataSource = null;
@@ -7035,7 +7100,17 @@ namespace Funtion_F3_SMT
                             switch (sheet)
                             {
                                 case "PEEL_TEST":
-                                    dt_load = load_data_logfile_Peel_Pull(f_folder, "PEEL_TEST", infor, textBox1.Text);
+                                    if (_PRIME_PEEL_TEST)
+                                    {
+                                        if (!new PeelTestWOSUSService().checkPeelTest(txtItemCode.Text, txtLotNo.Text))
+                                        {
+                                            if (MessageBox.Show("Peel test chưa tồn tại có tiếp tục đẩy dữ liệu!", "Thông báo!", MessageBoxButtons.YesNo) == DialogResult.No)
+                                            {
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    dt_load = load_data_logfile_Peel_Pull(f_folder, "PEEL_TEST" + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), infor, textBox1.Text);
                                     if (dt_load.Columns.Contains("ProductID"))
                                     {
 
@@ -7052,7 +7127,6 @@ namespace Funtion_F3_SMT
                                     dt_load = load_data_logfile_Peel_Pull(f_folder, "MATING_PULL_TEST", infor, textBox1.Text);
                                     if (dt_load.Columns.Contains("ProductID"))
                                     {
-
                                         Data_tbl = dt_load.AsDataView().ToTable(false, new string[] { "ID", "ProductID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Select_Img", "Graph", "Select_Grp", "Data", "Mode 1: Solder joint crack", "Mode 2: Pad lift", "Mode 3: Solder joint lift", "Mode 4: Intermetallic break", "Mode 5: Component damage", "Mode 6: Component detached", "Mode 7: Flex torn", "Operator", "Time_Update", "Remark" });
                                     }
                                     else
@@ -7686,7 +7760,7 @@ namespace Funtion_F3_SMT
                 }
 
             lblsave:
-                DataTable dt = TDMK_Code.Datatable_Filter(sqlcon, sheet, filter_str);
+                DataTable dt = TDMK_Code.Datatable_Filter(sqlcon, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), filter_str);
                 //DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, sheet, cb_Type.SelectedItem.ToString() }));
                 if (dt.Rows.Count == 0)
                 {
@@ -7710,7 +7784,7 @@ namespace Funtion_F3_SMT
                             if (chk)
                             {
                                 DataTable tbl_data_analysis = (DataTable)dgv_Analysis.DataSource;
-                                int i = TDMK_Code.SQL_MAX(sheet, "ID", sqlcon) + 1;
+                                int i = TDMK_Code.SQL_MAX(sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), "ID", sqlcon) + 1;
                                 foreach (DataRow dr in tbl_data_analysis.Rows)
                                 {
                                     dr[0] = i;
@@ -7721,7 +7795,7 @@ namespace Funtion_F3_SMT
                                     string str = ProductIDService.ConverterProductID(tbl_data_analysis);
                                     string itemCode = txtItemCode.Text;
                                     string lotNo = txtLotNo.Text;
-                                    string process = sheet;
+                                    string process = sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "");
                                     try
                                     {
                                         ProductIDService.InsertProductID(itemCode, lotNo, process, str);
@@ -7733,7 +7807,7 @@ namespace Funtion_F3_SMT
                                     }
                                     tbl_data_analysis.Columns.Remove("ProductID");
                                 }
-                                BatchBulkCopy(sqlcon, tbl_data_analysis, sheet);
+                                BatchBulkCopy(sqlcon, tbl_data_analysis, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""));
 
                                 int st = 1;
                                 foreach (DataRow dr in tbl_data_analysis.Rows)
@@ -7787,7 +7861,7 @@ namespace Funtion_F3_SMT
                         {
                             if (UserSession.Instance.IsLoggedIn)
                             {
-                                TDMK_Code.Delelte_FilteredItem_arr(sheet, sqlcon, filter_str);
+                                TDMK_Code.Delelte_FilteredItem_arr(sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), sqlcon, filter_str);
                                 //   TDMK_Code.Delelte_FilteredItem_arr(sheet + "_LOGFILE", sqlcon, filter_str);
                                 goto lblsave;
                             }
@@ -7804,7 +7878,7 @@ namespace Funtion_F3_SMT
                         {
                             if (admin_mode == "Admin mode")
                             {
-                                TDMK_Code.Delelte_FilteredItem_arr(sheet, sqlcon, filter_str);
+                                TDMK_Code.Delelte_FilteredItem_arr(sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), sqlcon, filter_str);
 
                                 btnEdit.BackColor = Color.GreenYellow;
                                 goto lblsave;
@@ -11586,10 +11660,10 @@ namespace Funtion_F3_SMT
 
                         }
 
-                        DataTable Data_all = TDMK_Code.Datatable_Filter(sqlcon, sheet, filter_str);
+                        DataTable Data_all = TDMK_Code.Datatable_Filter(sqlcon, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), filter_str);
                         try
                         {
-                            ProductIDService.FillProductID(Data_all, txtItemCode.Text, txtLotNo.Text, sheet);
+                            ProductIDService.FillProductID(Data_all, txtItemCode.Text, txtLotNo.Text, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""));
                         }
                         catch
                         {
@@ -11641,8 +11715,8 @@ namespace Funtion_F3_SMT
                                 }
                                 if (file_format != "")
                                 {
-
-                                    F_export_EPPlus.export_new_viewdata3(file_format, report_folder, export_path, txtItemCode.Text, txtLotNo.Text, cb_Type.SelectedItem.ToString(), Data_all, dt_spec, sheet, dgv_Analysis, txtOperator.Text, int.Parse(txt_qty.Text));
+                                    F_export_EPPlus._PRIME_WITHOUT_SUS = _PRIME_PEEL_TEST;
+                                    F_export_EPPlus.export_new_viewdata3(file_format, report_folder, export_path, txtItemCode.Text, txtLotNo.Text, cb_Type.SelectedItem.ToString(), Data_all, dt_spec, sheet, dgv_Analysis, txtOperator.Text, int.Parse(txt_qty.Text), txt_itemcode_nvl.Text, txt_lotno_nvl.Text);
 
                                 }
                                 else
@@ -13924,9 +13998,28 @@ namespace Funtion_F3_SMT
                 DataTable dataTable = (DataTable)dgv_logfile.DataSource;
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    if (row["Mode 1: Solder joint crack"].ToString().Contains("100%"))
+                    foreach (DataColumn col in dataTable.Columns)
                     {
-                        row["Mode 1: Solder joint crack"] = $"100% ({set_chan}/{set_chan})";
+                        if (col.ColumnName.Contains("Mode"))
+                        {
+
+                            if (row[col.ColumnName].ToString().Contains("100%"))
+                            {
+                                row[col.ColumnName] = $"100% ({set_chan}/{set_chan})";
+                            }
+                            else if (row[col.ColumnName].ToString().Contains("0%"))
+                            {
+                                row[col.ColumnName] = $"0% ({0}/{set_chan})";
+                            }
+                            else
+                            {
+                                if (int.TryParse(row[col.ColumnName].ToString().TrimEnd('%'), out int a))
+                                {
+                                    a = 100 / (a * set_chan);
+                                    row[col.ColumnName] = $"{row[col.ColumnName]} ({a}/{set_chan})";
+                                }
+                            }
+                        }
                     }
                 }
             }

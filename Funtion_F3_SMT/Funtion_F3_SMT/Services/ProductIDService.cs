@@ -91,7 +91,7 @@ namespace OK2SHIP_SMT.Services
             string part = fileName.Split('_')[0].Replace("00000B", "_");
             string itemCodez = part.Split('_')[0];
             string lotNoz = part.Split('_')[1];
-            if (itemCode.Equals(itemCodez) && lotNoz.Equals(lotNoz))
+            if (itemCode.Equals(itemCodez) && lotNoz.Contains(lotNo))
             {
                 return true;
             }

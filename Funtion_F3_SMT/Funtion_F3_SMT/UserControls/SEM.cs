@@ -112,7 +112,7 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void btn_GetData_Click(object sender, EventArgs e)
         {
-            getDataFormFile(tb_locationFolder.Text.Trim(), tb_ItemCode.Text.Trim(), tb_Lotno.Text.Trim(), PROCESS);
+            getDataFormFile(tb_locationFolder.Text.Trim(), tb_ItemCode.Text.Trim(), tb_Lotno.Text.Trim(), PROCESS, tb_productID.Text);
         }
         private void btn_checkSum_Click(object sender, EventArgs e)
         {
@@ -163,14 +163,14 @@ namespace OK2SHIP_SMT.UserControls
                         XRayPictureService x = new XRayPictureService();
                         try
                         {
-                            x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text);
+                            x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text);
                         }
                         catch (Exception ex)
                         {
                             string[] spt = ex.Message.Split('-');
                             if (spt[0].Contains("1234") && MessageBox.Show($"{spt[2].Trim()}", "Cảnh báo!", MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
-                                x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text, int.Parse(spt[1]));
+                                x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text, int.Parse(spt[1]));
                             }
                             else
                             {
@@ -358,7 +358,7 @@ namespace OK2SHIP_SMT.UserControls
                 switch (this.PROCESS)
                 {
                     case "X-Ray picture":
-                        status = new XRayPictureService().Export(tb_ItemCode.Text, tb_Lotno.Text);
+                        status = new XRayPictureService().Export(tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text);
                         break;
                     case "Environment en-durance":
                         status = new EEDService().Export(tb_ItemCode.Text, tb_Lotno.Text);
@@ -442,7 +442,7 @@ namespace OK2SHIP_SMT.UserControls
                 {
                     case "X-Ray picture":
                         XRayPictureService xray = new XRayPictureService();
-                        DataTable xrayData = xray.Load(tb_ItemCode.Text, tb_Lotno.Text);
+                        DataTable xrayData = xray.Load(tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text);
                         UC_XrayPicture.setData(xrayData);
                         break;
                     case "Environment en-durance":
@@ -559,10 +559,16 @@ namespace OK2SHIP_SMT.UserControls
             btn_checkBin.Visible = false;
             switch (this.PROCESS)
             {
+
                 case "X-Ray picture":
                     tb_datagridview.Controls.Clear();
 
                     tb_datagridview.Controls.Add(UC_XrayPicture);
+                    tableLayoutPanel3.Controls.Clear();
+                    tableLayoutPanel3.Controls.Add(new TDMK_Label() { Text = "Type" }, 0, 0);
+                    comboBox.Items.AddRange(new[] { "Flex bending", "Thermal Cycling And Bend", "Heat Soak And Bend" });
+                    tableLayoutPanel3.Controls.Add(comboBox, 0, 1);
+
 
                     break;
                 case "Impedance":
@@ -649,10 +655,22 @@ namespace OK2SHIP_SMT.UserControls
                     browseStatusFileZ = false;
 
                     break;
+                case "Air Bubble":
+                    this.Controls.Clear();
+                    UC_AirBubble ucAir = new UC_AirBubble() { Dock = DockStyle.Fill };
+
+                    this.Controls.Add(ucAir);
+                    break;
+                case "Peel Test (On Product)":
+                    this.Controls.Clear();
+                    UC_AirBubble ucAirZ = new UC_AirBubble(true) { Dock = DockStyle.Fill };
+                    this.Controls.Add(ucAirZ);
+                    break;
                 default:
                     throw new Exception("Process not found");
             }
         }
+        private ComboBox cb_airBubble = new ComboBox() { Dock = DockStyle.Fill };
         bool IsTheSameCellValue(int column, int row)
         {
 
@@ -877,7 +895,7 @@ namespace OK2SHIP_SMT.UserControls
                 MessageBox.Show("ItemCode chưa được cài TABLE OF CONTENT");
             }
         }
-        private void getDataFormFile(string location, string itemCode, string lotNo, string process)
+        private void getDataFormFile(string location, string itemCode, string lotNo, string process, string productIDLocation)
         {
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
@@ -888,9 +906,37 @@ namespace OK2SHIP_SMT.UserControls
             {
                 switch (process)
                 {
+
                     case "X-Ray picture":
                         XRayPictureService xRayPictureService = new XRayPictureService();
-                        UC_XrayPicture.setData(xRayPictureService.Read(location, itemCode, lotNo), null);
+                        try
+                        {
+                            UC_XrayPicture.setData(xRayPictureService.Read(location, itemCode, lotNo, comboBox.Text), null);
+                        }
+                        catch (Exception ex)
+                        {
+                            try
+                            {
+
+                                string exMsg = ex.Message;
+                                if (exMsg.Split('-')[0].Contains("1234"))
+                                {
+                                    if (MessageBox.Show(exMsg.Split('-')[1], comboBox.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                    {
+
+                                        UC_XrayPicture.setData(xRayPictureService.Read(location, itemCode, lotNo, comboBox.Text, true), null);
+                                    }
+                                }
+                                else
+                                {
+                                    MessageBox.Show(ex.Message);
+                                }
+                            }
+                            catch (Exception e2x)
+                            {
+                                MessageBox.Show(e2x.Message);
+                            }
+                        }
                         break;
                     case "Environment en-durance":
                         EEDService eEDService = new EEDService();
@@ -913,7 +959,7 @@ namespace OK2SHIP_SMT.UserControls
                         }
                         else
                         {
-                            if (!int.TryParse(spec_log.Rows[0]["Count_Sample"].ToString(), out pcs))
+                            if (spec_log.Rows.Count <= 0)
                             {
                                 pcs = -1;
                             }

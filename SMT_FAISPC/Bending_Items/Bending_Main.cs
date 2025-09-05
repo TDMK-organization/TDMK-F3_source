@@ -44,8 +44,8 @@ namespace Bending_Items
         bool manual_en = false;
         Resize rs = new Resize();
         public Bending_SMT_Lib bending_proc = new Bending_SMT_Lib();
-        string Data_Location; 
-        string format_folder; 
+        string Data_Location;
+        string format_folder;
         string log_folder;
         List<string> Net_lst = new List<string>();
         Dictionary<string, string> sel_Log_info = new Dictionary<string, string>();
@@ -62,7 +62,8 @@ namespace Bending_Items
 
         private void Bending_Main_Load(object sender, EventArgs e)
         {
-            sqlcon_OK2SHIP=bending_proc.initial_data("OK2SHIP_SMT",true);
+            //sqlcon_OK2SHIP = bending_proc.initial_data("OK2SHIP_SMT", true);
+            sqlcon_OK2SHIP = bending_proc.initial_data("OK2SHIP_SMT_Q3_2025", true);
             //cbMachine.SelectedIndex = 0;
             cbShift.SelectedIndex = 0;
             cbShift_Sel.SelectedIndex = 0;
@@ -148,7 +149,7 @@ namespace Bending_Items
                     DataTable netSpec_tbl = new DataTable();
                     DataTable result_data = new DataTable();
                     //result_data = bending_proc.DAT_To_DataTable_details_time(f_name, ref Net_lst, ref netSpec_tbl,ref sel_Log_info);
-                    result_data = bending_proc.DAT_To_DataTable_details_time(f_name, ref Net_lst, ref netSpec_tbl, ref sel_Log_info,ref itemname, ref userid);
+                    result_data = bending_proc.DAT_To_DataTable_details_time(f_name, ref Net_lst, ref netSpec_tbl, ref sel_Log_info, ref itemname, ref userid);
                     DGV_LogFile.DataSource = result_data;
                     DGV_NET_Spec.DataSource = netSpec_tbl;
                     txtItemName.Text = itemname;
@@ -158,9 +159,9 @@ namespace Bending_Items
                 {
                     string userid = "";
                     string itemname = "";
-                    DGV_LogFile.DataSource = bending_proc.Load_Log_Data(sqlcon_OK2SHIP, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, cbCycles.Text,cbShift.Text,ref userid,ref itemname, lstLogFile.SelectedItem.ToString(),Net_lst);
+                    DGV_LogFile.DataSource = bending_proc.Load_Log_Data(sqlcon_OK2SHIP, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, cbCycles.Text, cbShift.Text, ref userid, ref itemname, lstLogFile.SelectedItem.ToString(), Net_lst);
                     DataTable spec_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, "NET_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { txtItemCode.Text, cbProcess.Text }));
-                    DGV_NET_Spec.DataSource = spec_dt.AsDataView().ToTable(false, new string[] {"Net_Name", "Point+V", "Point-V", "LSL", "USL" });
+                    DGV_NET_Spec.DataSource = spec_dt.AsDataView().ToTable(false, new string[] { "Net_Name", "Point+V", "Point-V", "LSL", "USL" });
                     txtOperator.Text = userid;
                     txtItemName.Text = itemname;
                 }
@@ -205,22 +206,22 @@ namespace Bending_Items
                 if (DGV_LogFile.DataSource != null)
                 {
                     //DataTable dt = bending_proc.Save_LogFile_detail_time(sqlcon_OK2SHIP, (DataTable)DGV_LogFile.DataSource, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, cbCycles.Text, lstLogFile.SelectedItem.ToString(), Net_lst, sel_Log_info);
-                    DataTable dt = bending_proc.Save_LogFile_detail_time(sqlcon_OK2SHIP, (DataTable)DGV_LogFile.DataSource, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, cbCycles.Text,cbShift.Text,txtOperator.Text,txtItemName.Text, lstLogFile.SelectedItem.ToString(), Net_lst, sel_Log_info);
+                    DataTable dt = bending_proc.Save_LogFile_detail_time(sqlcon_OK2SHIP, (DataTable)DGV_LogFile.DataSource, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, cbCycles.Text, cbShift.Text, txtOperator.Text, txtItemName.Text, lstLogFile.SelectedItem.ToString(), Net_lst, sel_Log_info);
                     DataTable spec_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, "NET_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { txtItemCode.Text, cbProcess.Text }));
-                    if(spec_dt.Rows.Count==0)
+                    if (spec_dt.Rows.Count == 0)
                     {
-                        List<string> items = new List<string>() { "ID","ItemCode"};
+                        List<string> items = new List<string>() { "ID", "ItemCode" };
                         DataTable temp_spec = (DataTable)DGV_NET_Spec.DataSource;
-                        foreach(DataColumn dc in temp_spec.Columns)
+                        foreach (DataColumn dc in temp_spec.Columns)
                         {
-                            items.Add("["+dc.ColumnName+"]");
+                            items.Add("[" + dc.ColumnName + "]");
                         }
                         items.Add("Remark");
                         int id = TDMK_Code.SQL_MAX("NET_SPEC", "ID", sqlcon_OK2SHIP);
-                        foreach(DataRow dr in temp_spec.Rows)
+                        foreach (DataRow dr in temp_spec.Rows)
                         {
                             id++;
-                            List<string> items_val = new List<string>() { id.ToString(),txtItemCode.Text };
+                            List<string> items_val = new List<string>() { id.ToString(), txtItemCode.Text };
                             foreach (DataColumn dc in temp_spec.Columns)
                             {
                                 items_val.Add(dr[dc].ToString());
@@ -277,7 +278,7 @@ namespace Bending_Items
                 if (!Logfile_mode)
                 {
                     List<string> logfile_lst = new List<string>();
-                    dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, cbProcess.Text + "_LOGFILE", TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Cycles_name","Shift" }, new string[] { txtItemCode.Text, txtLotNo.Text, cbCycles.Text, cbShift.Text }));
+                    dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, cbProcess.Text, TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Cycles_name", "Shift" }, new string[] { txtItemCode.Text, txtLotNo.Text, cbCycles.Text, cbShift.Text }));
                     proc_data.Get_List_data(-1, dt, new string[] { "ItemCode", "LotNo", "Cycles_name" }, ref logfile_lst, "Logfile", true);
                     lstLogFile.DataSource = logfile_lst;
                     if (logfile_lst.Count == 0)
@@ -349,7 +350,7 @@ namespace Bending_Items
         //public SqlConnection initial_data(string DB_name, bool sa_en)
         //{
         //    SqlConnection _sqlcon_OK2SHIP;
-             
+
         //    if (!File.Exists("Config.ini"))
         //    {
         //        TDMK_init.Write("Server", "10.212.1.243", "SMT_Config");
@@ -440,7 +441,7 @@ namespace Bending_Items
                 {
                     foreach (var logfile in block.Value)
                     {
-                        DataTable dt = new DataTable();                       
+                        DataTable dt = new DataTable();
                         if (Logfile_mode)
                         {
                             string f_name = Path.Combine(txtLocation.Text, logfile);
@@ -452,7 +453,7 @@ namespace Bending_Items
                             List<string> temp_net_lst = new List<string>();
                             string userid = "";
                             string itemname = "";
-                            dt = bending_proc.Load_Log_Data(sqlcon_OK2SHIP, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, cbCycles.Text,cbShift.Text,ref userid,ref itemname, logfile, temp_net_lst);
+                            dt = bending_proc.Load_Log_Data(sqlcon_OK2SHIP, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, cbCycles.Text, cbShift.Text, ref userid, ref itemname, logfile, temp_net_lst);
                         }
                         if (dt.Rows.Count > 0)
                         {
@@ -622,7 +623,7 @@ namespace Bending_Items
         private void btnDataSelect_Click(object sender, EventArgs e)
         {
             List<string> pcs_lst = new List<string>();
-            DataTable src_tbl = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, cbProcess.Text, TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo","Shift" }, new string[] { txtItemCode.Text, txtLotNo.Text, cbShift.Text }));
+            DataTable src_tbl = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, cbProcess.Text, TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Shift" }, new string[] { txtItemCode.Text, txtLotNo.Text, cbShift.Text }));
             proc_data.Get_List_data(-1, src_tbl, new string[] { "ItemCode", "LotNo" }, ref pcs_lst, "Pcs_No", true);
             if (pcs_lst.Count > 0)
             {
@@ -1084,7 +1085,7 @@ namespace Bending_Items
         //        }
         public void load_spec()
         {
-            start_lbl: string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { txtItemCode.Text, cbProcess.Text });
+        start_lbl: string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { txtItemCode.Text, cbProcess.Text });
             DataTable spec_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, "NET_SPEC", filter_str);
             if (spec_dt.Rows.Count > 0)
             {
@@ -1187,14 +1188,14 @@ namespace Bending_Items
         }
         private void btnSaveSubmit_Click(object sender, EventArgs e)
         {
-            DGV_Data.DataSource = proc_data.Save_Submit_data(sqlcon_OK2SHIP, (DataTable)DGV_Data.DataSource, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, cbCycles.Text,cbShift.Text);
+            DGV_Data.DataSource = proc_data.Save_Submit_data(sqlcon_OK2SHIP, (DataTable)DGV_Data.DataSource, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, cbCycles.Text, cbShift.Text);
             myCode.DGV_Auto_Resize(DGV_Data);
             btnSaveSubmit.Enabled = false;
         }
 
         private void DGV_Data_DataSourceChanged(object sender, EventArgs e)
         {
-            if(DGV_Data.DataSource!=null)
+            if (DGV_Data.DataSource != null)
             {
                 btnSaveSubmit.Enabled = true;
             }
@@ -1284,7 +1285,7 @@ namespace Bending_Items
 
         private void cbProcess_Sel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(cbProcess_Sel.SelectedIndex!=-1)
+            if (cbProcess_Sel.SelectedIndex != -1)
             {
                 List<string> cycles_lst = new List<string>();
                 string app_path = Application.StartupPath;
@@ -1297,12 +1298,19 @@ namespace Bending_Items
         }
         private void btnLoad_Data_Sel_Click(object sender, EventArgs e)
         {
-            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Shift" }, new string[] { txtItemCode_Sel.Text, txtLotNo_Sel.Text, cbShift_Sel.Text });
-            DGV_Data_Sel.DataSource = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, cbProcess_Sel.Text, filter_str);
-            sel_spec_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, "NET_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { txtItemCode_Sel.Text, cbProcess_Sel.Text }));
-            sel_log_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, cbProcess_Sel.Text +"_LOGFILE", filter_str);
-            //myCode.Disable_Sort_DGV(DGV_Data_Sel);
-            myCode.DGV_Auto_Resize(DGV_Data_Sel);
+            try
+            {
+                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Shift" }, new string[] { txtItemCode_Sel.Text, txtLotNo_Sel.Text, cbShift_Sel.Text });
+                DGV_Data_Sel.DataSource = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, cbProcess_Sel.Text , filter_str);
+                sel_spec_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, "NET_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { txtItemCode_Sel.Text, cbProcess_Sel.Text }));
+                sel_log_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, cbProcess_Sel.Text , filter_str);
+                //myCode.Disable_Sort_DGV(DGV_Data_Sel);
+                myCode.DGV_Auto_Resize(DGV_Data_Sel);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void DGV_Data_Sel_ColumnHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -1443,7 +1451,7 @@ namespace Bending_Items
                     {
                         proc_data.update_bending_table(sqlcon_OK2SHIP, src_dt, (DataTable)DGV_Cycles_Data_Sel.DataSource, sel_item.cur_ItemCode, sel_item.cur_Process, sel_item.cur_Cycles);
                     }
-                    string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo","Shift" }, new string[] { sel_item.cur_ItemCode, sel_item.cur_LotNo, cbShift_Sel.Text });
+                    string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Shift" }, new string[] { sel_item.cur_ItemCode, sel_item.cur_LotNo, cbShift_Sel.Text });
                     DataTable temp_dt = (DataTable)DGV_Data_Sel.DataSource;
                     TDMK_Code.Delelte_FilteredItem_arr(sel_item.cur_Process, sqlcon_OK2SHIP, filter_str);
                     proc_data.BatchBulkCopy(sqlcon_OK2SHIP, temp_dt, sel_item.cur_Process);
@@ -1637,7 +1645,7 @@ namespace Bending_Items
                     sheet_name = "Heat Soak & bending";
                     break;
             }
-            if(RB_Mass.Checked)
+            if (RB_Mass.Checked)
             {
                 //bending_proc.Export_Thermal_HeatSoak_Bend_MultiType(sqlcon_OK2SHIP, txtItemCode_Sel.Text, txtLotNo_Sel.Text, cbProcess_Sel.Text, sheet_name, 1,"MASS", cbShift_Sel.Text);
                 bending_proc_Epplus.Export_Thermal_HeatSoak_Bend_MultiType(sqlcon_OK2SHIP, txtItemCode_Sel.Text, txtLotNo_Sel.Text, cbProcess_Sel.Text, sheet_name, 1, "MASS", cbShift_Sel.Text);
@@ -1646,7 +1654,7 @@ namespace Bending_Items
             {
                 //bending_proc.Export_Thermal_HeatSoak_Bend_All(sqlcon_OK2SHIP, txtItemCode_Sel.Text, txtLotNo_Sel.Text, cbProcess_Sel.Text, sheet_name, 20, "NPI");
                 bending_proc_Epplus.Export_Thermal_HeatSoak_Bend_All(sqlcon_OK2SHIP, txtItemCode_Sel.Text, txtLotNo_Sel.Text, cbProcess_Sel.Text, sheet_name, 20, "NPI");
-            }    
+            }
         }
         private void DGV_Data_Sel_DataSourceChanged(object sender, EventArgs e)
         {
@@ -2132,7 +2140,7 @@ namespace Bending_Items
                                 }
                                 r_inx++;
                             }
-                            if(col_NG)
+                            if (col_NG)
                             {
                                 DGV_Cycles_Data_Sel.EnableHeadersVisualStyles = false;
                                 DGV_Cycles_Data_Sel.Columns[c_inx].HeaderCell.Style.BackColor = Color.HotPink;
@@ -2147,11 +2155,11 @@ namespace Bending_Items
                         }
                     }
                     bool data_ok_status = true;
-                    foreach(DataGridViewColumn dgv_c in DGV_Cycles_Data_Sel.Columns)
+                    foreach (DataGridViewColumn dgv_c in DGV_Cycles_Data_Sel.Columns)
                     {
-                        foreach(DataGridViewRow dgv_r in DGV_Cycles_Data_Sel.Rows)
+                        foreach (DataGridViewRow dgv_r in DGV_Cycles_Data_Sel.Rows)
                         {
-                            if(dgv_r.Cells[dgv_c.Index].Style.BackColor!=Color.White)
+                            if (dgv_r.Cells[dgv_c.Index].Style.BackColor != Color.White)
                             {
 
                                 data_ok_status = false;
@@ -2159,7 +2167,7 @@ namespace Bending_Items
                             }
                         }
                     }
-                    if(data_ok_status)
+                    if (data_ok_status)
                     {
                         lblCycleDetail.BackColor = Color.Green;
                     }
@@ -2227,18 +2235,18 @@ namespace Bending_Items
         {
             //bending_proc.Save_Log(sqlcon_OK2SHIP, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, (List<string>)lstLogFile.DataSource, txtLocation.Text);
             //bending_proc.Summary_Logfile_All(sqlcon_OK2SHIP, txtItemCode.Text, txtLotNo.Text, cbProcess.Text);
-            bending_proc.Save_Log(sqlcon_OK2SHIP, txtItemCode.Text, txtLotNo.Text, cbProcess.Text,cbShift.Text, (List<string>)lstLogFile.DataSource, txtLocation.Text);
-            bending_proc.Summary_Logfile_All(sqlcon_OK2SHIP, txtItemCode.Text, txtLotNo.Text, cbProcess.Text,cbShift.Text,Convert.ToInt32(numQty.Value));
+            bending_proc.Save_Log(sqlcon_OK2SHIP, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, cbShift.Text, (List<string>)lstLogFile.DataSource, txtLocation.Text);
+            bending_proc.Summary_Logfile_All(sqlcon_OK2SHIP, txtItemCode.Text, txtLotNo.Text, cbProcess.Text, cbShift.Text, Convert.ToInt32(numQty.Value));
         }
 
         private void DGV_Data_Sel_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             int r_inx = e.RowIndex;
             int c_inx = e.ColumnIndex;
-            if(r_inx!=-1 && c_inx!=-1)
+            if (r_inx != -1 && c_inx != -1)
             {
                 string col_name = DGV_Data_Sel.Columns[c_inx].Name;
-                if(col_name=="Before")
+                if (col_name == "Before")
                 {
                     DataGridViewCell cur_cell = DGV_Data_Sel.CurrentCell;
                     string NetNo = DGV_Data_Sel.Rows[r_inx].Cells["Net_No"].Value.ToString();
@@ -2251,7 +2259,7 @@ namespace Bending_Items
             }
             else
             {
-                if(r_inx==-1 && c_inx==-1)
+                if (r_inx == -1 && c_inx == -1)
                 {
                     DataTable src_dt = (DataTable)DGV_Data_Sel.DataSource;
                     dic_updated_bef = new Dictionary<string, List<Bending_SMT_Lib.Cell_data_details>>();
@@ -2298,12 +2306,12 @@ namespace Bending_Items
                             R_vary_NG_lst.Add(bef, sum);
                         }
                         string tar_bef = R_vary_NG_lst.Where(x => x.Value == R_vary_NG_lst.Values.Min()).First().Key;
-                        if(Cell_bef_val != tar_bef)
+                        if (Cell_bef_val != tar_bef)
                         {
                             //dr.Cells["Before"].Value = tar_bef;
                             src_dt.Rows[r]["Before"] = tar_bef;
                             Bending_SMT_Lib.Cell_data_details sel_bef_update = new Bending_SMT_Lib.Cell_data_details(Cell_bef_val, tar_bef, NetNo, usl, lsl);
-                            if (dic_updated_bef.Keys.ToList().IndexOf(pcs)==-1)
+                            if (dic_updated_bef.Keys.ToList().IndexOf(pcs) == -1)
                             {
                                 dic_updated_bef.Add(pcs, new List<Bending_SMT_Lib.Cell_data_details> { sel_bef_update });
                             }
@@ -2314,9 +2322,9 @@ namespace Bending_Items
                         }
                     }
                     proc_data.Check_Cycles_Data(DGV_Data_Sel, 0.1);
-                    MessageBox.Show(new Form {TopMost = true },"Hoàn thành chọn dữ liệu Before tốt nhất", "Thông báo");
+                    MessageBox.Show(new Form { TopMost = true }, "Hoàn thành chọn dữ liệu Before tốt nhất", "Thông báo");
                 }
-            }    
+            }
         }
 
         private void DGV_Data_Sel_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -2388,7 +2396,7 @@ namespace Bending_Items
             if ((r_inx > -1) && (c_inx > -1))
             {
                 string col_name = DGV_Data_Sel.Columns[c_inx].Name;
-                if(col_name.Contains("Before")||col_name.Contains("After"))
+                if (col_name.Contains("Before") || col_name.Contains("After"))
                 {
                     string itemcode = DGV_Data_Sel.Rows[r_inx].Cells["ItemCode"].Value.ToString();
                     string lotno = DGV_Data_Sel.Rows[r_inx].Cells["LotNo"].Value.ToString();
@@ -2409,7 +2417,7 @@ namespace Bending_Items
                 }
             }
         }
-        public List<string> logfile_data_lst (int r_inx, int c_inx, DataTable src_data)
+        public List<string> logfile_data_lst(int r_inx, int c_inx, DataTable src_data)
         {
             List<string> result = new List<string>();
             string col_name = src_data.Columns[c_inx].ColumnName;
@@ -2423,7 +2431,7 @@ namespace Bending_Items
             DataView dv = sel_log_dt.AsDataView();
             dv.RowFilter = filter_str;
             DataTable log_dt = dv.ToTable();
-            result= log_dt.AsEnumerable().Select(x => x.Field<string>("Data")).Distinct().ToList();
+            result = log_dt.AsEnumerable().Select(x => x.Field<string>("Data")).Distinct().ToList();
             return result;
         }
 
@@ -2450,10 +2458,10 @@ namespace Bending_Items
                 {
                     if (!manual_en)
                     {
-                        foreach(var t in dic_updated_bef)
+                        foreach (var t in dic_updated_bef)
                         {
                             string cur_pcs = t.Key;
-                            List< Bending_SMT_Lib.Cell_data_details> sel_updated_lst = t.Value;
+                            List<Bending_SMT_Lib.Cell_data_details> sel_updated_lst = t.Value;
                             int id = TDMK_Code.SQL_MAX("EDIT_HISTORY", "ID", sqlcon_OK2SHIP);
                             foreach (var cur_data in sel_updated_lst)
                             {
@@ -2480,7 +2488,7 @@ namespace Bending_Items
 
         private void cbShift_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(cbShift.SelectedIndex!=-1)
+            if (cbShift.SelectedIndex != -1)
             {
                 reset_all();
             }
@@ -2496,6 +2504,26 @@ namespace Bending_Items
                 cbShift_Sel.SelectedIndex = cbShift.SelectedIndex;
                 cbProcess_Sel.SelectedIndex = cbProcess.SelectedIndex;
             }
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtTotal_NET_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtTotalItem_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

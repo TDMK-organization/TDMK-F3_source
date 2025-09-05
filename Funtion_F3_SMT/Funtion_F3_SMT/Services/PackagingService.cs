@@ -208,7 +208,7 @@ namespace OK2SHIP_SMT.Services
                     for (int i = 0; i < dataTable.Rows.Count - 1; i++)
                     {
                         PasteAddress = ExportProcess.AddColumn(PasteAddress, 3);
-                        exportProcess.CopyColumn(worksheet, worksheet.Cells[startAddress], PasteAddress);
+                        ExportProcess.CopyColumn(worksheet, worksheet.Cells[startAddress], PasteAddress);
                     }
                     name = new[] { "Packing Ship", "Picture", "1. Any Tray deformation" };
                     dic = ExportProcess.FindAddressByText(worksheet, name);
@@ -246,7 +246,7 @@ namespace OK2SHIP_SMT.Services
                             else if (value.Contains("Tray") && value.Contains("AL") && value.Contains("bag"))
                             {
                                 ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["TrayALImage"], $"TrayAL{i}");
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["TrayALImage"], $"ALBAG{i}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["ALBagsImage"], $"ALBAG{i}");
                             }
                             else if (value.Contains("Carton Box"))
                             {

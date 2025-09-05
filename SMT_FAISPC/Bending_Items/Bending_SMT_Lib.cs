@@ -44,7 +44,7 @@ namespace Bending_Items
             public List<string> log_data;
             public string ItemName;
             public string UserID;
-            public Log_bending_data(string in_log_time, List<string> in_log_data, string in_ItemName, string in_UserID )
+            public Log_bending_data(string in_log_time, List<string> in_log_data, string in_ItemName, string in_UserID)
             {
                 log_time = in_log_time;
                 log_data = in_log_data;
@@ -80,7 +80,7 @@ namespace Bending_Items
             {
                 string rgn_addr = sel_rgn.AddressLocal;
                 myExcel.Range temp_rgn = sel_rgn.Offset[0, 1];
-                if(col_direction)
+                if (col_direction)
                 {
                     temp_rgn = sel_rgn.Offset[1, 0];
                 }
@@ -345,7 +345,7 @@ namespace Bending_Items
                     sel_rgn = cycle_rgn.Offset[0, i];
                 }
                 string sel_rgn_val = myCode.checkDBNull(sel_rgn.Value);
-                
+
                 if (remove_special_char(sel_rgn_val, reject_char_lst).ToUpper() == remove_special_char(search_key, reject_char_lst).ToUpper())
                 {
                     result = cycle_rgn.Offset[i + sel_rgn.MergeArea.Rows.Count, 0].AddressLocal;
@@ -490,7 +490,7 @@ namespace Bending_Items
             char[] split_char = { '\t', ',' };
             List<string> src_data = new List<string>();
             tar_file = _filename;
-            System.IO.StreamReader file = new System.IO.StreamReader(tar_file,Encoding.UTF8);
+            System.IO.StreamReader file = new System.IO.StreamReader(tar_file, Encoding.UTF8);
             string newline;
             while ((newline = file.ReadLine()) != null)
             {
@@ -517,7 +517,7 @@ namespace Bending_Items
                 if (values.Length > col_num)
                 {
                     string fail_val = Extract_Num_from_String(values[2]);
-                    if(fail_val == "0")
+                    if (fail_val == "0")
                     {
                         rec_en = true;
                         if (proc_en)
@@ -605,7 +605,7 @@ namespace Bending_Items
             }
             catch
             {
-                MessageBox.Show( new Form { TopMost = true },"Lỗi tên chân Pin", "Thông báo");
+                MessageBox.Show(new Form { TopMost = true }, "Lỗi tên chân Pin", "Thông báo");
             }
             return result_dt;
         }
@@ -704,7 +704,7 @@ namespace Bending_Items
                         string col_name = data.log_data[0];
                         List<string> result_col_lst = Get_column_name(result_dt);
                         UUT_inx = result_col_lst.Where(x => x.Contains(col_name)).Count();
-                        if(UUT_inx!=0)
+                        if (UUT_inx != 0)
                         {
                             col_name = col_name + "_" + UUT_inx.ToString();
                         }
@@ -720,7 +720,7 @@ namespace Bending_Items
                                 int r = Net_list.IndexOf(detail_data[6]);
                                 if (r == -1)
                                 {
-                                    if(Ignored_NET_lst.IndexOf(detail_data[6].ToUpper())==-1)
+                                    if (Ignored_NET_lst.IndexOf(detail_data[6].ToUpper()) == -1)
                                     {
                                         if (result_dt.Rows.Count < r_count + 1)
                                         {
@@ -748,14 +748,14 @@ namespace Bending_Items
                         {
                             Log_info.Add(data.log_data[0], data.log_time);
                         }
-                        if(ItemName=="")
+                        if (ItemName == "")
                         {
                             ItemName = data.ItemName;
                         }
-                        if(UserId=="")
+                        if (UserId == "")
                         {
                             UserId = data.UserID;
-                        }    
+                        }
                     }
                 }
                 tar_spec_dt = spec_dt;
@@ -782,10 +782,10 @@ namespace Bending_Items
                 }
                 else
                 {
-                    if(newline != "")
+                    if (newline != "")
                     {
                         src_data.Add(newline);
-                    }    
+                    }
                 }
             }
             List<string> columnnames = src_data[0].Split(split_char).Where(x => x != "").Select(x => x.Trim()).ToList();
@@ -810,7 +810,7 @@ namespace Bending_Items
                         item_count++;
                         string itemname = values[0].Split('-').FirstOrDefault();
                         string userid = values[10];
-                        Raw_Bending_data.Add(item_count, new Log_bending_data(values[1].Trim(), new List<string>() { values[5].Trim() },itemname,userid));
+                        Raw_Bending_data.Add(item_count, new Log_bending_data(values[1].Trim(), new List<string>() { values[5].Trim() }, itemname, userid));
                     }
                     else
                     {
@@ -890,7 +890,7 @@ namespace Bending_Items
         public DataTable Save_LogFile_detail(SqlConnection sqlcon_OK2SHIP, DataTable logfile_tbl, string ItemCode, string LotNo, string process_name, string cycle_name, string Logfile_name, List<string> Net_lst)
         {
             process_name = process_name + "_LOGFILE";
-            start_lbl: string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Logfile", "Cycles_name" }, new string[] { ItemCode, LotNo, Logfile_name, cycle_name });
+        start_lbl: string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Logfile", "Cycles_name" }, new string[] { ItemCode, LotNo, Logfile_name, cycle_name });
             DataTable temp_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name, filter_str);
             if (temp_dt.Rows.Count > 0)
             {
@@ -931,7 +931,7 @@ namespace Bending_Items
                     {
                         id++;
                         string net = (r_inx + 1).ToString();
-                        if(r_inx<Net_lst.Count)
+                        if (r_inx < Net_lst.Count)
                         {
                             net = Net_lst[r_inx];
                         }
@@ -944,15 +944,15 @@ namespace Bending_Items
             }
             return TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name, filter_str);
         }
-        public DataTable Save_LogFile_detail_time(SqlConnection sqlcon_OK2SHIP, DataTable logfile_tbl, string ItemCode, string LotNo, string process_name, string cycle_name, string Logfile_name, List<string> Net_lst,Dictionary<string,string> Log_details)
+        public DataTable Save_LogFile_detail_time(SqlConnection sqlcon_OK2SHIP, DataTable logfile_tbl, string ItemCode, string LotNo, string process_name, string cycle_name, string Logfile_name, List<string> Net_lst, Dictionary<string, string> Log_details)
         {
             process_name = process_name + "_LOGFILE";
-            string _Logfile_name = "%"+ Path.GetFileNameWithoutExtension(Logfile_name)+"%";
-            start_lbl: string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Logfile", "Cycles_name" }, new string[] { ItemCode, LotNo, _Logfile_name.ToUpper(), cycle_name });
+            string _Logfile_name = "%" + Path.GetFileNameWithoutExtension(Logfile_name) + "%";
+        start_lbl: string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Logfile", "Cycles_name" }, new string[] { ItemCode, LotNo, _Logfile_name.ToUpper(), cycle_name });
             DataTable temp_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name, filter_str);
             if (temp_dt.Rows.Count > 0)
             {
-                if (MessageBox.Show("Data of log file: "+Logfile_name+" is existed in Database. Do you want to update again?", "Warning", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show("Data of log file: " + Logfile_name + " is existed in Database. Do you want to update again?", "Warning", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     if (temp_dt.Rows.Count == logfile_tbl.Rows.Count * logfile_tbl.Columns.Count)
                     {
@@ -989,7 +989,7 @@ namespace Bending_Items
                     string log_name = Logfile_name;
                     string[] temp_pcs = pcs.Split('_');
                     string log_time = Log_details[temp_pcs.First()];
-                    if (temp_pcs.Length>1)
+                    if (temp_pcs.Length > 1)
                     {
                         log_name = Path.GetFileNameWithoutExtension(Logfile_name) + "_" + temp_pcs.Last() + Path.GetExtension(Logfile_name);
                         pcs = temp_pcs.First();
@@ -1002,7 +1002,7 @@ namespace Bending_Items
                         {
                             net = Net_lst[r_inx];
                         }
-                        TDMK_Code.insert_val_arr2(process_name, sqlcon_OK2SHIP, new string[] { "ID", "ItemCode", "LotNo", "Net_No", "Pcs_No", "Logfile", "Cycles_name", "Data","Remark" }, new string[] { id.ToString(), ItemCode, LotNo, net, pcs, log_name.ToUpper(), cycle_name, dr[dc].ToString(),log_time });
+                        TDMK_Code.insert_val_arr2(process_name, sqlcon_OK2SHIP, new string[] { "ID", "ItemCode", "LotNo", "Net_No", "Pcs_No", "Logfile", "Cycles_name", "Data", "Remark" }, new string[] { id.ToString(), ItemCode, LotNo, net, pcs, log_name.ToUpper(), cycle_name, dr[dc].ToString(), log_time });
                         r_inx++;
                     }
                     //col_inx++;
@@ -1010,11 +1010,11 @@ namespace Bending_Items
             }
             return TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name, filter_str);
         }
-        public DataTable Save_LogFile_detail_time(SqlConnection sqlcon_OK2SHIP, DataTable logfile_tbl, string ItemCode, string LotNo, string process_name, string cycle_name,string shift,string userid, string itemname, string Logfile_name, List<string> Net_lst, Dictionary<string, string> Log_details)
+        public DataTable Save_LogFile_detail_time(SqlConnection sqlcon_OK2SHIP, DataTable logfile_tbl, string ItemCode, string LotNo, string process_name, string cycle_name, string shift, string userid, string itemname, string Logfile_name, List<string> Net_lst, Dictionary<string, string> Log_details)
         {
             process_name = process_name + "_LOGFILE";
             string _Logfile_name = "%" + Path.GetFileNameWithoutExtension(Logfile_name) + "%";
-            start_lbl: string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Logfile", "Cycles_name","Shift" }, new string[] { ItemCode, LotNo, _Logfile_name.ToUpper(), cycle_name, shift });
+        start_lbl: string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Logfile", "Cycles_name", "Shift" }, new string[] { ItemCode, LotNo, _Logfile_name.ToUpper(), cycle_name, shift });
             DataTable temp_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name, filter_str);
             if (temp_dt.Rows.Count > 0)
             {
@@ -1062,7 +1062,7 @@ namespace Bending_Items
                     string log_name = Logfile_name;
                     string[] temp_pcs = pcs.Split('_');
                     string log_time = Log_details[temp_pcs.First()];
-                    if(col_lst.Count==1)
+                    if (col_lst.Count == 1)
                     {
                         if (temp_pcs.Length > 1)
                         {
@@ -1078,13 +1078,97 @@ namespace Bending_Items
                         {
                             net = Net_lst[r_inx];
                         }
-                        TDMK_Code.insert_val_arr2(process_name, sqlcon_OK2SHIP, new string[] { "ID", "ItemCode", "LotNo", "Net_No", "Pcs_No", "Logfile", "Cycles_name", "Data", "Remark","Shift","UserID","ItemName" }, new string[] { id.ToString(), ItemCode, LotNo, net, pcs, log_name.ToUpper(), cycle_name, dr[dc].ToString(), log_time,shift,userid,itemname });
+                        TDMK_Code.insert_val_arr2(process_name, sqlcon_OK2SHIP, new string[] { "ID", "ItemCode", "LotNo", "Net_No", "Pcs_No", "Logfile", "Cycles_name", "Data", "Remark", "Shift", "UserID", "ItemName" }, new string[] { id.ToString(), ItemCode, LotNo, net, pcs, log_name.ToUpper(), cycle_name, dr[dc].ToString(), log_time, shift, userid, itemname });
                         r_inx++;
                     }
                     //col_inx++;
                 }
             }
             return TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name, filter_str);
+        }
+        public bool Save_LogFile_detail_time_result(SqlConnection sqlcon_OK2SHIP, DataTable logfile_tbl, string ItemCode, string LotNo, string process_name, string cycle_name, string shift, string userid, string itemname, string Logfile_name, List<string> Net_lst, Dictionary<string, string> Log_details, string season = "")
+        {
+            try
+            {
+                process_name = process_name + "_LOGFILE" + season;
+                string _Logfile_name = "%" + Path.GetFileNameWithoutExtension(Logfile_name) + "%";
+            start_lbl: string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Logfile", "Cycles_name", "Shift" }, new string[] { ItemCode, LotNo, _Logfile_name.ToUpper(), cycle_name, shift });
+                DataTable temp_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name, filter_str);
+                if (temp_dt.Rows.Count > 0)
+                {
+                    if (MessageBox.Show("Data of log file: " + Logfile_name + " is existed in Database. Do you want to update again?", "Warning", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        if (temp_dt.Rows.Count == logfile_tbl.Rows.Count * logfile_tbl.Columns.Count)
+                        {
+                            int r_inx = 0;
+                            foreach (DataColumn dc in logfile_tbl.Columns)
+                            {
+                                foreach (DataRow dr in logfile_tbl.Rows)
+                                {
+                                    if (r_inx < temp_dt.Rows.Count)
+                                    {
+                                        temp_dt.Rows[r_inx]["Data"] = dr[dc].ToString();
+                                    }
+                                    r_inx++;
+                                }
+                            }
+                            foreach (DataRow dr in temp_dt.Rows)
+                            {
+                                dr["Shift"] = shift;
+                                dr["UserID"] = userid;
+                                dr["ItemName"] = itemname;
+                            }
+                            TDMK_Code.Delelte_FilteredItem_arr(process_name, sqlcon_OK2SHIP, filter_str);
+                            BatchBulkCopy(sqlcon_OK2SHIP, temp_dt, process_name);
+                        }
+                        else
+                        {
+                            TDMK_Code.Delelte_FilteredItem_arr(process_name, sqlcon_OK2SHIP, filter_str);
+                            goto start_lbl;
+                        }
+                    }
+                }
+                else
+                {
+                    int id = TDMK_Code.SQL_MAX(process_name, "ID", sqlcon_OK2SHIP);
+                    //int col_inx = 0;
+                    List<string> col_lst = Get_column_name(logfile_tbl).Where(x => !x.Contains("_")).ToList();
+                    foreach (DataColumn dc in logfile_tbl.Columns)
+                    {
+                        int r_inx = 0;
+                        string pcs = dc.ColumnName;
+                        string log_name = Logfile_name;
+                        string[] temp_pcs = pcs.Split('_');
+                        string log_time = Log_details[temp_pcs.First()];
+                        if (col_lst.Count == 1)
+                        {
+                            if (temp_pcs.Length > 1)
+                            {
+                                log_name = Path.GetFileNameWithoutExtension(Logfile_name) + "_" + temp_pcs.Last() + Path.GetExtension(Logfile_name);
+                                pcs = temp_pcs.First();
+                            }
+                        }
+                        foreach (DataRow dr in logfile_tbl.Rows)
+                        {
+                            id++;
+                            string net = (r_inx + 1).ToString();
+                            if (r_inx < Net_lst.Count)
+                            {
+                                net = Net_lst[r_inx];
+                            }
+                            TDMK_Code.insert_val_arr2(process_name, sqlcon_OK2SHIP, new string[] { "ID", "ItemCode", "LotNo", "Net_No", "Pcs_No", "Logfile", "Cycles_name", "Data", "Remark", "Shift", "UserID", "ItemName" }, new string[] { id.ToString(), ItemCode, LotNo, net, pcs, log_name.ToUpper(), cycle_name, dr[dc].ToString(), log_time, shift, userid, itemname });
+                            r_inx++;
+                        }
+                        //col_inx++;
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString(), "Thong bao");
+                return false;
+            }
         }
         public DataTable Load_Log_Data(SqlConnection sqlcon_OK2SHIP, string ItemCode, string LotNo, string process_name, string cycle_name, string logfile_name, List<string> Net_lst_name)
         {
@@ -1104,9 +1188,9 @@ namespace Bending_Items
             DataTable dt = DS.Tables[0];
             List<string> col_lst = new List<string>();
             Get_List_data(-1, dt, new string[] { "ItemCode", "LotNo" }, ref col_lst, "Pcs_No", true);
-            foreach(string col in col_lst)
+            foreach (string col in col_lst)
             {
-                if(!myCode.check_columns_existed(dgv_dt,col))
+                if (!myCode.check_columns_existed(dgv_dt, col))
                 {
                     dgv_dt.Columns.Add(col);
                 }
@@ -1128,7 +1212,7 @@ namespace Bending_Items
             }
             return dgv_dt;
         }
-        public DataTable Load_Log_Data(SqlConnection sqlcon_OK2SHIP, string ItemCode, string LotNo, string process_name, string cycle_name, string shift,ref string userid, ref string itemname, string logfile_name, List<string> Net_lst_name)
+        public DataTable Load_Log_Data(SqlConnection sqlcon_OK2SHIP, string ItemCode, string LotNo, string process_name, string cycle_name, string shift, ref string userid, ref string itemname, string logfile_name, List<string> Net_lst_name)
         {
             DataTable dgv_dt = new DataTable();
             List<DataTable> myLst_tbl = new List<DataTable>();
@@ -1140,11 +1224,11 @@ namespace Bending_Items
             }
             else
             {
-                TDMK_Code.fill_dataset_Filter_arr(DS, sqlcon_OK2SHIP, process_name, new string[] { "ItemCode", "LotNo", "Cycles_name","Shift", "Logfile" }, new string[] { ItemCode, LotNo, cycle_name,shift, logfile_name });
+                TDMK_Code.fill_dataset_Filter_arr(DS, sqlcon_OK2SHIP, process_name, new string[] { "ItemCode", "LotNo", "Cycles_name", "Shift", "Logfile" }, new string[] { ItemCode, LotNo, cycle_name, shift, logfile_name });
             }
 
             DataTable dt = DS.Tables[0];
-            if(dt.Rows.Count>0)
+            if (dt.Rows.Count > 0)
             {
                 userid = myCode.checkDBNull(dt.Rows[0]["UserID"]);
                 itemname = myCode.checkDBNull(dt.Rows[0]["ItemName"]);
@@ -1506,7 +1590,7 @@ namespace Bending_Items
         }
         public DataTable Save_Submit_data(SqlConnection sqlcon_OK2SHIP, DataTable submit_tbl, string ItemCode, string LotNo, string process_name, string cycle_name, List<string> Net_name)
         {
-            start_lbl: string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo });
+        start_lbl: string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo });
             DataTable temp_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name, filter_str);
             if (cycle_name == "")
             {
@@ -1579,7 +1663,7 @@ namespace Bending_Items
                         {
                             id++;
                             string net = (r_inx + 1).ToString();
-                            if(r_inx< Net_name.Count)
+                            if (r_inx < Net_name.Count)
                             {
                                 net = Net_name[r_inx];
                             }
@@ -1686,7 +1770,7 @@ namespace Bending_Items
 
             DirectoryInfo directory = new DirectoryInfo(in_data_loc);
             var files = extensions.SelectMany(e => directory.EnumerateFiles(e, SearchOption.AllDirectories)).Where(x => x.FullName.Contains(ItemCode)).ToList();
-            if(files.Count>0)
+            if (files.Count > 0)
             {
                 return files[0].FullName;
             }
@@ -1695,7 +1779,7 @@ namespace Bending_Items
         public SqlConnection initial_data(string DB_name, bool sa_en)
         {
             SqlConnection _sqlcon_OK2SHIP;
-            string temp = find_config_path(Application.StartupPath,"TDMK Program") ;// Path.GetDirectoryName(Application.StartupPath);
+            string temp = find_config_path(Application.StartupPath, "TDMK Program");// Path.GetDirectoryName(Application.StartupPath);
             string config_file = Path.Combine(temp, "Config.ini");
             TDMK_init = new IniFile(config_file);
             if (!File.Exists(config_file))
@@ -1717,7 +1801,7 @@ namespace Bending_Items
             Report_location = TDMK_init.Read("Report_Location", "SMT_Config");
             if (sa_en)
             {
-                string connstr_OK2SHIP = TDMK_Code.data_connection(server_name, DB_name, server_acc, server_pass).ConnectionString;
+                string connstr_OK2SHIP = TDMK_Code.data_connection(server_name, DB_name, server_acc, server_pass).ConnectionString + ";Connection Timeout=60000";
                 _sqlcon_OK2SHIP = new SqlConnection(connstr_OK2SHIP);
             }
             else
@@ -1730,7 +1814,7 @@ namespace Bending_Items
         public void Export_Bending(SqlConnection sqlcon_OK2SHIP, string ItemCode, string LotNo, string process_name, string format_name)
         {
             string f_loca = "";
-            string format_file =  find_format(format_folder, ItemCode);//@"D:\Customer Projects\SEEV\SMT Project\temp\Flex Bending_Export.xlsx";//
+            string format_file = find_format(format_folder, ItemCode);//@"D:\Customer Projects\SEEV\SMT Project\temp\Flex Bending_Export.xlsx";//
             if (format_file != "")
             {
                 string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo });
@@ -1739,7 +1823,7 @@ namespace Bending_Items
                 Get_ListTable(-1, src_tbl, new string[] { "ItemCode", "LotNo", "Pcs_No" }, ref src_tbl_lst, "Before");
                 myExcel.Workbook report_wrk = create_export_wrk(format_file, format_name);
                 myExcel.Worksheet tar_wrksht = report_wrk.Sheets[1];
-                List<string> data_addr_lst = Get_Bending_data_addr("Test item", "Sample", tar_wrksht, "A10",false);
+                List<string> data_addr_lst = Get_Bending_data_addr("Test item", "Sample", tar_wrksht, "A10", false);
                 int col_inx = 0;
                 foreach (var tbl in src_tbl_lst)
                 {
@@ -1855,9 +1939,9 @@ namespace Bending_Items
                     }
                 }
             }
-            MessageBox.Show( new Form { TopMost = true},"Lưu dữ liệu hoàn thành", "Thông báo");
+            MessageBox.Show(new Form { TopMost = true }, "Lưu dữ liệu hoàn thành", "Thông báo");
         }
-        public void Save_Log(SqlConnection sqlcon_OK2SHIP, string ItemCode, string LotNo, string process, string shift,List<string> logfile_lst, string log_locate)
+        public void Save_Log(SqlConnection sqlcon_OK2SHIP, string ItemCode, string LotNo, string process, string shift, List<string> logfile_lst, string log_locate)
         {
             char[] split_char = new char[] { ' ', '(', '_' };
             bool save_spec_en = true;
@@ -1883,9 +1967,9 @@ namespace Bending_Items
                 Dictionary<string, string> Log_info = new Dictionary<string, string>();
                 string userid = "";
                 string itemname = "";
-                result_data = DAT_To_DataTable_details_time(f_name, ref Net_lst, ref netSpec_tbl, ref Log_info,ref itemname, ref userid);
-                DataTable dt = Save_LogFile_detail_time(sqlcon_OK2SHIP, result_data, ItemCode, LotNo, process, cycle,shift,userid,itemname, log, Net_lst, Log_info);
-   start_label: DataTable spec_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, "NET_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { ItemCode, process }));
+                result_data = DAT_To_DataTable_details_time(f_name, ref Net_lst, ref netSpec_tbl, ref Log_info, ref itemname, ref userid);
+                bool save_result = Save_LogFile_detail_time_result(sqlcon_OK2SHIP, result_data, ItemCode, LotNo, process, cycle, shift, userid, itemname, log, Net_lst, Log_info);
+            start_label: DataTable spec_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, "NET_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { ItemCode, process }));
                 if (spec_dt.Rows.Count == 0)
                 {
                     List<string> items = new List<string>() { "ID", "ItemCode" };
@@ -1911,19 +1995,19 @@ namespace Bending_Items
                 }
                 else
                 {
-                    if(save_spec_en)
+                    if (save_spec_en)
                     {
-                        if(netSpec_tbl.Rows.Count!=spec_dt.Rows.Count)
+                        if (netSpec_tbl.Rows.Count != spec_dt.Rows.Count)
                         {
-                            if(MessageBox.Show("Dữ liệu NET Spec của logfile khác với dữ liệu đã lưu. Bạn muốn cập nhật lại ?","Thông báo", MessageBoxButtons.YesNo)==DialogResult.Yes)
+                            if (MessageBox.Show("Dữ liệu NET Spec của logfile khác với dữ liệu đã lưu. Bạn muốn cập nhật lại ?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
                                 save_spec_en = false;
                                 TDMK_Code.Delelte_FilteredItem_arr("NET_SPEC", sqlcon_OK2SHIP, TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { ItemCode, process }));
                                 goto start_label;
-                            }    
+                            }
                         }
                     }
-                }    
+                }
             }
             MessageBox.Show(new Form { TopMost = true }, "Lưu dữ liệu logfile hoàn thành", "Thông báo");
         }
@@ -1951,7 +2035,7 @@ namespace Bending_Items
                 List<string> Net_lst = new List<string>();
                 Dictionary<string, string> Log_info = new Dictionary<string, string>();
                 result_data = DAT_To_DataTable_details_time(f_name, ref Net_lst, ref netSpec_tbl, ref Log_info);
-                DataTable dt = Save_LogFile_detail_time(sqlcon_OK2SHIP, result_data, ItemCode, LotNo, process, cycle, log, Net_lst, Log_info);            
+                DataTable dt = Save_LogFile_detail_time(sqlcon_OK2SHIP, result_data, ItemCode, LotNo, process, cycle, log, Net_lst, Log_info);
                 DataTable spec_dt = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, "NET_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { ItemCode, process }));
                 if (spec_dt.Rows.Count == 0)
                 {
@@ -1981,8 +2065,8 @@ namespace Bending_Items
         public void Export_Thermal_HeatSoak_Bend_All(SqlConnection sqlcon_OK2SHIP, string ItemCode, string LotNo, string process_name, string format_name, int qty, string format_type)
         {
             //string format_loc = Path.Combine(format_folder, format_type);
-            string format_loc = Path.Combine(find_config_path(Application.StartupPath,"SEEV Data"),"Format", format_type);
-            Report_location= Path.Combine(find_config_path(Application.StartupPath, "SEEV Data"), "Report");
+            string format_loc = Path.Combine(find_config_path(Application.StartupPath, "SEEV Data"), "Format", format_type);
+            Report_location = Path.Combine(find_config_path(Application.StartupPath, "SEEV Data"), "Report");
             string format_file = find_format(format_loc, ItemCode, new List<string> { "*.xlsx", "*.xlsm" });
             if (format_file != "")
             {
@@ -1992,11 +2076,11 @@ namespace Bending_Items
                 SortedDictionary<int, string> sel_index_lst = Get_bending_Net(sqlcon_OK2SHIP, ItemCode, process_name);
                 List<int> index_lst = sel_index_lst.Keys.ToList();
                 DataTable src_tbl = _src_tbl.AsEnumerable().Where(x => index_lst.Contains(Convert.ToInt32(x.Field<string>("Net_no")) - 1)).CopyToDataTable();
-                DataTable spec_tbl = _spec_tbl.AsEnumerable().Where(x => x.Field<string>("Sel_Report")!="No").CopyToDataTable();
+                DataTable spec_tbl = _spec_tbl.AsEnumerable().Where(x => x.Field<string>("Sel_Report") != "No").CopyToDataTable();
                 DataTable log_tbl = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name + "_LOGFILE", filter_str);
                 List<DataTable> src_tbl_lst = new List<DataTable>();
                 Get_ListTable(-1, src_tbl, new string[] { "ItemCode", "LotNo", "Pcs_No" }, ref src_tbl_lst, "Before");
-                List<char> reject_char_lst = new List<char> { ' ', '_', '-','&' };
+                List<char> reject_char_lst = new List<char> { ' ', '_', '-', '&' };
                 List<string> Net_name = spec_tbl.AsEnumerable().Select(x => x.Field<string>("Net_Name")).ToList();
                 myExcel.Workbook report_wrk = null; //create_export_wrk(format_file, format_name);
                 myExcel.Worksheet tar_wrksht = null;// report_wrk.Sheets[1];
@@ -2024,7 +2108,7 @@ namespace Bending_Items
                         }
                     }
                 }
-                if (tar_wrksht!=null)
+                if (tar_wrksht != null)
                 {
                     string[] temp = Path.GetFileNameWithoutExtension(report_wrk.Name).Split('-');
                     string itemname = "";
@@ -2077,7 +2161,7 @@ namespace Bending_Items
                             {
                                 myExcel.Range time_rgn_offset = tar_wrksht.Range[Echeck_Cycle_addr[item.Key]].Offset[0, 1];
                                 time_rgn_offset.Value = log_time.Split(' ');
-                                time_rgn_offset.Offset[1,0].Value = log_time.Split(' ');
+                                time_rgn_offset.Offset[1, 0].Value = log_time.Split(' ');
                             }
                             if (Echeck_Cycle_addr.Keys.ToList().IndexOf(item.Key) != -1)
                             {
@@ -2116,14 +2200,14 @@ namespace Bending_Items
                                 cycle_rgn.Offset[i, 1].Value = last_data[i];
                             }
                             cycle_rgn.Offset[i, 2].FormulaR1C1 = "=RC[-1]/RC[-2]-1";
-                            if(Math.Abs(Convert.ToDouble(cycle_rgn.Offset[i, 2].Value)) > 0.1)
+                            if (Math.Abs(Convert.ToDouble(cycle_rgn.Offset[i, 2].Value)) > 0.1)
                             {
                                 cycle_rgn.Offset[i, 2].Interior.Color = 255;
                             }
                             cycle_rgn.Offset[i, 2].NumberFormat = "0.00 %";
                         }
                     }
-                    for(int i=0;i<Net_name.Count;i++)
+                    for (int i = 0; i < Net_name.Count; i++)
                     {
                         NET_rgn.Offset[i, 0].Value = Net_name[i];
                     }
@@ -2178,7 +2262,7 @@ namespace Bending_Items
                 myExcel.Range Echeck_cycle_rgn = tar_wrksht.Range[Echeck_start_rgn];
                 Dictionary<string, string> Echeck_Cycle_addr = Get_Echeck_address(Echeck_cycle_rgn);
                 Dictionary<int, string> cycle_data_addr_lst = Get_Bending_Cycle_addr("Test item", "Bending", tar_wrksht, "A10", false);
-                if(tar_pcs<=src_tbl_lst.Count)
+                if (tar_pcs <= src_tbl_lst.Count)
                 {
                     int col_inx = tar_pcs - 1;
                     DataTable tbl = src_tbl_lst[col_inx];
@@ -2189,15 +2273,15 @@ namespace Bending_Items
                         //List<string> after_data = item.Value;
                         List<string> sel_data = item.Value;
                         string cycle_filter = "BF";
-                        if(item.Key.Contains("After"))
+                        if (item.Key.Contains("After"))
                         {
                             cycle_filter = "L" + Extract_Num_from_String(item.Key);
                         }
-                        List<string>log_time_lst =  log_tbl.AsEnumerable().Where(x => x.Field<string>("Logfile").Contains(cycle_filter)).Select(x => x.Field<string>("Remark")).Distinct().ToList();
+                        List<string> log_time_lst = log_tbl.AsEnumerable().Where(x => x.Field<string>("Logfile").Contains(cycle_filter)).Select(x => x.Field<string>("Remark")).Distinct().ToList();
                         string log_time = "";
-                        if(log_time_lst.Count>0)
+                        if (log_time_lst.Count > 0)
                         {
-                            log_time = log_tbl.Rows[0]["Logfile"].ToString().Split('-').First()+" "+ log_time_lst.Last();
+                            log_time = log_tbl.Rows[0]["Logfile"].ToString().Split('-').First() + " " + log_time_lst.Last();
                         }
                         if (Echeck_Cycle_addr.Keys.ToList().IndexOf(item.Key) != -1)
                         {
@@ -2229,7 +2313,7 @@ namespace Bending_Items
                                 sum_rgn_offset.Value = "FAIL";
                             }
                         }
-                        if(item.Key.Contains("After"))
+                        if (item.Key.Contains("After"))
                         {
                             int cycle_no = Convert.ToInt32(Extract_Num_from_String(item.Key));
                             if (cycle_data_addr_lst.Keys.ToList().IndexOf(cycle_no) != -1)
@@ -2253,31 +2337,31 @@ namespace Bending_Items
         public void Export_Thermal_HeatSoak_Bend_MultiType(SqlConnection sqlcon_OK2SHIP, string ItemCode, string LotNo, string process_name, string format_name, int tar_pcs, string format_type, string shift)
         {
             //string format_loc = Path.Combine(format_folder, format_type);
-            string format_loc = Path.Combine(find_config_path(Application.StartupPath,"SEEV Data"),"Format", format_type);
+            string format_loc = Path.Combine(find_config_path(Application.StartupPath, "SEEV Data"), "Format", format_type);
             Report_location = Path.Combine(find_config_path(Application.StartupPath, "SEEV Data"), "Report");
             //string format_file = find_format(format_folder, ItemCode, new List<string> { "*.xlsx", "*.xlsm" });
             List<string> format_lst = get_multiple_files(format_loc, new List<string> { "*.xlsx", "*.xlsm" }, ItemCode, process_name);
-            string format_file ="";
+            string format_file = "";
             if (format_lst.Count > 0)
             {
                 format_file = format_lst[0];
             }
             if (format_file != "")
             {
-                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo","Shift" }, new string[] { ItemCode, LotNo, shift });
+                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Shift" }, new string[] { ItemCode, LotNo, shift });
                 DataTable _src_tbl = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name, filter_str);
                 DataTable _spec_tbl = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, "NET_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { ItemCode, process_name }));
                 DataTable log_tbl = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name + "_LOGFILE", filter_str);
                 SortedDictionary<int, string> sel_index_lst = Get_bending_Net(sqlcon_OK2SHIP, ItemCode, process_name);
                 List<int> index_lst = sel_index_lst.Keys.ToList();
                 DataTable src_tbl = _src_tbl.AsEnumerable().Where(x => index_lst.Contains(Convert.ToInt32(x.Field<string>("Net_no")) - 1)).CopyToDataTable();
-                DataTable spec_tbl = _spec_tbl.AsEnumerable().Where(x => x.Field<string>("Sel_Report")!="No").CopyToDataTable();
-               
+                DataTable spec_tbl = _spec_tbl.AsEnumerable().Where(x => x.Field<string>("Sel_Report") != "No").CopyToDataTable();
+
                 List<string> NET_name = spec_tbl.AsEnumerable().Select(x => x.Field<string>("Net_Name")).ToList();
                 List<DataTable> src_tbl_lst = new List<DataTable>();
                 Get_ListTable(-1, src_tbl, new string[] { "ItemCode", "LotNo", "Pcs_No" }, ref src_tbl_lst, "Before");
-                List<char> reject_char_lst = new List<char> { ' ', '_', '-','\r','\n' };
-                myExcel.Workbook report_wrk=null;// 
+                List<char> reject_char_lst = new List<char> { ' ', '_', '-', '\r', '\n' };
+                myExcel.Workbook report_wrk = null;// 
                 myExcel.Worksheet tar_wrksht = null;
                 myExcel.Worksheet result_sht = null;
                 string find_cycle_key = "Bending";
@@ -2287,7 +2371,7 @@ namespace Bending_Items
                     report_wrk = TDMK_Code.open_excel_file(format_file, "", "");
                     foreach (myExcel.Worksheet sht in report_wrk.Worksheets)
                     {
-                        if(remove_special_char(sht.Name, reject_char_lst)==remove_special_char(process_name, reject_char_lst))
+                        if (remove_special_char(sht.Name, reject_char_lst) == remove_special_char(process_name, reject_char_lst))
                         {
                             tar_wrksht = sht;
                             break;
@@ -2314,7 +2398,7 @@ namespace Bending_Items
                         }
                     }
                 }
-                if(tar_wrksht!=null)
+                if (tar_wrksht != null)
                 {
                     Dictionary<int, string> cycle_data_addr_lst = Get_Bending_Cycle_addr("Test item", find_cycle_key, tar_wrksht, "A10", false);
                     string NET_start_rgn = Get_start_range("Test item", "A10", tar_wrksht);
@@ -2331,7 +2415,7 @@ namespace Bending_Items
                     string time_addr = "";
                     string result_addr = "";
                     string operator_addr = "";
-                    if (result_sht!=null)
+                    if (result_sht != null)
                     {
                         proId_addr = Get_start_range("ProductID", "A1", result_sht, true);
                         itemname_addr = Get_start_range("Item name", "A1", result_sht, true);
@@ -2341,7 +2425,7 @@ namespace Bending_Items
                         cycle_addr = Get_start_range("Bending cycle", "A1", result_sht, true);
                         time_addr = Get_start_range(@"ICT Datetime Finish", "A1", result_sht, true);
                         result_addr = Get_start_range("Result", "A1", result_sht, true);
-                        operator_addr = Get_start_range("Output OperatorID", "A1", result_sht, true); 
+                        operator_addr = Get_start_range("Output OperatorID", "A1", result_sht, true);
                     }
                     if (tar_pcs <= src_tbl_lst.Count)
                     {
@@ -2354,7 +2438,7 @@ namespace Bending_Items
                         //}
                         itemname = myCode.checkDBNull(log_tbl.Rows[0]["ItemName"]);
                         UserID = myCode.checkDBNull(log_tbl.Rows[0]["UserID"]);
-                        string report_name = process_name + " " + itemname + "-" + ItemCode + "-" + LotNo +"-C"+shift+ " " + DateTime.Now.ToString("yyyyMMdd") + Path.GetExtension(report_wrk.Name);
+                        string report_name = process_name + " " + itemname + "-" + ItemCode + "-" + LotNo + "-C" + shift + " " + DateTime.Now.ToString("yyyyMMdd") + Path.GetExtension(report_wrk.Name);
                         if (format_type == "NPI")
                         {
                             report_name = Path.GetFileNameWithoutExtension(report_wrk.Name) + "-" + LotNo + " " + DateTime.Now.ToString("yyyyMMdd") + Path.GetExtension(report_wrk.Name);
@@ -2379,11 +2463,11 @@ namespace Bending_Items
                             {
                                 cycle_filter = "L" + Extract_Num_from_String(item.Key);
                             }
-                            List<string> log_time_lst = log_tbl.AsEnumerable().Where(x => x.Field<string>("Cycles_name")== item.Key).Select(x => x.Field<string>("Remark")).Distinct().ToList();
+                            List<string> log_time_lst = log_tbl.AsEnumerable().Where(x => x.Field<string>("Cycles_name") == item.Key).Select(x => x.Field<string>("Remark")).Distinct().ToList();
                             string log_time = "";
                             if (log_time_lst.Count > 0)
                             {
-                                string _log_time= log_tbl.AsEnumerable().Where(x => x.Field<string>("Cycles_name") == item.Key).Select(x => x.Field<string>("Logfile")).FirstOrDefault();
+                                string _log_time = log_tbl.AsEnumerable().Where(x => x.Field<string>("Cycles_name") == item.Key).Select(x => x.Field<string>("Logfile")).FirstOrDefault();
                                 log_time = _log_time.Split('-').First() + " " + log_time_lst.Last();
                             }
                             bool data_OK = false;
@@ -2392,7 +2476,7 @@ namespace Bending_Items
                                 myExcel.Range sum_rgn_offset = tar_wrksht.Range[Echeck_Cycle_addr[item.Key]].Offset[0, 2 + col_inx];
                                 myExcel.Range time_rgn_offset = tar_wrksht.Range[Echeck_Cycle_addr[item.Key]].Offset[0, 1 + col_inx];
                                 time_rgn_offset.Value = log_time;
-                                
+
                                 for (int r_inx = 0; r_inx < sel_data.Count; r_inx++)
                                 {
                                     string USL = myCode.checkDBNull(spec_tbl.Rows[r_inx]["USL"]);
@@ -2437,7 +2521,7 @@ namespace Bending_Items
                                     }
                                 }
                             }
-                            if(result_sht!=null)
+                            if (result_sht != null)
                             {
                                 if (item.Key.Contains("After"))
                                 {
@@ -2468,16 +2552,16 @@ namespace Bending_Items
                                     r_offset++;
                                 }
                             }
-                            
+
                         }
-                        for(int i=0;i< NET_name.Count;i++)
+                        for (int i = 0; i < NET_name.Count; i++)
                         {
                             NET_rgn.Offset[i, 0].Value = NET_name[i];
                         }
                         string last_cycle_addr = cycle_data_addr_lst.LastOrDefault().Value;
                         int col_num = tar_wrksht.Range[last_cycle_addr].MergeArea.Columns.Count;
                         int total_col_num = tar_wrksht.Range[last_cycle_addr].Column + col_num - 1;
-                        int r_off = NET_name.Count-1;
+                        int r_off = NET_name.Count - 1;
                         myExcel.Range final_rgn = tar_wrksht.Range[tar_wrksht.Range[NET_start_rgn], tar_wrksht.Range[NET_start_rgn].Offset[r_off, total_col_num - 1]];
                         List<myExcel.XlBordersIndex> st_lst = new List<myExcel.XlBordersIndex>() { myExcel.XlBordersIndex.xlEdgeLeft, myExcel.XlBordersIndex.xlEdgeTop, myExcel.XlBordersIndex.xlEdgeBottom, myExcel.XlBordersIndex.xlEdgeRight, myExcel.XlBordersIndex.xlInsideHorizontal, myExcel.XlBordersIndex.xlInsideVertical };//myExcel.XlBordersIndex.xlDiagonalDown, myExcel.XlBordersIndex.xlDiagonalUp,
                         foreach (var st in st_lst)
@@ -2504,7 +2588,7 @@ namespace Bending_Items
             while (myCode.checkDBNull(cycle_rgn.Offset[row_inx, 0].Value) != "")
             {
                 string rgn_val = myCode.checkDBNull(cycle_rgn.Offset[row_inx, 0].Value);
-                if(rgn_val.ToUpper().Contains("E-CHECK"))
+                if (rgn_val.ToUpper().Contains("E-CHECK"))
                 {
                     string cycle = Extract_Num_from_String(cycle_rgn.Offset[row_inx, 0].Value);// Get_Number_String(cycle_rgn.Offset[row_inx, 0].Value, ' ');
                     string cycle_name = "";
@@ -2535,7 +2619,7 @@ namespace Bending_Items
             {
                 if (myCode.checkDBNull(dr["Sel_Report"]) != "No")
                 {
-                    string cur_net = dr["Net_Name"].ToString() ;
+                    string cur_net = dr["Net_Name"].ToString();
                     dic_index_lst.Add(inx, cur_net);
                 }
                 inx++;
@@ -2579,7 +2663,7 @@ namespace Bending_Items
                 if (temp_rgn_val.ToUpper().Contains(search_key.ToUpper()))
                 {
                     int key = Convert.ToInt32(Extract_Num_from_String(temp_rgn_val));
-                    if(result.Keys.ToList().IndexOf(key)==-1)
+                    if (result.Keys.ToList().IndexOf(key) == -1)
                     {
                         result.Add(key, temp_rgn.AddressLocal);
                     }
@@ -2626,197 +2710,6 @@ namespace Bending_Items
                         DataTable dt = new DataTable();
                         List<string> temp_net_lst = new List<string>();
                         dt = Load_Log_Data(sqlcon, itemcode, lotno, process, cycle, logfile, temp_net_lst);
-
-                        if (dt.Rows.Count > 0)
-                        {
-                            if (TDMK_Code.check_exist_list_index2(cycle, dic_tbl_data_lst.Keys.ToList()) == -1)
-                            {
-                                dic_tbl_data_lst.Add(cycle, new List<DataTable>() { dt });
-                            }
-                            else
-                            {
-                                dic_tbl_data_lst[cycle].Add(dt);
-                            }
-                        }
-                    }
-                }
-                foreach (var tbl in dic_tbl_data_lst)
-                {
-                    DataTable block_tbl = Summary_Data_Table_from_list(tbl.Value, spec_dt);
-                    List<string> col_lst = Get_column_name(block_tbl);
-                    if(col_lst.Count>1)
-                    {
-                        List<string> main_col_lst = col_lst.Where(x => !x.Contains("_")).ToList();
-                        DataTable final_dt = new DataTable();
-                        foreach (string sel_col in main_col_lst)
-                        {
-                            string[] cur_col = col_lst.Where(x => x.Contains(sel_col)).ToArray();
-                            DataTable cur_dt = block_tbl.AsDataView().ToTable(false, cur_col);
-                            final_dt.Columns.Add(sel_col);
-                            int r_inx = 0;
-                            foreach (DataRow dr in cur_dt.Rows)
-                            {
-                                string USL = spec_dt.Rows[r_inx]["USL"].ToString();
-                                string LSL = spec_dt.Rows[r_inx]["LSL"].ToString();
-                                List<double> col_data_lst = new List<double>();
-                                foreach (DataColumn dc in cur_dt.Columns)
-                                {
-                                    string cur_val = myCode.checkDBNull(dr[dc]);
-                                    if (check_in_limit(USL, LSL, cur_val))
-                                    {
-                                        col_data_lst.Add(Convert.ToDouble(cur_val));
-                                    }
-                                }
-                                if (final_dt.Rows.Count <= r_inx)
-                                {
-                                    final_dt.Rows.Add();
-                                }
-                                if (col_data_lst.Count > 0)
-                                {
-                                    final_dt.Rows[r_inx][sel_col] = col_data_lst.Min();
-                                }
-                                r_inx++;
-                            }
-                        }
-                        result_table_lst.Add(tbl.Key, final_dt);
-                    }
-                    else
-                    {
-                        result_table_lst.Add(tbl.Key, block_tbl);
-                    }                   
-                }
-                List<string> pcs_lst = new List<string>();
-                pcs_lst = Get_column_name(dic_sum["Before"]);
-                if (pcs_lst.Count > 0)
-                {
-                    DataTable cur_dt = new DataTable();
-                    for (int i = 0; i < pcs_lst.Count; i++)
-                    {
-                        cur_dt.Columns.Add(pcs_lst[i]);
-                    }
-                    foreach (var tbl in result_table_lst)
-                    {
-                        string[] bl_name_arr = tbl.Key.Split('-');
-                        string bl_name = bl_name_arr[bl_name_arr.Length - 1];
-                        for (int r_inx = 0; r_inx < tbl.Value.Rows.Count; r_inx++)
-                        {
-                            if (cur_dt.Rows.Count < r_inx + 1)
-                            {
-                                cur_dt.Rows.Add();
-                            }
-                            for (int c_inx = 0; c_inx < tbl.Value.Columns.Count; c_inx++)
-                            {
-                                string col_name = tbl.Value.Columns[c_inx].ColumnName;// + "_" + "BL" + bl_name;
-                                if (TDMK_Code.check_exist_list_index2(col_name, pcs_lst) != -1)
-                                {
-                                    cur_dt.Rows[r_inx][col_name] = tbl.Value.Rows[r_inx][c_inx];
-                                }
-                            }
-                        }
-                    }
-                    dic_sum[cycle] = cur_dt;
-                }
-                else
-                {
-                    int div_factor = result_table_lst.Count;
-                    int fact = sel_num / div_factor;
-                    List<int> item_qty = new List<int>();
-                    List<DataTable> summ_tbl_lst = new List<DataTable>();
-                    if (sel_num > 1)
-                    {
-                        for (int i = 0; i < div_factor - 1; i++)
-                        {
-                            item_qty.Add(fact);
-                        }
-                        item_qty.Add(sel_num - (div_factor - 1) * fact);
-                    }
-                    else
-                    {
-                        for (int i = 0; i < div_factor; i++)
-                        {
-                            item_qty.Add(1);
-                        }
-                    }
-                    int inx = 0;
-                    foreach (var tbl in result_table_lst)
-                    {
-                        List<ECheck_Process.NG_list2> cur_NGList = exp_process.Get_NG_point_tbl(spec_dt, tbl.Value);
-                        DataTable sel_dt = exp_process.Summary_Selected_FromExisted(tbl.Value, cur_NGList, item_qty[inx]);
-                        summ_tbl_lst.Add(sel_dt);
-                        inx++;
-                    }
-                    DataTable disp_result = new DataTable();
-                    string bl_name;
-                    for (int i = 0; i < summ_tbl_lst.Count; i++)
-                    {
-                        string[] bl_name_arr = result_table_lst.Keys.ToList()[i].Split('-');
-                        bl_name = bl_name_arr[bl_name_arr.Length - 1];
-                        for (int j = 0; j < summ_tbl_lst[i].Columns.Count; j++)
-                        {
-
-                            string col_name = summ_tbl_lst[i].Columns[j].ColumnName;// + "_" + "BL" + bl_name;
-                            disp_result.Columns.Add(col_name);
-                        }
-                    }
-                    for (int i = 0; i < summ_tbl_lst.Count; i++)
-                    {
-                        string[] bl_name_arr = result_table_lst.Keys.ToList()[i].Split('-');
-                        bl_name = bl_name_arr[bl_name_arr.Length - 1];
-                        for (int r_inx = 0; r_inx < summ_tbl_lst[i].Rows.Count; r_inx++)
-                        {
-                            if (disp_result.Rows.Count < r_inx + 1)
-                            {
-                                disp_result.Rows.Add();
-                            }
-                            for (int c_inx = 0; c_inx < summ_tbl_lst[i].Columns.Count; c_inx++)
-                            {
-                                string col_name = summ_tbl_lst[i].Columns[c_inx].ColumnName;// + "_" + "BL" + bl_name;
-                                disp_result.Rows[r_inx][col_name] = summ_tbl_lst[i].Rows[r_inx][c_inx];
-                            }
-                        }
-                    }
-                    dic_sum[cycle] = disp_result;
-                }
-            }
-            return dic_sum;
-        }
-        public Dictionary<string, DataTable> Summary_Cycles_Logfile(SqlConnection sqlcon, string itemcode, string lotno, string process,string shift, int sel_num = 1)
-        {
-            Dictionary<string, DataTable> dic_sum = new Dictionary<string, DataTable>();
-            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo","Shift" }, new string[] { itemcode, lotno, shift });
-            string spec_filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { itemcode, process });
-            DataTable src_log_dt = TDMK_Code.Datatable_Filter(sqlcon, process + "_LOGFILE", filter_str);
-            List<string>_after_pcs_lst= src_log_dt.AsEnumerable().Where(x => x.Field<string>("Cycles_name").Contains("After")).Select(x=>x.Field<string>("Pcs_No")).Distinct().ToList();
-            List<string> after_pcs_lst=_after_pcs_lst.Where(x => !x.Contains("_")).Select(x => x.ToUpper()).Distinct().ToList();
-            List<string> _cycle_lst = src_log_dt.AsEnumerable().Select(x => x.Field<string>("Cycles_name")).Distinct().ToList();
-            List<string> cycle_lst = new List<string>();
-            if ( _cycle_lst.IndexOf("Before")!=-1 )
-            {
-                cycle_lst.Add("Before");
-                _cycle_lst.Remove("Before");
-                cycle_lst.AddRange(_cycle_lst);
-            }
-            else
-            {
-                return null;
-            }
-            foreach (string cycle in cycle_lst)
-            {
-                dic_sum.Add(cycle, new DataTable());
-                List<string> logfile_lst = src_log_dt.AsEnumerable().Where(x => x.Field<string>("Cycles_name") == cycle).Select(x => x.Field<string>("Logfile")).Distinct().ToList();
-                Dictionary<string, List<string>> dic_logfile = Get_BlockofLogFile(logfile_lst);
-                Dictionary<string, DataTable> result_table_lst = new Dictionary<string, DataTable>();
-                Dictionary<string, List<DataTable>> dic_tbl_data_lst = new Dictionary<string, List<DataTable>>();
-                DataTable spec_dt = TDMK_Code.Datatable_Filter(sqlcon, "NET_SPEC", spec_filter_str);
-                foreach (var block in dic_logfile)
-                {
-                    foreach (var logfile in block.Value)
-                    {
-                        DataTable dt = new DataTable();
-                        List<string> temp_net_lst = new List<string>();
-                        string userid = "";
-                        string itemname = "";
-                        dt = Load_Log_Data(sqlcon, itemcode, lotno, process, cycle,shift,ref userid,ref itemname, logfile, temp_net_lst);
 
                         if (dt.Rows.Count > 0)
                         {
@@ -2931,7 +2824,198 @@ namespace Bending_Items
                     int inx = 0;
                     foreach (var tbl in result_table_lst)
                     {
-                        List<string> sel_before_pcs_lst = Get_column_name(tbl.Value).Select(x=>x.ToUpper()).ToList();
+                        List<ECheck_Process.NG_list2> cur_NGList = exp_process.Get_NG_point_tbl(spec_dt, tbl.Value);
+                        DataTable sel_dt = exp_process.Summary_Selected_FromExisted(tbl.Value, cur_NGList, item_qty[inx]);
+                        summ_tbl_lst.Add(sel_dt);
+                        inx++;
+                    }
+                    DataTable disp_result = new DataTable();
+                    string bl_name;
+                    for (int i = 0; i < summ_tbl_lst.Count; i++)
+                    {
+                        string[] bl_name_arr = result_table_lst.Keys.ToList()[i].Split('-');
+                        bl_name = bl_name_arr[bl_name_arr.Length - 1];
+                        for (int j = 0; j < summ_tbl_lst[i].Columns.Count; j++)
+                        {
+
+                            string col_name = summ_tbl_lst[i].Columns[j].ColumnName;// + "_" + "BL" + bl_name;
+                            disp_result.Columns.Add(col_name);
+                        }
+                    }
+                    for (int i = 0; i < summ_tbl_lst.Count; i++)
+                    {
+                        string[] bl_name_arr = result_table_lst.Keys.ToList()[i].Split('-');
+                        bl_name = bl_name_arr[bl_name_arr.Length - 1];
+                        for (int r_inx = 0; r_inx < summ_tbl_lst[i].Rows.Count; r_inx++)
+                        {
+                            if (disp_result.Rows.Count < r_inx + 1)
+                            {
+                                disp_result.Rows.Add();
+                            }
+                            for (int c_inx = 0; c_inx < summ_tbl_lst[i].Columns.Count; c_inx++)
+                            {
+                                string col_name = summ_tbl_lst[i].Columns[c_inx].ColumnName;// + "_" + "BL" + bl_name;
+                                disp_result.Rows[r_inx][col_name] = summ_tbl_lst[i].Rows[r_inx][c_inx];
+                            }
+                        }
+                    }
+                    dic_sum[cycle] = disp_result;
+                }
+            }
+            return dic_sum;
+        }
+        public Dictionary<string, DataTable> Summary_Cycles_Logfile(SqlConnection sqlcon, string itemcode, string lotno, string process, string shift, int sel_num = 1, string season = "")
+        {
+            Dictionary<string, DataTable> dic_sum = new Dictionary<string, DataTable>();
+            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Shift" }, new string[] { itemcode, lotno, shift });
+            string spec_filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { itemcode, process });
+            DataTable src_log_dt = TDMK_Code.Datatable_Filter(sqlcon, process + "_LOGFILE" + season, filter_str);
+            List<string> _after_pcs_lst = src_log_dt.AsEnumerable().Where(x => x.Field<string>("Cycles_name").Contains("After")).Select(x => x.Field<string>("Pcs_No")).Distinct().ToList();
+            List<string> after_pcs_lst = _after_pcs_lst.Where(x => !x.Contains("_")).Select(x => x.ToUpper()).Distinct().ToList();
+            List<string> _cycle_lst = src_log_dt.AsEnumerable().Select(x => x.Field<string>("Cycles_name").Trim()).Distinct().ToList();
+            List<string> cycle_lst = new List<string>();
+            if (_cycle_lst.IndexOf("Before") != -1)
+            {
+                cycle_lst.Add("Before");
+                _cycle_lst.Remove("Before");
+                cycle_lst.AddRange(_cycle_lst);
+            }
+            else
+            {
+                return null;
+            }
+            foreach (string cycle in cycle_lst)
+            {
+                dic_sum.Add(cycle, new DataTable());
+                List<string> logfile_lst = src_log_dt.AsEnumerable().Where(x => x.Field<string>("Cycles_name").Trim() == cycle).Select(x => x.Field<string>("Logfile")).Distinct().ToList();
+                Dictionary<string, List<string>> dic_logfile = Get_BlockofLogFile(logfile_lst);
+                Dictionary<string, DataTable> result_table_lst = new Dictionary<string, DataTable>();
+                Dictionary<string, List<DataTable>> dic_tbl_data_lst = new Dictionary<string, List<DataTable>>();
+                DataTable spec_dt = TDMK_Code.Datatable_Filter(sqlcon, "NET_SPEC", spec_filter_str);
+                foreach (var block in dic_logfile)
+                {
+                    foreach (var logfile in block.Value)
+                    {
+                        DataTable dt = new DataTable();
+                        List<string> temp_net_lst = new List<string>();
+                        string userid = "";
+                        string itemname = "";
+                        dt = Load_Log_Data(sqlcon, itemcode, lotno, process, cycle, shift, ref userid, ref itemname, logfile, temp_net_lst);
+
+                        if (dt.Rows.Count > 0)
+                        {
+                            if (TDMK_Code.check_exist_list_index2(cycle, dic_tbl_data_lst.Keys.ToList()) == -1)
+                            {
+                                dic_tbl_data_lst.Add(cycle, new List<DataTable>() { dt });
+                            }
+                            else
+                            {
+                                dic_tbl_data_lst[cycle].Add(dt);
+                            }
+                        }
+                    }
+                }
+                foreach (var tbl in dic_tbl_data_lst)
+                {
+                    DataTable block_tbl = Summary_Data_Table_from_list(tbl.Value, spec_dt);
+                    List<string> col_lst = Get_column_name(block_tbl);
+                    if (col_lst.Count > 1)
+                    {
+                        List<string> main_col_lst = col_lst.Where(x => !x.Contains("_")).ToList();
+                        DataTable final_dt = new DataTable();
+                        foreach (string sel_col in main_col_lst)
+                        {
+                            string[] cur_col = col_lst.Where(x => x.Contains(sel_col)).ToArray();
+                            DataTable cur_dt = block_tbl.AsDataView().ToTable(false, cur_col);
+                            final_dt.Columns.Add(sel_col);
+                            int r_inx = 0;
+                            foreach (DataRow dr in cur_dt.Rows)
+                            {
+                                string USL = spec_dt.Rows[r_inx]["USL"].ToString();
+                                string LSL = spec_dt.Rows[r_inx]["LSL"].ToString();
+                                List<double> col_data_lst = new List<double>();
+                                foreach (DataColumn dc in cur_dt.Columns)
+                                {
+                                    string cur_val = myCode.checkDBNull(dr[dc]);
+                                    if (check_in_limit(USL, LSL, cur_val))
+                                    {
+                                        col_data_lst.Add(Convert.ToDouble(cur_val));
+                                    }
+                                }
+                                if (final_dt.Rows.Count <= r_inx)
+                                {
+                                    final_dt.Rows.Add();
+                                }
+                                if (col_data_lst.Count > 0)
+                                {
+                                    final_dt.Rows[r_inx][sel_col] = col_data_lst.Min();
+                                }
+                                r_inx++;
+                            }
+                        }
+                        result_table_lst.Add(tbl.Key, final_dt);
+                    }
+                    else
+                    {
+                        result_table_lst.Add(tbl.Key, block_tbl);
+                    }
+                }
+                List<string> pcs_lst = new List<string>();
+                pcs_lst = Get_column_name(dic_sum["Before"]);
+                if (pcs_lst.Count > 0)
+                {
+                    DataTable cur_dt = new DataTable();
+                    for (int i = 0; i < pcs_lst.Count; i++)
+                    {
+                        cur_dt.Columns.Add(pcs_lst[i]);
+                    }
+                    foreach (var tbl in result_table_lst)
+                    {
+                        string[] bl_name_arr = tbl.Key.Split('-');
+                        string bl_name = bl_name_arr[bl_name_arr.Length - 1];
+                        for (int r_inx = 0; r_inx < tbl.Value.Rows.Count; r_inx++)
+                        {
+                            if (cur_dt.Rows.Count < r_inx + 1)
+                            {
+                                cur_dt.Rows.Add();
+                            }
+                            for (int c_inx = 0; c_inx < tbl.Value.Columns.Count; c_inx++)
+                            {
+                                string col_name = tbl.Value.Columns[c_inx].ColumnName;// + "_" + "BL" + bl_name;
+                                if (TDMK_Code.check_exist_list_index2(col_name, pcs_lst) != -1)
+                                {
+                                    cur_dt.Rows[r_inx][col_name] = tbl.Value.Rows[r_inx][c_inx];
+                                }
+                            }
+                        }
+                    }
+                    dic_sum[cycle] = cur_dt;
+                }
+                else
+                {
+                    int div_factor = result_table_lst.Count;
+                    int fact = sel_num / div_factor;
+                    List<int> item_qty = new List<int>();
+                    List<DataTable> summ_tbl_lst = new List<DataTable>();
+                    if (sel_num > 1)
+                    {
+                        for (int i = 0; i < div_factor - 1; i++)
+                        {
+                            item_qty.Add(fact);
+                        }
+                        item_qty.Add(sel_num - (div_factor - 1) * fact);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < div_factor; i++)
+                        {
+                            item_qty.Add(1);
+                        }
+                    }
+                    int inx = 0;
+                    foreach (var tbl in result_table_lst)
+                    {
+                        List<string> sel_before_pcs_lst = Get_column_name(tbl.Value).Select(x => x.ToUpper()).ToList();
                         List<string> sel_pcs_lst = Get_intersec(new List<List<string>>() { sel_before_pcs_lst, after_pcs_lst });
                         DataTable dest_dt = tbl.Value.AsDataView().ToTable(false, sel_pcs_lst.ToArray());
                         List<ECheck_Process.NG_list2> cur_NGList = exp_process.Get_NG_point_tbl(spec_dt, dest_dt);
@@ -2974,11 +3058,11 @@ namespace Bending_Items
             }
             return dic_sum;
         }
-        public DataTable Summary_Logfile_All(SqlConnection sqlcon, string itemcode,string lotno,string process, int sel_num = 1)
+        public DataTable Summary_Logfile_All(SqlConnection sqlcon, string itemcode, string lotno, string process, int sel_num = 1)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { itemcode, lotno });
-            Dictionary<string, DataTable> dic_sum = Summary_Cycles_Logfile(sqlcon,itemcode, lotno, process, sel_num);
-            start_lable: DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, process, filter_str);
+            Dictionary<string, DataTable> dic_sum = Summary_Cycles_Logfile(sqlcon, itemcode, lotno, process, sel_num);
+        start_lable: DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, process, filter_str);
             if (src_dt.Rows.Count > 0)
             {
                 if (MessageBox.Show("Dữ liệu ItemCode / LotNo " + itemcode + " / " + lotno + "đã có. Bạn muốn cập nhật ?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -3018,7 +3102,7 @@ namespace Bending_Items
                             for (int i = 0; i < cycle_dt.Value.Rows.Count; i++)
                             {
                                 src_dt.Rows.Add((id + 1 + i).ToString(), itemcode, lotno, (i + 1), pcs);
-                                src_dt.Rows[i+r_offset][cycle_name] = cycle_dt.Value.Rows[i][dc];
+                                src_dt.Rows[i + r_offset][cycle_name] = cycle_dt.Value.Rows[i][dc];
                             }
                         }
                     }
@@ -3027,11 +3111,11 @@ namespace Bending_Items
             }
             return src_dt;
         }
-        public DataTable Summary_Logfile_All(SqlConnection sqlcon, string itemcode, string lotno, string process, string shift, int sel_num = 1)
+        public DataTable Summary_Logfile_All(SqlConnection sqlcon, string itemcode, string lotno, string process, string shift, int sel_num = 1, string season = "")
         {
-            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo","Shift" }, new string[] { itemcode, lotno,shift });
-            Dictionary<string, DataTable> dic_sum = Summary_Cycles_Logfile(sqlcon, itemcode, lotno, process,shift, sel_num);
-            if( dic_sum!=null)
+            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Shift" }, new string[] { itemcode, lotno, shift });
+            Dictionary<string, DataTable> dic_sum = Summary_Cycles_Logfile(sqlcon, itemcode, lotno, process, shift, sel_num, season);
+            if (dic_sum != null)
             {
             start_lable: DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, process, filter_str);
                 if (src_dt.Rows.Count > 0)
@@ -3044,7 +3128,7 @@ namespace Bending_Items
                 }
                 else
                 {
-                    int id = TDMK_Code.SQL_MAX(process, "ID", sqlcon)+1;
+                    int id = TDMK_Code.SQL_MAX(process, "ID", sqlcon) + 1;
                     foreach (var cycle_dt in dic_sum)
                     {
                         string cycle_name = cycle_dt.Key;
@@ -3076,7 +3160,7 @@ namespace Bending_Items
                                     src_dt.Rows[i + r_offset][cycle_name] = cycle_dt.Value.Rows[i][dc];
                                     src_dt.Rows[i + r_offset]["Shift"] = shift;
                                 }
-                                id+= cycle_dt.Value.Rows.Count;
+                                id += cycle_dt.Value.Rows.Count;
                             }
                         }
                     }
@@ -3089,10 +3173,10 @@ namespace Bending_Items
             {
                 MessageBox.Show("Thiếu dữ liệu Before", "Thông báo");
                 return null;
-            }    
+            }
 
         }
-        
+
         public void Export_Thermal_HeatSoak_Bend_MultiType_Type2(SqlConnection sqlcon_OK2SHIP, string ItemCode, string LotNo, string process_name, string format_type)//string format_name, ,  
         {
             string format_loc = Path.Combine(format_folder, format_type);
@@ -3136,7 +3220,7 @@ namespace Bending_Items
                     int row_num = tar_wrksht.Range[before_addr].MergeArea.Rows.Count;
                     int before_column = tar_wrksht.Range[before_addr].Column;
                     myExcel.Range NET_rgn = tar_wrksht.Range[NET_start_rgn];
-                    myExcel.Range No_rgn = NET_rgn.Offset[ 0, -3];
+                    myExcel.Range No_rgn = NET_rgn.Offset[0, -3];
                     myExcel.Range pattern_rgn = NET_rgn.Offset[0, -2];
                     cycle_data_addr_lst.Add(0, before_addr);
                     string[] temp = Path.GetFileNameWithoutExtension(report_wrk.Name).Split('-');
@@ -3172,14 +3256,14 @@ namespace Bending_Items
                             if (cycle_data_addr_lst.Keys.ToList().IndexOf(cycle_no) != -1)
                             {
                                 myExcel.Range cycle_rgn = tar_wrksht.Range[cycle_data_addr_lst[cycle_no]].Offset[row_num, 0];
-                                if(cycle_no==0)
+                                if (cycle_no == 0)
                                 {
                                     cycle_rgn = tar_wrksht.Range[cycle_data_addr_lst[cycle_no]].Offset[1, 0];
                                 }
                                 for (int r_inx = 0; r_inx < sel_data.Count; r_inx++)
                                 {
                                     cycle_rgn.Offset[r_inx + r_offset, 0].Value = sel_data[r_inx];
-                                    
+
                                     if (cycle_no == 0)
                                     {
                                         NET_rgn.Offset[r_inx + r_offset, 0].Value = NET_name[r_inx];
@@ -3188,12 +3272,12 @@ namespace Bending_Items
                                     }
                                     else
                                     {
-                                        cycle_rgn.Offset[r_inx + r_offset, 1].FormulaR1C1 = "=+(RC[-1]-RC"+before_column.ToString()+")/RC"+before_column.ToString();
+                                        cycle_rgn.Offset[r_inx + r_offset, 1].FormulaR1C1 = "=+(RC[-1]-RC" + before_column.ToString() + ")/RC" + before_column.ToString();
                                         cycle_rgn.Offset[r_inx + r_offset, 2].FormulaR1C1 = @"=+IFERROR(IF(ABS(RC[-1])>10%,IF(ABS(RC[-1])<100%,""10% ~ 100%"",IF(ABS(RC[-1])<500%,""100% ~ 500%"",""Over 500%"")),""Under 10%""),""Under 10%"")";
                                     }
                                 }
                             }
-                            
+
                         }
                         col_inx++;
                     }

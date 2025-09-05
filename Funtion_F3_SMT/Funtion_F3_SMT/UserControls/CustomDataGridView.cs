@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -24,7 +25,8 @@ namespace OK2SHIP_SMT.UserControls
         #region Constructor
         public CustomDataGridView(DataTable dataTable = null, Dictionary<string, string[]> dropdownItems = null)
         {
-            if (dataTable == null) { 
+            if (dataTable == null)
+            {
                 dataTable = new DataTable();
             }
 
@@ -353,6 +355,7 @@ namespace OK2SHIP_SMT.UserControls
         #endregion
 
         #region Event Handlers
+
         private void CustomDataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             if (Columns[e.ColumnIndex].ValueType == typeof(Image) ||
@@ -364,6 +367,21 @@ namespace OK2SHIP_SMT.UserControls
         #endregion
 
         #region Public Methods
+     
+       
+        public void SetUpWidth(int[] list)
+        {
+            int i = 0;
+            foreach (DataGridViewColumn item in this.Columns)
+            {
+                if (i >= list.Count())
+                {
+                    break;
+                }
+                item.Width = list[i++];
+
+            }
+        }
         public DataTable ConvertToDataTable()
         {
             DataTable resultTable = new DataTable();

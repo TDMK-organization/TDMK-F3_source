@@ -111,10 +111,10 @@ namespace OK2SHIP_SMT.Services
             }
             foreach (DataRow row in dataTable.Rows)
             {
-                string s1 = row["Black200250"].ToString();
+                //string s1 = row["Black200250"].ToString();
                 string s2 = row["Black500700"].ToString();
                 string jud = row["Judgement"].ToString();
-                if (jud.Equals("Level 3") && double.TryParse(s1, out double d1) && double.TryParse(s2, out double d2))
+                if (jud.Equals("Level 3") && double.TryParse(s2, out double d2))
                 {
                     row["CheckResults"] = "OK";
                 }
@@ -446,35 +446,56 @@ namespace OK2SHIP_SMT.Services
                             }
 
                             /// Insert SEM500-700
-
-                            byte[] imgData500 = (byte[])dt.Rows[iz]["SEM500700"];
-                            if (dic.TryGetValue("SEM 500-700", out addressCol))
+                            try
                             {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700{iz}");
+
+                                byte[] imgData500 = (byte[])dt.Rows[iz]["SEM500700"];
+                                if (dic.TryGetValue("SEM 500-700", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700{iz}");
+                                }
+                                if (dic.TryGetValue("SEM BSE 500-700", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700BIN{iz}");
+                                }
                             }
-                            if (dic.TryGetValue("SEM BSE 500-700", out addressCol))
+                            catch
                             {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700BIN{iz}");
+
+
                             }
-
-                            //Insert Binarization Image
-                            byte[] imgData200bin = (byte[])dt.Rows[iz]["Binarization500700"];
-
-                            if (dic.TryGetValue("Binarization 2", out addressCol))
+                            try
                             {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData200bin, $"Bin2001{iz}");
-                                ExportProcess.AddBorderToImage(worksheet, $"Bin2001{iz}", Color.Green);
+                                //Insert Binarization Image
+                                byte[] imgData200bin = (byte[])dt.Rows[iz]["Binarization500700"];
+
+                                if (dic.TryGetValue("Binarization 2", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData200bin, $"Bin2001{iz}");
+                                    ExportProcess.AddBorderToImage(worksheet, $"Bin2001{iz}", Color.Green);
+                                }
                             }
-
-                            byte[] imgData500bin = (byte[])dt.Rows[iz]["Binarization200250"];
-                            if (dic.TryGetValue("Binarization 3", out addressCol))
+                            catch
                             {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
-                                ExportProcess.AddBorderToImage(worksheet, $"Bin5001{iz}", Color.Green);
+
+                            }
+                            try
+                            {
+
+                                byte[] imgData500bin = (byte[])dt.Rows[iz]["Binarization200250"];
+                                if (dic.TryGetValue("Binarization 3", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
+                                    ExportProcess.AddBorderToImage(worksheet, $"Bin5001{iz}", Color.Green);
+                                }
+                            }
+                            catch
+                            {
+
                             }
 
                             //Insert black %

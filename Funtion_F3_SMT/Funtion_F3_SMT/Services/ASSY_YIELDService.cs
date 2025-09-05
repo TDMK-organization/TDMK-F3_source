@@ -130,8 +130,19 @@ namespace OK2SHIP_SMT.Services
             {
                 using (ExcelWorksheet worksheet = exportProcess.FindSheet(package, "Assy Yield"))
                 {
-                    string[] healder = new string[] { "Station", "Input", "Passed and shipped to next process", "Rejected", "Evaluation", "IPQC", "ORT", "WIP", "Others" };
+                    string[] healder = new string[] { "Production Yield Target:", "Station", "Input", "Passed and shipped to next process", "Rejected", "Evaluation", "IPQC", "ORT", "WIP", "Others" };
                     IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, healder, true);
+                    if (dic.TryGetValue("Production Yield Target:", out string valueZA))
+                    {
+                        DataTable dtz = _dbContext.LoadDataTable("TARGET_OF_ASSY_YIELD", new[] { "ItemCode" }, new[] { itemCode });
+                        string value = dtz.Rows[0]["Value"].ToString();
+                        if (double.TryParse(value, out double val))
+                        {
+                            worksheet.Cells[ExportProcess.AddColumn(valueZA, 1)].Value = val / 100;
+                            worksheet.Cells[ExportProcess.AddColumn(valueZA, 1)].Style.Numberformat.Format = "#0.00%";
+
+                        }
+                    }
                     #region Process
                     DataTable dataTable = dIC["Process"];
                     Dictionary<string, int> Marking = new Dictionary<string, int>();
@@ -141,6 +152,7 @@ namespace OK2SHIP_SMT.Services
                         Marking.Add(row["Station"].ToString(), i);
                     }
                     string address = dic["Station"].Split('-')[dic["Station"].Split('-').Count() - 1];
+                    string SaveADD = address;
                     while (true)
                     {
                         address = ExportProcess.AddRow(address, 1);
@@ -251,7 +263,7 @@ namespace OK2SHIP_SMT.Services
                                         {
                                             ExportProcess.InsertImageToCell(worksheet, newz, TDMK_ImageConverter.ImageToByteArray((Image)row[col], ImageFormat.Png), $"{Guid.NewGuid()}");
                                         }
-
+                                        newz.Value = row["Defect Name"];
                                         add = ExportProcess.AddColumn(add, 1);
 
                                     }
@@ -262,7 +274,17 @@ namespace OK2SHIP_SMT.Services
                                             add = ExportProcess.AddColumn(add, -1);
 
                                         }
-                                        worksheet.Cells[add].Value = row[col].ToString();
+                                        if (col.ColumnName.Equals("Defect Rate"))
+                                        {
+                                           
+                                            int r = worksheet.Cells[SaveADD].Start.Row - worksheet.Cells[add].Start.Row + 1;
+                                            int c = worksheet.Cells[SaveADD].Start.Column - worksheet.Cells[add].Start.Column + 1;
+                                            worksheet.Cells[add].FormulaR1C1 = $"=RC[-1]/R[{r}]C[{c}]";
+                                        }
+                                        else
+                                        {
+                                            worksheet.Cells[add].Value = row[col].ToString();
+                                        }
                                     }
                                     add = ExportProcess.AddColumn(add, 1);
                                 }
@@ -273,6 +295,36 @@ namespace OK2SHIP_SMT.Services
                     #endregion
                     exportProcess.SaveExcelWorksheet(package, "Assy Yield", $"Assy Yield - {itemCode} - {lotNo}");
                 }
+            }
+
+        }
+
+        public string LoadTarget(string itemCode)
+        {
+            DataTable dt = _dbContext.LoadDataTable("TARGET_OF_ASSY_YIELD", new[] { "ItemCode" }, new[] { itemCode });
+            if (dt.Rows.Count > 0)
+            {
+                return dt.Rows[0]["Value"].ToString();
+            }
+            return "";
+        }
+
+        public void SaveTarget(string itemCode, string value)
+        {
+
+            DataTable dt = _dbContext.GetTableStructure("TARGET_OF_ASSY_YIELD");
+            DataRow row = dt.NewRow();
+            if (double.TryParse(value, out double valuez))
+            {
+                row["Value"] = valuez;
+                row["ItemCode"] = itemCode;
+                dt.Rows.Add(row);
+                _dbContext.BuckDataTable(dt, "TARGET_OF_ASSY_YIELD", new[] { "ItemCode" }, null, "ID");
+                throw new Exception("Lưu thành công");
+            }
+            else
+            {
+                throw new Exception("Dữ liệu không phù hợp");
             }
 
         }

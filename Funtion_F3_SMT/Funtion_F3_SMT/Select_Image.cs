@@ -358,10 +358,13 @@ namespace Funtion_F3_SMT
         private void UpdateData()
         {
             DataTable dataTable = (DataTable)dgv_judgement.DataSource;
-         
-            foreach(DataColumn col in dataTable.Columns)
+            if (dataTable != null)
             {
-                dt_image.Rows[r_inx][col.ColumnName] = dataTable.Rows[0][col];
+
+                foreach (DataColumn col in dataTable.Columns)
+                {
+                    dt_image.Rows[r_inx][col.ColumnName] = dataTable.Rows[0][col];
+                }
             }
         }
         private void btn_next_Click(object sender, EventArgs e)

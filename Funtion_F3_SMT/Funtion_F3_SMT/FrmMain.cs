@@ -171,6 +171,8 @@ namespace Funtion_F3_SMT
                 case "Bar Code Verification":
                 case "X-Ray picture":
                 case "Thermal cycling, Heat soak, Thermal shock":
+                case "Air Bubble":
+                case "Peel Test (On Product)":
                     pMain.Controls.Clear();
                     pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
                     break;

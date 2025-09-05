@@ -758,22 +758,22 @@ namespace OK2SHIP_SMT.Services
                             }
 
                         }
-                    }
-                    if (!string.IsNullOrEmpty(avarage) && !string.IsNullOrEmpty(peak))
-                    {
-                        double aS = double.Parse(avarage.Split('~')[0]);
-                        double aE = double.Parse(avarage.Split('~')[1]);
-                        double pS = double.Parse(peak.Split('~')[0]);
-                        double pE = double.Parse(peak.Split('~')[1]);
-                        foreach (DataRow row in dic[tape][name].Rows)
+                        if (!string.IsNullOrEmpty(avarage) && !string.IsNullOrEmpty(peak))
                         {
-                            bool prime = false;
-                            double peakR = double.Parse(row["Peak"].ToString());
-                            double averageR = double.Parse(row["Average"].ToString());
+                            double aS = double.Parse(avarage.Split('~')[0]);
+                            double aE = double.Parse(avarage.Split('~')[1]);
+                            double pS = double.Parse(peak.Split('~')[0]);
+                            double pE = double.Parse(peak.Split('~')[1]);
+                            foreach (DataRow rowz in dic[tape][name].Rows)
+                            {
+                                bool prime = false;
+                                double peakR = double.Parse(rowz["Peak"].ToString());
+                                double averageR = double.Parse(rowz["Average"].ToString());
 
-                            prime = peakR < pE && peakR > pS;
-                            prime = prime && averageR < aE && averageR > aS;
-                            row["Judgement Peeling force"] = prime ? "Pass" : "Fail";
+                                prime = peakR < pE && peakR > pS;
+                                prime = prime && averageR < aE && averageR > aS;
+                                rowz["Judgement Peeling force"] = prime ? "Pass" : "Fail";
+                            }
                         }
                     }
                 }

@@ -4,10 +4,15 @@ using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Excel;
 using OfficeOpenXml;
 using OK2SHIP_SMT.Libary;
+using OK2SHIP_SMT.Services;
+using OK2SHIP_SMT.ToolBoxs;
+using OK2SHIP_SMT.UserControls;
+using OK2SHIP_SMT.Views;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -25,7 +30,7 @@ namespace OK2SHIP_SMT
 
         public TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
         //public EPPlus_Lib TDMK_EPPLUS = new EPPlus_Lib();
-     
+
         public SEI_Lib myCode = new SEI_Lib();
         string admin_mode = "LOGIN";
         public SqlConnection sqlcon = null;
@@ -49,14 +54,15 @@ namespace OK2SHIP_SMT
 
         private void ACF_Load(object sender, EventArgs e)
         {
+            UpdateLogin();
             string app_path = System.Windows.Forms.Application.StartupPath;
             //app_path = @"\\10.212.6.212\Saomai\QA\TDMK_DATA\Test_Areas\FPCA OK2SHIP Auto System(temp2)\VHX-IMADA";
             string program_loc = F_export_EPPlus.find_config_path(app_path, "TDMK Program");
             string config_path = Path.Combine(program_loc, "Config.ini");
             //string config_path = Path.Combine(app_path.Replace(@"\VHX-IMADA", ""), "Config.ini");
             TDMK_init = new IniFile(config_path);
-            //data_loc = TDMK_init.Read("Format_Folder", "SMT_Config");
-            data_loc = F_export_EPPlus.find_config_path(app_path, "SEEV Data");
+            data_loc = TDMK_init.Read("Format_Folder", "SMT_Config") + "\\SEEV Data";
+            //data_loc = F_export_EPPlus.find_config_path(app_path.Replace("\\FPCA OK2SHIP Auto System\\VHX-IMADA", ""), "Format_Folder");
             //data_loc = Path.Combine(System.Windows.Forms.Application.StartupPath.Replace(@"\VHX-IMADA", ""));
             server_name = TDMK_init.Read("Server", "SMT_Config");
             server_acc = TDMK_init.Read("Account", "SMT_Config");
@@ -286,173 +292,58 @@ namespace OK2SHIP_SMT
         }
         public void fill_dgv_spec_wetting()
         {
-            if (dgv_Wetting.Rows.Count > 0 && cb_Type.SelectedIndex != -1 && cb_Type.SelectedItem.ToString() == "NPI")
+
+        }
+        private void FillData()
+        {
+            DateTime dateTime = DateTime.Now;
+            foreach (string key in dic.Keys)
             {
-                string spec = "";
-                DataTable dt_spec_DB = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, "ACF", cb_Type.SelectedItem.ToString() }));
-                if (dt_spec_DB.Rows.Count > 0)
+                if (dic_list.TryGetValue(key, out List<DateTime> list))
                 {
-                    spec = dt_spec_DB.Rows[0]["Location"].ToString().Split('_')[0];
-                    DataTable dt_spec = new DataTable();
-                    dt_spec.Columns.Add("Machine");
-                    dt_spec.Columns.Add("Wetting angle");
-                    dt_spec.Columns.Add("Side");
-                    dt_spec.Columns.Add("Spec");
-                    dt_spec.Columns.Add("Min");
-                    dt_spec.Columns.Add("Max");
-                    dt_spec.Columns.Add("Average");
-                    dt_spec.Columns.Add("Std");
-                    dt_spec.Columns.Add("CPK");
-                    dt_spec.Columns.Add("JUDGE");
 
-                    List<DataTable> lst_table_machine = new List<DataTable> { };
-                    Get_ListTable(-1, (DataTable)dgv_Wetting.DataSource, new string[] { "Machine" }, ref lst_table_machine, "Machine");
-
-                    foreach (DataTable dt in lst_table_machine)
-                    {
-                        string machine = dt.Rows[0]["Machine"].ToString();
-
-                        string[] arr_side = { "ACF", "GND" };
-                        string[] arr_angle = { "After_Plasma", "Before_Packing" };
-                        int k = 0;
-                        foreach (string angle in arr_angle)
-                        {
-                            foreach (string side in arr_side)
-                            {
-                                string filter = TDMK_Code.filter_str(new string[] { "Machine", "Side" }, new string[] { machine, side });
-                                DataView dv = ((DataTable)dgv_Wetting.DataSource).AsDataView();
-                                dv.RowFilter = filter;
-                                DataTable dt_filter = dv.ToTable();
-                                List<double> lst_data = new List<double> { };
-                                foreach (DataRow dr in dt_filter.Rows)
-                                {
-                                    if (myCode.IsNumeric(dr[angle].ToString()))
-                                    {
-                                        lst_data.Add(Double.Parse(dr[angle].ToString()));
-                                    }
-                                }
-                                if (lst_data.Count > 0)
-                                {
-                                    DataRow row = dt_spec.NewRow();
-                                    string max = lst_data.Max().ToString();
-                                    string min = lst_data.Min().ToString();
-                                    string Average = Math.Round(lst_data.Average(), 2).ToString();
-                                    double STDEV = CalculateStandardDeviation(lst_data);
-
-                                    string _spec = spec.Split(';')[k + 2];
-                                    double Mean = double.Parse(_spec.Replace("<", "").Replace(">", "").Replace("°", "").Replace(" ", ""));
-                                    double cpk = Math.Round((Mean - lst_data.Average()) / (3 * STDEV), 2);
-
-                                    // double cpk = new double[] { cpkl, cpku }.Min(); 
-
-                                    row[0] = machine;
-                                    row[1] = angle;
-                                    row[2] = side;
-                                    row[3] = _spec;
-                                    row[4] = min;
-                                    row[5] = max;
-                                    row[6] = Average;
-                                    row[7] = Math.Round(STDEV, 2);
-                                    row[8] = cpk;
-
-
-                                    if (cpk > 1.33)
-                                    {
-                                        row[9] = "OK";
-                                    }
-                                    else
-                                    {
-                                        row[9] = "NG";
-                                    }
-
-                                    dt_spec.Rows.Add(row);
-
-                                }
-                                k++;
-                            }
-                        }
-
-                    }
-                    dgv_spec.DataSource = dt_spec;
                 }
                 else
                 {
-                    MessageBox.Show(new Form { TopMost = true }, "Vui lòng cài đặt format", "Thông báo");
+                    // Tạo một List<DateTime> gồm 6 phần tử, mỗi phần tử cách nhau 10 ngày
+                    List<DateTime> dateList = new List<DateTime>();
+                    DateTime startDate = DateTime.Now;
+                    for (int i = 0; i < 6; i++)
+                    {
+                        dateList.Add(startDate.AddDays(i * 10));
+                    }
+                    dic_list.Add(key, dateList);
                 }
-
             }
-
+            listBox1.Items.Clear();
+            listBox1.Items.AddRange(dic.Keys.ToArray());
+            dataGridView.DataSource = new DataTable();
 
         }
-
+        private Dictionary<string, DataTable> dic = new Dictionary<string, DataTable>();
+        private Dictionary<string, List<DateTime>> dic_list = new Dictionary<string, List<DateTime>>();
         private void btn_loadwetting_Click(object sender, EventArgs e)
         {
-            if (txtItemCode.Text != "" && txtLotNo.Text != "" && txtOperator.Text != "" && txtLogfile_wetting.Text != "")
+            try
             {
-                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode" }, new string[] { txtItemCode.Text });
-                DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, "ACF_WETTING", filter_str).Clone();
-                Dictionary<string, Dictionary<string, string>> dic_spec = new Dictionary<string, Dictionary<string, string>> { };
-
-                ExcelWorkbook wb = TDMK_EPPLUS.open_excel_file(txtLogfile_wetting.Text);
-                foreach (ExcelWorksheet ws in wb.Worksheets)
+                if (txtItemCode.Text != "" && txtLotNo.Text != "" && txtOperator.Text != "")
                 {
-                    SortedDictionary<int, string> dic_machine = new SortedDictionary<int, string> { };
-                    for (int i = 1; i < 50; i++)
-                    {
-                        for (int j = 1; j < 3; j++)
-                        {
-                            if (myCode.checkDBNull(ws.Cells[i, j].Value).Replace(" ", "").ToUpper() == "NO")
-                            {
-                                int count_sample = 0;
-                                while (myCode.IsNumeric(myCode.checkDBNull(ws.Cells[i + 2 + count_sample, j].Value)))
-                                {
-                                    count_sample++;
-                                }
+                    UC_AddDataMachine uc = new UC_AddDataMachine();
+                    uc.DICTIONARY = dic;
+                    NormalForm form = new NormalForm(uc);
+                    form.ShowDialog();
 
-                                if (myCode.checkDBNull(ws.Cells[i, j + 4].Value).ToUpper().Contains("PLASMA"))
-                                {
-                                    for (int k = 0; k < count_sample; k++)
-                                    {
-                                        string val = "";
-
-                                        val += get_value_cell(ws.Cells[i + k + 2, j + 4].Value) + "_" + get_value_cell(ws.Cells[i + k + 2, j + 5].Value) + "_" + get_value_cell(ws.Cells[i + k + 2, j + 8].Value) + "_" + get_value_cell(ws.Cells[i + k + 2, j + 9].Value);
-
-                                        dic_machine.Add(k + 1, val);
-                                    }
-                                    Dictionary<string, string> dic_spec_machine = new Dictionary<string, string> { };
-
-                                    dic_spec_machine.Add("Max", get_value_cell(ws.Cells[i + count_sample + 2, j + 4].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 2, j + 5].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 2, j + 8].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 2, j + 9].Value));
-                                    dic_spec_machine.Add("Min", get_value_cell(ws.Cells[i + count_sample + 3, j + 4].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 3, j + 5].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 3, j + 8].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 3, j + 9].Value));
-                                    dic_spec_machine.Add("Average", get_value_cell(ws.Cells[i + count_sample + 4, j + 4].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 4, j + 5].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 4, j + 8].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 4, j + 9].Value));
-                                    dic_spec_machine.Add("Std", get_value_cell(ws.Cells[i + count_sample + 5, j + 4].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 5, j + 5].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 5, j + 8].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 5, j + 9].Value));
-                                    dic_spec_machine.Add("Cpk", get_value_cell(ws.Cells[i + count_sample + 6, j + 4].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 6, j + 5].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 6, j + 8].Value) + "_" + get_value_cell(ws.Cells[i + count_sample + 6, j + 9].Value));
-
-                                    dic_spec.Add(ws.Name.Replace(" ", ""), dic_spec_machine);
-                                }
-                            }
-                        }
-                    }
-                    int ID = 1;
-                    foreach (var data in dic_machine)
-                    {
-                        string[] val = data.Value.Split('_');
-
-                        Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, ws.Name.Replace(" ", ""), data.Key.ToString(), "ACF", val[0], val[2], txtOperator.Text, DateTime.Now.ToString(), txtLogfile_wetting.Text);
-                        Data_tbl.Rows.Add(ID + 1, txtItemCode.Text, txtLotNo.Text, ws.Name.Replace(" ", ""), data.Key.ToString(), "GND", val[1], val[3], txtOperator.Text, DateTime.Now.ToString(), txtLogfile_wetting.Text);
-                        ID = ID + 2;
-                    }
+                    dic = uc.DICTIONARY;
+                    FillData();
                 }
-
-
-                dgv_Wetting.DataSource = Data_tbl;
-                myCode.Disable_Sort_DGV(dgv_Wetting);
-                myCode.Disable_Sort_DGV(dgv_spec);
-                fill_dgv_spec_wetting();
-
+                else
+                {
+                    MessageBox.Show(new Form { TopMost = true }, "Please, fill in ItemCode / LotNo / Operator / Type / Logfile Location", "Warning");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show(new Form { TopMost = true }, "Please, fill in ItemCode / LotNo / Operator / Type / Logfile Location", "Warning");
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -473,17 +364,17 @@ namespace OK2SHIP_SMT
 
         private void txtLogfile_wetting_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            OpenFileDialog f_open = new OpenFileDialog();
-            f_open.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
-            f_open.InitialDirectory = System.Windows.Forms.Application.StartupPath;
-            if (f_open.ShowDialog() == DialogResult.OK)
-            {
-                if (f_open.FileName != "")
-                {
-                    txtLogfile_wetting.Text = f_open.FileName;
-                }
+            //OpenFileDialog f_open = new OpenFileDialog();
+            //f_open.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+            //f_open.InitialDirectory = System.Windows.Forms.Application.StartupPath;
+            //if (f_open.ShowDialog() == DialogResult.OK)
+            //{
+            //    if (f_open.FileName != "")
+            //    {
+            //        txtLogfile_wetting.Text = f_open.FileName;
+            //    }
 
-            }
+            //}
         }
         public string find_format(string in_data_loc, string ItemCode)
         {
@@ -1554,7 +1445,7 @@ namespace OK2SHIP_SMT
             {
                 if (cb_Type.SelectedIndex != -1)
                 {
-                    btnLoaddb_wetting.PerformClick();
+                    //btnLoaddb_wetting.PerformClick();
                     if (cb_Type.SelectedItem.ToString() == "NPI")
                     {
                         string file_format = find_format(data_loc, txtItemCode.Text);
@@ -1609,49 +1500,21 @@ namespace OK2SHIP_SMT
 
         private void btn_save_wetting_Click(object sender, EventArgs e)
         {
-            if (txtItemCode.Text != "" && txtLotNo.Text != "" && dgv_Wetting.DataSource != null)
+            try
             {
-                DataTable tbl_data = (DataTable)dgv_Wetting.DataSource;
-                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-            lblsave:
-                DataTable dt = TDMK_Code.Datatable_Filter(sqlcon, "ACF_WETTING", filter_str);
-                if (dt.Rows.Count == 0)
+                new ACFService().Save(txtItemCode.Text, txtLotNo.Text, dic, dic_list, cb_Type.Text);
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.Message;
+                if (msg.Split('_').Count() >= 2 && msg.Split('_')[0].Contains("1231"))
                 {
-                    if (tbl_data.Rows.Count > 0)
-                    {
-                        int i = TDMK_Code.SQL_MAX("ACF_WETTING", "ID", sqlcon) + 1;
-                        foreach (DataRow dr in tbl_data.Rows)
-                        {
-                            dr[0] = i;
-                            i++;
-                        }
-                        BatchBulkCopy(sqlcon, (DataTable)dgv_Wetting.DataSource, "ACF_WETTING");
-                        MessageBox.Show(new Form { TopMost = true }, "Lưu dữ liệu thành công", "Thông báo");
-                    }
-                    else
-                    {
-                        MessageBox.Show(new Form { TopMost = true }, "Không có dữ liệu", "Thông báo");
-                    }
-
-
+                    bool prime = MessageBox.Show($"{msg.Split('_')[1]}", "Thông báo!", MessageBoxButtons.YesNo) == DialogResult.Yes;
+                    new ACFService().Save(txtItemCode.Text, txtLotNo.Text, dic, dic_list, cb_Type.Text, prime);
                 }
                 else
                 {
-
-                    if (MessageBox.Show(new Form { TopMost = true }, "Dữ liệu đã tồn tại. Bạn có muốn cập nhật không?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        if (admin_mode == "Admin mode")
-                        {
-                            TDMK_Code.Delelte_FilteredItem_arr("ACF_WETTING", sqlcon, filter_str);
-                            goto lblsave;
-                        }
-                        else
-                        {
-                            MessageBox.Show("Vui lòng đăng nhập để cập nhật dữ liệu", "Thông báo");
-
-                        }
-                    }
-
+                    MessageBox.Show(msg);
                 }
             }
         }
@@ -1778,16 +1641,24 @@ namespace OK2SHIP_SMT
 
                 if (myCode.checkDBNull(dgv.Rows[i].Cells[j].Value) != "")
                 {
-                    double data = double.Parse(myCode.checkDBNull(dgv.Rows[i].Cells[j].Value));
-                    if (data >= sa)
+                    try
                     {
-                        dgv.Rows[i].Cells[j].Style.BackColor = Color.Red;
-                    }
-                    else
-                    {
-                        dgv.Rows[i].Cells[j].Style.BackColor = Color.White;
-                    }
 
+                        double data = double.Parse(myCode.checkDBNull(dgv.Rows[i].Cells[j].Value));
+                        if (data >= sa)
+                        {
+                            dgv.Rows[i].Cells[j].Style.BackColor = Color.Red;
+                        }
+                        else
+                        {
+                            dgv.Rows[i].Cells[j].Style.BackColor = Color.White;
+                        }
+
+                    }
+                    catch
+                    {
+                        return;
+                    }
                 }
             }
 
@@ -1832,14 +1703,19 @@ namespace OK2SHIP_SMT
         public void Load_data_SMT(string tbl_name, DataGridView dgv_data)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
+
+            DataTable dt_analysis = tbl_name != "ACF_BONDING" ? TDMK_Code.Datatable_Filter(sqlcon, tbl_name, filter_str) : new DataTable();
             if (tbl_name == "ACF_BONDING")
             {
-                filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Remark" }, new string[] { txtItemCode.Text, txtLotNo.Text, txt_date_peel.Text + "_" + txt_worker_peel.Text + "_" + cb_Type.SelectedItem.ToString() });
+                dt_analysis = new ACFService().loadPeel(txtItemCode.Text, txtLotNo.Text);
             }
-
-            DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, tbl_name, filter_str);
             if (dt_analysis.Rows.Count > 0)
             {
+                if (!dt_analysis.Columns.Contains("ProductID"))
+                {
+
+                    ProductIDService.FillProductID(dt_analysis, txtItemCode.Text, txtLotNo.Text, tbl_name);
+                }
                 int ID = 1;
                 foreach (DataRow dr in dt_analysis.Rows)
                 {
@@ -1865,59 +1741,70 @@ namespace OK2SHIP_SMT
             }
             else
             {
-                MessageBox.Show(new Form { TopMost = true }, tbl_name + ": Không có dữ liệu", "Warning");
+                throw new Exception(tbl_name + ": Không có dữ liệu");
             }
         }
 
 
         private void btnLoaddb_wetting_Click(object sender, EventArgs e)
         {
-            dgv_Flatness.DataSource = dgv_peel.DataSource = dgv_roughness_data.DataSource = dgv_spec.DataSource = dgv_Wetting.DataSource = null;
-            if (txtItemCode.Text != "" && txtLotNo.Text != "" && cb_Type.SelectedIndex != -1)
+            try
             {
 
-                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-                DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, "ACF_WETTING", filter_str);
-
-                if (dt_analysis.Rows.Count > 0)
-                {
-                    int ID = 1;
-                    foreach (DataRow dr in dt_analysis.Rows)
-                    {
-                        dr["ID"] = ID;
-                        ID++;
-                    }
-
-                    dgv_Wetting.DataSource = dt_analysis;
-                    myCode.Disable_Sort_DGV(dgv_Wetting);
-                    myCode.Disable_Sort_DGV(dgv_spec);
-                    fill_dgv_spec_wetting();
-                }
-                else
-                {
-                    MessageBox.Show(new Form { TopMost = true }, "ACF wetting contact angle: Không có dữ liệu", "Warning");
-                }
-
+                ACFService service = new ACFService();
+                txt_ItemName.Text = service.loadItemNamebyItemCode(txtItemCode.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            #region WCA
+            try
+            {
+                KeyValuePair<Dictionary<string, DataTable>, Dictionary<string, List<DateTime>>> z = new ACFService().LoadWCA(txtItemCode.Text, txtLotNo.Text, cb_Type.Text);
+                dic = z.Key;
+                dic_list = z.Value;
+                listBox1.Items.Clear();
+                listBox1.Items.AddRange(dic.Keys.ToArray());
+                dataGridView.DataSource = new DataTable();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"WCA: {ex.Message}");
+            }
+            #endregion
+            #region FLATNESS
+            try
+            {
                 Load_data_SMT("ACF_FLATNESS", dgv_Flatness);
-                Load_data_SMT("ACF_BONDING", dgv_peel);
-                if (dgv_peel.DataSource != null)
-                {
-                    check_data_bonding_mass(dgv_peel);
-                }
-                Load_data_SMT("Roughness", dgv_roughness_data);
-
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show(new Form { TopMost = true }, "Vui lòng nhập đầy đủ thông tin", "Warning");
+                MessageBox.Show($"ACF_FLATNESS: {ex.Message}");
+            }
+            try
+            {
+                Load_data_SMT("ACF_BONDING", dgv_peel);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"ACF_BONDING: {ex.Message}");
+            }
+            try
+            {
+                Load_data_SMT("Roughness", dgv_roughness_data);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Roughness: {ex.Message}");
             }
 
+            #endregion
         }
 
 
         private void dgv_Wetting_ColumnHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            Hide_column(dgv_Wetting, ref hide_mode_wetting);
             //highlight_row(dgv_Wetting);
         }
 
@@ -1926,37 +1813,34 @@ namespace OK2SHIP_SMT
 
         }
 
-        private void Setmode(string value)
+
+        private void UpdateLogin()
         {
-            this.lbl_Login.Text = value;
-            admin_mode = value;
-            if (value == "Admin mode")
+            if (UserSession.Instance.IsLoggedIn)
             {
-                // this.lbl_Login.BackColor = Color.GreenYellow;
-                this.lbl_Login.ForeColor = Color.Green;
+                lbl_Login.Text = "Logout";
+                lbl_Login.ForeColor = Color.Red;
+                txtOperator.Text = UserSession.Instance.User_ID;
             }
             else
             {
-                // this.lbl_Login.BackColor = Color.Yellow;
-                this.lbl_Login.ForeColor = Color.SteelBlue;
-
+                lbl_Login.Text = "Login";
+                lbl_Login.ForeColor = Color.SteelBlue;
+                txtOperator.Text = "";
             }
-
         }
-
         private void lbl_Login_Click(object sender, EventArgs e)
         {
-            Login fr1 = new Login(Setmode);
-            if (lbl_Login.Text == "Admin mode")
+            if (UserSession.Instance.IsLoggedIn)
             {
-                fr1.mode = true;
+                UserSession.Instance.Logout();
             }
             else
             {
-                fr1.mode = false;
+                Login fr1 = new Login();
+                fr1.ShowDialog();
             }
-
-            fr1.Show();
+            UpdateLogin();
         }
 
         private void dgv_Wetting_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
@@ -1966,34 +1850,6 @@ namespace OK2SHIP_SMT
 
         private void dgv_Wetting_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            string colname = dgv_Wetting.Columns[e.ColumnIndex].Name;
-            if (colname == "After_Plasma" || colname == "Before_Packing")
-            {
-                string machine = dgv_Wetting.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
-                string side = dgv_Wetting.Rows[e.RowIndex].Cells["Side"].Value.ToString();
-                DataView dv = ((DataTable)dgv_spec.DataSource).AsDataView();
-                string filter = TDMK_Code.filter_str(new string[] { "Machine", "Wetting angle", "Side" }, new string[] { machine, colname, side });
-                if (dv.Count > 0)
-                {
-                    string spec = dv.ToTable().Rows[0]["Spec"].ToString();
-                    double Mean = double.Parse(spec.Replace("<", "").Replace(">", "").Replace("°", "").Replace(" ", ""));
-
-                    if (myCode.IsNumeric(myCode.checkDBNull(dgv_Wetting.Rows[e.RowIndex].Cells[e.ColumnIndex].Value)))
-                    {
-                        if (double.Parse(myCode.checkDBNull(dgv_Wetting.Rows[e.RowIndex].Cells[e.ColumnIndex].Value)) > Mean)
-                        {
-                            dgv_Wetting.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Red;
-                        }
-                        else
-                        {
-                            dgv_Wetting.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.White;
-                        }
-                    }
-                }
-
-            }
-
-            fill_dgv_spec_wetting();
         }
 
         private void dgv_roughness_data_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
@@ -2145,7 +2001,7 @@ namespace OK2SHIP_SMT
             if (dgv.Rows.Count > 0)
             {
                 List<double> arr_sample = new List<double> { };
-                for (int i = 4; i < dgv.Columns.Count - 2; i++)
+                for (int i = 4; i < dgv.Columns.Count - 3; i++)
                 {
                     double value;
                     if (Double.TryParse(dgv.Rows[row].Cells[i].Value.ToString(), out value))
@@ -2208,7 +2064,10 @@ namespace OK2SHIP_SMT
 
                                 Data_tbl.Rows.Add(dr);
                             }
-
+                            if (Data_tbl.Rows.Count > 0)
+                            {
+                                new ACFService().GetProductID(txtItemCode.Text, txtLotNo.Text, textBox1.Text, "Flatness", Data_tbl);
+                            }
                             dgv_Flatness.DataSource = Data_tbl;
                             myCode.Disable_Sort_DGV(dgv_Flatness);
                             check_Flatness(dgv_Flatness);
@@ -2253,6 +2112,7 @@ namespace OK2SHIP_SMT
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && dgv_Flatness.DataSource != null)
             {
                 DataTable tbl_data = (DataTable)dgv_Flatness.DataSource;
+
                 string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
             lblsave:
                 DataTable dt = TDMK_Code.Datatable_Filter(sqlcon, "ACF_FLATNESS", filter_str);
@@ -2265,6 +2125,12 @@ namespace OK2SHIP_SMT
                         {
                             dr[0] = i;
                             i++;
+                        }
+                        if (tbl_data.Columns.Contains("ProductID"))
+                        {
+                            string pid = ProductIDService.ConverterProductID(tbl_data, "Id");
+                            tbl_data.Columns.Remove("ProductID");
+                            ProductIDService.InsertProductID(txtItemCode.Text, txtLotNo.Text, "ACF_FLATNESS", pid);
                         }
                         BatchBulkCopy(sqlcon, (DataTable)dgv_Flatness.DataSource, "ACF_FLATNESS");
                         MessageBox.Show(new Form { TopMost = true }, "Lưu dữ liệu thành công!", "Warning");
@@ -2279,9 +2145,9 @@ namespace OK2SHIP_SMT
 
                     if (MessageBox.Show(new Form { TopMost = true }, "Dữ liệu đã tồn tại. Bạn có muốn cập nhật không?", "Warning", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        if (admin_mode == "Admin mode")
+                        if (UserSession.Instance.IsLoggedIn)
                         {
-                            TDMK_Code.Delelte_FilteredItem_arr("ACF_", sqlcon, filter_str);
+                            TDMK_Code.Delelte_FilteredItem_arr("ACF_FLATNESS", sqlcon, filter_str);
                             goto lblsave;
                         }
                         else
@@ -2297,9 +2163,8 @@ namespace OK2SHIP_SMT
 
         private void txtItemCode_TextChanged(object sender, EventArgs e)
         {
-            dgv_Flatness.DataSource = dgv_Wetting.DataSource = dgv_peel.DataSource = dgv_roughness_data.DataSource = null;
             txt_qty_peel.Text = "";
-            txtLogfile_Flatness.Text = txtLogfile_peel.Text = txtLogfile_wetting.Text = txt_logfile_roughness.Text = "";
+            //txtLogfile_Flatness.Text = txtLogfile_peel.Text = txtLogfile_wetting.Text = txt_logfile_roughness.Text = "";
 
         }
 
@@ -2542,6 +2407,10 @@ namespace OK2SHIP_SMT
 
         public DataTable load_data_logfile_peel(string in_src)
         {
+            if (string.IsNullOrEmpty(txt_ItemName.Text))
+            {
+                MessageBox.Show("Thiếu ITEMNAME");
+            }
             int qty = int.Parse(txt_qty_peel.Text);
 
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode" }, new string[] { txtItemCode.Text });
@@ -2634,7 +2503,25 @@ namespace OK2SHIP_SMT
 
                 if (dt_spec.Rows.Count > 0)
                 {
-                    dgv_peel.DataSource = load_data_logfile_peel(txtLogfile_peel.Text);
+                    DataTable dt = load_data_logfile_peel(txtLogfile_peel.Text);
+                    ProductIDService service = new ProductIDService(txtItemCode.Text, txtLotNo.Text, textBox2.Text, new[] { "OQC", "ACF" }, new[] { "Bonding" });
+                    if (service._listFile.Count > 0)
+                    {
+                        List<string> s = service.getListProductID(service._listFile["Bonding"]);
+                        if (!dt.Columns.Contains("ProductID"))
+                        {
+                            dt.Columns.Add("ProductID", typeof(string));
+                        }
+                        int i = 0;
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            if (i < s.Count)
+                            {
+                                row["ProductID"] = s[i++];
+                            }
+                        }
+                    }
+                    dgv_peel.DataSource = dt;
                     if (dgv_peel.DataSource != null)
                     {
                         check_data_bonding_mass(dgv_peel);
@@ -2678,6 +2565,12 @@ namespace OK2SHIP_SMT
                             dr[0] = i;
                             i++;
                         }
+                        if (tbl_data.Columns.Contains("ProductID"))
+                        {
+                            string content = ProductIDService.ConverterProductID(tbl_data, "Id");
+                            ProductIDService.InsertProductID(txtItemCode.Text, txtLotNo.Text, tbl_name, content);
+                            tbl_data.Columns.Remove("ProductID");
+                        }
                         BatchBulkCopy(sqlcon, (DataTable)dgv_data.DataSource, tbl_name);
                         MessageBox.Show(new Form { TopMost = true }, "Lưu thành công", "Thông báo");
                     }
@@ -2691,7 +2584,7 @@ namespace OK2SHIP_SMT
 
                     if (MessageBox.Show(new Form { TopMost = true }, "Dữ liệu đã được lưu. Bạn có muốn cập nhật không?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        if (admin_mode == "Admin mode")
+                        if (UserSession.Instance.IsLoggedIn)
                         {
                             TDMK_Code.Delelte_FilteredItem_arr(tbl_name, sqlcon, filter_str);
                             goto lblsave;
@@ -2748,6 +2641,7 @@ namespace OK2SHIP_SMT
                     lbl_save:
                         if (chk_NG)
                         {
+
                             save_data("ACF_BONDING", dgv_peel);
                         }
                         else
@@ -3343,7 +3237,7 @@ namespace OK2SHIP_SMT
         {
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && txt_qty.Text != "" && txt_measloc.Text != "" && cb_Type.SelectedIndex != -1)
             {
-                if (int.Parse(txt_measloc.Text) <= 3)
+                if (int.TryParse(txt_measloc.Text, out int num) && int.Parse(txt_measloc.Text) <= 3)
                 {
                     if (myCode.IsNumeric(txt_qty.Text) && myCode.IsNumeric(txt_measloc.Text))
                     {
@@ -3365,7 +3259,29 @@ namespace OK2SHIP_SMT
 
                         if (logfile != "")
                         {
-                            dgv_roughness_data.DataSource = Roughness_Scan_ACF_SMT(logfile, int.Parse(txt_qty.Text), int.Parse(txt_measloc.Text));
+                            DataTable dt = Roughness_Scan_ACF_SMT(logfile, int.Parse(txt_qty.Text), int.Parse(txt_measloc.Text));
+
+                            if (!string.IsNullOrEmpty(textBox3.Text))
+                            {
+                                ProductIDService pid = new ProductIDService(txtItemCode.Text, txtLotNo.Text, textBox3.Text, new[] { "OQC", "ACF" }, new[] { "roughness" });
+                                if (pid._listFile.Count > 0)
+                                {
+                                    List<string> s = pid.getListProductID(pid._listFile["roughness"]);
+                                    if (!dt.Columns.Contains("ProductID"))
+                                    {
+                                        dt.Columns.Add("ProductID", typeof(string));
+                                    }
+                                    int i = 0;
+                                    foreach (DataRow row in dt.Rows)
+                                    {
+                                        if (i < s.Count)
+                                        {
+                                            row["ProductID"] = s[i++];
+                                        }
+                                    }
+                                }
+                            }
+                            dgv_roughness_data.DataSource = dt;
                         }
                         else
                         {
@@ -3477,6 +3393,304 @@ namespace OK2SHIP_SMT
         private void txt_ItemName_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void label13_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ACFService service = new ACFService();
+            txt_ItemName.Text = service.loadItemNamebyItemCode(txtItemCode.Text);
+        }
+
+        private void dataGridView_CellLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            if (checkRowSpec((DataGridView)sender, ((DataGridView)sender).Rows[e.RowIndex]))
+            {
+
+                ((DataGridView)sender).Rows[e.RowIndex].Cells["JUDGE"].Value = "PASS";
+            }
+            else
+            {
+                ((DataGridView)sender).Rows[e.RowIndex].Cells["JUDGE"].Value = "FAIL";
+            }
+        }
+        private void FillDataList(List<DateTime> dateTime)
+        {
+            dateTimePicker1.Value = dateTime[0];
+            dateTimePicker2.Value = dateTime[1];
+            dateTimePicker3.Value = dateTime[2];
+            dateTimePicker4.Value = dateTime[3];
+            dateTimePicker5.Value = dateTime[4];
+            dateTimePicker6.Value = dateTime[5];
+        }
+        private void FillDataList()
+        {
+            string i = listBox1.Items[listBox1.SelectedIndex].ToString();
+            dic_list[i][0] = dateTimePicker1.Value;
+            dic_list[i][1] = dateTimePicker2.Value;
+            dic_list[i][2] = dateTimePicker3.Value;
+            dic_list[i][3] = dateTimePicker4.Value;
+            dic_list[i][4] = dateTimePicker5.Value;
+            dic_list[i][5] = dateTimePicker6.Value;
+            dic[i] = dataGridView.DataSource as DataTable;
+        }
+        private bool checkRowSpec(DataGridView dgv, DataGridViewRow row)
+        {
+
+            bool prime = true;
+            if (row.Cells["Spec"].Value == null)
+            {
+                prime = false;
+            }
+            else if (double.TryParse(row.Cells["Spec"].Value.ToString(), out double d) && d == 0)
+            {
+                prime = false;
+            }
+            if (!prime)
+            {
+                row.Cells["Spec"].Style.BackColor = Color.Red;
+            }
+
+            else
+            {
+
+                row.Cells["Spec"].Style.BackColor = Color.White;
+                if (double.TryParse(row.Cells["Spec"].Value.ToString(), out double d))
+                {
+                    foreach (DataGridViewColumn col in dgv.Columns)
+                    {
+                        prime = true;
+                        if (col.Name.Contains("Sample"))
+                        {
+                            if (double.TryParse(row.Cells[col.Name].Value.ToString(), out double dz))
+                            {
+                                if (dz >= d)
+                                {
+
+                                    prime = false;
+                                    row.Cells[col.Name].Style.BackColor = Color.Red;
+
+                                }
+                                else
+                                {
+                                    row.Cells[col.Name].Style.BackColor = Color.White;
+                                }
+                            }
+                            else
+                            {
+
+                                prime = false;
+                                row.Cells[col.Name].Style.BackColor = Color.Red;
+
+                            }
+                        }
+                    }
+                }
+            }
+            return prime;
+        }
+        private void checkSpecWCA(DataGridView dgv)
+        {
+            foreach (DataGridViewRow row in dgv.Rows)
+            {
+                if (row.Index == dgv.Rows.Count - 1)
+                {
+                    break;
+                }
+                if (!checkRowSpec(dgv, row))
+                {
+                    row.Cells["JUDGE"].Value = "FAIL";
+                }
+                else
+                {
+                    row.Cells["JUDGE"].Value = "PASS";
+                }
+
+            }
+        }
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (tdmK_Button3.Enabled == true)
+                {
+                    if (MessageBox.Show("Bạn có muốn lưu thay đổi hay không", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        FillDataList();
+                    }
+                }
+                string i = listBox1.Items[listBox1.SelectedIndex].ToString();
+                dataGridView.DataSource = dic[i];
+                checkSpecWCA(dataGridView);
+                FillDataList(dic_list[i]);
+                tdmK_Button3.Enabled = false;
+            }
+            catch
+            {
+
+            }
+        }
+        private void remove()
+        {
+            if (listBox1.SelectedIndex != -1)
+            {
+                string i = listBox1.Items[listBox1.SelectedIndex].ToString();
+                dic.Remove(i);
+                dic_list.Remove(i);
+                listBox1.Items.RemoveAt(listBox1.SelectedIndex);
+                FillData();
+            }
+        }
+        private void tdmK_Button2_Click(object sender, EventArgs e)
+        {
+            remove();
+        }
+        private void rename()
+        {
+            if (listBox1.SelectedIndex != -1)
+            {
+                string i = listBox1.Items[listBox1.SelectedIndex].ToString();
+                Form inputForm = new Form();
+                TableLayoutPanel tbl = new TableLayoutPanel() { Dock = DockStyle.Fill };
+                TableLayoutPanel tbl1 = new TableLayoutPanel() { Dock = DockStyle.Fill };
+                System.Windows.Forms.Button button = new System.Windows.Forms.Button() { Text = "Ok", Dock = DockStyle.Fill, Width = 300, Height = 200 };
+
+
+                tbl.ColumnCount = 2;
+                tbl1.RowCount = 2;
+
+                tbl1.RowStyles.Add(new ColumnStyle(SizeType.Percent, 20));
+                tbl.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20));
+                tbl1.Controls.Add(button, 0, 1);
+                tbl1.Controls.Add(tbl, 0, 0);
+                System.Windows.Forms.TextBox tb = new System.Windows.Forms.TextBox() { Text = i, Dock = DockStyle.Fill };
+                TDMK_Label lb = new TDMK_Label() { Text = "Nhập tên mới" };
+                tbl.Controls.Add(tb, 1, 0);
+                tbl.Controls.Add(lb, 0, 0);
+                inputForm.Controls.Add(tbl1);
+                inputForm.ShowDialog();
+
+                string new_name = tb.Text;
+                if (new_name != "")
+                {
+                    if (!dic.ContainsKey(new_name))
+                    {
+                        dic.Add(new_name, dic[i]);
+                        dic_list.Add(new_name, dic_list[i]);
+                        dic.Remove(i);
+                        dic_list.Remove(i);
+                        listBox1.Items[listBox1.SelectedIndex] = new_name;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Tên đã tồn tại");
+                    }
+                }
+            }
+        }
+
+
+        private void tdmK_Button1_Click(object sender, EventArgs e)
+        {
+            rename();
+        }
+
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            primeNow();
+        }
+        private void primeNow()
+        {
+            tdmK_Button3.Enabled = true;
+        }
+        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
+        {
+
+            primeNow();
+        }
+
+        private void dateTimePicker3_ValueChanged(object sender, EventArgs e)
+        {
+
+            primeNow();
+        }
+
+        private void dateTimePicker4_ValueChanged(object sender, EventArgs e)
+        {
+
+            primeNow();
+        }
+
+        private void dateTimePicker6_ValueChanged(object sender, EventArgs e)
+        {
+
+            primeNow();
+        }
+
+        private void dateTimePicker5_ValueChanged(object sender, EventArgs e)
+        {
+            primeNow();
+        }
+
+        private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            primeNow();
+        }
+
+        private void tdmK_Button3_Click(object sender, EventArgs e)
+        {
+            tdmK_Button3.Enabled = false;
+            FillDataList();
+        }
+
+        private void textBox1_DoubleClick(object sender, EventArgs e)
+        {
+            OpenFileDialog f_open = new OpenFileDialog();
+            f_open.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+            f_open.InitialDirectory = System.Windows.Forms.Application.StartupPath;
+            if (f_open.ShowDialog() == DialogResult.OK)
+            {
+                if (f_open.FileName != "")
+                {
+                    txtLogfile_Flatness.Text = f_open.FileName;
+                }
+
+            }
+        }
+
+        private void textBox2_DoubleClick(object sender, EventArgs e)
+        {
+            OpenFileDialog f_open = new OpenFileDialog();
+            f_open.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+            f_open.InitialDirectory = System.Windows.Forms.Application.StartupPath;
+            if (f_open.ShowDialog() == DialogResult.OK)
+            {
+                if (f_open.FileName != "")
+                {
+                    txtLogfile_Flatness.Text = f_open.FileName;
+                }
+
+            }
+        }
+
+        private void textBox3_DoubleClick(object sender, EventArgs e)
+        {
+            OpenFileDialog f_open = new OpenFileDialog();
+            f_open.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+            f_open.InitialDirectory = System.Windows.Forms.Application.StartupPath;
+            if (f_open.ShowDialog() == DialogResult.OK)
+            {
+                if (f_open.FileName != "")
+                {
+                    txtLogfile_Flatness.Text = f_open.FileName;
+                }
+
+            }
         }
     }
 

@@ -472,6 +472,7 @@ namespace OK2SHIP_SMT.Repositories
                     using (SqlBulkCopy bulkCopy = new SqlBulkCopy(SqlConnection, SqlBulkCopyOptions.Default | SqlBulkCopyOptions.FireTriggers, transaction))
                     {
 
+
                         // Đặt tên bảng đích trong cơ sở dữ liệu
                         bulkCopy.DestinationTableName = TableSql;
 
@@ -576,6 +577,40 @@ namespace OK2SHIP_SMT.Repositories
             }
 
             return existingItemCodes.ToArray();
+        }
+        public int DeleteData(string tableName, string[] conditionColumn, string[] conditionValue)
+        {
+            int rowsAffected = 0;
+
+            try
+            {
+                string query = $"DELETE FROM {tableName} WHERE ";
+                for (int i = 0; i < conditionColumn.Count(); i++)
+                {
+                    query += $" {conditionColumn[i].Trim()} = '{conditionValue[i].Trim()}'";
+                    if (i != conditionValue.Count() - 1)
+                    {
+                        query += " AND ";
+                    }
+                }
+
+                using (SqlCommand command = new SqlCommand(query, SqlConnection))
+                {
+                    rowsAffected = command.ExecuteNonQuery();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                // Xử lý lỗi SQL (ghi log, ném ngoại lệ, v.v.)
+                throw new Exception($"Lỗi SQL: {ex.Message}");
+                // Cân nhắc ném một ngoại lệ cụ thể hơn hoặc ghi log lỗi.
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi chung: {ex.Message}");
+            }
+            return rowsAffected;
         }
         public int DeleteData(string tableName, string conditionColumn, string[] conditionValue)
         {

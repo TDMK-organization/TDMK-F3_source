@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace OK2SHIP_SMT.Repositories
 {
-    static class FileFolderRepository
+    public static class FileFolderRepository
     {
         public static bool checkLocationIsValid(string location)
         {
@@ -87,9 +87,9 @@ namespace OK2SHIP_SMT.Repositories
         /// </summary>
         /// <param name="locationFolder"></param>
         /// <returns></returns>
-        public static IList<KeyValuePair<Image, string>> ListAllPictureInAFolder(string locationFolder, string Extension = null)
+        public static List<KeyValuePair<Image, string>> ListAllPictureInAFolder(string locationFolder, string Extension = null)
         {
-            IList<KeyValuePair<Image, string>> listPicture = new List<KeyValuePair<Image, string>>();
+            List<KeyValuePair<Image, string>> listPicture = new List<KeyValuePair<Image, string>>();
             string[] folder = Directory.GetFiles(locationFolder);
             foreach (string file in folder)
             {
@@ -131,7 +131,6 @@ namespace OK2SHIP_SMT.Repositories
         public static DataTable ConvertCsvToDataTable(string filePath, int countRow = -1)
         {
             DataTable dataTable = new DataTable();
-
             try
             {
                 using (StreamReader reader = new StreamReader(filePath))

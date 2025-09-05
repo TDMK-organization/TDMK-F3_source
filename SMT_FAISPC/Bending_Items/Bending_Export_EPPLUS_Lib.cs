@@ -16,6 +16,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Drawing;
 using System.Diagnostics;
+using Bending_Items.Repositories;
 
 namespace Bending_Export
 {
@@ -432,9 +433,16 @@ namespace Bending_Export
         }
         public void Export_Thermal_HeatSoak_Bend_All(SqlConnection sqlcon_OK2SHIP, string ItemCode, string LotNo, string process_name, string format_name, int qty, string format_type)
         {
-            string format_loc = Path.Combine(find_config_path(Application.StartupPath, "SEEV Data"), "Format", format_type);
-            Report_location = Path.Combine(find_config_path(Application.StartupPath, "SEEV Data"), "Report");
-            string format_file = find_format(format_loc, ItemCode, new List<string> { "*.xlsx", "*.xlsm" });
+            string program_loc = find_config_path(Application.StartupPath, "TDMK Program");
+            string config_path = Path.Combine(program_loc, "Config.ini");
+            //string config_path = Path.Combine(Application.StartupPath, "Config.ini");
+            TDMK_init = new IniFile(config_path);
+            string server_name = TDMK_init.Read("Server", "SMT_Config");
+            string server_acc = TDMK_init.Read("Account", "SMT_Config");
+            string server_pass = TDMK_init.Read("Password", "SMT_Config");
+            format_folder = TDMK_init.Read("Format_Folder", "SMT_Config") + "\\SEEV Data\\Format\\" + format_type;
+            Report_location = TDMK_init.Read("Report_Location", "SMT_Config");
+            string format_file = find_format(format_folder, ItemCode, new List<string> { "*.xlsx", "*.xlsm" });
             if (format_file != "")
             {
                 List<char> reject_char_lst = new List<char> { ' ', '_', '-', '&' };
@@ -496,7 +504,7 @@ namespace Bending_Export
                         report_pack.SaveAs(new FileInfo(daily_report_name));
                     }
                     report_wrk = report_pack.Workbook;
-                    while (report_wrk.Worksheets.Count>1)
+                    while (report_wrk.Worksheets.Count > 1)
                     {
                         foreach (ExcelWorksheet sht in report_wrk.Worksheets)
                         {
@@ -519,9 +527,12 @@ namespace Bending_Export
                     Get_ListTable(-1, src_tbl, new string[] { "ItemCode", "LotNo", "Pcs_No" }, ref src_tbl_lst, "Before");
                     List<string> Net_name = spec_tbl.AsEnumerable().Select(x => x.Field<string>("Net_Name")).ToList();
                     string condition_addr = Excel_Lib.Find_Cell_Addr("Condition", "A1", tar_wrksht, false);
-                    string Echeck_start_rgn = Excel_Lib.Find_Start_Addr("A1", tar_wrksht, false, "Condition");// Get_start_range("Condition", "A1", tar_wrksht);
-                    ExcelRangeBase Echeck_cycle_rgn = tar_wrksht.Cells[Echeck_start_rgn];
-                    string result_rgn_addr = Excel_Lib.Find_Cell_Addr("Due Date", condition_addr, tar_wrksht, true);
+
+                    IDictionary<string, string> dic = ExportProcess.FindAddressByText(tar_wrksht, new[] { "Due date", "Flex SN", "Condition" });
+                    string Echeck_start_rgn = dic["Condition"];// Get_start_range("Condition", "A1", tar_wrksht);
+                    ExcelRangeBase Echeck_cycle_rgn = tar_wrksht.Cells[tar_wrksht.Cells[Echeck_start_rgn].End.Row + 3, tar_wrksht.Cells[Echeck_start_rgn].End.Column];
+                    
+                    string result_rgn_addr = dic["Due date"];
                     int offset_val = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[result_rgn_addr]).col_qty + 1;
                     int offset_duedate = tar_wrksht.Cells[result_rgn_addr].End.Column - tar_wrksht.Cells[condition_addr].End.Column;
                     Dictionary<string, string> Echeck_Cycle_addr = Get_Echeck_address(Echeck_cycle_rgn);
@@ -532,7 +543,10 @@ namespace Bending_Export
                     int sel_qty = src_tbl_lst.Count;
                     for (int col_inx = 0; col_inx < sel_qty; col_inx++)
                     {
+                        // wirete FLEX SN
+                        string addZ = ExportProcess.AddColumn(dic["Flex SN"], col_inx + 1);
                         DataTable tbl = src_tbl_lst[col_inx];
+                        tar_wrksht.Cells[addZ].Value = tbl.Rows[0]["Pcs_No"];
                         Dictionary<string, List<string>> data_lst = Get_List_Pair_data(tbl);
                         List<string> before_data = data_lst["Before"];
                         List<string> last_data = data_lst.Values.ToList().Last();
@@ -577,6 +591,8 @@ namespace Bending_Export
                                         break;
                                     }
                                 }
+
+
                                 if (data_OK)
                                 {
                                     sum_rgn_offset.Value = "PASS";
@@ -652,7 +668,7 @@ namespace Bending_Export
             string format_loc = Path.Combine(find_config_path(Application.StartupPath, "SEEV Data"), "Format", format_type);
             Report_location = Path.Combine(find_config_path(Application.StartupPath, "SEEV Data"), "Report");
             //List<string> format_lst = get_multiple_files(format_loc, new List<string> { "*.xlsx", "*.xlsm" }, ItemCode, process_name);
-            List<string> format_lst = get_multiple_files(format_loc, new List<string> { "*.xlsx", "*.xlsm" },"",process_name);
+            List<string> format_lst = get_multiple_files(format_loc, new List<string> { "*.xlsx", "*.xlsm" }, "", process_name);
             string format_file = "";
             if (format_lst.Count > 0)
             {
@@ -660,11 +676,11 @@ namespace Bending_Export
             }
             if (format_file != "")
             {
-                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo","Shift" }, new string[] { ItemCode, LotNo, shift_no });
+                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Shift" }, new string[] { ItemCode, LotNo, shift_no });
                 DataTable _src_tbl = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, process_name, filter_str);
-                if(_src_tbl.Rows.Count==0)
+                if (_src_tbl.Rows.Count == 0)
                 {
-                    MessageBox.Show(new Form { TopMost=true},"Không có dữ liệu", "Thông báo");
+                    MessageBox.Show(new Form { TopMost = true }, "Không có dữ liệu", "Thông báo");
                     return;
                 }
                 DataTable _spec_tbl = TDMK_Code.Datatable_Filter(sqlcon_OK2SHIP, "NET_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { ItemCode, process_name }));
@@ -726,7 +742,7 @@ namespace Bending_Export
                         itemname = myCode.checkDBNull(log_tbl.Rows[0]["ItemName"]);
                         UserID = myCode.checkDBNull(log_tbl.Rows[0]["UserID"]);
                         FileInfo report_wrk_info = new FileInfo(format_file);
-                        string report_name = process_name + " " + itemname + "-" + ItemCode + "-" + LotNo + "-C" + shift_no+ " " + DateTime.Now.ToString("yyyyMMdd_HHmmss") + Path.GetExtension(report_wrk_info.Name);
+                        string report_name = process_name + " " + itemname + "-" + ItemCode + "-" + LotNo + "-C" + shift_no + " " + DateTime.Now.ToString("yyyyMMdd_HHmmss") + Path.GetExtension(report_wrk_info.Name);
                         if (format_type == "NPI")
                         {
                             report_name = Path.GetFileNameWithoutExtension(report_wrk_info.Name) + "-" + LotNo + " " + DateTime.Now.ToString("yyyyMMdd_HHmmss") + Path.GetExtension(report_wrk_info.Name);
@@ -828,7 +844,7 @@ namespace Bending_Export
                                 if (data_OK)
                                 {
                                     sum_rgn_offset.Value = "OK";
-                                    sum_rgn_offset.Offset(1,0).Value = "PASS";
+                                    sum_rgn_offset.Offset(1, 0).Value = "PASS";
                                 }
                                 else
                                 {
@@ -916,7 +932,7 @@ namespace Bending_Export
                         {
                             MessageBox.Show(new Form { TopMost = true }, "Phần mềm Excel bị lỗi hoặc chưa có", "Thông báo");
                         }
-                        
+
                     }
                 }
                 else
@@ -929,14 +945,14 @@ namespace Bending_Export
                 MessageBox.Show("Format of ItemCode " + ItemCode + " not found", "Warning");
             }
         }
-        public List<string> get_multiple_files(string src_path, List<string> extensions, string tar_ItemCode="", string tar_process="Bending")
+        public List<string> get_multiple_files(string src_path, List<string> extensions, string tar_ItemCode = "", string tar_process = "Bending")
         {
             List<string> result = new List<string>();
             List<char> remove_char = new List<char> { ' ', '-', '_' };
             string process = new string(tar_process.Where(x => remove_char.IndexOf(x) == -1).ToArray());
             DirectoryInfo directory = new DirectoryInfo(src_path);
-            var files = extensions.SelectMany(e => directory.EnumerateFiles(e, SearchOption.AllDirectories)).Where(x=>remove_special_char(x.FullName, remove_char).ToUpper().Contains(process.ToUpper()));
-            if(tar_ItemCode!="")
+            var files = extensions.SelectMany(e => directory.EnumerateFiles(e, SearchOption.AllDirectories)).Where(x => remove_special_char(x.FullName, remove_char).ToUpper().Contains(process.ToUpper()));
+            if (tar_ItemCode != "")
             {
                 files = extensions.SelectMany(e => directory.EnumerateFiles(e, SearchOption.AllDirectories)).Where(x => x.FullName.Contains(tar_ItemCode) && remove_special_char(x.FullName, remove_char).ToUpper().Contains(process.ToUpper()));
             }

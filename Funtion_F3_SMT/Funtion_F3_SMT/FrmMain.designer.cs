@@ -84,6 +84,7 @@
             "CROSS_SECTION",
             "GAP_CONNECTOR",
             "PEEL_TEST",
+            "PEEL_TEST WITHOUT SUS",
             "MATING_PULL_TEST",
             "SHEAR_TEST",
             "IQC_UNMATING_PULL_TEST",
@@ -99,7 +100,9 @@
             "Environment en-durance",
             "Impedance",
             "X-Ray picture",
-            "Assy Yield"});
+            "Assy Yield",
+            "Air Bubble",
+            "Peel Test (On Product)"});
             this.mnuProcess.Name = "mnuProcess";
             this.mnuProcess.Size = new System.Drawing.Size(150, 28);
             this.mnuProcess.Click += new System.EventHandler(this.mnuProcess_Click);

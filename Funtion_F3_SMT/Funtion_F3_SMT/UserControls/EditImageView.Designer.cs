@@ -46,6 +46,7 @@
             this.mainForm1.Size = new System.Drawing.Size(1116, 590);
             this.mainForm1.TabIndex = 0;
             this.mainForm1.ZoomOnMouseWheel = false;
+            this.mainForm1.Load += new System.EventHandler(this.mainForm1_Load);
             // 
             // tableLayoutPanel1
             // 

@@ -66,9 +66,6 @@ namespace Bending_Items
             this.rbDatabase = new System.Windows.Forms.RadioButton();
             this.rbLogfile = new System.Windows.Forms.RadioButton();
             this.GBInfo = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.txtItemName = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.cbShift = new System.Windows.Forms.ComboBox();
@@ -96,6 +93,7 @@ namespace Bending_Items
             this.DGV_Data = new System.Windows.Forms.DataGridView();
             this.DGV_NG_detail = new System.Windows.Forms.DataGridView();
             this.tabSelection = new System.Windows.Forms.TabPage();
+            this.blNG_Details = new Bending_Items.NG_Details();
             this.GB_Sel_Info = new System.Windows.Forms.GroupBox();
             this.cbShift_Sel = new System.Windows.Forms.ComboBox();
             this.label16 = new System.Windows.Forms.Label();
@@ -122,8 +120,6 @@ namespace Bending_Items
             this.tsmCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsCopyPaste = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip_Vari_R = new System.Windows.Forms.ToolTip(this.components);
-            this.blNG_Details = new Bending_Items.NG_Details();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.DGV_Data_Sel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DGV_Cycles_Data_Sel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DGV_NET_Spec)).BeginInit();
@@ -135,7 +131,6 @@ namespace Bending_Items
             ((System.ComponentModel.ISupportInitialize)(this.numQty)).BeginInit();
             this.GB_Data.SuspendLayout();
             this.GBInfo.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DGV_LogFile)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DGV_NET_NG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DGV_Data)).BeginInit();
@@ -144,7 +139,6 @@ namespace Bending_Items
             this.GB_Sel_Info.SuspendLayout();
             this.cmsUpdate.SuspendLayout();
             this.cmsCopyPaste.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label9
@@ -215,7 +209,7 @@ namespace Bending_Items
             this.label7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
             this.label7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(1251, 145);
+            this.label7.Location = new System.Drawing.Point(1252, 151);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(104, 27);
             this.label7.TabIndex = 15;
@@ -227,7 +221,7 @@ namespace Bending_Items
             this.lblNG_Detail.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.lblNG_Detail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblNG_Detail.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNG_Detail.Location = new System.Drawing.Point(1018, 410);
+            this.lblNG_Detail.Location = new System.Drawing.Point(1018, 390);
             this.lblNG_Detail.Name = "lblNG_Detail";
             this.lblNG_Detail.Size = new System.Drawing.Size(336, 27);
             this.lblNG_Detail.TabIndex = 25;
@@ -237,9 +231,9 @@ namespace Bending_Items
             // lstNG
             // 
             this.lstNG.FormattingEnabled = true;
-            this.lstNG.Location = new System.Drawing.Point(1251, 182);
+            this.lstNG.Location = new System.Drawing.Point(1251, 187);
             this.lstNG.Name = "lstNG";
-            this.lstNG.Size = new System.Drawing.Size(104, 225);
+            this.lstNG.Size = new System.Drawing.Size(104, 186);
             this.lstNG.TabIndex = 14;
             this.lstNG.SelectedIndexChanged += new System.EventHandler(this.lstNG_SelectedIndexChanged);
             // 
@@ -269,11 +263,12 @@ namespace Bending_Items
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(1022, 449);
+            this.label8.Location = new System.Drawing.Point(1026, 429);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(96, 16);
             this.label8.TabIndex = 24;
             this.label8.Text = "Total NG_NET";
+            this.label8.Click += new System.EventHandler(this.label8_Click);
             // 
             // label21
             // 
@@ -306,11 +301,12 @@ namespace Bending_Items
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(1198, 449);
+            this.label5.Location = new System.Drawing.Point(1202, 429);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(95, 16);
             this.label5.TabIndex = 23;
             this.label5.Text = "Total NG_PCS";
+            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // label4
             // 
@@ -326,10 +322,11 @@ namespace Bending_Items
             // 
             // txtTotalItem
             // 
-            this.txtTotalItem.Location = new System.Drawing.Point(1306, 447);
+            this.txtTotalItem.Location = new System.Drawing.Point(1310, 427);
             this.txtTotalItem.Name = "txtTotalItem";
             this.txtTotalItem.Size = new System.Drawing.Size(45, 20);
             this.txtTotalItem.TabIndex = 22;
+            this.txtTotalItem.TextChanged += new System.EventHandler(this.txtTotalItem_TextChanged);
             // 
             // DGV_NET_Spec
             // 
@@ -338,7 +335,7 @@ namespace Bending_Items
             this.DGV_NET_Spec.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DGV_NET_Spec.Location = new System.Drawing.Point(350, 37);
             this.DGV_NET_Spec.Name = "DGV_NET_Spec";
-            this.DGV_NET_Spec.Size = new System.Drawing.Size(336, 370);
+            this.DGV_NET_Spec.Size = new System.Drawing.Size(336, 336);
             this.DGV_NET_Spec.TabIndex = 8;
             // 
             // label20
@@ -372,7 +369,7 @@ namespace Bending_Items
             this.GBAction.Controls.Add(this.btnSaveSubmit);
             this.GBAction.Controls.Add(this.btnLoadData);
             this.GBAction.Controls.Add(this.btnSave);
-            this.GBAction.Location = new System.Drawing.Point(100, 305);
+            this.GBAction.Location = new System.Drawing.Point(100, 271);
             this.GBAction.Name = "GBAction";
             this.GBAction.Size = new System.Drawing.Size(141, 102);
             this.GBAction.TabIndex = 10;
@@ -478,7 +475,7 @@ namespace Bending_Items
             this.GB_Submit.Controls.Add(this.btnSummary);
             this.GB_Submit.Controls.Add(this.numQty);
             this.GB_Submit.Enabled = false;
-            this.GB_Submit.Location = new System.Drawing.Point(247, 305);
+            this.GB_Submit.Location = new System.Drawing.Point(247, 271);
             this.GB_Submit.Name = "GB_Submit";
             this.GB_Submit.Size = new System.Drawing.Size(96, 102);
             this.GB_Submit.TabIndex = 27;
@@ -533,7 +530,7 @@ namespace Bending_Items
             // 
             this.GB_Data.Controls.Add(this.rbDatabase);
             this.GB_Data.Controls.Add(this.rbLogfile);
-            this.GB_Data.Location = new System.Drawing.Point(8, 305);
+            this.GB_Data.Location = new System.Drawing.Point(8, 271);
             this.GB_Data.Name = "GB_Data";
             this.GB_Data.Size = new System.Drawing.Size(86, 102);
             this.GB_Data.TabIndex = 26;
@@ -566,7 +563,6 @@ namespace Bending_Items
             // 
             // GBInfo
             // 
-            this.GBInfo.Controls.Add(this.groupBox1);
             this.GBInfo.Controls.Add(this.txtItemName);
             this.GBInfo.Controls.Add(this.label17);
             this.GBInfo.Controls.Add(this.cbShift);
@@ -588,45 +584,14 @@ namespace Bending_Items
             this.GBInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.GBInfo.Name = "GBInfo";
             this.GBInfo.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.GBInfo.Size = new System.Drawing.Size(338, 291);
+            this.GBInfo.Size = new System.Drawing.Size(338, 257);
             this.GBInfo.TabIndex = 6;
             this.GBInfo.TabStop = false;
             this.GBInfo.Text = "Information";
             // 
-            // button1
-            // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button1.Location = new System.Drawing.Point(233, 0);
-            this.button1.Margin = new System.Windows.Forms.Padding(0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(73, 30);
-            this.button1.TabIndex = 26;
-            this.button1.Text = "Get ID";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.tableLayoutPanel1);
-            this.groupBox1.Location = new System.Drawing.Point(15, 146);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(312, 49);
-            this.groupBox1.TabIndex = 25;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Product ID Location";
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(233, 30);
-            this.richTextBox1.TabIndex = 24;
-            this.richTextBox1.Text = "";
-            // 
             // txtItemName
             // 
-            this.txtItemName.Location = new System.Drawing.Point(259, 261);
+            this.txtItemName.Location = new System.Drawing.Point(258, 216);
             this.txtItemName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtItemName.Name = "txtItemName";
             this.txtItemName.Size = new System.Drawing.Size(69, 20);
@@ -635,7 +600,7 @@ namespace Bending_Items
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(260, 244);
+            this.label17.Location = new System.Drawing.Point(259, 199);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(55, 13);
             this.label17.TabIndex = 22;
@@ -675,7 +640,7 @@ namespace Bending_Items
             // lstLogFile
             // 
             this.lstLogFile.FormattingEnabled = true;
-            this.lstLogFile.Location = new System.Drawing.Point(14, 201);
+            this.lstLogFile.Location = new System.Drawing.Point(13, 156);
             this.lstLogFile.Name = "lstLogFile";
             this.lstLogFile.Size = new System.Drawing.Size(239, 82);
             this.lstLogFile.TabIndex = 14;
@@ -733,7 +698,7 @@ namespace Bending_Items
             // 
             // txtOperator
             // 
-            this.txtOperator.Location = new System.Drawing.Point(259, 220);
+            this.txtOperator.Location = new System.Drawing.Point(258, 175);
             this.txtOperator.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtOperator.Name = "txtOperator";
             this.txtOperator.Size = new System.Drawing.Size(69, 20);
@@ -743,7 +708,7 @@ namespace Bending_Items
             // lblOperator
             // 
             this.lblOperator.AutoSize = true;
-            this.lblOperator.Location = new System.Drawing.Point(275, 203);
+            this.lblOperator.Location = new System.Drawing.Point(274, 158);
             this.lblOperator.Name = "lblOperator";
             this.lblOperator.Size = new System.Drawing.Size(43, 13);
             this.lblOperator.TabIndex = 4;
@@ -786,17 +751,18 @@ namespace Bending_Items
             // 
             // txtTotal_NET
             // 
-            this.txtTotal_NET.Location = new System.Drawing.Point(1136, 447);
+            this.txtTotal_NET.Location = new System.Drawing.Point(1140, 427);
             this.txtTotal_NET.Name = "txtTotal_NET";
             this.txtTotal_NET.Size = new System.Drawing.Size(45, 20);
             this.txtTotal_NET.TabIndex = 21;
+            this.txtTotal_NET.TextChanged += new System.EventHandler(this.txtTotal_NET_TextChanged);
             // 
             // lblLogfile
             // 
             this.lblLogfile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.lblLogfile.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblLogfile.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLogfile.Location = new System.Drawing.Point(6, 410);
+            this.lblLogfile.Location = new System.Drawing.Point(6, 390);
             this.lblLogfile.Name = "lblLogfile";
             this.lblLogfile.Size = new System.Drawing.Size(1007, 27);
             this.lblLogfile.TabIndex = 12;
@@ -806,7 +772,7 @@ namespace Bending_Items
             // lblItemNG
             // 
             this.lblItemNG.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblItemNG.Location = new System.Drawing.Point(1019, 468);
+            this.lblItemNG.Location = new System.Drawing.Point(1020, 450);
             this.lblItemNG.Name = "lblItemNG";
             this.lblItemNG.Size = new System.Drawing.Size(336, 26);
             this.lblItemNG.TabIndex = 20;
@@ -818,9 +784,9 @@ namespace Bending_Items
             this.DGV_LogFile.AllowUserToAddRows = false;
             this.DGV_LogFile.AllowUserToDeleteRows = false;
             this.DGV_LogFile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.DGV_LogFile.Location = new System.Drawing.Point(6, 449);
+            this.DGV_LogFile.Location = new System.Drawing.Point(6, 429);
             this.DGV_LogFile.Name = "DGV_LogFile";
-            this.DGV_LogFile.Size = new System.Drawing.Size(1007, 378);
+            this.DGV_LogFile.Size = new System.Drawing.Size(1007, 398);
             this.DGV_LogFile.TabIndex = 9;
             this.DGV_LogFile.DataSourceChanged += new System.EventHandler(this.DGV_LogFile_DataSourceChanged);
             this.DGV_LogFile.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DGV_LogFile_RowHeaderMouseDoubleClick);
@@ -864,7 +830,7 @@ namespace Bending_Items
             this.DGV_Data.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DGV_Data.Location = new System.Drawing.Point(692, 37);
             this.DGV_Data.Name = "DGV_Data";
-            this.DGV_Data.Size = new System.Drawing.Size(553, 370);
+            this.DGV_Data.Size = new System.Drawing.Size(553, 336);
             this.DGV_Data.TabIndex = 7;
             this.DGV_Data.DataSourceChanged += new System.EventHandler(this.DGV_Data_DataSourceChanged);
             this.DGV_Data.ColumnHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DGV_Data_ColumnHeaderMouseDoubleClick);
@@ -874,9 +840,9 @@ namespace Bending_Items
             this.DGV_NG_detail.AllowUserToAddRows = false;
             this.DGV_NG_detail.AllowUserToDeleteRows = false;
             this.DGV_NG_detail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.DGV_NG_detail.Location = new System.Drawing.Point(1019, 497);
+            this.DGV_NG_detail.Location = new System.Drawing.Point(1019, 479);
             this.DGV_NG_detail.Name = "DGV_NG_detail";
-            this.DGV_NG_detail.Size = new System.Drawing.Size(336, 127);
+            this.DGV_NG_detail.Size = new System.Drawing.Size(336, 145);
             this.DGV_NG_detail.TabIndex = 17;
             // 
             // tabSelection
@@ -895,6 +861,16 @@ namespace Bending_Items
             this.tabSelection.TabIndex = 1;
             this.tabSelection.Text = "Selection";
             this.tabSelection.UseVisualStyleBackColor = true;
+            // 
+            // blNG_Details
+            // 
+            this.blNG_Details.item_NG_lst = null;
+            this.blNG_Details.Location = new System.Drawing.Point(6, 421);
+            this.blNG_Details.Name = "blNG_Details";
+            this.blNG_Details.NET_index_lst = null;
+            this.blNG_Details.Net_Spec_tbl = null;
+            this.blNG_Details.Size = new System.Drawing.Size(457, 414);
+            this.blNG_Details.TabIndex = 44;
             // 
             // GB_Sel_Info
             // 
@@ -1147,32 +1123,6 @@ namespace Bending_Items
             this.toolTip_Vari_R.InitialDelay = 500;
             this.toolTip_Vari_R.ReshowDelay = 100;
             // 
-            // blNG_Details
-            // 
-            this.blNG_Details.item_NG_lst = null;
-            this.blNG_Details.Location = new System.Drawing.Point(6, 421);
-            this.blNG_Details.Name = "blNG_Details";
-            this.blNG_Details.NET_index_lst = null;
-            this.blNG_Details.Net_Spec_tbl = null;
-            this.blNG_Details.Size = new System.Drawing.Size(457, 414);
-            this.blNG_Details.TabIndex = 44;
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.14379F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.85621F));
-            this.tableLayoutPanel1.Controls.Add(this.richTextBox1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.button1, 1, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 16);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(306, 30);
-            this.tableLayoutPanel1.TabIndex = 0;
-            // 
             // Bending_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1199,7 +1149,6 @@ namespace Bending_Items
             this.GB_Data.PerformLayout();
             this.GBInfo.ResumeLayout(false);
             this.GBInfo.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.DGV_LogFile)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DGV_NET_NG)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DGV_Data)).EndInit();
@@ -1209,7 +1158,6 @@ namespace Bending_Items
             this.GB_Sel_Info.PerformLayout();
             this.cmsUpdate.ResumeLayout(false);
             this.cmsCopyPaste.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1305,9 +1253,5 @@ namespace Bending_Items
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox txtItemName;
         private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }

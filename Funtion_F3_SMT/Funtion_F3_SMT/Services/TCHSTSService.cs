@@ -54,7 +54,7 @@ namespace OK2SHIP_SMT.Services
                 if (nameItem.Split('.').Count() > 1)
                 {
 
-                    string zone;
+                    string zone = "";
                     string folderName = nameItem.Split('.')[1].Trim();
                     switch (folderName)
                     {
@@ -69,32 +69,35 @@ namespace OK2SHIP_SMT.Services
                             break;
                         default:
                             Debugger.Break();
-                            throw new Exception($"Lỗi FolderName");
+                            break;
                     }
-                    string[] files = FileFolderRepository.GetSubFolders(item);
-                    foreach (var folder in files)
+                    if (!string.IsNullOrEmpty(zone))
                     {
-                        if (ValidateService.compareItemCodeLotNo(FileFolderRepository.GetFolderName(folder), $"{itemCode}-{lotNo}"))
+                        string[] files = FileFolderRepository.GetSubFolders(item);
+                        foreach (var folder in files)
                         {
-                            string[] fileLocation = FileFolderRepository.GetFileByExtension(folder, "csv");
-                            if (fileLocation.Count() > 0)
+                            if (ValidateService.compareItemCodeLotNo(FileFolderRepository.GetFolderName(folder), $"{itemCode}-{lotNo}"))
                             {
-                                DataRow dr = dataTable.NewRow();
-                                dr["ID"] = dataTable.Rows.Count + 1;
-                                dr["ItemCode"] = itemCode;
-                                dr["LotNo"] = lotNo;
-                                dr["Type"] = switchType(zone);
-                                DataTable newDt = new DataTable();
-                                DataTable dt = SolveFile(fileLocation[0], zone, out newDt);
-                                if (prime)
+                                string[] fileLocation = FileFolderRepository.GetFileByExtension(folder, "csv");
+                                if (fileLocation.Count() > 0)
                                 {
-                                    
-                                }
-                                dr["DataLog"] = $"{ConverterService.DataTableToJson(newDt)}@{ConverterService.DataTableToJson(dt)}";
-                                dataTable.Rows.Add(dr);
-                            }
-                        }
+                                    DataRow dr = dataTable.NewRow();
+                                    dr["ID"] = dataTable.Rows.Count + 1;
+                                    dr["ItemCode"] = itemCode;
+                                    dr["LotNo"] = lotNo;
+                                    dr["Type"] = switchType(zone);
+                                    DataTable newDt = new DataTable();
+                                    DataTable dt = SolveFile(fileLocation[0], zone, out newDt);
+                                    if (prime)
+                                    {
 
+                                    }
+                                    dr["DataLog"] = $"{ConverterService.DataTableToJson(newDt)}@{ConverterService.DataTableToJson(dt)}";
+                                    dataTable.Rows.Add(dr);
+                                }
+                            }
+
+                        }
                     }
                 }
             }

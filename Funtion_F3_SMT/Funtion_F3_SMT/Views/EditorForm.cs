@@ -100,6 +100,7 @@ namespace OK2SHIP_SMT.Views
         private void toolStripLabel4_Click(object sender, EventArgs e)
         {
             pictureBox1.Image = _image;
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
         }
         Form dialog = new Form();
         private void btn_close_Click(object sender, EventArgs e)
@@ -117,6 +118,16 @@ namespace OK2SHIP_SMT.Views
                 return;
             }
             pictureBox1.Image = edit.image;
+        }
+
+        private void toolStripLabel5_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
+            if (open.ShowDialog() == DialogResult.OK)
+            {
+                pictureBox1.Image = Image.FromFile(open.FileName);
+            }
         }
 
         private void pictureBox1_MouseEnter(object sender, EventArgs e)

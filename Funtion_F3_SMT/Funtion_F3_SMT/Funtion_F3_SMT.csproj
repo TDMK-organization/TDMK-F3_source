@@ -75,6 +75,7 @@
       <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.configuration" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
@@ -155,9 +156,12 @@
     <Compile Include="Select_Image.Designer.cs">
       <DependentUpon>Select_Image.cs</DependentUpon>
     </Compile>
+    <Compile Include="Services\ACFService.cs" />
+    <Compile Include="Services\AirBubbleService.cs" />
     <Compile Include="Services\ArtistFramerService.cs" />
     <Compile Include="Services\ASSY_YIELDService.cs" />
     <Compile Include="Services\BarCodeVertification.cs" />
+    <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\ConverterService.cs" />
     <Compile Include="Services\DataBaseService.cs" />
     <Compile Include="Services\DictionaryService.cs" />
@@ -165,6 +169,8 @@
     <Compile Include="Services\GAPConnectorService.cs" />
     <Compile Include="Services\ImpedanceService.cs" />
     <Compile Include="Services\PackagingService.cs" />
+    <Compile Include="Services\PeelTestOnProductService.cs" />
+    <Compile Include="Services\PeelTestWOSUS.cs" />
     <Compile Include="Services\ProductIDService.cs" />
     <Compile Include="Services\TableOfContentService.cs" />
     <Compile Include="Services\TCHSTSService.cs" />
@@ -249,6 +255,18 @@
     <Compile Include="UserControls\Logins\UserDashboard.Designer.cs">
       <DependentUpon>UserDashboard.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\UC_AddDataMachine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\UC_AddDataMachine.Designer.cs">
+      <DependentUpon>UC_AddDataMachine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UC_AirBubble.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\UC_AirBubble.Designer.cs">
+      <DependentUpon>UC_AirBubble.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\UC_Assy_Yield.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -279,6 +297,12 @@
     <Compile Include="UserControls\UC_XrayPicture.Designer.cs">
       <DependentUpon>UC_XrayPicture.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\CommentItemCodeAirBubble.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\CommentItemCodeAirBubble.Designer.cs">
+      <DependentUpon>CommentItemCodeAirBubble.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\CommonForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -296,6 +320,12 @@
     </Compile>
     <Compile Include="Views\NormalForm.Designer.cs">
       <DependentUpon>NormalForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReferForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ReferForm.Designer.cs">
+      <DependentUpon>ReferForm.cs</DependentUpon>
     </Compile>
     <Compile Include="View_Data_3.cs">
       <SubType>Form</SubType>
@@ -370,6 +400,12 @@
     <EmbeddedResource Include="UserControls\Logins\UserDashboard.resx">
       <DependentUpon>UserDashboard.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\UC_AddDataMachine.resx">
+      <DependentUpon>UC_AddDataMachine.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\UC_AirBubble.resx">
+      <DependentUpon>UC_AirBubble.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControls\UC_Assy_Yield.resx">
       <DependentUpon>UC_Assy_Yield.cs</DependentUpon>
     </EmbeddedResource>
@@ -385,6 +421,9 @@
     <EmbeddedResource Include="UserControls\UC_XrayPicture.resx">
       <DependentUpon>UC_XrayPicture.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\CommentItemCodeAirBubble.resx">
+      <DependentUpon>CommentItemCodeAirBubble.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\CommonForm.resx">
       <DependentUpon>CommonForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -393,6 +432,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\NormalForm.resx">
       <DependentUpon>NormalForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ReferForm.resx">
+      <DependentUpon>ReferForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View_Data_3.resx">
       <DependentUpon>View_Data_3.cs</DependentUpon>

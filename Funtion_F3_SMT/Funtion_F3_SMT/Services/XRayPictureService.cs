@@ -39,7 +39,7 @@ namespace OK2SHIP_SMT.Services
             }
             return true;
         }
-        public int Save(DataTable dataTable, string itemCode, string lotNo, int prime = -1)
+        public int Save(DataTable dataTable, string itemCode, string lotNo,string type, int prime = -1)
         {
             if (dataTable.Rows.Count <= 0)
             {
@@ -52,7 +52,7 @@ namespace OK2SHIP_SMT.Services
             int area = 0;
             if (prime == -1)
             {
-                DataTable log = _dbContext.LoadDataTable(_NAME_SQL, new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }, new[] { "ID", "Area" });
+                DataTable log = _dbContext.LoadDataTable(_NAME_SQL, new[] { "ItemCode", "LotNo", "Type" }, new[] { itemCode, lotNo, type }, new[] { "ID", "Area" });
                 if (log.Rows.Count > 0)
                 {
                     string z = log.Rows[0]["Area"].ToString();
@@ -70,10 +70,11 @@ namespace OK2SHIP_SMT.Services
             dr["LotNo"] = lotNo;
             dr["Data"] = json;
             dr["Area"] = area;
+            dr["Type"] = type;
             resDataTable.Rows.Add(dr);
             res += _dbContext.BuckDataTable(dataTableImage, _NAME_SQL + "_Image", new[] { "Area" });
             _dbContext.DeleteData(_NAME_SQL + "_Image", "Area", new[] { prime.ToString() });
-            res += _dbContext.BuckDataTable(resDataTable, _NAME_SQL, new[] { "ItemCode", "LotNo" }, null, "ID");
+            res += _dbContext.BuckDataTable(resDataTable, _NAME_SQL, new[] { "ItemCode", "LotNo", "Type" }, null, "ID");
             return res;
         }
         public string ConvertDataTable(DataTable datatable, DataTable dataTableImage, ref int id, int area)
@@ -165,19 +166,39 @@ namespace OK2SHIP_SMT.Services
 
             return res;
         }
-        public DataTable Read(string location, string itemCode, string lotNo)
+        public DataTable Read(string location, string itemCode, string lotNo, string type, bool prime = false)
         {
+
+            type = type.Trim();
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
             if (!CheckNameFile(location, itemCode, lotNo))
             {
                 throw new Exception("Vấn đề itemcode lotno");
             }
+            string tableName = type.Trim().ToUpper().Replace(" ", "_");
+
+            DataTable pidList = _dbContext.LoadDataTable(tableName, new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }, new[] { "ItemCode", "LotNo", "Net_No", "Pcs_No" });
+            if (pidList.Rows.Count <= 0 && !prime)
+            {
+                throw new Exception($"1234 - {type} Chưa có productID!");
+            }
+
+            List<string> pid = new List<string>();
+            foreach (DataRow ro in pidList.Rows)
+            {
+                if (ro["Net_No"].ToString().Trim().Equals("1"))
+                {
+                    pid.Add(ro["Pcs_No"].ToString());
+                }
+            }
             string[] subFolder = FileFolderRepository.GetSubFolders(location);
             DataTable dataTable = new DataTable();
             dataTable.Columns.Add("ID");
             dataTable.Columns.Add("Area");
             dataTable.Columns.Add("Result");
+            dataTable.Columns.Add("ProductID");
+            dataTable.Columns.Add("Type");
             dataTable.Columns.Add("Image", typeof(byte[]));
             foreach (string folder in subFolder)
             {
@@ -189,7 +210,17 @@ namespace OK2SHIP_SMT.Services
                 {
                     DataRow row = dataTable.NewRow();
                     row["Area"] = ar;
+                    try
+                    {
+
+                    row["ProductID"] = pid[id - 1];
+                    }
+                    catch
+                    {
+
+                    }
                     row["ID"] = id++;
+                    row["Type"] = type;
                     row["Image"] = TDMK_ImageConverter.ImageToByteArray(item.Key, ImageFormat.Png);
                     dataTable.Rows.Add(row);
                 }
@@ -197,15 +228,19 @@ namespace OK2SHIP_SMT.Services
             return dataTable;
         }
 
-        public DataTable Load(string itemCode, string lotNo)
+        public DataTable Load(string itemCode, string lotNo, string type)
         {
+            if (string.IsNullOrEmpty(type.Trim()))
+            {
+                throw new Exception("Hãy chọn type!");
+            }
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
             if (string.IsNullOrEmpty(itemCode) && string.IsNullOrEmpty(lotNo))
             {
                 throw new Exception("Không được để trống itemcode lotno");
             }
-            DataTable dataTable = _dbContext.LoadDataTable(_NAME_SQL, new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }, new[] { "Area", "Data" });
+            DataTable dataTable = _dbContext.LoadDataTable(_NAME_SQL, new[] { "ItemCode", "LotNo", "Type" }, new[] { itemCode, lotNo , type}, new[] { "Area", "Data" });
             if (dataTable.Rows.Count == 0)
             {
                 throw new Exception("Không tìm thấy dữ liệu");
@@ -217,14 +252,14 @@ namespace OK2SHIP_SMT.Services
 
         }
 
-        public string Export(string itemCode, string lotNo)
+        public string Export(string itemCode, string lotNo, string type)
         {
             ExportProcess exportProcess = new ExportProcess();
             using (ExcelPackage ex = exportProcess.FindFormatProcess("X-Ray picture", itemCode, lotNo))
             {
                 using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, "X-Ray picture"))
                 {
-                    DataTable dataTable = Load(itemCode, lotNo);
+                    DataTable dataTable = Load(itemCode, lotNo, type);
                     string[] header = new[] { "#", "Bending", "Flex SN" };
                     IDictionary<string, string> keyValuePairs = ExportProcess.FindAddressByText(workSheet, header);
                     //
@@ -245,6 +280,11 @@ namespace OK2SHIP_SMT.Services
 
                     foreach (DataRow row in dataTable.Rows)
                     {
+                        if(keyValuePairs.TryGetValue("Flex SN", out string da))
+                        {
+                            da = ExportProcess.AddColumn(da, int.Parse(row["ID"].ToString()));
+                            workSheet.Cells[da].Value = row["ProductID"];
+                        }
                         string area = row["Area"].ToString().Replace(" ", "").Replace("B", "");
                         if (headler.TryGetValue(area, out string value))
                         {
@@ -252,12 +292,26 @@ namespace OK2SHIP_SMT.Services
                             {
                                 var address = workSheet.Cells[value.Split('-')[0]];
                                 ExportProcess.InsertImageToCell(workSheet, address, (byte[])row["Image"], $"{Guid.NewGuid()}");
+                                
                                 headler[area] = headler[area].Replace($"{address.Address}-", "");
                                 workSheet.Cells[ExportProcess.AddRow(address.Address, 1)].Value = row["Result"].ToString();
                             }
                         }
                     }
-                    exportProcess.SaveExcelWorksheet(ex, "X-Ray picture", $"{itemCode.Trim()}-{lotNo.Trim()}");
+                    string nameSheet = "X-Ray picture";
+                    switch (type) {
+                        case "Flex bending":
+                            nameSheet = "X-ray after Bending";
+                            break;
+                        case "Thermal Cycling And Bend":
+                            nameSheet = "X-ray after TC & Bending";
+                            break;
+                        case "Heat Soak And Bend":
+                            nameSheet = "X-ray after HS & Bending";
+                            break;
+                }
+                    workSheet.Name = nameSheet;
+                    exportProcess.SaveExcelWorksheet(ex, nameSheet, $"{itemCode.Trim()}-{lotNo.Trim()}");
                 }
             }
             return "Export thành công!";

@@ -39,7 +39,12 @@ namespace OK2SHIP_SMT.UserControls
         {
             this.image = this.mainForm1.ExportToImage();
             this.save_status = true;
-            
+
+        }
+
+        private void mainForm1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

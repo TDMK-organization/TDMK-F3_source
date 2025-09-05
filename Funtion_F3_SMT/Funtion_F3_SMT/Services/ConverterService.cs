@@ -17,6 +17,12 @@ namespace OK2SHIP_SMT.Services
 
     public static class ConverterService
     {
+        public static int getDigit(string str)
+        {
+            return int.Parse(new string(str.SkipWhile(c => !char.IsDigit(c))
+                                           .TakeWhile(c => char.IsDigit(c))
+                                           .ToArray()));
+        }
         public static DataTable ConvertDataTableImage(DataTable datatable, DataTable dataTableImage)
         {
             DataTable res = new DataTable();
@@ -114,7 +120,7 @@ namespace OK2SHIP_SMT.Services
             {
                 if (int.TryParse(match.Value, out int number))
                 {
-                    return number; 
+                    return number;
                 }
                 else
                 {

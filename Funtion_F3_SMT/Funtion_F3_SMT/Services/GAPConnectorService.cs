@@ -68,14 +68,13 @@ namespace OK2SHIP_SMT.Services
                 for (int i = 0; i < SpecNum; i++)
                 {
                     string addressP = ExportProcess.AddColumn(address, i);
-                    addressP = ExportProcess.AddRow(addressP, 1);
                     // Kiểm tra và ghi product ID
-                    if (prime || workSheet.Cells[ExportProcess.AddColumn(addressP, -1)].Text.Contains("Flex"))
+                    if (prime || workSheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressP, -1),-1)].Text.Contains("Flex"))
                     {
                         prime = true;
                         if (originalTable.Columns.Contains("ProductID"))
                         {
-                            workSheet.Cells[addressP].Value = originalTable.Rows[i]["ProductID"];
+                            workSheet.Cells[ExportProcess.AddRow(addressP, -1)].Value = originalTable.Rows[i]["ProductID"];
                         }
                     }
                     else

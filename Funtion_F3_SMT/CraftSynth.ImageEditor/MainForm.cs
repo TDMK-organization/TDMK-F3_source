@@ -757,6 +757,8 @@ namespace CraftSynth.ImageEditor
         }
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
+            
+            
             if (!toolStripButton1.Text.ToString().Equals("Apply"))
             {
                 toolStripButton1.Text = "Apply";

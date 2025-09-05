@@ -37,6 +37,7 @@
             this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tdmK_Label1 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
+            this.toolStripLabel5 = new System.Windows.Forms.ToolStripLabel();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -80,7 +81,8 @@
             this.toolStripLabel1,
             this.toolStripLabel2,
             this.toolStripLabel3,
-            this.toolStripLabel4});
+            this.toolStripLabel4,
+            this.toolStripLabel5});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1229, 30);
@@ -138,6 +140,13 @@
             this.tdmK_Label1.Text = "Crop Image";
             this.tdmK_Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // toolStripLabel5
+            // 
+            this.toolStripLabel5.Name = "toolStripLabel5";
+            this.toolStripLabel5.Size = new System.Drawing.Size(71, 27);
+            this.toolStripLabel5.Text = "New Picture";
+            this.toolStripLabel5.Click += new System.EventHandler(this.toolStripLabel5_Click);
+            // 
             // EditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -167,5 +176,6 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ToolStripLabel toolStripLabel4;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel5;
     }
 }

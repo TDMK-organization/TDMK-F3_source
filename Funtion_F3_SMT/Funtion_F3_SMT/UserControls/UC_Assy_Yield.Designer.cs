@@ -28,12 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.tdmK_Label4 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanel16 = new System.Windows.Forms.TableLayoutPanel();
             this.label12 = new System.Windows.Forms.Label();
@@ -49,58 +55,62 @@
             this.label7 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.tdmK_Label1 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.tdmK_Label2 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.dataGridView3 = new System.Windows.Forms.DataGridView();
+            this.tdmK_Label3 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
+            this.tdmK_Label5 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.tdmK_Label6 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
+            this.tdmK_Label7 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.tdmK_Button1 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.tdmK_Button7 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
+            this.tdmK_Button5 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
+            this.tdmK_Button4 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
+            this.tableLayoutPanel17 = new System.Windows.Forms.TableLayoutPanel();
+            this.tdmK_Label18 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
+            this.tableLayoutPanel18 = new System.Windows.Forms.TableLayoutPanel();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.tdmK_Button8 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
             this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
+            this.tdmK_Label9 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
+            this.tdmK_Button6 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
+            this.tdmK_Label8 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel11 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel14 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel12 = new System.Windows.Forms.TableLayoutPanel();
+            this.tdmK_Label10 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tableLayoutPanel13 = new System.Windows.Forms.TableLayoutPanel();
             this.textBox5 = new System.Windows.Forms.TextBox();
-            this.comboBox = new System.Windows.Forms.ComboBox();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.tableLayoutPanel15 = new System.Windows.Forms.TableLayoutPanel();
-            this.tdmK_Label5 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
-            this.tdmK_Label6 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
-            this.tdmK_Label7 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
-            this.tdmK_Button1 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
-            this.tdmK_Button7 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
-            this.tdmK_Button5 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
-            this.tdmK_Button4 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
-            this.tdmK_Label9 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
-            this.tdmK_Button6 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
-            this.tdmK_Label8 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
-            this.tdmK_Label4 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
-            this.tdmK_Label1 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
-            this.tdmK_Label2 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
-            this.tdmK_Label3 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
-            this.tdmK_Label10 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tdmK_Label17 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
+            this.comboBox = new System.Windows.Forms.ComboBox();
             this.tdmK_Label11 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tdmK_Label16 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tdmK_Label15 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tdmK_Label14 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
             this.tdmK_Label13 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.textBox4 = new System.Windows.Forms.TextBox();
             this.tdmK_Label12 = new OK2SHIP_SMT.ToolBoxs.TDMK_Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.tableLayoutPanel15 = new System.Windows.Forms.TableLayoutPanel();
             this.tdmK_Button3 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
             this.tdmK_Button2 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
@@ -108,16 +118,20 @@
             this.tableLayoutPanel16.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.tabPage4.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
             this.tableLayoutPanel8.SuspendLayout();
             this.tableLayoutPanel9.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
+            this.tableLayoutPanel17.SuspendLayout();
+            this.tableLayoutPanel18.SuspendLayout();
             this.tableLayoutPanel10.SuspendLayout();
             this.tableLayoutPanel11.SuspendLayout();
             this.tableLayoutPanel14.SuspendLayout();
@@ -125,8 +139,6 @@
             this.tableLayoutPanel13.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel15.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -171,10 +183,38 @@
             this.tableLayoutPanel4.Size = new System.Drawing.Size(803, 426);
             this.tableLayoutPanel4.TabIndex = 1;
             // 
+            // tdmK_Label4
+            // 
+            this.tdmK_Label4.AutoSize = true;
+            this.tdmK_Label4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label4.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Label4.Location = new System.Drawing.Point(3, 0);
+            this.tdmK_Label4.Name = "tdmK_Label4";
+            this.tdmK_Label4.Size = new System.Drawing.Size(797, 34);
+            this.tdmK_Label4.TabIndex = 2;
+            this.tdmK_Label4.Text = "Yield by process";
+            this.tdmK_Label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // dataGridView
             // 
             this.dataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView.Location = new System.Drawing.Point(3, 37);
             this.dataGridView.Name = "dataGridView";
@@ -360,6 +400,45 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(803, 426);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 42);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
+            this.dataGridView1.Size = new System.Drawing.Size(797, 381);
+            this.dataGridView1.TabIndex = 2;
+            // 
+            // tdmK_Label1
+            // 
+            this.tdmK_Label1.AutoSize = true;
+            this.tdmK_Label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Label1.Location = new System.Drawing.Point(3, 0);
+            this.tdmK_Label1.Name = "tdmK_Label1";
+            this.tdmK_Label1.Size = new System.Drawing.Size(797, 39);
+            this.tdmK_Label1.TabIndex = 1;
+            this.tdmK_Label1.Text = "Top SMT Yield Hitters\t\t";
+            this.tdmK_Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.tableLayoutPanel2);
@@ -390,20 +469,40 @@
             // 
             this.dataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView2.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle6;
             this.dataGridView2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView2.Location = new System.Drawing.Point(3, 42);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
             this.dataGridView2.Size = new System.Drawing.Size(797, 381);
             this.dataGridView2.TabIndex = 0;
+            // 
+            // tdmK_Label2
+            // 
+            this.tdmK_Label2.AutoSize = true;
+            this.tdmK_Label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label2.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Label2.Location = new System.Drawing.Point(3, 0);
+            this.tdmK_Label2.Name = "tdmK_Label2";
+            this.tdmK_Label2.Size = new System.Drawing.Size(797, 39);
+            this.tdmK_Label2.TabIndex = 1;
+            this.tdmK_Label2.Text = "Top Backend Yield Hitters (FCT, PSA assembly, Prebend etc)\t\t\t";
+            this.tdmK_Label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tabPage4
             // 
@@ -430,6 +529,45 @@
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90.63927F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(803, 426);
             this.tableLayoutPanel3.TabIndex = 2;
+            // 
+            // dataGridView3
+            // 
+            this.dataGridView3.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView3.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView3.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView3.DefaultCellStyle = dataGridViewCellStyle8;
+            this.dataGridView3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView3.Location = new System.Drawing.Point(3, 42);
+            this.dataGridView3.Name = "dataGridView3";
+            this.dataGridView3.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
+            this.dataGridView3.Size = new System.Drawing.Size(797, 381);
+            this.dataGridView3.TabIndex = 2;
+            // 
+            // tdmK_Label3
+            // 
+            this.tdmK_Label3.AutoSize = true;
+            this.tdmK_Label3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label3.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Label3.Location = new System.Drawing.Point(3, 0);
+            this.tdmK_Label3.Name = "tdmK_Label3";
+            this.tdmK_Label3.Size = new System.Drawing.Size(797, 39);
+            this.tdmK_Label3.TabIndex = 1;
+            this.tdmK_Label3.Text = "OQC dppm details\t\t\t";
+            this.tdmK_Label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel8
             // 
@@ -463,6 +601,19 @@
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel9.Size = new System.Drawing.Size(1131, 151);
             this.tableLayoutPanel9.TabIndex = 1;
+            // 
+            // tdmK_Label5
+            // 
+            this.tdmK_Label5.AutoSize = true;
+            this.tdmK_Label5.BackColor = System.Drawing.Color.IndianRed;
+            this.tdmK_Label5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label5.Font = new System.Drawing.Font("Arial", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tdmK_Label5.Location = new System.Drawing.Point(3, 0);
+            this.tdmK_Label5.Name = "tdmK_Label5";
+            this.tdmK_Label5.Size = new System.Drawing.Size(317, 75);
+            this.tdmK_Label5.TabIndex = 0;
+            this.tdmK_Label5.Text = "Assy Yield";
+            this.tdmK_Label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel6
             // 
@@ -498,6 +649,30 @@
             this.tableLayoutPanel5.Size = new System.Drawing.Size(662, 63);
             this.tableLayoutPanel5.TabIndex = 1;
             // 
+            // tdmK_Label6
+            // 
+            this.tdmK_Label6.AutoSize = true;
+            this.tdmK_Label6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label6.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tdmK_Label6.Location = new System.Drawing.Point(4, 1);
+            this.tdmK_Label6.Name = "tdmK_Label6";
+            this.tdmK_Label6.Size = new System.Drawing.Size(92, 30);
+            this.tdmK_Label6.TabIndex = 0;
+            this.tdmK_Label6.Text = "ItemCode";
+            this.tdmK_Label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tdmK_Label7
+            // 
+            this.tdmK_Label7.AutoSize = true;
+            this.tdmK_Label7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label7.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tdmK_Label7.Location = new System.Drawing.Point(4, 32);
+            this.tdmK_Label7.Name = "tdmK_Label7";
+            this.tdmK_Label7.Size = new System.Drawing.Size(92, 30);
+            this.tdmK_Label7.TabIndex = 1;
+            this.tdmK_Label7.Text = "LotNo";
+            this.tdmK_Label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // textBox1
             // 
             this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -517,6 +692,18 @@
             this.textBox2.TabIndex = 3;
             this.textBox2.Leave += new System.EventHandler(this.textBox2_Leave);
             // 
+            // tdmK_Button1
+            // 
+            this.tdmK_Button1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Button1.Location = new System.Drawing.Point(671, 3);
+            this.tdmK_Button1.Name = "tdmK_Button1";
+            this.tdmK_Button1.Size = new System.Drawing.Size(128, 63);
+            this.tdmK_Button1.TabIndex = 2;
+            this.tdmK_Button1.Text = "Load";
+            this.tdmK_Button1.UseVisualStyleBackColor = true;
+            this.tdmK_Button1.Click += new System.EventHandler(this.tdmK_Button1_Click);
+            // 
             // tableLayoutPanel7
             // 
             this.tableLayoutPanel7.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
@@ -528,6 +715,7 @@
             this.tableLayoutPanel7.Controls.Add(this.tdmK_Button7, 0, 0);
             this.tableLayoutPanel7.Controls.Add(this.tdmK_Button5, 3, 0);
             this.tableLayoutPanel7.Controls.Add(this.tdmK_Button4, 2, 0);
+            this.tableLayoutPanel7.Controls.Add(this.tableLayoutPanel17, 1, 0);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(326, 78);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -535,6 +723,106 @@
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel7.Size = new System.Drawing.Size(802, 70);
             this.tableLayoutPanel7.TabIndex = 3;
+            // 
+            // tdmK_Button7
+            // 
+            this.tdmK_Button7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Button7.Location = new System.Drawing.Point(4, 4);
+            this.tdmK_Button7.Name = "tdmK_Button7";
+            this.tdmK_Button7.Size = new System.Drawing.Size(193, 62);
+            this.tdmK_Button7.TabIndex = 4;
+            this.tdmK_Button7.Text = "Save";
+            this.tdmK_Button7.UseVisualStyleBackColor = true;
+            this.tdmK_Button7.Click += new System.EventHandler(this.tdmK_Button7_Click);
+            // 
+            // tdmK_Button5
+            // 
+            this.tdmK_Button5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Button5.Location = new System.Drawing.Point(604, 4);
+            this.tdmK_Button5.Name = "tdmK_Button5";
+            this.tdmK_Button5.Size = new System.Drawing.Size(194, 62);
+            this.tdmK_Button5.TabIndex = 3;
+            this.tdmK_Button5.Text = "Clear Data";
+            this.tdmK_Button5.UseVisualStyleBackColor = true;
+            this.tdmK_Button5.Click += new System.EventHandler(this.tdmK_Button5_Click);
+            // 
+            // tdmK_Button4
+            // 
+            this.tdmK_Button4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Button4.Location = new System.Drawing.Point(404, 4);
+            this.tdmK_Button4.Name = "tdmK_Button4";
+            this.tdmK_Button4.Size = new System.Drawing.Size(193, 62);
+            this.tdmK_Button4.TabIndex = 2;
+            this.tdmK_Button4.Text = "Export";
+            this.tdmK_Button4.UseVisualStyleBackColor = true;
+            this.tdmK_Button4.Click += new System.EventHandler(this.tdmK_Button4_Click);
+            // 
+            // tableLayoutPanel17
+            // 
+            this.tableLayoutPanel17.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            this.tableLayoutPanel17.ColumnCount = 1;
+            this.tableLayoutPanel17.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel17.Controls.Add(this.tdmK_Label18, 0, 0);
+            this.tableLayoutPanel17.Controls.Add(this.tableLayoutPanel18, 0, 1);
+            this.tableLayoutPanel17.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel17.Location = new System.Drawing.Point(204, 4);
+            this.tableLayoutPanel17.Name = "tableLayoutPanel17";
+            this.tableLayoutPanel17.RowCount = 2;
+            this.tableLayoutPanel17.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 22.22222F));
+            this.tableLayoutPanel17.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 77.77778F));
+            this.tableLayoutPanel17.Size = new System.Drawing.Size(193, 62);
+            this.tableLayoutPanel17.TabIndex = 5;
+            // 
+            // tdmK_Label18
+            // 
+            this.tdmK_Label18.AutoSize = true;
+            this.tdmK_Label18.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label18.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Label18.Location = new System.Drawing.Point(4, 1);
+            this.tdmK_Label18.Name = "tdmK_Label18";
+            this.tdmK_Label18.Size = new System.Drawing.Size(185, 13);
+            this.tdmK_Label18.TabIndex = 0;
+            this.tdmK_Label18.Text = "Target";
+            this.tdmK_Label18.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tableLayoutPanel18
+            // 
+            this.tableLayoutPanel18.ColumnCount = 2;
+            this.tableLayoutPanel18.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 74.86631F));
+            this.tableLayoutPanel18.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.13369F));
+            this.tableLayoutPanel18.Controls.Add(this.textBox9, 0, 0);
+            this.tableLayoutPanel18.Controls.Add(this.tdmK_Button8, 1, 0);
+            this.tableLayoutPanel18.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel18.Location = new System.Drawing.Point(4, 18);
+            this.tableLayoutPanel18.Name = "tableLayoutPanel18";
+            this.tableLayoutPanel18.RowCount = 1;
+            this.tableLayoutPanel18.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel18.Size = new System.Drawing.Size(185, 40);
+            this.tableLayoutPanel18.TabIndex = 1;
+            // 
+            // textBox9
+            // 
+            this.textBox9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox9.Location = new System.Drawing.Point(3, 3);
+            this.textBox9.Multiline = true;
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(132, 34);
+            this.textBox9.TabIndex = 0;
+            // 
+            // tdmK_Button8
+            // 
+            this.tdmK_Button8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Button8.Location = new System.Drawing.Point(141, 3);
+            this.tdmK_Button8.Name = "tdmK_Button8";
+            this.tdmK_Button8.Size = new System.Drawing.Size(41, 34);
+            this.tdmK_Button8.TabIndex = 1;
+            this.tdmK_Button8.Text = "Save";
+            this.tdmK_Button8.UseVisualStyleBackColor = true;
+            this.tdmK_Button8.Click += new System.EventHandler(this.tdmK_Button8_Click);
             // 
             // tableLayoutPanel10
             // 
@@ -554,6 +842,44 @@
             this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel10.Size = new System.Drawing.Size(317, 70);
             this.tableLayoutPanel10.TabIndex = 4;
+            // 
+            // tdmK_Label9
+            // 
+            this.tdmK_Label9.AutoSize = true;
+            this.tdmK_Label9.BackColor = System.Drawing.Color.RosyBrown;
+            this.tdmK_Label9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label9.Font = new System.Drawing.Font("Arial", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tdmK_Label9.Location = new System.Drawing.Point(4, 35);
+            this.tdmK_Label9.Name = "tdmK_Label9";
+            this.tdmK_Label9.Size = new System.Drawing.Size(132, 34);
+            this.tdmK_Label9.TabIndex = 3;
+            this.tdmK_Label9.Text = "Hello, guest";
+            this.tdmK_Label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tdmK_Button6
+            // 
+            this.tdmK_Button6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tdmK_Button6.Location = new System.Drawing.Point(143, 38);
+            this.tdmK_Button6.Name = "tdmK_Button6";
+            this.tdmK_Button6.Size = new System.Drawing.Size(170, 28);
+            this.tdmK_Button6.TabIndex = 0;
+            this.tdmK_Button6.Text = "Login";
+            this.tdmK_Button6.UseVisualStyleBackColor = true;
+            this.tdmK_Button6.Click += new System.EventHandler(this.tdmK_Button6_Click);
+            // 
+            // tdmK_Label8
+            // 
+            this.tdmK_Label8.AutoSize = true;
+            this.tdmK_Label8.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.tdmK_Label8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label8.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Label8.Location = new System.Drawing.Point(4, 1);
+            this.tdmK_Label8.Name = "tdmK_Label8";
+            this.tdmK_Label8.Size = new System.Drawing.Size(132, 33);
+            this.tdmK_Label8.TabIndex = 1;
+            this.tdmK_Label8.Text = "Operator";
+            this.tdmK_Label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // textBox3
             // 
@@ -612,6 +938,19 @@
             this.tableLayoutPanel12.Size = new System.Drawing.Size(308, 384);
             this.tableLayoutPanel12.TabIndex = 1;
             // 
+            // tdmK_Label10
+            // 
+            this.tdmK_Label10.AutoSize = true;
+            this.tdmK_Label10.BackColor = System.Drawing.Color.MistyRose;
+            this.tdmK_Label10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label10.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tdmK_Label10.Location = new System.Drawing.Point(4, 1);
+            this.tdmK_Label10.Name = "tdmK_Label10";
+            this.tdmK_Label10.Size = new System.Drawing.Size(300, 60);
+            this.tdmK_Label10.TabIndex = 0;
+            this.tdmK_Label10.Text = "Create New Hiiter";
+            this.tdmK_Label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // tableLayoutPanel13
             // 
             this.tableLayoutPanel13.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
@@ -655,6 +994,18 @@
             this.textBox5.Size = new System.Drawing.Size(185, 34);
             this.textBox5.TabIndex = 14;
             // 
+            // tdmK_Label17
+            // 
+            this.tdmK_Label17.AutoSize = true;
+            this.tdmK_Label17.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Label17.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Label17.Location = new System.Drawing.Point(4, 31);
+            this.tdmK_Label17.Name = "tdmK_Label17";
+            this.tdmK_Label17.Size = new System.Drawing.Size(100, 40);
+            this.tdmK_Label17.TabIndex = 13;
+            this.tdmK_Label17.Text = "Defect Name";
+            this.tdmK_Label17.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // comboBox
             // 
             this.comboBox.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -671,268 +1022,6 @@
             this.comboBox.Name = "comboBox";
             this.comboBox.Size = new System.Drawing.Size(185, 28);
             this.comboBox.TabIndex = 0;
-            // 
-            // textBox8
-            // 
-            this.textBox8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox8.Location = new System.Drawing.Point(111, 255);
-            this.textBox8.Multiline = true;
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(185, 56);
-            this.textBox8.TabIndex = 11;
-            // 
-            // textBox7
-            // 
-            this.textBox7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox7.Location = new System.Drawing.Point(111, 196);
-            this.textBox7.Multiline = true;
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(185, 52);
-            this.textBox7.TabIndex = 10;
-            // 
-            // textBox6
-            // 
-            this.textBox6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox6.Enabled = false;
-            this.textBox6.Location = new System.Drawing.Point(111, 166);
-            this.textBox6.Multiline = true;
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(185, 23);
-            this.textBox6.TabIndex = 9;
-            // 
-            // textBox4
-            // 
-            this.textBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox4.Location = new System.Drawing.Point(111, 136);
-            this.textBox4.Multiline = true;
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(185, 23);
-            this.textBox4.TabIndex = 7;
-            this.textBox4.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.ButtonShadow;
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.InitialImage = global::OK2SHIP_SMT.Properties.Resources.Logo__2_;
-            this.pictureBox1.Location = new System.Drawing.Point(111, 75);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(185, 54);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 12;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
-            // 
-            // tableLayoutPanel15
-            // 
-            this.tableLayoutPanel15.ColumnCount = 2;
-            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel15.Controls.Add(this.tdmK_Button3, 1, 0);
-            this.tableLayoutPanel15.Controls.Add(this.tdmK_Button2, 0, 0);
-            this.tableLayoutPanel15.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel15.Location = new System.Drawing.Point(3, 387);
-            this.tableLayoutPanel15.Name = "tableLayoutPanel15";
-            this.tableLayoutPanel15.RowCount = 1;
-            this.tableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel15.Size = new System.Drawing.Size(302, 62);
-            this.tableLayoutPanel15.TabIndex = 2;
-            // 
-            // tdmK_Label5
-            // 
-            this.tdmK_Label5.AutoSize = true;
-            this.tdmK_Label5.BackColor = System.Drawing.Color.IndianRed;
-            this.tdmK_Label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label5.Font = new System.Drawing.Font("Arial", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tdmK_Label5.Location = new System.Drawing.Point(3, 0);
-            this.tdmK_Label5.Name = "tdmK_Label5";
-            this.tdmK_Label5.Size = new System.Drawing.Size(317, 75);
-            this.tdmK_Label5.TabIndex = 0;
-            this.tdmK_Label5.Text = "Assy Yield";
-            this.tdmK_Label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tdmK_Label6
-            // 
-            this.tdmK_Label6.AutoSize = true;
-            this.tdmK_Label6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label6.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tdmK_Label6.Location = new System.Drawing.Point(4, 1);
-            this.tdmK_Label6.Name = "tdmK_Label6";
-            this.tdmK_Label6.Size = new System.Drawing.Size(92, 30);
-            this.tdmK_Label6.TabIndex = 0;
-            this.tdmK_Label6.Text = "ItemCode";
-            this.tdmK_Label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tdmK_Label7
-            // 
-            this.tdmK_Label7.AutoSize = true;
-            this.tdmK_Label7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label7.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tdmK_Label7.Location = new System.Drawing.Point(4, 32);
-            this.tdmK_Label7.Name = "tdmK_Label7";
-            this.tdmK_Label7.Size = new System.Drawing.Size(92, 30);
-            this.tdmK_Label7.TabIndex = 1;
-            this.tdmK_Label7.Text = "LotNo";
-            this.tdmK_Label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tdmK_Button1
-            // 
-            this.tdmK_Button1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold);
-            this.tdmK_Button1.Location = new System.Drawing.Point(671, 3);
-            this.tdmK_Button1.Name = "tdmK_Button1";
-            this.tdmK_Button1.Size = new System.Drawing.Size(128, 63);
-            this.tdmK_Button1.TabIndex = 2;
-            this.tdmK_Button1.Text = "Load";
-            this.tdmK_Button1.UseVisualStyleBackColor = true;
-            this.tdmK_Button1.Click += new System.EventHandler(this.tdmK_Button1_Click);
-            // 
-            // tdmK_Button7
-            // 
-            this.tdmK_Button7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold);
-            this.tdmK_Button7.Location = new System.Drawing.Point(4, 4);
-            this.tdmK_Button7.Name = "tdmK_Button7";
-            this.tdmK_Button7.Size = new System.Drawing.Size(193, 62);
-            this.tdmK_Button7.TabIndex = 4;
-            this.tdmK_Button7.Text = "Save";
-            this.tdmK_Button7.UseVisualStyleBackColor = true;
-            this.tdmK_Button7.Click += new System.EventHandler(this.tdmK_Button7_Click);
-            // 
-            // tdmK_Button5
-            // 
-            this.tdmK_Button5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold);
-            this.tdmK_Button5.Location = new System.Drawing.Point(604, 4);
-            this.tdmK_Button5.Name = "tdmK_Button5";
-            this.tdmK_Button5.Size = new System.Drawing.Size(194, 62);
-            this.tdmK_Button5.TabIndex = 3;
-            this.tdmK_Button5.Text = "Clear Data";
-            this.tdmK_Button5.UseVisualStyleBackColor = true;
-            this.tdmK_Button5.Click += new System.EventHandler(this.tdmK_Button5_Click);
-            // 
-            // tdmK_Button4
-            // 
-            this.tdmK_Button4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold);
-            this.tdmK_Button4.Location = new System.Drawing.Point(404, 4);
-            this.tdmK_Button4.Name = "tdmK_Button4";
-            this.tdmK_Button4.Size = new System.Drawing.Size(193, 62);
-            this.tdmK_Button4.TabIndex = 2;
-            this.tdmK_Button4.Text = "Export";
-            this.tdmK_Button4.UseVisualStyleBackColor = true;
-            this.tdmK_Button4.Click += new System.EventHandler(this.tdmK_Button4_Click);
-            // 
-            // tdmK_Label9
-            // 
-            this.tdmK_Label9.AutoSize = true;
-            this.tdmK_Label9.BackColor = System.Drawing.Color.RosyBrown;
-            this.tdmK_Label9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label9.Font = new System.Drawing.Font("Arial", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tdmK_Label9.Location = new System.Drawing.Point(4, 35);
-            this.tdmK_Label9.Name = "tdmK_Label9";
-            this.tdmK_Label9.Size = new System.Drawing.Size(132, 34);
-            this.tdmK_Label9.TabIndex = 3;
-            this.tdmK_Label9.Text = "Hello, guest";
-            this.tdmK_Label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tdmK_Button6
-            // 
-            this.tdmK_Button6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tdmK_Button6.Location = new System.Drawing.Point(143, 38);
-            this.tdmK_Button6.Name = "tdmK_Button6";
-            this.tdmK_Button6.Size = new System.Drawing.Size(170, 28);
-            this.tdmK_Button6.TabIndex = 0;
-            this.tdmK_Button6.Text = "Login";
-            this.tdmK_Button6.UseVisualStyleBackColor = true;
-            this.tdmK_Button6.Click += new System.EventHandler(this.tdmK_Button6_Click);
-            // 
-            // tdmK_Label8
-            // 
-            this.tdmK_Label8.AutoSize = true;
-            this.tdmK_Label8.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.tdmK_Label8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label8.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.tdmK_Label8.Location = new System.Drawing.Point(4, 1);
-            this.tdmK_Label8.Name = "tdmK_Label8";
-            this.tdmK_Label8.Size = new System.Drawing.Size(132, 33);
-            this.tdmK_Label8.TabIndex = 1;
-            this.tdmK_Label8.Text = "Operator";
-            this.tdmK_Label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tdmK_Label4
-            // 
-            this.tdmK_Label4.AutoSize = true;
-            this.tdmK_Label4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label4.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.tdmK_Label4.Location = new System.Drawing.Point(3, 0);
-            this.tdmK_Label4.Name = "tdmK_Label4";
-            this.tdmK_Label4.Size = new System.Drawing.Size(797, 34);
-            this.tdmK_Label4.TabIndex = 2;
-            this.tdmK_Label4.Text = "Yield by process";
-            this.tdmK_Label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tdmK_Label1
-            // 
-            this.tdmK_Label1.AutoSize = true;
-            this.tdmK_Label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.tdmK_Label1.Location = new System.Drawing.Point(3, 0);
-            this.tdmK_Label1.Name = "tdmK_Label1";
-            this.tdmK_Label1.Size = new System.Drawing.Size(797, 39);
-            this.tdmK_Label1.TabIndex = 1;
-            this.tdmK_Label1.Text = "Top SMT Yield Hitters\t\t";
-            this.tdmK_Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tdmK_Label2
-            // 
-            this.tdmK_Label2.AutoSize = true;
-            this.tdmK_Label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label2.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.tdmK_Label2.Location = new System.Drawing.Point(3, 0);
-            this.tdmK_Label2.Name = "tdmK_Label2";
-            this.tdmK_Label2.Size = new System.Drawing.Size(797, 39);
-            this.tdmK_Label2.TabIndex = 1;
-            this.tdmK_Label2.Text = "Top Backend Yield Hitters (FCT, PSA assembly, Prebend etc)\t\t\t";
-            this.tdmK_Label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tdmK_Label3
-            // 
-            this.tdmK_Label3.AutoSize = true;
-            this.tdmK_Label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label3.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.tdmK_Label3.Location = new System.Drawing.Point(3, 0);
-            this.tdmK_Label3.Name = "tdmK_Label3";
-            this.tdmK_Label3.Size = new System.Drawing.Size(797, 39);
-            this.tdmK_Label3.TabIndex = 1;
-            this.tdmK_Label3.Text = "OQC dppm details\t\t\t";
-            this.tdmK_Label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tdmK_Label10
-            // 
-            this.tdmK_Label10.AutoSize = true;
-            this.tdmK_Label10.BackColor = System.Drawing.Color.MistyRose;
-            this.tdmK_Label10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label10.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tdmK_Label10.Location = new System.Drawing.Point(4, 1);
-            this.tdmK_Label10.Name = "tdmK_Label10";
-            this.tdmK_Label10.Size = new System.Drawing.Size(300, 60);
-            this.tdmK_Label10.TabIndex = 0;
-            this.tdmK_Label10.Text = "Create New Hiiter";
-            this.tdmK_Label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tdmK_Label17
-            // 
-            this.tdmK_Label17.AutoSize = true;
-            this.tdmK_Label17.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tdmK_Label17.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.tdmK_Label17.Location = new System.Drawing.Point(4, 31);
-            this.tdmK_Label17.Name = "tdmK_Label17";
-            this.tdmK_Label17.Size = new System.Drawing.Size(100, 40);
-            this.tdmK_Label17.TabIndex = 13;
-            this.tdmK_Label17.Text = "Defect Name";
-            this.tdmK_Label17.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tdmK_Label11
             // 
@@ -994,6 +1083,44 @@
             this.tdmK_Label13.Text = "Defects Qty";
             this.tdmK_Label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // textBox8
+            // 
+            this.textBox8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox8.Location = new System.Drawing.Point(111, 255);
+            this.textBox8.Multiline = true;
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(185, 56);
+            this.textBox8.TabIndex = 11;
+            // 
+            // textBox7
+            // 
+            this.textBox7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox7.Location = new System.Drawing.Point(111, 196);
+            this.textBox7.Multiline = true;
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(185, 52);
+            this.textBox7.TabIndex = 10;
+            // 
+            // textBox6
+            // 
+            this.textBox6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox6.Enabled = false;
+            this.textBox6.Location = new System.Drawing.Point(111, 166);
+            this.textBox6.Multiline = true;
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(185, 23);
+            this.textBox6.TabIndex = 9;
+            // 
+            // textBox4
+            // 
+            this.textBox4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox4.Location = new System.Drawing.Point(111, 136);
+            this.textBox4.Multiline = true;
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(185, 23);
+            this.textBox4.TabIndex = 7;
+            this.textBox4.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
+            // 
             // tdmK_Label12
             // 
             this.tdmK_Label12.AutoSize = true;
@@ -1005,6 +1132,34 @@
             this.tdmK_Label12.TabIndex = 2;
             this.tdmK_Label12.Text = "Defect Description\t";
             this.tdmK_Label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.SystemColors.ButtonShadow;
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.InitialImage = global::OK2SHIP_SMT.Properties.Resources.Logo__2_;
+            this.pictureBox1.Location = new System.Drawing.Point(111, 75);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(185, 54);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 12;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
+            // 
+            // tableLayoutPanel15
+            // 
+            this.tableLayoutPanel15.ColumnCount = 2;
+            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel15.Controls.Add(this.tdmK_Button3, 1, 0);
+            this.tableLayoutPanel15.Controls.Add(this.tdmK_Button2, 0, 0);
+            this.tableLayoutPanel15.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel15.Location = new System.Drawing.Point(3, 387);
+            this.tableLayoutPanel15.Name = "tableLayoutPanel15";
+            this.tableLayoutPanel15.RowCount = 1;
+            this.tableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel15.Size = new System.Drawing.Size(302, 62);
+            this.tableLayoutPanel15.TabIndex = 2;
             // 
             // tdmK_Button3
             // 
@@ -1029,44 +1184,6 @@
             this.tdmK_Button2.UseVisualStyleBackColor = true;
             this.tdmK_Button2.Click += new System.EventHandler(this.tdmK_Button2_Click);
             // 
-            // dataGridView1
-            // 
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 42);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
-            this.dataGridView1.Size = new System.Drawing.Size(797, 381);
-            this.dataGridView1.TabIndex = 2;
-            // 
-            // dataGridView3
-            // 
-            this.dataGridView3.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView3.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView3.DefaultCellStyle = dataGridViewCellStyle3;
-            this.dataGridView3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView3.Location = new System.Drawing.Point(3, 42);
-            this.dataGridView3.Name = "dataGridView3";
-            this.dataGridView3.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
-            this.dataGridView3.Size = new System.Drawing.Size(797, 381);
-            this.dataGridView3.TabIndex = 2;
-            // 
             // UC_Assy_Yield
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1083,6 +1200,7 @@
             this.tabPage2.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
@@ -1090,6 +1208,7 @@
             this.tabPage4.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
             this.tableLayoutPanel8.ResumeLayout(false);
             this.tableLayoutPanel9.ResumeLayout(false);
             this.tableLayoutPanel9.PerformLayout();
@@ -1097,6 +1216,10 @@
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
             this.tableLayoutPanel7.ResumeLayout(false);
+            this.tableLayoutPanel17.ResumeLayout(false);
+            this.tableLayoutPanel17.PerformLayout();
+            this.tableLayoutPanel18.ResumeLayout(false);
+            this.tableLayoutPanel18.PerformLayout();
             this.tableLayoutPanel10.ResumeLayout(false);
             this.tableLayoutPanel10.PerformLayout();
             this.tableLayoutPanel11.ResumeLayout(false);
@@ -1107,8 +1230,6 @@
             this.tableLayoutPanel13.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tableLayoutPanel15.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1185,5 +1306,10 @@
         private System.Windows.Forms.DataGridView dataGridView2;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.DataGridView dataGridView3;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel17;
+        private ToolBoxs.TDMK_Label tdmK_Label18;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel18;
+        private System.Windows.Forms.TextBox textBox9;
+        private ToolBoxs.TDMK_Button tdmK_Button8;
     }
 }

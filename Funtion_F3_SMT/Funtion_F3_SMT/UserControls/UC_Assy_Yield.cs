@@ -1,11 +1,13 @@
 ﻿using Funtion_F3_SMT;
 using OK2SHIP_SMT.Services;
+using OK2SHIP_SMT.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Security.Authentication;
 using System.Text;
@@ -55,7 +57,7 @@ namespace OK2SHIP_SMT.UserControls
         {
             LoadDataProcess();
             MakeColor();
-            
+
         }
 
         private void tdmK_Button4_Click(object sender, EventArgs e)
@@ -171,6 +173,8 @@ namespace OK2SHIP_SMT.UserControls
                         break;
                 }
             }
+
+            MakeColor();
             ClearForm();
         }
         private void tdmK_Button5_Click(object sender, EventArgs e)
@@ -181,8 +185,16 @@ namespace OK2SHIP_SMT.UserControls
         {
             dataGridView.DataSource = CaculateDataTable((DataTable)dataGridView.DataSource);
         }
+        private void btn_close_Click(object sender, EventArgs e)
+        {
+            dialog.Hide();
+        }
+
+        Form dialog = new Form();
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
         {
+
+
             if (pictureBox1.Image == null)
             {
                 OpenFileDialog open = new OpenFileDialog();
@@ -195,10 +207,13 @@ namespace OK2SHIP_SMT.UserControls
             }
             else
             {
-                using (ArtistFramerService edit = new ArtistFramerService((Image)pictureBox1.Image))
-                {
-                    pictureBox1.Image = edit.Image;
-                }
+                Image image = pictureBox1.Image;
+                EditorForm edit = new EditorForm((Image)image);
+                edit.ShowDialog();
+                image = edit._image;
+
+                pictureBox1.Image = image;
+                imageMAIN = image;
             }
         }
         #endregion
@@ -210,7 +225,7 @@ namespace OK2SHIP_SMT.UserControls
             {
                 dataGridView.DataSource = dataTable;
             }
-            
+
             if (_DIC.TryGetValue("Top_SMT", out dataTable))
             {
                 dataGridView1.DataSource = dataTable;
@@ -233,6 +248,9 @@ namespace OK2SHIP_SMT.UserControls
                 string lotNo = textBox2.Text.Trim();
                 _DIC = new ASSY_YIELDService().Load(itemCode, lotNo);
                 DisplayData();
+                string value = new ASSY_YIELDService().LoadTarget(itemCode);
+                textBox9.Text = value;
+                throw new Exception("Load dữ liệu thành công!");
             }
             catch (Exception ex)
             {
@@ -390,6 +408,19 @@ namespace OK2SHIP_SMT.UserControls
         private void dataGridView_CellValueChanged(object sender, EventArgs e)
         {
             dataGridView.DataSource = CaculateDataTable((DataTable)dataGridView.DataSource);
+        }
+
+        private void tdmK_Button8_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                new ASSY_YIELDService().SaveTarget(textBox1.Text, textBox9.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

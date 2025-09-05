@@ -50,6 +50,21 @@ namespace Funtion_F3_SMT
         //export cross_section
         public void export_excel_cross_section(ExcelWorksheet ws, string itemcode, string lotno, DataTable Data_tbl, DataTable dt_spec, DataGridView dgv_data, string type, string leader, int count_sample)
         {
+            string regionZ = "";
+            int iz = 1;
+            foreach (DataRow row in Data_tbl.Rows)
+            {
+                if (row["Region"].ToString().Equals(regionZ))
+                {
+
+                }
+                else
+                {
+                    regionZ = row["Region"].ToString();
+                    iz = 1;
+                }
+                row["Sample"] = iz++;
+            }
             List<string> list = new List<string>();
             int counting = int.Parse(dt_spec.Rows[0]["Count_Sample"].ToString());
             for (int i = 0; i < counting; i++)
@@ -68,6 +83,14 @@ namespace Funtion_F3_SMT
                 if (samplePcs == 0)
                 {
                     samplePcs = counting;
+                }
+                if (region.Contains("TRAI"))
+                {
+                    region = region.Replace("TRAI", "T");
+                }
+                if (region.Contains("PHAI"))
+                {
+                    region = region.Replace("PHAI", "P");
                 }
                 switch (region)
                 {
@@ -95,9 +118,11 @@ namespace Funtion_F3_SMT
                                 {
                                     string[] data = row["Data"].ToString().Replace(" ", "").TrimEnd(';').Split(';');
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[0];
+                                    ws.Cells[address].Value = double.Parse(data[0]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[1];
+                                    ws.Cells[address].Value = double.Parse(data[1]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                 }
                                 catch
                                 {
@@ -124,9 +149,11 @@ namespace Funtion_F3_SMT
                                 {
                                     string[] data = row["Data"].ToString().Replace(" ", "").TrimEnd(';').Split(';');
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[0];
+                                    ws.Cells[address].Value = double.Parse(data[0]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[1];
+                                    ws.Cells[address].Value = double.Parse(data[1]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                 }
                                 catch
                                 {
@@ -162,6 +189,10 @@ namespace Funtion_F3_SMT
                             if (dic.TryGetValue($"Sample {samplePcs}", out string addSample))
                             {
                                 address = ws.Cells[ws.Cells[address].End.Row, ws.Cells[addSample].End.Column].Address;
+                                if (Data_tbl.Columns.Contains("ProductID"))
+                                {
+                                    ws.Cells[address].Value = row["ProductID"].ToString();
+                                }
                                 address = ExportProcess.AddRow(address, 1);
                                 ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])row["Image1"], $"{Guid.NewGuid()}");
                                 address = ExportProcess.AddRow(address, 1);
@@ -170,21 +201,29 @@ namespace Funtion_F3_SMT
                                 {
                                     string[] data = row["Data"].ToString().Replace(" ", "").Split('/');
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[0].TrimEnd(';').Split(';')[0];
+                                    ws.Cells[address].Value = double.Parse(data[0].TrimEnd(';').Split(';')[0]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[0].TrimEnd(';').Split(';')[1];
+                                    ws.Cells[address].Value = double.Parse(data[0].TrimEnd(';').Split(';')[1]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[1].TrimEnd(';').Split(';')[0];
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[1]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[1].TrimEnd(';').Split(';')[1];
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[4]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[1].TrimEnd(';').Split(';')[2];
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[2]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[1].TrimEnd(';').Split(';')[3];
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[5]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[1].TrimEnd(';').Split(';')[4];
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[0]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                     address = ExportProcess.AddRow(address, 1);
-                                    ws.Cells[address].Value = data[1].TrimEnd(';').Split(';')[5];
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[3]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
                                 }
                                 catch
                                 {
@@ -2256,7 +2295,7 @@ namespace Funtion_F3_SMT
         }
 
 
-        public void export_excel_peel_pull_shear(ExcelWorksheet ws, string itemcode, string lotno, string sheet, DataTable Data_tbl, DataTable dt_spec, DataGridView dgv_data, string type, string leader, int count_sample)
+        public void export_excel_peel_pull_shear(ExcelWorksheet ws, string itemcode, string lotno, string sheet, DataTable Data_tbl, DataTable dt_spec, DataGridView dgv_data, string type, string leader, int count_sample, bool prime = false)
         {
 
             string testName = "Force!!!!!!!!!!!!!!!", forceName = "Froezzzz", caching = "crack";
@@ -2282,260 +2321,336 @@ namespace Funtion_F3_SMT
             //Find Dictionary have name column {sample 1} and address
             IDictionary<string, string> addressDic = ExportProcess.FindAddressByText(ws, nameAddress);
 
+            string addressForce = "";
             if (addressDic.TryGetValue("Sample", out string address))
             {
+                if (address.Split('-').Count() < Data_tbl.Rows.Count)
+                {
+                    int z = Data_tbl.Rows.Count - address.Split('-').Count();
+                    string a = address.Split('-')[address.Split('-').Count() - 1];
+                    for (int c = 0; c < z; c++)
+                    {
+                        string aStart = ExportProcess.AddColumn(ExportProcess.AddRow(a, -1), c);
+                        string aEnd = ExportProcess.AddColumn(ExportProcess.AddRow(a, 19), c);
+                        ExportProcess.CopyColumn(ws, ws.Cells[$"{aStart}:{aEnd}"], ExportProcess.AddRow(ExportProcess.AddColumn(a, c + 1), -1));
+                        ws.Cells[ExportProcess.AddColumn(a, c + 1)].Value = $"Sample {count_sample + c + 1}";
+                        addressDic["Sample"] = $"{addressDic["Sample"]}-{ExportProcess.AddColumn(a, c + 1)}";
+                    }
+                    address = addressDic["Sample"];
+                }
                 if (count_sample != address.Split('-').Count())
                 {
                     if (MessageBox.Show("Số pcs của format không phù hợp bạn có muốn tiếp tục", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.No)
                     {
                         return;
                     }
+
                 }
+
             }
 
-            int rowIndex = -1;
-            string addressForce = "";
-            IList<double> numbers = new List<double>();
-            foreach (string addressCol in address.Split('-'))
+            try
             {
-                rowIndex++;
-                int column = ws.Cells[addressCol].End.Column;
-                ///
-                DataRow item = Data_tbl.Rows[rowIndex];
-                if (addressDic.TryGetValue("Flex SN", out string adz))
+                int rowIndex = -1;
+                IList<double> numbers = new List<double>();
+                foreach (string addressCol in address.Split('-'))
                 {
-                    adz = ws.Cells[ws.Cells[adz].Start.Row, ws.Cells[addressCol].Start.Column].Address;
-                    if (Data_tbl.Columns.Contains("ProductID"))
+                    rowIndex++;
+                    int column = ws.Cells[addressCol].End.Column;
+                    ///
+                    DataRow item = Data_tbl.Rows[rowIndex];
+                    if (addressDic.TryGetValue("Flex SN", out string adz))
                     {
-                        ws.Cells[adz].Value = item["ProductID"];
-                    }
-                }
-                if (addressDic.TryGetValue("Picture", out string addressRow))
-                {
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    if (item["Image"] != DBNull.Value && item["Image"] is byte[])
-                    {
-                        InsertPicture_Name(ws, ws.Cells[address], (byte[])item["Image"], $"{rowIndex} - picture");
-                    }
-                }
-                if (addressDic.TryGetValue("Graph", out addressRow))
-                {
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    if (item["Graph"] != DBNull.Value && item["Graph"] is byte[])
-                    {
-                        InsertPicture_Name(ws, ws.Cells[address], (byte[])item["Graph"], $"{rowIndex} - Graph");
-                    }
-                }
-                if (addressDic.TryGetValue(testName, out addressRow))
-                {
-                    addressRow = addressRow.Split('-')[0];
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    int z = testName.Contains("Shear") ? 1 : 0;
-                    addressForce += $" {ExportProcess.AddRow(address, z)} + ";
-                    ws.Cells[address].Value = double.Parse(item["Data"].ToString().Trim());
-                    if (testName.Contains("Shear"))
-                    {
-                        ws.Cells[ExportProcess.AddRow(address, 1)].FormulaR1C1 = $" =R[-1]C*9.8";
-                    }
-                }
-
-
-                string primeMode = "";
-                double maxMode = double.MinValue;
-
-                string pinZ = item["Mode 1: Solder joint crack"].ToString().Split('%')[1].Split('/')[1].Replace(")", "");
-                int pin = int.Parse(pinZ);
-                if (addressDic.TryGetValue($"Solder joint {caching}", out addressRow))
-                {
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    string[] content = item["Mode 1: Solder joint crack"].ToString().Split('%');
-                    if (content.Count() > 1 && content[1].Contains("("))
-                    {
-                        ws.Cells[address].Formula = $"={content[1]}";
-
-                        if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
+                        adz = ws.Cells[ws.Cells[adz].Start.Row, ws.Cells[addressCol].Start.Column].Address;
+                        if (Data_tbl.Columns.Contains("ProductID"))
                         {
-                            if (number > maxMode)
+                            ws.Cells[adz].Value = item["ProductID"];
+                        }
+                    }
+                    if (addressDic.TryGetValue("Picture", out string addressRow))
+                    {
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        if (item["Image"] != DBNull.Value && item["Image"] is byte[])
+                        {
+                            InsertPicture_Name(ws, ws.Cells[address], (byte[])item["Image"], $"{rowIndex} - picture");
+                        }
+                    }
+                    if (addressDic.TryGetValue("Graph", out addressRow))
+                    {
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        if (item["Graph"] != DBNull.Value && item["Graph"] is byte[])
+                        {
+                            InsertPicture_Name(ws, ws.Cells[address], (byte[])item["Graph"], $"{rowIndex} - Graph");
+                        }
+                    }
+                    if (addressDic.TryGetValue(testName, out addressRow))
+                    {
+                        addressRow = addressRow.Split('-')[0];
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        int z = testName.Contains("Shear") ? 1 : 0;
+                        addressForce += $" {ExportProcess.AddRow(address, z)} + ";
+                        ws.Cells[address].Value = double.Parse(item["Data"].ToString().Trim());
+                        if (testName.Contains("Shear"))
+                        {
+                            ws.Cells[ExportProcess.AddRow(address, 1)].FormulaR1C1 = $" =R[-1]C*9.8";
+                        }
+                    }
+
+
+                    string primeMode = "";
+                    double maxMode = double.MinValue;
+                    int pin = 0;
+                    try
+                    {
+                        string pinZ = item["Mode 1: Solder joint crack"].ToString().Split('%')[1].Split('/')[1].Replace(")", "");
+                        pin = int.Parse(pinZ);
+                    }
+                    catch
+                    {
+                       
+                    }
+                    if (addressDic.TryGetValue($"Solder joint {caching}", out addressRow))
+                    {
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        string[] content = item["Mode 1: Solder joint crack"].ToString().Split('%');
+                        if (content.Count() > 1 && content[1].Contains("("))
+                        {
+                            ws.Cells[address].Formula = $"={content[1]}";
+
+                            if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
                             {
-                                maxMode = number;
-                                primeMode = "Mode #1";
+                                if (number > maxMode)
+                                {
+                                    maxMode = number;
+                                    primeMode = "Mode #1";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ws.Cells[address].Formula = $"=0/{pin}";
+                        }
+                    }
+                    if (addressDic.TryGetValue("Pad lift", out addressRow))
+                    {
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        string[] content = item["Mode 2: Pad lift"].ToString().Split('%');
+                        if (content.Count() > 1 && content[1].Contains("("))
+                        {
+                            ws.Cells[address].Formula = $"={content[1]}";
+
+                            if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
+                            {
+                                if (number > maxMode)
+                                {
+                                    maxMode = number;
+                                    primeMode = "Mode #2";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ws.Cells[address].Formula = $"=0/{pin}";
+                        }
+                    }
+                    if (addressDic.TryGetValue("Solder joint lift", out addressRow))
+                    {
+
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        string[] content = item["Mode 3: Solder joint lift"].ToString().Split('%');
+                        if (content.Count() > 1 && content[1].Contains("("))
+                        {
+                            ws.Cells[address].Formula = $"={content[1]}";
+
+                            if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
+                            {
+                                if (number > maxMode)
+                                {
+                                    maxMode = number;
+                                    primeMode = "Mode #3";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ws.Cells[address].Formula = $"=0/{pin}";
+                        }
+                    }
+                    if (addressDic.TryGetValue("Intermetallic break", out addressRow))
+                    {
+
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        string[] content = item["Mode 4: Intermetallic break"].ToString().Split('%');
+                        if (content.Count() > 1 && content[1].Contains("("))
+                        {
+                            ws.Cells[address].Formula = $"={content[1]}";
+
+                            if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
+                            {
+                                if (number > maxMode)
+                                {
+                                    maxMode = number;
+                                    primeMode = "Mode #4";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ws.Cells[address].Formula = $"=0/{pin}";
+                        }
+                    }
+                    if (addressDic.TryGetValue("Component damage", out addressRow))
+                    {
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        string[] content = item["Mode 5: Component damage"].ToString().Split('%');
+                        if (content.Count() > 1 && content[1].Contains("("))
+                        {
+                            ws.Cells[address].Formula = $"={content[1]}";
+
+                            if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
+                            {
+                                if (number > maxMode)
+                                {
+                                    maxMode = number;
+                                    primeMode = "Mode #5";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ws.Cells[address].Formula = $"=0/{pin}";
+                        }
+                    }
+                    if (addressDic.TryGetValue("Component detached", out addressRow))
+                    {
+
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        string[] content = item["Mode 6: Component detached"].ToString().Split('%');
+                        if (content.Count() > 1 && content[1].Contains("("))
+                        {
+                            ws.Cells[address].Formula = $"={content[1]}";
+
+                            if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
+                            {
+                                if (number > maxMode)
+                                {
+                                    maxMode = number;
+                                    primeMode = "Mode #6";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ws.Cells[address].Formula = $"=0/{pin}";
+                        }
+                    }
+                    if (addressDic.TryGetValue("Flex torn", out addressRow))
+                    {
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        string[] content = item["Mode 7: Flex torn"].ToString().Split('%');
+                        if (content.Count() > 1 && content[1].Contains("("))
+                        {
+                            ws.Cells[address].Formula = $"={content[1]}";
+
+                            if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
+                            {
+                                if (number > maxMode)
+                                {
+                                    maxMode = number;
+                                    primeMode = "Mode #7";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ws.Cells[address].Formula = $"=0/{pin}";
+                        }
+                    }
+                    //Debugger.Break();
+                    double valueForce = double.MinValue;
+
+                    if (addressDic.TryGetValue(forceName, out addressRow))
+                    {
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+
+                        if (double.TryParse(item["Data"].ToString(), out valueForce))
+                        {
+                            if (dt_spec.Rows.Count > 0)
+                            {
+                                DataRow row = dt_spec.Rows[0];
+                                string specLow = row["Location"].ToString().Replace("N", "").Replace(">", "").Trim();
+                                if (double.TryParse(specLow, out double num))
+                                {
+                                    if (addressDic.TryGetValue(testName, out string addressRowZ))
+                                    {
+
+                                        int r = ws.Cells[address].Start.Row - ws.Cells[addressRowZ].Start.Row;
+                                        ws.Cells[address].FormulaR1C1 = $"=IF(R[{r * -1}]C>{num}, \"Pass\",\"Fail\" )";
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                ws.Cells[address].Value = valueForce > 5 ? "Pass" : "NG";
+                            }
+                        }
+                        numbers.Add(valueForce);
+                    }
+                    if (addressDic.TryGetValue("Judgement failure mode", out addressRow))
+                    {
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        //ws.Cells[address].Value = primeMode;
+                        if (addressDic.TryGetValue("Flex torn", out string addMode7))
+                        {
+                            string addressMode7 = ws.Cells[ws.Cells[addMode7].End.Row, column].Address;
+                            if (addressDic.TryGetValue($"Solder joint {caching}", out string addMode1))
+                            {
+                                string addressMode1 = ws.Cells[ws.Cells[addMode1].End.Row, column].Address;
+
+                                addMode1 = ExportProcess.AddColumn(addMode1, -1);
+                                addMode7 = ExportProcess.AddColumn(addMode7, -1);
+                                int r1 = ws.Cells[addMode1].End.Row - ws.Cells[address].End.Row;
+                                int c1 = ws.Cells[addMode1].End.Column - ws.Cells[address].End.Column;
+                                int r7 = ws.Cells[addMode7].End.Row - ws.Cells[address].End.Row;
+                                int c7 = ws.Cells[addMode7].End.Column - ws.Cells[address].End.Column;
+
+
+                                int row1 = ws.Cells[addressMode1].End.Row - ws.Cells[address].End.Row;
+                                int col1 = ws.Cells[addressMode1].End.Column - ws.Cells[address].End.Column;
+                                int row7 = ws.Cells[addressMode7].End.Row - ws.Cells[address].End.Row;
+                                int col7 = ws.Cells[addressMode7].End.Column - ws.Cells[address].End.Column;
+
+                                ws.Cells[address].FormulaR1C1 = $"=INDEX(R[{r1}]C[{c1}]:R[{r7}]C[{c7}],MATCH(MAX(R[{row1}]C[{col1}]:R[{row7}]C[{col7}]),R[{row1}]C[{col1}]:R[{row7}]C[{col7}],0))";
                             }
                         }
                     }
-                    else
+                    if (addressDic.TryGetValue("Final judgement", out addressRow))
                     {
-                        ws.Cells[address].Formula = $"=0/{pin}";
-                    }
-                }
-                if (addressDic.TryGetValue("Pad lift", out addressRow))
-                {
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    string[] content = item["Mode 2: Pad lift"].ToString().Split('%');
-                    if (content.Count() > 1 && content[1].Contains("("))
-                    {
-                        ws.Cells[address].Formula = $"={content[1]}";
-
-                        if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
+                        address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
+                        if (addressDic.TryGetValue("Intermetallic break", out string addressRowZ))
                         {
-                            if (number > maxMode)
-                            {
-                                maxMode = number;
-                                primeMode = "Mode #2";
-                            }
+                            int r = ws.Cells[addressRowZ].End.Row - ws.Cells[addressRow].End.Row;
+                            ws.Cells[address].FormulaR1C1 = $"=IF(R[{r}]C > 0, \"SEM/EDX analysis 1 piece\", \"Pass\")";
                         }
-                    }
-                    else
-                    {
-                        ws.Cells[address].Formula = $"=0/{pin}";
-                    }
-                }
-                if (addressDic.TryGetValue("Solder joint lift", out addressRow))
-                {
 
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    string[] content = item["Mode 3: Solder joint lift"].ToString().Split('%');
-                    if (content.Count() > 1 && content[1].Contains("("))
-                    {
-                        ws.Cells[address].Formula = $"={content[1]}";
+                        //if (valueForce > 5 && (primeMode.Contains("5") || primeMode.Contains("2")))
+                        //{
+                        //    ws.Cells[address].Value = "Pass";
+                        //}
+                        //else
+                        //{
+                        //    ws.Cells[address].Value = "Fail";
 
-                        if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
-                        {
-                            if (number > maxMode)
-                            {
-                                maxMode = number;
-                                primeMode = "Mode #3";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ws.Cells[address].Formula = $"=0/{pin}";
-                    }
-                }
-                if (addressDic.TryGetValue("Intermetallic break", out addressRow))
-                {
-
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    string[] content = item["Mode 4: Intermetallic break"].ToString().Split('%');
-                    if (content.Count() > 1 && content[1].Contains("("))
-                    {
-                        ws.Cells[address].Formula = $"={content[1]}";
-
-                        if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
-                        {
-                            if (number > maxMode)
-                            {
-                                maxMode = number;
-                                primeMode = "Mode #4";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ws.Cells[address].Formula = $"=0/{pin}";
-                    }
-                }
-                if (addressDic.TryGetValue("Component damage", out addressRow))
-                {
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    string[] content = item["Mode 5: Component damage"].ToString().Split('%');
-                    if (content.Count() > 1 && content[1].Contains("("))
-                    {
-                        ws.Cells[address].Formula = $"={content[1]}";
-
-                        if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
-                        {
-                            if (number > maxMode)
-                            {
-                                maxMode = number;
-                                primeMode = "Mode #5";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ws.Cells[address].Formula = $"=0/{pin}";
-                    }
-                }
-                if (addressDic.TryGetValue("Component detached", out addressRow))
-                {
-
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    string[] content = item["Mode 6: Component detached"].ToString().Split('%');
-                    if (content.Count() > 1 && content[1].Contains("("))
-                    {
-                        ws.Cells[address].Formula = $"={content[1]}";
-
-                        if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
-                        {
-                            if (number > maxMode)
-                            {
-                                maxMode = number;
-                                primeMode = "Mode #6";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ws.Cells[address].Formula = $"=0/{pin}";
-                    }
-                }
-                if (addressDic.TryGetValue("Flex torn", out addressRow))
-                {
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    string[] content = item["Mode 7: Flex torn"].ToString().Split('%');
-                    if (content.Count() > 1 && content[1].Contains("("))
-                    {
-                        ws.Cells[address].Formula = $"={content[1]}";
-
-                        if (double.TryParse(content[1].Split('/')[0].Replace("(", ""), out double number))
-                        {
-                            if (number > maxMode)
-                            {
-                                maxMode = number;
-                                primeMode = "Mode #7";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ws.Cells[address].Formula = $"=0/{pin}";
-                    }
-                }
-                //Debugger.Break();
-                double valueForce = double.MinValue;
-
-                if (addressDic.TryGetValue(forceName, out addressRow))
-                {
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-
-                    if (double.TryParse(item["Data"].ToString(), out valueForce))
-                    {
-                        ws.Cells[address].Value = valueForce > 5 ? "Pass" : "NG";
-                    }
-                    numbers.Add(valueForce);
-                }
-                if (addressDic.TryGetValue("Judgement failure mode", out addressRow))
-                {
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    ws.Cells[address].Value = primeMode;
-
-                }
-                if (addressDic.TryGetValue("Final judgement", out addressRow))
-                {
-                    address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    if (valueForce > 5 && (primeMode.Contains("5") || primeMode.Contains("2")))
-                    {
-                        ws.Cells[address].Value = "Pass";
-                    }
-                    else
-                    {
-                        ws.Cells[address].Value = "Fail";
+                        //}
 
                     }
 
                 }
-
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
             if (addressDic.TryGetValue("Max Force (N)", out string addressRowz))
             {
@@ -2562,6 +2677,11 @@ namespace Funtion_F3_SMT
                     address = ws.Cells[ws.Cells[addressRowz].End.Row, ws.Cells[addressRowz].End.Column + 2].Address;
                     ws.Cells[address].FormulaR1C1 = $"=({ExportProcess.ConvertAddressRangeBase(ws, addressAverage, address)}-{ConverterService.GetNumberFromString(dt_spec.Rows[0]["Location"].ToString())})/(3*{ExportProcess.ConvertAddressRangeBase(ws, addressSTDEV, address)})";
                 }
+            }
+
+            if (prime)
+            {
+                ws.Name = "Peel Test without SUS";
             }
             #region OldCode
             //bool judge_all = true;
@@ -3717,170 +3837,31 @@ namespace Funtion_F3_SMT
 
         public void export_ACF_Wetting(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
         {
-
-            DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet" }, new string[] { ItemCode, "ACF" }));
-            if (dt_spec.Rows.Count > 0)
+            try
             {
-                int count_sample = int.Parse(dt_spec.Rows[0]["Count_sample"].ToString());
-                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet" }, new string[] { ItemCode, "ACF" });
-
-                DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, "ACF_WETTING", TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo }));
-                if (Data_tbl.Rows.Count > 0)
-                {
-                    List<string> lst_machine = Data_tbl.AsEnumerable().Select(x => x.Field<string>("Machine")).Distinct().ToList();
-                    int count_machine_DB = lst_machine.Count();
-                    int count_machine_format = dt_spec.Rows[0]["Location"].ToString().Split('_').Length - 1;
-
-                    int r_begin = int.Parse(dt_spec.Rows[0]["Location"].ToString().Split('_')[0].Split(';')[0]);
-                    int c_begin = int.Parse(dt_spec.Rows[0]["Location"].ToString().Split('_')[0].Split(';')[1]);
-
-                    // Range line = (Range)ws.Row[r_begin];
-                    ws.InsertRow(r_begin, 1);
-                    if (count_machine_DB > count_machine_format)
-                    {
-                        insert_row_excel(ws, r_begin, r_begin + 6);
-                        ws.InsertRow(r_begin, 7);
-                    }
-                    foreach (string machine in lst_machine)
-                    {
-
-                        Dictionary<int, List<Double>> dic_list = new Dictionary<int, List<double>> { };
-                        List<double> lst_after_plasma_ACF = new List<double> { };
-                        List<double> lst_after_plasma_GND = new List<double> { };
-                        List<double> lst_Before_Packing_ACF = new List<double> { };
-                        List<double> lst_Before_Packing_GND = new List<double> { };
-
-
-                        ws.Cells[r_begin, 1].Value = "Result data machine " + machine;
-
-                        DataTable tbl_machine = TDMK_Code.Datatable_Filter(sqlcon, "ACF_WETTING", TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Machine" }, new string[] { ItemCode, LotNo, machine }));
-                        int col_data = c_begin + 9;
-                        for (int i = 0; i < tbl_machine.Rows.Count; i = i + 2)
-                        {
-                            if (col_data < col_data + count_sample)
-                            {
-
-                                if (myCode.checkDBNull(tbl_machine.Rows[i]["After_Plasma"]) != "")
-                                {
-                                    ws.Cells[r_begin + 2, col_data].Value = double.Parse(tbl_machine.Rows[i]["After_Plasma"].ToString());
-                                    ws.Cells[r_begin + 2, col_data].Style.Numberformat.Format = "0.00";
-                                    lst_after_plasma_ACF.Add(double.Parse(myCode.checkDBNull(myCode.checkDBNull(tbl_machine.Rows[i]["After_Plasma"]))));
-                                }
-
-                                if (myCode.checkDBNull(tbl_machine.Rows[i + 1]["After_Plasma"]) != "")
-                                {
-                                    ws.Cells[r_begin + 3, col_data].Value = double.Parse(tbl_machine.Rows[i + 1]["After_Plasma"].ToString());
-                                    ws.Cells[r_begin + 3, col_data].Style.Numberformat.Format = "0.00";
-                                    lst_after_plasma_GND.Add(double.Parse(myCode.checkDBNull(tbl_machine.Rows[i + 1]["After_Plasma"])));
-                                }
-
-                                if (myCode.checkDBNull(tbl_machine.Rows[i]["Before_Packing"]) != "")
-                                {
-                                    ws.Cells[r_begin + 4, col_data].Value = double.Parse(tbl_machine.Rows[i]["Before_Packing"].ToString());
-                                    ws.Cells[r_begin + 4, col_data].Style.Numberformat.Format = "0.00";
-                                    lst_Before_Packing_ACF.Add(double.Parse(myCode.checkDBNull(tbl_machine.Rows[i]["Before_Packing"])));
-                                }
-
-                                if (myCode.checkDBNull(tbl_machine.Rows[i + 1]["Before_Packing"]) != "")
-                                {
-                                    ws.Cells[r_begin + 5, col_data].Value = double.Parse(tbl_machine.Rows[i + 1]["Before_Packing"].ToString());
-                                    ws.Cells[r_begin + 5, col_data].Style.Numberformat.Format = "0.00";
-                                    lst_Before_Packing_GND.Add(double.Parse(myCode.checkDBNull(tbl_machine.Rows[i + 1]["Before_Packing"])));
-                                }
-
-                                col_data++;
-                            }
-                        }
-                        dic_list.Add(2, lst_after_plasma_ACF);
-                        dic_list.Add(3, lst_after_plasma_GND);
-                        dic_list.Add(4, lst_Before_Packing_ACF);
-                        dic_list.Add(5, lst_Before_Packing_GND);
-
-
-                        foreach (var lst in dic_list)
-                        {
-                            string max = lst.Value.Max().ToString();
-                            string min = lst.Value.Min().ToString();
-                            string Average = Math.Round(lst.Value.Average(), 2).ToString();
-                            double STDEV = CalculateStandardDeviation(lst.Value);
-
-                            string _spec = ws.Cells[r_begin + lst.Key, c_begin + 2].Value.ToString();
-                            double Mean = double.Parse(_spec.Replace("<", "").Replace(">", "").Replace("°", "").Replace(" ", ""));
-                            double cpk = Math.Round((Mean - lst.Value.Average()) / (3 * STDEV), 2);
-
-                            ws.Cells[r_begin + lst.Key, c_begin + 3].Value = min;
-                            ws.Cells[r_begin + lst.Key, c_begin + 4].Value = max;
-                            ws.Cells[r_begin + lst.Key, c_begin + 5].Value = Average;
-                            ws.Cells[r_begin + lst.Key, c_begin + 6].Value = STDEV;
-                            ws.Cells[r_begin + lst.Key, c_begin + 7].Value = cpk;
-                            if (cpk > 1.33)
-                            {
-                                ws.Cells[r_begin + lst.Key, c_begin + 8].Value = "OK";
-                            }
-                            else
-                            {
-                                ws.Cells[r_begin + lst.Key, c_begin + 8].Value = "NG";
-                            }
-
-                        }
-
-                        r_begin = r_begin + 7;
-                    }
-                }
+                ACFService service = new ACFService();
+                service.ExportWCA(ws, ItemCode, LotNo);
             }
-
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
 
         }
 
         public void Export_ACF_Peel_NPI(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
         {
-            DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, "ACF_BONDING", TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo }));
-            DataTable tbl_Data = new DataTable();
-            if (dt_analysis.Rows.Count > 0)
+            try
             {
-                string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Remark")).Distinct().ToArray();
-                string filter = "";
-                foreach (string item in arr_val)
-                {
-                    if (item.Contains("NPI"))
-                    {
-                        filter = item;
-                        tbl_Data = dt_analysis.AsEnumerable().Where(r => r.Field<string>("Remark") == filter).CopyToDataTable();
-                        break;
-                    }
-                }
+
+                new ACFService().ExportBoding(ws, ItemCode, LotNo);
             }
-            if (tbl_Data.Rows.Count > 0)
+            catch (Exception ex)
             {
-                ExcelRangeBase sel_rgn = ws.Cells[1, 1];
-                string find_addr = Find_addr_peel("Before tape test", sel_rgn);
-                if (find_addr == "")
-                    find_addr = Find_addr_peel("Glass coupon", sel_rgn);
-                //string find_addr = Find_addr_peel("ACF Bonding", sel_rgn);
-                if (find_addr != "")
-                {
-
-                    ExcelRangeBase rgn_ = ws.Cells[find_addr];
-                    ExcelRangeBase cur_rgn = ws.Cells[find_addr].Offset(0, 1);
-
-                    if (cur_rgn != null)
-                    {
-                        Export_DatatableImage_Excel_ACF(tbl_Data, "Image_Before", ws, cur_rgn, false);
-                        Export_DatatableImage_Excel_ACF(tbl_Data, "Image_After", ws, cur_rgn.Offset(1, 0), false);
-                        Export_DatatableImage_Excel_Graph_ACF(tbl_Data, "Graph", ws, cur_rgn.Offset(2, 0), false);
-                        List<string> lst_data = tbl_Data.AsEnumerable().Select(x => x.Field<string>("Data")).ToList();
-                        for (int i = 0; i < tbl_Data.Rows.Count; i++)
-                        {
-                            cur_rgn.Offset(3, i).Value = lst_data[i];
-                        }
-
-                    }
-
-                }
+                MessageBox.Show(ex.Message);
             }
-
-
         }
+
         //public ExcelRangeBase find_cell(ExcelWorksheet ws, string find_item)
         //{
         //    ExcelRangeBase cur_cell = null;
@@ -4028,6 +4009,20 @@ namespace Funtion_F3_SMT
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo });
             DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, "ACF_FLATNESS", filter_str);
 
+
+            ProductIDService.FillProductID(src_dt, ItemCode, LotNo, "ACF_FLATNESS");
+            if (src_dt.Columns.Contains("ProductID"))
+            {
+                IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[] { "Flex ID" }, true);
+                if (dic.TryGetValue("Flex ID", out string value))
+                {
+                    int i = 1;
+                    foreach (DataRow row in src_dt.Rows)
+                    {
+                        ws.Cells[ExportProcess.AddRow(value, i++ + 1)].Value = row["ProductID"];
+                    }
+                }
+            }
             if (src_dt.Rows.Count > 0)
             {
                 ExcelRangeBase curr_rgn = ws.Cells[1, 1];
@@ -4069,107 +4064,7 @@ namespace Funtion_F3_SMT
         }
         public void Export_ACF_Roughness(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
         {
-            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo });
-            DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, "Roughness", filter_str);
-
-
-            if (src_dt.Rows.Count > 0)
-            {
-
-                List<List<string>> lst_rghness = lst_roughness(src_dt);
-                ExcelRangeBase curr_rgn_1 = ws.Cells[1, 1];
-
-
-                List<int> vitri_sa = new List<int> { };
-                List<int> vitri_sq = new List<int> { };
-                List<int> vitri_sdr = new List<int> { };
-                string[] arr_info = ACF_pad_location(ws).Split('+');
-                string vitri_ACF_pad = arr_info[0];
-
-                int row = int.Parse(arr_info[0]);
-                int r_count = int.Parse(arr_info[arr_info.Length - 1]);
-                curr_rgn_1 = curr_rgn_1.Offset(row, 0);
-
-                for (int i = 1; i < arr_info.Length; i++)
-                {
-                    if (arr_info[i].Contains("sa"))
-                    {
-                        vitri_sa.Add(i);
-                    }
-                    if (arr_info[i].Contains("sq"))
-                    {
-                        vitri_sq.Add(i);
-                    }
-                    if (arr_info[i].Contains("sdr"))
-                    {
-                        vitri_sdr.Add(i);
-                    }
-                }
-
-                int m = 0;
-                int k;
-                while (m < 32)
-                {
-                    for (int c = 0; c < 4; c++)
-                    {
-                        for (int i = 2; i <= 9; i++)
-                        {
-                            k = 0;
-                            foreach (int j in vitri_sa)
-                            {
-                                if (myCode.IsNumeric(lst_rghness[k][m]))
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = double.Parse(lst_rghness[k][m]);
-                                    curr_rgn_1.Offset(j, i).Style.Numberformat.Format = "0.00";
-                                }
-                                else
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = lst_rghness[k][m];
-                                }
-
-                                k += 3;
-                            }
-                            k = 1;
-                            foreach (int j in vitri_sq)
-                            {
-                                if (myCode.IsNumeric(lst_rghness[k][m]))
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = double.Parse(lst_rghness[k][m]);
-                                    curr_rgn_1.Offset(j, i).Style.Numberformat.Format = "0.00";
-                                }
-                                else
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = lst_rghness[k][m];
-
-                                }
-                                //curr_rgn_1.Offset(j, i).Value = lst_rghness[k][m];
-                                k += 3;
-                            }
-                            k = 2;
-                            foreach (int j in vitri_sdr)
-                            {
-                                if (myCode.IsNumeric(lst_rghness[k][m]))
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = double.Parse(lst_rghness[k][m]);
-                                    curr_rgn_1.Offset(j, i).Style.Numberformat.Format = "0.00";
-                                }
-                                else
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = lst_rghness[k][m];
-                                }
-                                //curr_rgn_1.Offset(j, i).Value = lst_rghness[k][m];
-                                k += 3;
-                            }
-                            m++;
-                        }
-
-                        curr_rgn_1 = curr_rgn_1.Offset(r_count, 0);
-
-                    }
-                }
-
-            }
-
+            new ACFService().ExportRoughness(ItemCode, LotNo, ws);
         }
 
         public Boolean check_roughness_data(DataTable Data_tbl)
@@ -5548,12 +5443,26 @@ namespace Funtion_F3_SMT
                 {
                     ExcelWorksheet worksheet0 = wb_format.Worksheets[mySheet];
                     report_saved.Worksheets.Add(mySheet, worksheet0);
-
                     ExcelWorksheet ws = report_saved.Worksheets[0];
                     export_ACF_Wetting(ws, itemcode, lotno, sqlcon);
                     Export_ACF_Peel_NPI(ws, itemcode, lotno, sqlcon);
-                    Export_ACFFlatness(ws, itemcode, lotno, sqlcon);
-                    Export_ACF_Roughness(ws, itemcode, lotno, sqlcon);
+                    try
+                    {
+
+                        Export_ACFFlatness(ws, itemcode, lotno, sqlcon);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                    try
+                    {
+                        Export_ACF_Roughness(ws, itemcode, lotno, sqlcon);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
 
             }
@@ -5744,8 +5653,8 @@ namespace Funtion_F3_SMT
             }
         }
 
-
-        public void export_new_viewdata3(string file_format, string report_folder, string export_path, string itemcode, string lotno, string type, DataTable Data_all, DataTable dt_spec, string sheet, DataGridView dgv_data, string leader, int count_sample)
+        public bool _PRIME_WITHOUT_SUS = false;
+        public void export_new_viewdata3(string file_format, string report_folder, string export_path, string itemcode, string lotno, string type, DataTable Data_all, DataTable dt_spec, string sheet, DataGridView dgv_data, string leader, int count_sample, string itemCodeNVL, string lotNoNVL)
         {
             ExcelWorkbook wb_format = null;
             if (type == "NPI")
@@ -5831,7 +5740,7 @@ namespace Funtion_F3_SMT
                     }
                     else if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST")
                     {
-                        export_excel_peel_pull_shear(ws, itemcode, lotno, sheet, Data_all, dt_spec, dgv_data, type, leader, count_sample);
+                        export_excel_peel_pull_shear(ws, itemcode, lotno, sheet, Data_all, dt_spec, dgv_data, type, leader, count_sample, _PRIME_WITHOUT_SUS);
                     }
                     else if (sheet == "IQC_UNMATING_PULL_TEST")
                     {
@@ -5840,10 +5749,22 @@ namespace Funtion_F3_SMT
                     else
                     {
                         export_excel_coupon(ws, itemcode, lotno, sheet, Data_all, dt_spec, dgv_data, type, leader, count_sample);
+                        string filename = FileFolderRepository.GetFileName(export_path);
+                        export_path = export_path.Replace(filename, "");
+                        string exten = filename.Split('.')[1];
+
+
+                        string key = $"{lotNoNVL}";
+                        int pos = filename.IndexOf(key) + key.Length;
+                        filename = filename.Substring(0, pos);
+
+
+                        export_path += $"{filename}.{exten}";
                     }
 
                     if (sourcePackage != null)
                     {
+
                         sourcePackage.SaveAs(new FileInfo(export_path));
                     }
 
