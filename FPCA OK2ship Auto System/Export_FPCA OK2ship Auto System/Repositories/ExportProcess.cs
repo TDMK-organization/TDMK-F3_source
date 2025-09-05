@@ -344,18 +344,6 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
             return null;
         }
-
-        public static string AddColumn(string address, int column)
-        {
-            ExcelCellAddress cell = new ExcelCellAddress(address);
-            return new ExcelCellAddress(cell.Row, cell.Column + column).Address;
-        }
-
-        public static string AddRow(string address, int row)
-        {
-            ExcelCellAddress cell = new ExcelCellAddress(address);
-            return new ExcelCellAddress(cell.Row + row, cell.Column).Address;
-        }
         /// <summary>
         /// 
         /// </summary>
@@ -363,13 +351,27 @@ namespace Export_FPCA_OK2ship_Auto_System
         /// <param name="colHeader"></param>
         /// <param name="eq"></param>
         /// <returns>text with value is list of address of column</returns>
-        public static IDictionary<string, string> FindAddressByText(ExcelWorksheet workSheet, string[] colHeader, bool eq = false)
+        public static IDictionary<string, string> FindAddressByText(ExcelWorksheet workSheet, string[] colHeader, bool eq = false, string formAddress = "", string endAddress = "")
         {
+            int column = workSheet.Dimension.End.Column + 1;
+            int row = workSheet.Dimension.End.Row + 1;
+            int startColumn = workSheet.Dimension.Start.Column;
+            int startRow = workSheet.Dimension.Start.Row;
+            if (!string.IsNullOrEmpty(formAddress))
+            {
+                startColumn = workSheet.Cells[formAddress].End.Column;
+                startRow = workSheet.Cells[formAddress].End.Row;
+            }
+            if (!string.IsNullOrEmpty(endAddress))
+            {
+                column = workSheet.Cells[endAddress].End.Column;
+                row = workSheet.Cells[endAddress].End.Row;
+            }
             IList<string> colHeaderz = colHeader.ToList();
             IDictionary<string, string> addressHeader = new Dictionary<string, string>();
-            for (int i = workSheet.Dimension.Start.Column; i <= workSheet.Dimension.End.Column + 1; i++)
+            for (int i = startColumn; i <= column; i++)
             {
-                for (int j = workSheet.Dimension.Start.Row; j <= workSheet.Dimension.End.Row + 1; j++)
+                for (int j = startRow; j <= row; j++)
                 {
                     string cellValue = workSheet.Cells[j, i].Text.Trim().Replace("\n", "");
                     if (!string.IsNullOrEmpty(cellValue.ToString()))
@@ -405,6 +407,25 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
             return addressHeader;
         }
+        public static string AddColumn(string address, int column)
+        {
+            ExcelCellAddress cell = new ExcelCellAddress(address);
+            return new ExcelCellAddress(cell.Row, cell.Column + column).Address;
+        }
+
+        public static string AddRow(string address, int row)
+        {
+            ExcelCellAddress cell = new ExcelCellAddress(address);
+            return new ExcelCellAddress(cell.Row + row, cell.Column).Address;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="workSheet"></param>
+        /// <param name="colHeader"></param>
+        /// <param name="eq"></param>
+        /// <returns>text with value is list of address of column</returns>
+        
         public static void AddBorderToImage(ExcelWorksheet worksheet, string imageName, Color color, int size = 1, eLineStyle styleLine = eLineStyle.Solid)
         {
 
@@ -453,6 +474,19 @@ namespace Export_FPCA_OK2ship_Auto_System
 
             // Bạn có thể muốn copy định dạng, kiểu dữ liệu, v.v.
             CopyRowFormat(worksheet, sourceRow, destinationRow);
+
+        }
+        public static void CopyRowStyle(ExcelWorksheet workSheet, int rowForm, int rowTo)
+        {
+            workSheet.Row(rowTo).Height = workSheet.Row(rowForm).Height;
+            //workSheet.Row(rowTo).StyleID = workSheet.Row(rowForm).StyleID;
+            //workSheet.Row(rowTo).Style.Font.Bold = workSheet.Row(rowForm).Style.Font.Bold;
+            //workSheet.Row(rowTo).Style.HorizontalAlignment = workSheet.Row(rowForm).Style.HorizontalAlignment;
+            //workSheet.Row(rowTo).Style.VerticalAlignment = workSheet.Row(rowForm).Style.VerticalAlignment;
+            //workSheet.Row(rowTo).Style.Border.Top.Style = workSheet.Row(rowForm).Style.Border.Top.Style;
+            //workSheet.Row(rowTo).Style.Border.Bottom.Style = workSheet.Row(rowForm).Style.Border.Bottom.Style;
+            //workSheet.Row(rowTo).Style.Border.Left.Style = workSheet.Row(rowForm).Style.Border.Top.Style;
+            //workSheet.Row(rowTo).Style.Border.Right.Style = workSheet.Row(rowForm).Style.Border.Right.Style;
 
         }
         static void CopyRowFormat(ExcelWorksheet worksheet, int sourceRow, int destinationRow)

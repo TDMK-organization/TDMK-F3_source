@@ -64,7 +64,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 for (int i = 0; i < SpecNum; i++)
                 {
                     string addressP = ExportProcess.AddColumn(address, i);
-                    addressP = ExportProcess.AddRow(addressP, 1);
+                    addressP = ExportProcess.AddRow(addressP, -1);
                     // Kiểm tra và ghi product ID
                     if (prime || workSheet.Cells[ExportProcess.AddColumn(addressP, -1)].Text.Contains("Flex"))
                     {
@@ -73,6 +73,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         {
                             workSheet.Cells[addressP].Value = originalTable.Rows[i]["ProductID"];
                         }
+                        addressP = ExportProcess.AddRow(addressP, 1);
                     }
                     else
                     {

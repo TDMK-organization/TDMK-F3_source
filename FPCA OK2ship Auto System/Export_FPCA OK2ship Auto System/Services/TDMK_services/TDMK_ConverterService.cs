@@ -15,6 +15,12 @@ namespace Export_FPCA_OK2ship_Auto_System.Services.TDMK_services
 {
     public static class TDMK_ConverterService
     {
+        public static int getDigit(string str)
+        {
+            return int.Parse(new string(str.SkipWhile(c => !char.IsDigit(c))
+                                           .TakeWhile(c => char.IsDigit(c))
+                                           .ToArray()));
+        }
         public static DataTable ConvertDataTableImage(DataTable datatable, DataTable dataTableImage)
         {
             DataTable res = new DataTable();

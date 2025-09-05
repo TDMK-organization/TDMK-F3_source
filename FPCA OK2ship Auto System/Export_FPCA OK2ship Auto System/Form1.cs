@@ -27,6 +27,7 @@ using IniLibs;
 using Export_FPCA_OK2ship_Auto_System.Services;
 using Export_FPCA_OK2ship_Auto_System.Libary;
 using TDMK_SQL;
+using Export_FPCA_OK2ship_Auto_System.Repositories;
 
 
 
@@ -34,6 +35,7 @@ namespace Export_FPCA_OK2ship_Auto_System
 {
     public partial class Form1 : Form
     {
+        private AirBubbleService airService = null;
         //public Bending_Export_Lib Bending_Exp = new Bending_Export_Lib();
         public Bending_Export_EPPLUS_Lib Bending_Exp = new Bending_Export_EPPLUS_Lib();
         public TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
@@ -357,7 +359,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         private void Form1_Load(object sender, EventArgs e)
         {
             //sqlcon = initial_data("OK2SHIP_SMT", true);
-            lst_auto = new List<string> { "FAI", "Cross section", "GAP Connector", "Peel Test", "(Mating) Pull Test", "(IQC Unmating) Pull Test", "Shear test", "IQC Liner peeling (Coupon)", "IQC PSA peeling (Coupon)", "Liner peel test (On product)", "PSA peel test (On product)", "Flex bending", "Thermal Cycling & bending", "Heat Soak & bending", "ACF" };
+            lst_auto = new List<string> { "FAI", "Cross section", "GAP Connector", "Peel Test", "(Mating) Pull Test", "(IQC Unmating) Pull Test", "Shear test", "IQC Liner peeling (Coupon)", "IQC PSA peeling (Coupon)", "Flex bending", "Thermal Cycling & bending", "Heat Soak & bending", "ACF" };
 
             foreach (string item in lst_auto)
             {
@@ -621,7 +623,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
             return myexcel;
         }
-
+        public bool CHECK_PEELTEST = false;
 
         private void btn_export_Click(object sender, EventArgs e)
         {
@@ -751,6 +753,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                         }
                     }
 
+                    DataTable dt_spec_all = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { txtItemCode.Text, "NPI" }));
                     foreach (string item in lst_sheet_export)
                     {
                         if (item != "FAI")
@@ -758,8 +761,13 @@ namespace Export_FPCA_OK2ship_Auto_System
                             //try
                             //{
                             string sheet = item.Replace(" ", "_").Replace("(", "").Replace(")", "").ToUpper();
-                            DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, sheet, "NPI" }));
-
+                            //DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, sheet, "NPI" }));
+                            DataRow rowZ = dt_spec_all.AsEnumerable().FirstOrDefault(x => x["Sheet"].ToString().Trim().Contains(sheet));
+                            DataTable dt_spec = dt_spec_all.Clone();
+                            if (rowZ != null)
+                            {
+                                dt_spec.ImportRow(rowZ);
+                            }
                             DataTable Data_all = new DataTable();
                             string _process = item.Replace("_", "").Replace("-", "").Replace(" ", "").Replace("(", "").Replace(")", "").Replace("&", "").ToUpper();
                             string mySheet = "";
@@ -777,222 +785,344 @@ namespace Export_FPCA_OK2ship_Auto_System
                                 ExcelWorksheet ws = report_saved.Worksheets[mySheet];
                                 //ws.Activate();
                                 bool export_ok = true;
-                                switch (mySheet.Trim())
+                                try
                                 {
-                                    case "ACF":
-                                        string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-                                        DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, "Roughness", filter_str);
-                                        if (F_expNPI.check_roughness_data(src_dt))
-                                        {
-                                            bool chk = F_expNPI.check_cpk_roughness(sqlcon, txtItemCode.Text, txtLotNo.Text);
-                                        lbl_continue_exp:
-                                            if (chk)
+
+                                    switch (mySheet.Trim())
+                                    {
+                                        case "ACF":
+                                            string msgACF = "";
+                                            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
+                                            DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, "Roughness", filter_str);
+                                            if (F_expNPI.check_roughness_data(src_dt))
                                             {
-                                                F_expNPI.export_ACF_Wetting(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
-                                                F_expNPI.Export_ACF_Peel(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
-                                                F_expNPI.Export_ACFFlatness(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
-                                                F_expNPI.Export_ACF_Roughness(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
-                                            }
-                                            else
-                                            {
-                                                if (MessageBox.Show(new Form { TopMost = true }, "Roughness: cpk < 1.33. Tiếp tục xuất dữ liệu ?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                                bool chk = F_expNPI.check_cpk_roughness(sqlcon, txtItemCode.Text, txtLotNo.Text);
+                                            lbl_continue_exp:
+                                                if (chk)
                                                 {
-                                                    chk = true;
-                                                    goto lbl_continue_exp;
+                                                    try
+                                                    {
+
+                                                        F_expNPI.export_ACF_Wetting(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        msgACF += $"ACF WETTING: {ex.Message}";
+                                                    }
+                                                    try
+                                                    {
+
+                                                        F_expNPI.Export_ACF_Peel(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        msgACF += $"ACF peel: {ex.Message}";
+                                                    }
+                                                    try
+                                                    {
+
+                                                        F_expNPI.Export_ACFFlatness(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        msgACF += $"ACF flatness: {ex.Message}";
+                                                    }
+                                                    try
+                                                    {
+                                                        F_expNPI.Export_ACF_Roughness(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        msgACF += $"ACF roughness: {ex.Message}";
+                                                    }
                                                 }
                                                 else
                                                 {
-                                                    export_ok = false;
+                                                    if (MessageBox.Show(new Form { TopMost = true }, "Roughness: cpk < 1.33. Tiếp tục xuất dữ liệu ?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                                    {
+                                                        chk = true;
+                                                        goto lbl_continue_exp;
+                                                    }
+                                                    else
+                                                    {
+                                                        export_ok = false;
+                                                    }
+
                                                 }
-
-                                            }
-                                        }
-                                        else
-                                        {
-                                            export_ok = false;
-                                        }
-                                        break;
-                                    case "Flex bending":
-                                        if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text, "FLEX_BENDING"))
-                                        {
-                                            Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text, txtLotNo.Text, "FLEX_BENDING", mySheet, 20, "NPI", ws);
-                                        }
-                                        else
-                                        {
-                                            export_ok = false;
-                                        }
-
-                                        break;
-                                    case "Thermal Cycling & bending":
-                                        if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text, "THERMAL_CYCLING_AND_BEND"))
-                                        {
-                                            Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text, txtLotNo.Text, "THERMAL_CYCLING_AND_BEND", mySheet, 20, "NPI", ws);
-                                        }
-                                        else
-                                        {
-                                            export_ok = false;
-                                        }
-
-                                        break;
-                                    case "Heat Soak & bending":
-                                        if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text, "HEAT_SOAK_AND_BEND"))
-                                        {
-                                            Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text, txtLotNo.Text, "HEAT_SOAK_AND_BEND", mySheet, 20, "NPI", ws);
-                                        }
-                                        else
-                                        {
-                                            export_ok = false;
-                                        }
-
-                                        break;
-                                    case "Packaging":
-                                        new PackagingService().ExportToExcel(ws, txtItemCode.Text.Trim());
-                                        break;
-                                    case "Impedance":
-                                        new ImpedanceService().Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
-                                        break;
-                                    case "SEM BSE & Binarization":
-                                        SEMServices.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
-                                        break;
-                                    case "OQC B2B Mating-Unmating":
-                                        OQCB2BMatingUnmatting.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
-                                        break;
-                                    //case 
-                                    case "Table of Contents":
-                                        TableOfContentService.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
-                                        break;
-                                    case "Environment en-durance":
-                                        new EEDService(sqlcon).Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
-                                        break;
-                                    case "Assy Yield":
-                                        new AssyYieldService(sqlcon).Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
-                                        break;
-                                    case "Bar Code Verification":
-                                        new BarCodeVertification().Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
-                                        break;
-                                    case "Thermal Cycling":
-                                    case "Thermal Shock":
-                                    case "Heat Soak and Recovery":
-                                        new TCHSTSService().Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim(), mySheet);
-                                        break;
-                                    case "X-Ray picture":
-                                        new XRayPictureService().Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
-                                        break;
-                                    default:
-                                        string str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-                                        if (sheet.Contains("UNMATING"))
-                                        {
-                                            if (Itemcode_unmating != "" && LotNo_unmating != "")
-                                            {
-                                                str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { Itemcode_unmating, LotNo_unmating });
                                             }
                                             else
                                             {
-                                                MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của (IQC Unmating) Pull Test", "Thông báo");
+                                                export_ok = false;
                                             }
-
-                                        }
-                                        else if (sheet.Contains("COUPON") && sheet.Contains("LINER"))
-                                        {
-                                            if (ItemCode_liner_coupon != "" && LotNo_liner_coupon != "")
+                                            break;
+                                        case "Flex bending":
+                                            if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text, "FLEX_BENDING"))
                                             {
-                                                str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode_liner_coupon, LotNo_liner_coupon });
+                                                Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text, txtLotNo.Text, "FLEX_BENDING", mySheet, 20, "NPI", ws);
                                             }
                                             else
                                             {
-                                                MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC Liner peeling (Coupon)", "Thông báo");
+                                                export_ok = false;
                                             }
-                                        }
-                                        else if (sheet.Contains("COUPON") && sheet.Contains("PSA"))
-                                        {
-                                            if (ItemCode_psa_coupon != "" && LotNo_psa_coupon != "")
+
+                                            break;
+                                        case "Thermal Cycling & bending":
+                                            if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text, "THERMAL_CYCLING_AND_BEND"))
                                             {
-                                                str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode_psa_coupon, LotNo_psa_coupon });
+                                                Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text, txtLotNo.Text, "THERMAL_CYCLING_AND_BEND", mySheet, 20, "NPI", ws);
                                             }
                                             else
                                             {
-                                                MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC PSA peeling (Coupon)", "Thông báo");
+                                                export_ok = false;
                                             }
-                                        }
-                                        switch (sheet)
-                                        {
-                                            case "OQC_B2B_MATING-UNMATING":
-                                                sheet = "OQC_B2B_Mating_Unmating";
-                                                break;
-                                            case "SEM_BSE_&_BINARIZATION":
-                                                sheet = "SEM_BSE_Binarization_Logfile";
-                                                break;
-                                            default:
-                                                break;
-                                        }
 
-                                        DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet, str_filter);
-
-                                        if (dt_analysis.Rows.Count > 0)
-                                        {
-                                            string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Sheet")).Distinct().ToArray();
-                                            string filter = "";
-                                            foreach (string i in arr_val)
+                                            break;
+                                        case "Heat Soak & bending":
+                                            if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text, "HEAT_SOAK_AND_BEND"))
                                             {
-                                                if (i.Contains("NPI"))
+                                                Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text, txtLotNo.Text, "HEAT_SOAK_AND_BEND", mySheet, 20, "NPI", ws);
+                                            }
+                                            else
+                                            {
+                                                export_ok = false;
+                                            }
+
+                                            break;
+                                        case "Packaging":
+                                            new PackagingService().ExportToExcel(ws, txtItemCode.Text.Trim());
+                                            break;
+                                        case "Impedance":
+                                            new ImpedanceService().Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            break;
+                                        case "SEM BSE & Binarization":
+                                            SEMServices.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            break;
+                                        case "OQC B2B Mating-Unmating":
+                                            OQCB2BMatingUnmatting.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            break;
+                                        //case 
+                                        case "Table of Contents":
+                                            TableOfContentService.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            break;
+                                        case "Environment en-durance":
+                                            new EEDService(sqlcon).Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            break;
+                                        case "Assy Yield":
+                                            new AssyYieldService(sqlcon).Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            break;
+                                        case "Bar Code Verification":
+                                            new BarCodeVertification().Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            break;
+                                        case "Air bubble btw Liner-PSA":
+                                            if (airService == null)
+                                            {
+                                                airService = new AirBubbleService(txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                                airService.LoadDataRefer();
+                                            }
+
+                                            airService.Export(ws, "Liner");
+
+                                            break;
+                                        case "Air bubble btw PSA-FPC":
+                                            if (airService == null)
+                                            {
+                                                airService = new AirBubbleService(txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                                airService.LoadDataRefer();
+                                            }
+                                            airService.Export(ws, "PSA");
+                                            break;
+                                        case "Thermal Cycling":
+                                        case "Thermal Shock":
+                                        case "Heat Soak and Recovery":
+                                            new TCHSTSService().Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim(), mySheet);
+                                            break;
+                                        case "X-Ray picture":
+                                            string[] types = new[] { "Flex bending", "Thermal Cycling & bending", "Heat Soak & bending" };
+                                            foreach (string type in types)
+                                            {
+                                                string nameSheet = "";
+                                                switch (type)
                                                 {
-                                                    filter = i;
-                                                    break;
+                                                    case "Flex bending":
+                                                        nameSheet = "X-ray after Bending";
+                                                        break;
+                                                    case "Thermal Cycling & bending":
+                                                        nameSheet = "X-ray after TC & Bending";
+                                                        break;
+                                                    case "Heat Soak & bending":
+                                                        nameSheet = "X-ray after HS & Bending";
+                                                        break;
+                                                }
+                                                sourcePackage.Workbook.Worksheets.Add(nameSheet, ws);
+                                                //new XRayPictureService().Export(sourcePackage.Workbook.Worksheets[nameSheet], txtItemCode.Text.Trim(), txtLotNo.Text.Trim(), type);
+                                            }
+                                            sourcePackage.Workbook.Worksheets.Delete(ws);
+                                            break;
+                                        default:
+                                            string str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
+                                            if (sheet.Contains("UNMATING"))
+                                            {
+                                                if (Itemcode_unmating != "" && LotNo_unmating != "")
+                                                {
+                                                    str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { Itemcode_unmating, LotNo_unmating });
+                                                }
+                                                else
+                                                {
+                                                    MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của (IQC Unmating) Pull Test", "Thông báo");
+                                                }
+
+                                            }
+                                            else if (sheet.Contains("COUPON") && sheet.Contains("LINER"))
+                                            {
+                                                if (ItemCode_liner_coupon != "" && LotNo_liner_coupon != "")
+                                                {
+                                                    str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode_liner_coupon, LotNo_liner_coupon });
+                                                }
+                                                else
+                                                {
+                                                    MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC Liner peeling (Coupon)", "Thông báo");
                                                 }
                                             }
-                                            if (filter != "")
+                                            else if (sheet.Contains("COUPON") && sheet.Contains("PSA"))
                                             {
-                                                Data_all = dt_analysis.AsEnumerable().Where(r => r.Field<string>("Sheet") == filter).CopyToDataTable();
-
-                                            }
-                                        }
-                                        if (Data_all.Rows.Count > 0 && dt_spec.Rows.Count > 0)
-                                        {
-
-                                            int st = 1;
-                                            foreach (DataRow dr in Data_all.Rows)
-                                            {
-                                                dr["ID"] = st;
-                                                st++;
-                                            }
-                                            if (sheet == "GAP_CONNECTOR")
-                                            {
-                                                new GAPConnectorService().Export(ws, Data_all, dt_spec);
-                                            }
-                                            else if (sheet == "CROSS_SECTION")
-                                            {
-                                                F_expNPI.export_excel_cross_section(txtItemCode.Text, txtLotNo.Text, ws, Data_all, dt_spec, ref export_ok);
-
+                                                if (ItemCode_psa_coupon != "" && LotNo_psa_coupon != "")
+                                                {
+                                                    str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode_psa_coupon, LotNo_psa_coupon });
+                                                }
+                                                else
+                                                {
+                                                    MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC PSA peeling (Coupon)", "Thông báo");
+                                                }
                                             }
                                             else if (sheet.Contains("ON_PRODUCT"))
                                             {
-                                                F_expNPI.export_excel_onproduct(ws, Data_all, dt_spec, sheet, ref export_ok);
+                                                try
+                                                {
+
+                                                    new PeelTestOnProductService(txtItemCode.Text, txtLotNo.Text).Export(ws, !sheet.Contains("LINER"));
+                                                    export_ok = true;
+                                                    //F_expNPI.export_excel_onproduct(ws, Data_all, dt_spec, sheet, ref export_ok);
+                                                }
+                                                catch (Exception exZ)
+                                                {
+                                                    throw new Exception(exZ.Message);
+                                                }
+                                                break;
                                             }
-                                            else if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST")
+                                            switch (sheet)
                                             {
-                                                F_expNPI.export_excel_peel_pull_shear(ws, sheet, Data_all, dt_spec, ref export_ok);
+                                                case "OQC_B2B_MATING-UNMATING":
+                                                    sheet = "OQC_B2B_Mating_Unmating";
+                                                    break;
+                                                case "SEM_BSE_&_BINARIZATION":
+                                                    sheet = "SEM_BSE_Binarization_Logfile";
+                                                    break;
+                                                default:
+                                                    break;
                                             }
-                                            else if (sheet == "IQC_UNMATING_PULL_TEST")
+
+                                            DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet, str_filter);
+
+                                            if (dt_analysis.Rows.Count > 0)
                                             {
-                                                F_expNPI.export_excel_unmating(ws, Data_all, dt_spec, ref export_ok);
+                                                string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Sheet")).Distinct().ToArray();
+                                                string filter = "";
+                                                foreach (string i in arr_val)
+                                                {
+                                                    if (i.Contains("NPI"))
+                                                    {
+                                                        filter = i;
+                                                        break;
+                                                    }
+                                                }
+                                                if (filter != "")
+                                                {
+                                                    Data_all = dt_analysis.AsEnumerable().Where(r => r.Field<string>("Sheet") == filter).CopyToDataTable();
+
+                                                }
+                                            }
+                                            if (Data_all.Rows.Count > 0 && dt_spec.Rows.Count > 0)
+                                            {
+                                                try
+                                                {
+
+                                                    PIDService.FillProductID(Data_all, txtItemCode.Text, txtLotNo.Text, sheet);
+                                                }
+                                                catch
+                                                {
+
+                                                }
+
+                                                int st = 1;
+                                                foreach (DataRow dr in Data_all.Rows)
+                                                {
+                                                    dr["ID"] = st;
+                                                    st++;
+                                                }
+                                                if (sheet == "GAP_CONNECTOR")
+                                                {
+                                                    new GAPConnectorService().Export(ws, Data_all, dt_spec);
+                                                }
+                                                else if (sheet == "CROSS_SECTION")
+                                                {
+                                                    F_expNPI.export_excel_cross_section(txtItemCode.Text, txtLotNo.Text, ws, Data_all, dt_spec, ref export_ok);
+
+                                                }
+                                                //else if (sheet.Contains("ON_PRODUCT"))
+                                                //{
+                                                //    F_expNPI.export_excel_onproduct(ws, Data_all, dt_spec, sheet, ref export_ok);
+                                                //}
+                                                else if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST" || sheet == "Peel test without SUS")
+                                                {
+                                                    if (sheet == "PEEL_TEST")
+                                                    {
+                                                        if (Data_all.Rows.Count <= 0)
+                                                        {
+                                                            CHECK_PEELTEST = false;
+                                                            break;
+                                                        }
+                                                        foreach (DataRow row in Data_all.Rows)
+                                                        {
+                                                            string numStr = row["Mode 1: Solder joint crack"].ToString().Trim().Split('%')[0];
+                                                            double num = double.Parse(numStr);
+                                                            if (num > 50)
+                                                            {
+                                                                CHECK_PEELTEST = true;
+                                                                sourcePackage.Workbook.Worksheets.Add("Peel test without SUS", ws);
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                    F_expNPI.export_excel_peel_pull_shear(ws, sheet, Data_all, dt_spec, ref export_ok);
+                                                }
+                                                else if (sheet == "IQC_UNMATING_PULL_TEST")
+                                                {
+                                                    F_expNPI.export_excel_unmating(ws, Data_all, dt_spec, ref export_ok);
+                                                }
+                                                else
+                                                {
+                                                    F_expNPI.export_excel_coupon(ws, Data_all, dt_spec, sheet, ref export_ok);
+                                                }
+
                                             }
                                             else
                                             {
-                                                F_expNPI.export_excel_coupon(ws, Data_all, dt_spec, sheet, ref export_ok);
+                                                export_ok = false;
                                             }
+                                            break;
 
-                                        }
-                                        else
-                                        {
-                                            export_ok = false;
-                                        }
-                                        break;
+                                    }
+
+                                    Update_dgv_complete(item, export_ok);
+                                    if (export_ok)
+                                        ws.TabColor = Color.Green;
 
                                 }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show($"{mySheet}: {ex.Message}");
+                                }
 
-                                Update_dgv_complete(item, export_ok);
-                                if (export_ok)
-                                    ws.TabColor = Color.Green;
 
                             }
 
@@ -1031,10 +1161,17 @@ namespace Export_FPCA_OK2ship_Auto_System
                     if (!System.IO.Directory.Exists(xlFile_path))
                         System.IO.Directory.CreateDirectory(xlFile_path);
                     Export_fromExcel_Manual(report_saved, txtItemCode.Text, txtLotNo.Text, xlFile_path);
-
+                    ExportPeelTest(sourcePackage);
                     if (sourcePackage != null)
                     {
-                        sourcePackage.SaveAs(new FileInfo(export_path));
+                        try
+                        {
+                            sourcePackage.SaveAs(new FileInfo(export_path));
+                        }
+                        catch (Exception Ex)
+                        {
+                            MessageBox.Show($"Error Save: {Ex.Message}");
+                        }
                     }
                     else if (xlPackage != null)
                     {
@@ -1064,6 +1201,51 @@ namespace Export_FPCA_OK2ship_Auto_System
             else
             {
                 MessageBox.Show(new Form { TopMost = true }, "Vui lòng điền đầy đủ thông tin!", "Thông báo");
+            }
+        }
+
+        private void ExportPeelTest(ExcelPackage package)
+        {
+            try
+            {
+
+                if (CHECK_PEELTEST)
+                {
+                    foreach (var ws in package.Workbook.Worksheets)
+                    {
+                        if (ws.Name.Contains("Peel Test"))
+                        {
+
+                            int index = ws.Index;
+                            package.Workbook.Worksheets.MoveAfter(package.Workbook.Worksheets.Count() - 1, index + 1);
+
+                        }
+                        if (ws.Name.Contains("Peel test without SUS"))
+                        {
+                            DataTable data_all = new DBContext().LoadDataTable("PEEL_TEST_WITHOUT_SUS", new[] { "ItemCode", "LotNo" }, new[] { txtItemCode.Text, txtLotNo.Text });
+                            try
+                            {
+                                PIDService.FillProductID(data_all, txtItemCode.Text, txtLotNo.Text, "PEEL_TEST_WITHOUT_SUS");
+                            }
+                            catch
+                            {
+
+                            }
+                            if (data_all.Rows.Count <= 0)
+                            {
+                                MessageBox.Show("Cần đánh giá peeling without SUS");
+                                return;
+                            }
+                            DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, "PEEL_TEST", "NPI" }));
+                            bool export_ok = true;
+                            F_expNPI.export_excel_peel_pull_shear(ws, ws.Name, data_all, dt_spec, ref export_ok);
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
             }
         }
 

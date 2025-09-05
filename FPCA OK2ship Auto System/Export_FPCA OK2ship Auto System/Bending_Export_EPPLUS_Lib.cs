@@ -14,6 +14,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Drawing;
 using Export_FPCA_OK2ship_Auto_System.Libary;
+using Export_FPCA_OK2ship_Auto_System;
 
 namespace Bending_Export
 {
@@ -445,7 +446,8 @@ namespace Bending_Export
             string condition_addr = Excel_Lib.Find_Cell_Addr("Condition", "A1", tar_wrksht, false);
             string Echeck_start_rgn = Excel_Lib.Find_Start_Addr("A1", tar_wrksht, false, "Condition");// Get_start_range("Condition", "A1", tar_wrksht);
             ExcelRangeBase Echeck_cycle_rgn = tar_wrksht.Cells[Echeck_start_rgn];
-            string result_rgn_addr = Excel_Lib.Find_Cell_Addr("Due Date",condition_addr, tar_wrksht, true);
+            IDictionary<string, string> dic = ExportProcess.FindAddressByText(tar_wrksht, new[] { "Due date", "Flex SN" });
+            string result_rgn_addr = dic["Due date"];
             int offset_val = Excel_Lib.Get_Cells_Info(tar_wrksht, tar_wrksht.Cells[result_rgn_addr]).col_qty+1;
             int offset_duedate = tar_wrksht.Cells[result_rgn_addr].End.Column - tar_wrksht.Cells[condition_addr].End.Column;
             Dictionary<string, string> Echeck_Cycle_addr = Get_Echeck_address(Echeck_cycle_rgn);
@@ -456,7 +458,10 @@ namespace Bending_Export
             int sel_qty = src_tbl_lst.Count;
             for (int col_inx = 0; col_inx < sel_qty; col_inx++)
             {
+                // wirete FLEX SN
+                string addZ = ExportProcess.AddColumn(dic["Flex SN"], col_inx + 1);
                 DataTable tbl = src_tbl_lst[col_inx];
+                tar_wrksht.Cells[addZ].Value = tbl.Rows[0]["Pcs_No"];
                 Dictionary<string, List<string>> data_lst = Get_List_Pair_data(tbl);
                 List<string> before_data = data_lst["Before"];
                 List<string> last_data = data_lst.Values.ToList().Last();

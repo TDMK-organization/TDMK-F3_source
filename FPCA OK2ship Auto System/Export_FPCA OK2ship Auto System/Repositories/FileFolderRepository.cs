@@ -14,6 +14,20 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
 {
     static class FileFolderRepository
     {
+        public static bool checkLocationIsValid(string location)
+        {
+            try
+            {
+                // Check if the location exists and is accessible
+                return Directory.Exists(location);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                // Log or handle exceptions if needed
+                return false;
+            }
+        }
         public static string[] GetFileByExtension(string folderPath, string extension)
         {
             // Lấy danh sách các tệp có phần mở rộng cụ thể trong thư mục
@@ -87,7 +101,36 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
             }
             return listPicture;
         }
-
+        /// <summary>
+        /// Get picture in a folder
+        /// </summary>
+        /// <param name="locationFolder"></param>
+        /// <returns></returns>
+        public static List<KeyValuePair<Image, string>> ListAllPictureInAFolder(string locationFolder, string Extension = null)
+        {
+            List<KeyValuePair<Image, string>> listPicture = new List<KeyValuePair<Image, string>>();
+            string[] folder = Directory.GetFiles(locationFolder);
+            foreach (string file in folder)
+            {
+                string[] fileSplit = file.Split('\\');
+                string fileName = fileSplit[fileSplit.Length - 1];
+                if (Extension == null)
+                {
+                    if (fileName.ToLower().Contains(".jpg") || fileName.Contains(".png"))
+                    {
+                        listPicture.Add(new KeyValuePair<Image, string>(Image.FromFile(file), fileName));
+                    }
+                }
+                else
+                {
+                    if (fileName.Contains(Extension))
+                    {
+                        listPicture.Add(new KeyValuePair<Image, string>(Image.FromFile(file), fileName));
+                    }
+                }
+            }
+            return listPicture;
+        }
         /// <summary>
         /// Get all picture in many subfolder in folder
         /// </summary>

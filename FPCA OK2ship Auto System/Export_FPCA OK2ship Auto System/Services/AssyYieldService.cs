@@ -79,6 +79,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 Marking.Add(row["Station"].ToString(), i);
             }
             string address = dic["Station"].Split('-')[dic["Station"].Split('-').Count() - 1];
+            string SaveADD = address;
             while (true)
             {
                 address = ExportProcess.AddRow(address, 1);
@@ -200,7 +201,17 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                                     add = ExportProcess.AddColumn(add, -1);
 
                                 }
-                                worksheet.Cells[add].Value = row[col].ToString();
+                                if (col.ColumnName.Equals("Defect Rate"))
+                                {
+
+                                    int r = worksheet.Cells[SaveADD].Start.Row - worksheet.Cells[add].Start.Row + 1;
+                                    int c = worksheet.Cells[SaveADD].Start.Column - worksheet.Cells[add].Start.Column + 1;
+                                    worksheet.Cells[add].FormulaR1C1 = $"=RC[-1]/R[{r}]C[{c}]";
+                                }
+                                else
+                                {
+                                    worksheet.Cells[add].Value = row[col].ToString();
+                                }
                             }
                             add = ExportProcess.AddColumn(add, 1);
                         }

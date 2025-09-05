@@ -82,6 +82,8 @@
     <Compile Include="Repositories\DBContext.cs" />
     <Compile Include="Repositories\ExportProcess.cs" />
     <Compile Include="Repositories\FileFolderRepository.cs" />
+    <Compile Include="Services\ACFService.cs" />
+    <Compile Include="Services\AirBubbleService.cs" />
     <Compile Include="Services\AssyYieldService.cs" />
     <Compile Include="Services\BarCodeVertification.cs" />
     <Compile Include="Services\EEDService.cs" />
@@ -89,6 +91,9 @@
     <Compile Include="Services\ImpedanceService.cs" />
     <Compile Include="Services\OQCB2BMatingUnmatting.cs" />
     <Compile Include="Services\PackagingService.cs" />
+    <Compile Include="Services\PeelTestOnProductService.cs" />
+    <Compile Include="Services\PIDService.cs" />
+    <Compile Include="Services\ProductIDService.cs" />
     <Compile Include="Services\SEMServices.cs" />
     <Compile Include="Services\TableOfContentService.cs" />
     <Compile Include="Services\TCHSTSService.cs" />

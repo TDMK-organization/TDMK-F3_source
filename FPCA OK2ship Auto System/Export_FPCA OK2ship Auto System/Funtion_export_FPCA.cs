@@ -26,6 +26,7 @@ using static System.Net.Mime.MediaTypeNames;
 using TDMK_Image;
 using Export_FPCA_OK2ship_Auto_System.Services.TDMK_services;
 using System.Diagnostics;
+using Export_FPCA_OK2ship_Auto_System.Services;
 
 namespace Export_FPCA_OK2ship_Auto_System
 {
@@ -41,134 +42,168 @@ namespace Export_FPCA_OK2ship_Auto_System
         // export cross_section
         public void export_excel_cross_section(string ItemCode, string LotNo, ExcelWorksheet ws, DataTable Data_tbl, DataTable dt_spec, ref bool export_ok)
         {
-
-            if (Check_spec_crossection(Data_tbl, ItemCode, dt_spec))
+            List<string> list = new List<string>();
+            int counting = int.Parse(dt_spec.Rows[0]["Count_Sample"].ToString());
+            for (int i = 0; i < counting; i++)
             {
-                string location_spec = dt_spec.Rows[0]["Location"].ToString();
-                int col_begin = int.Parse(location_spec.Split('+')[0].Split(';')[1]);
-                string[] region = location_spec.Split('+')[1].Split('_');
-
-                List<string> lst_region = Data_tbl.AsEnumerable().Select(x => x.Field<string>("Region")).Distinct().ToList();
-                int no_lk = 1;
-                int count_sample = int.Parse(dt_spec.Rows[0]["Count_sample"].ToString());
-                foreach (string reg in region)
-                {
-                    if (!reg.Contains("^") && reg != "")
-                    {
-                        int count_row = int.Parse(reg.Split(';')[1]);
-                        int row_begin = int.Parse(reg.Split(';')[2]);
-                        if (reg.ToUpper().Contains("Horizontal".ToUpper()))
-                        {
-                            export_Hottizontal_NPI(reg, ws, row_begin, col_begin, no_lk, lst_region, count_row, Data_tbl, dt_spec);
-
-                        }
-
-                        if (reg.ToUpper().Contains("Vertical".ToUpper()))
-                        {
-
-                            List<string> lst_key = new List<string> { };
-                            if (count_row == 32)
-                            {
-                                lst_key = new List<string> { "TRU_T", "TRU_P", "DOC_T", "DOC_P" };
-                            }
-                            else if (count_row == 48)
-                            {
-                                lst_key = new List<string> { "TRU1_T", "TRU1_P", "TRU2_T", "TRU2_P", "DOC_T", "DOC_P" };
-                            }
-
-                            foreach (string item in lst_key)
-                            {
-                                ExcelRangeBase cell_Pic1_2 = ws.Cells[row_begin, col_begin];
-                                ExcelRangeBase cell_Pic2_2 = ws.Cells[row_begin + 3, col_begin];
-                                ExcelRangeBase cell_data_2 = ws.Cells[row_begin + 1, col_begin];
-
-                                string filter_reg_2 = "";
-
-                                string txt_find = "";
-                                if (reg.ToUpper().Contains("MALE"))
-                                {
-                                    txt_find = no_lk.ToString() + "_";
-                                }
-
-                                foreach (string i in lst_region)
-                                {
-                                    if (i.Replace(" ", "").ToUpper().Contains(item) && i.ToUpper().Contains(txt_find))
-                                    {
-                                        filter_reg_2 = i;
-                                        break;
-                                    }
-                                }
-                                if (filter_reg_2 != "")
-                                {
-
-                                    DataView dv = Data_tbl.AsDataView();
-                                    dv.RowFilter = TDMK_Code.filter_str(new string[] { "Region" }, new string[] { filter_reg_2 });
-                                    DataTable tbl_region = dv.ToTable();
-
-                                    if (tbl_region.Rows.Count > 0)
-                                    {
-                                        //int count_sample = int.Parse(dt_spec.Rows[0]["Count_Sample"].ToString());
-                                        Export_DatatableImage_Excel(tbl_region, "Image1", ws, cell_Pic1_2, false, count_sample);
-                                        Export_DatatableImage_Excel(tbl_region, "Image2", ws, cell_Pic2_2, false, count_sample);
-
-                                        List<string> lst_data = tbl_region.AsEnumerable().Select(x => x.Field<string>("Data")).ToList();
-
-                                        for (int i = 0; i < tbl_region.Rows.Count; i++)
-                                        {
-                                            if (i < count_sample)
-                                            {
-                                                cell_data_2.Offset(0, i).Value = double.Parse(lst_data[i].Split('/')[0].Split(';')[0]);
-                                                cell_data_2.Offset(0, i).Style.Numberformat.Format = "0.00";
-                                                cell_data_2.Offset(1, i).Value = double.Parse(lst_data[i].Split('/')[0].Split(';')[1]);
-                                                cell_data_2.Offset(1, i).Style.Numberformat.Format = "0.00";
-
-                                                cell_data_2.Offset(3, i).Value = double.Parse(lst_data[i].Split('/')[1].Split(';')[0]);
-                                                cell_data_2.Offset(3, i).Style.Numberformat.Format = "0.00";
-                                                cell_data_2.Offset(4, i).Value = double.Parse(lst_data[i].Split('/')[1].Split(';')[2]);
-                                                cell_data_2.Offset(4, i).Style.Numberformat.Format = "0.00";
-                                                cell_data_2.Offset(5, i).Value = double.Parse(lst_data[i].Split('/')[1].Split(';')[1]);
-                                                cell_data_2.Offset(5, i).Style.Numberformat.Format = "0.00";
-                                                cell_data_2.Offset(6, i).Value = double.Parse(lst_data[i].Split('/')[1].Split(';')[3]);
-                                                cell_data_2.Offset(6, i).Style.Numberformat.Format = "0.00";
-                                            }
-                                        }
-                                    }
-                                }
-                                row_begin = row_begin + 8;
-                            }
-                            no_lk++;
-                        }
-                    }
-                }
-
-
-                // SortedDictionary<int, string> dic_judge = dic_judge_crosscut(count_sample, Data_tbl); 
-                //for (int j = 1; j < 5; j++)
-                //{
-                //    for (int i = 1; i < 120; i++)
-                //    {
-                //        if (myCode.checkDBNull(ws.Cells[i, j].Value).ToUpper().Replace(" ", "") == "RESULT")
-                //        {
-                //            for (int k = 0; k < count_sample; k++)
-                //            {
-                //                if (dic_judge.ContainsKey(k + 1))
-                //                {
-                //                    ws.Cells[i, j + 2 + k] = "Fail";
-                //                }
-                //                else
-                //                {
-                //                    ws.Cells[i, j + 2 + k] = "Pass";
-                //                }
-                //            }
-                //        return;
-                //        }
-                //    }
-                //}
+                list.Add($"Sample {i + 1}");
             }
-            else
+            list.Add("Flex SN");
+            string address = "";
+            IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, list.ToArray(), true);
+            foreach (DataRow row in Data_tbl.Rows)
             {
-                export_ok = false;
-                MessageBox.Show(new Form { TopMost = true }, "CROSS_SECTION chứa dữ liệu NG. Không thể xuất dữ liệu vào báo cáo", "Warning");
+                string dif = "";
+                string region = row["Region"].ToString();
+                int samplePcs = int.Parse(row["Sample"].ToString()) % counting;
+                int step = (int.Parse(row["Sample"].ToString()) - 1) / counting;
+                if (samplePcs == 0)
+                {
+                    samplePcs = counting;
+                }
+                switch (region)
+                {
+                    case "NGANG":
+                        if (dic.TryGetValue("Flex SN", out address))
+                        {
+                            if (dic.TryGetValue($"Sample {samplePcs}", out string addSample))
+                            {
+                                int vari = 0;
+                                if (step <= 0)
+                                {
+                                    vari = 0;
+                                }
+                                if (step >= 1)
+                                {
+                                    vari = 1;
+                                }
+                                address = ws.Cells[ws.Cells[address.Split('-')[vari]].End.Row, ws.Cells[addSample].End.Column].Address;
+                                ws.Cells[address].Value = row["ProductID"];
+                                address = ExportProcess.AddRow(address, 2 - vari);
+                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])row[$"Image1"], $"NGANG1{Guid.NewGuid()}");
+                                address = ExportProcess.AddRow(address, 1);
+                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])row[$"Image2"], $"NGANG2{Guid.NewGuid()}");
+                                try
+                                {
+                                    string[] data = row["Data"].ToString().Replace(" ", "").TrimEnd(';').Split(';');
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[0]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[1]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                }
+                                catch
+                                {
+                                    MessageBox.Show($"Có lỗi tại row {row["ID"]}");
+                                }
+                            }
+                        }
+                        break;
+                    case "TRUNGANG_P":
+                    case "TRUNGANG_T":
+                        dif = region.Equals("TRUNGANG_P") ? "2 - 5" : "3 - 4";
+
+                        if (dic.TryGetValue("Flex SN", out address))
+                        {
+                            int z = int.Parse(dif.Split('-')[step]);
+                            address = address.Split('-')[z];
+                            if (dic.TryGetValue($"Sample {samplePcs}", out string addSample))
+                            {
+                                address = ws.Cells[ws.Cells[address].End.Row, ws.Cells[addSample].End.Column].Address;
+                                ws.Cells[address].Value = row["ProductID"];
+                                address = ExportProcess.AddRow(address, 1);
+                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])row["Image1"], $"{Guid.NewGuid()}");
+                                try
+                                {
+                                    string[] data = row["Data"].ToString().Replace(" ", "").TrimEnd(';').Split(';');
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[0]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[1]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                }
+                                catch
+                                {
+                                    MessageBox.Show($"Có lỗi tại row {row["ID"]}");
+                                }
+
+                            }
+                        }
+
+                        break;
+                    case "TRU_T":
+                    case "TRU_P":
+                    case "DOC_T":
+                    case "DOC_P":
+                        switch (region)
+                        {
+                            case "TRU_T":
+                                step = 6;
+                                break;
+                            case "TRU_P":
+                                step = 7;
+                                break;
+                            case "DOC_T":
+                                step = 8;
+                                break;
+                            case "DOC_P":
+                                step = 9;
+                                break;
+                        }
+                        if (dic.TryGetValue("Flex SN", out address))
+                        {
+                            address = address.Split('-')[step];
+                            if (dic.TryGetValue($"Sample {samplePcs}", out string addSample))
+                            {
+                                address = ws.Cells[ws.Cells[address].End.Row, ws.Cells[addSample].End.Column].Address;
+                                if (Data_tbl.Columns.Contains("ProductID"))
+                                {
+                                    ws.Cells[address].Value = row["ProductID"].ToString();
+                                }
+                                address = ExportProcess.AddRow(address, 1);
+                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])row["Image1"], $"{Guid.NewGuid()}");
+                                address = ExportProcess.AddRow(address, 1);
+                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])row["Image2"], $"{Guid.NewGuid()}");
+                                try
+                                {
+                                    string[] data = row["Data"].ToString().Replace(" ", "").Split('/');
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[0].TrimEnd(';').Split(';')[0]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[0].TrimEnd(';').Split(';')[1]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[1]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[4]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[2]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[5]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[0]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                    address = ExportProcess.AddRow(address, 1);
+                                    ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[3]);
+                                    ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                }
+                                catch
+                                {
+                                    MessageBox.Show($"Có lỗi tại row {row["ID"]}");
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
 
         }
@@ -1107,142 +1142,142 @@ namespace Export_FPCA_OK2ship_Auto_System
         public void export_excel_onproduct(ExcelWorksheet ws, DataTable Data_all, DataTable dt_spec, string sheet, ref bool export_ok)
         {
 
-            int count_sample = int.Parse(dt_spec.Rows[0]["Count_sample"].ToString());
-            if (dt_spec.Rows.Count > 0)
-            {
-                List<string> lst_region = Data_all.AsEnumerable().Select(x => x.Field<string>("Region")).Distinct().ToList();
-                string[] region = dt_spec.Rows[0]["Location"].ToString().Split('_');
+            //int count_sample = int.Parse(dt_spec.Rows[0]["Count_sample"].ToString());
+            //if (dt_spec.Rows.Count > 0)
+            //{
+            //    List<string> lst_region = Data_all.AsEnumerable().Select(x => x.Field<string>("Region")).Distinct().ToList();
+            //    string[] region = dt_spec.Rows[0]["Location"].ToString().Split('_');
 
-                SortedDictionary<int, string> dic_judgement = check_spec_onproduct(Data_all, dt_spec, sheet);
+            //    SortedDictionary<int, string> dic_judgement = check_spec_onproduct(Data_all, dt_spec, sheet);
 
-                bool check_all = true;
-                foreach (var result in dic_judgement.Values)
-                {
-                    if (result == "FAIL")
-                    {
-                        check_all = false;
-                        break;
-                    }
-                }
-                if (check_all)
-                {
-                    foreach (string reg in region)
-                    {
-                        if (reg != "")
-                        {
-                            string[] str_location = reg.Split('+');
-                            string cpn = "";
+            //    bool check_all = true;
+            //    foreach (var result in dic_judgement.Values)
+            //    {
+            //        if (result == "FAIL")
+            //        {
+            //            check_all = false;
+            //            break;
+            //        }
+            //    }
+            //    if (check_all)
+            //    {
+            //        foreach (string reg in region)
+            //        {
+            //            if (reg != "")
+            //            {
+            //                string[] str_location = reg.Split('+');
+            //                string cpn = "";
 
-                            foreach (string r in lst_region)
-                            {
-                                string key1 = r.Split('_')[0].Replace(" ", "").ToUpper();
-                                string key2 = r.Split('_')[1].Replace(" ", "").ToUpper();
+            //                foreach (string r in lst_region)
+            //                {
+            //                    string key1 = r.Split('_')[0].Replace(" ", "").ToUpper();
+            //                    string key2 = r.Split('_')[1].Replace(" ", "").ToUpper();
 
-                                if (reg.Replace("Component", "Tape").Replace(" ", "").ToUpper().Contains(key1) && reg.Replace("Component", "Tape").Replace(" ", "").ToUpper().Contains(key2))
-                                {
-                                    cpn = r;
-                                    break;
-                                }
-                            }
-                            ExcelRangeBase cell_Pic = ws.Cells[int.Parse(str_location[1].Split(';')[2]), int.Parse(str_location[1].Split(';')[3]) + 1];
-                            ExcelRangeBase cell_graph = ws.Cells[int.Parse(str_location[2].Split(';')[1]), int.Parse(str_location[1].Split(';')[3]) + 1];
-                            ExcelRangeBase cell_data = ws.Cells[int.Parse(str_location[3].Split(';')[1]), int.Parse(str_location[1].Split(';')[3]) + 1];
+            //                    if (reg.Replace("Component", "Tape").Replace(" ", "").ToUpper().Contains(key1) && reg.Replace("Component", "Tape").Replace(" ", "").ToUpper().Contains(key2))
+            //                    {
+            //                        cpn = r;
+            //                        break;
+            //                    }
+            //                }
+            //                ExcelRangeBase cell_Pic = ws.Cells[int.Parse(str_location[1].Split(';')[2]), int.Parse(str_location[1].Split(';')[3]) + 1];
+            //                ExcelRangeBase cell_graph = ws.Cells[int.Parse(str_location[2].Split(';')[1]), int.Parse(str_location[1].Split(';')[3]) + 1];
+            //                ExcelRangeBase cell_data = ws.Cells[int.Parse(str_location[3].Split(';')[1]), int.Parse(str_location[1].Split(';')[3]) + 1];
 
-                            if (cpn != "")
-                            {
-                                DataTable Data_tbl = Data_all.AsEnumerable().Where(s => s.Field<string>("Region") == cpn).CopyToDataTable();
-                                if (Data_tbl.Rows.Count > 0)
-                                {
+            //                if (cpn != "")
+            //                {
+            //                    DataTable Data_tbl = Data_all.AsEnumerable().Where(s => s.Field<string>("Region") == cpn).CopyToDataTable();
+            //                    if (Data_tbl.Rows.Count > 0)
+            //                    {
 
-                                    Export_DatatableImage_Excel_tape(Data_tbl, "Image", ws, cell_Pic, false, count_sample);
-                                    Export_DatatableImage_Excel_Graph(Data_tbl, "Graph", ws, cell_graph, false, count_sample);
+            //                        Export_DatatableImage_Excel_tape(Data_tbl, "Image", ws, cell_Pic, false, count_sample);
+            //                        Export_DatatableImage_Excel_Graph(Data_tbl, "Graph", ws, cell_graph, false, count_sample);
 
-                                    List<string> lst_data = Data_tbl.AsEnumerable().Select(x => x.Field<string>("Data")).ToList();
-                                    List<string> lst_judge = new List<string> { };
-                                    for (int i = 0; i < count_sample; i++)
-                                    {
-                                        if (i < Data_tbl.Rows.Count)
-                                        {
-                                            cell_data.Offset(0, i).Value = double.Parse(lst_data[i].Split('_')[0].Replace("Max:", ""));
-                                            cell_data.Offset(0, i).Style.Numberformat.Format = "0.00";
-                                            cell_data.Offset(1, i).Value = double.Parse(lst_data[i].Split('_')[1].Replace("Average:", ""));
-                                            cell_data.Offset(1, i).Style.Numberformat.Format = "0.00";
+            //                        List<string> lst_data = Data_tbl.AsEnumerable().Select(x => x.Field<string>("Data")).ToList();
+            //                        List<string> lst_judge = new List<string> { };
+            //                        for (int i = 0; i < count_sample; i++)
+            //                        {
+            //                            if (i < Data_tbl.Rows.Count)
+            //                            {
+            //                                cell_data.Offset(0, i).Value = double.Parse(lst_data[i].Split('_')[0].Replace("Max:", ""));
+            //                                cell_data.Offset(0, i).Style.Numberformat.Format = "0.00";
+            //                                cell_data.Offset(1, i).Value = double.Parse(lst_data[i].Split('_')[1].Replace("Average:", ""));
+            //                                cell_data.Offset(1, i).Style.Numberformat.Format = "0.00";
 
 
-                                        }
-                                    }
+            //                            }
+            //                        }
 
-                                    for (int i = 1; i < 13; i++)
-                                    {
-                                        if (myCode.checkDBNull(cell_data.Offset(i, -1).Value).Replace(" ", "").ToUpper().Contains("MINFORCE"))
-                                        {
-                                            ExcelRangeBase cell_min = cell_data.Offset(i, 0);
-                                            ExcelRangeBase cell_max = cell_data.Offset(i + 1, 0);
-                                            ExcelRangeBase cell_ave = cell_data.Offset(i + 2, 0);
+            //                        for (int i = 1; i < 13; i++)
+            //                        {
+            //                            if (myCode.checkDBNull(cell_data.Offset(i, -1).Value).Replace(" ", "").ToUpper().Contains("MINFORCE"))
+            //                            {
+            //                                ExcelRangeBase cell_min = cell_data.Offset(i, 0);
+            //                                ExcelRangeBase cell_max = cell_data.Offset(i + 1, 0);
+            //                                ExcelRangeBase cell_ave = cell_data.Offset(i + 2, 0);
 
-                                            int c_offset = count_sample;
-                                            cell_min.FormulaR1C1 = "=MIN(R[-" + i.ToString() + "]C[0]:R[-" + i.ToString() + "]C[" + (c_offset - 1).ToString() + "])";
-                                            cell_max.FormulaR1C1 = "=MAX(R[-" + (i + 1).ToString() + "]C[0]:R[-" + (i + 1).ToString() + "]C[" + (c_offset - 1).ToString() + "])";
-                                            cell_ave.FormulaR1C1 = "=AVERAGE(R[-" + (i + 2).ToString() + "]C[0]:R[-" + (i + 2).ToString() + "]C[" + (c_offset - 1).ToString() + "])";
+            //                                int c_offset = count_sample;
+            //                                cell_min.FormulaR1C1 = "=MIN(R[-" + i.ToString() + "]C[0]:R[-" + i.ToString() + "]C[" + (c_offset - 1).ToString() + "])";
+            //                                cell_max.FormulaR1C1 = "=MAX(R[-" + (i + 1).ToString() + "]C[0]:R[-" + (i + 1).ToString() + "]C[" + (c_offset - 1).ToString() + "])";
+            //                                cell_ave.FormulaR1C1 = "=AVERAGE(R[-" + (i + 2).ToString() + "]C[0]:R[-" + (i + 2).ToString() + "]C[" + (c_offset - 1).ToString() + "])";
 
-                                            ExcelRangeBase cell_min1 = cell_data.Offset(i, 2);
-                                            ExcelRangeBase cell_max1 = cell_data.Offset(i + 1, 2);
-                                            ExcelRangeBase cell_ave1 = cell_data.Offset(i + 2, 2);
+            //                                ExcelRangeBase cell_min1 = cell_data.Offset(i, 2);
+            //                                ExcelRangeBase cell_max1 = cell_data.Offset(i + 1, 2);
+            //                                ExcelRangeBase cell_ave1 = cell_data.Offset(i + 2, 2);
 
-                                            cell_min1.FormulaR1C1 = "=MIN(R[-" + (i - 1).ToString() + "]C[-2]:R[-" + (i - 1).ToString() + "]C[" + (c_offset - 3).ToString() + "])";
-                                            cell_max1.FormulaR1C1 = "=MAX(R[-" + i.ToString() + "]C[-2]:R[-" + i.ToString() + "]C[" + (c_offset - 3).ToString() + "])";
-                                            cell_ave1.FormulaR1C1 = "=AVERAGE(R[-" + (i + 1).ToString() + "]C[-2]:R[-" + (i + 1).ToString() + "]C[" + (c_offset - 3).ToString() + "])";
+            //                                cell_min1.FormulaR1C1 = "=MIN(R[-" + (i - 1).ToString() + "]C[-2]:R[-" + (i - 1).ToString() + "]C[" + (c_offset - 3).ToString() + "])";
+            //                                cell_max1.FormulaR1C1 = "=MAX(R[-" + i.ToString() + "]C[-2]:R[-" + i.ToString() + "]C[" + (c_offset - 3).ToString() + "])";
+            //                                cell_ave1.FormulaR1C1 = "=AVERAGE(R[-" + (i + 1).ToString() + "]C[-2]:R[-" + (i + 1).ToString() + "]C[" + (c_offset - 3).ToString() + "])";
 
-                                            break;
-                                        }
-                                    }
+            //                                break;
+            //                            }
+            //                        }
 
-                                    for (int i = 0; i < count_sample; i++)
-                                    {
-                                        if (i < Data_tbl.Rows.Count)
-                                        {
-                                            int ID = int.Parse(Data_tbl.Rows[i]["ID"].ToString());
-                                            if (dic_judgement.ContainsKey(ID - 1))
-                                            {
-                                                if (dic_judgement[ID - 1] == "FAIL")
-                                                {
-                                                    lst_judge.Add("Fail");
+            //                        for (int i = 0; i < count_sample; i++)
+            //                        {
+            //                            if (i < Data_tbl.Rows.Count)
+            //                            {
+            //                                int ID = int.Parse(Data_tbl.Rows[i]["ID"].ToString());
+            //                                if (dic_judgement.ContainsKey(ID - 1))
+            //                                {
+            //                                    if (dic_judgement[ID - 1] == "FAIL")
+            //                                    {
+            //                                        lst_judge.Add("Fail");
 
-                                                }
-                                                else
-                                                {
-                                                    lst_judge.Add("Pass");
-                                                }
-                                            }
+            //                                    }
+            //                                    else
+            //                                    {
+            //                                        lst_judge.Add("Pass");
+            //                                    }
+            //                                }
 
-                                        }
-                                    }
+            //                            }
+            //                        }
 
-                                    for (int t = 1; t < 5; t++)
-                                    {
-                                        if (myCode.checkDBNull(cell_data.Offset(t, -1).Value).ToUpper().Contains("JUDGEMENT") && !myCode.checkDBNull(cell_data.Offset(t, -1).Value).ToUpper().Replace(" ", "").Contains("FAILUREMODE"))
-                                        {
-                                            for (int i = 0; i < lst_judge.Count; i++)
-                                            {
-                                                cell_data.Offset(t, i).Value = lst_judge[i];
+            //                        for (int t = 1; t < 5; t++)
+            //                        {
+            //                            if (myCode.checkDBNull(cell_data.Offset(t, -1).Value).ToUpper().Contains("JUDGEMENT") && !myCode.checkDBNull(cell_data.Offset(t, -1).Value).ToUpper().Replace(" ", "").Contains("FAILUREMODE"))
+            //                            {
+            //                                for (int i = 0; i < lst_judge.Count; i++)
+            //                                {
+            //                                    cell_data.Offset(t, i).Value = lst_judge[i];
 
-                                            }
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
+            //                                }
+            //                                break;
+            //                            }
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
 
-                    export_ok = false;
-                    MessageBox.Show(new Form { TopMost = true }, sheet + " chứa dữ liệu NG. Không thể xuất dữ liệu vào báo cáo", "Warning");
-                }
+            //        export_ok = false;
+            //        MessageBox.Show(new Form { TopMost = true }, sheet + " chứa dữ liệu NG. Không thể xuất dữ liệu vào báo cáo", "Warning");
+            //    }
 
-            }
+            //}
             // }
         }
         public void Export_DatatableImage_Excel_Graph(DataTable dt, string Image_Col_name, ExcelWorksheet tar_wrksht, ExcelRangeBase sel_rgn, bool row_offset, int count_sample)
@@ -1278,7 +1313,6 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         public void export_excel_peel_pull_shear(ExcelWorksheet ws, string sheet, DataTable Data_tbl, DataTable dt_spec, ref bool export_ok)
         {
-
             string testName = "Force!!!!!!!!!!!!!!!", forceName = "Froezzzz", caching = "crack";
             if (ws.Name.Contains("Peel"))
             {
@@ -1531,28 +1565,74 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                     if (double.TryParse(item["Data"].ToString(), out valueForce))
                     {
-                        ws.Cells[address].Value = valueForce > 5 ? "Pass" : "NG";
+                        if (dt_spec.Rows.Count > 0)
+                        {
+                            DataRow row = dt_spec.Rows[0];
+                            string specLow = row["Location"].ToString().Replace("N", "").Replace(">", "").Trim();
+                            if (double.TryParse(specLow, out double num))
+                            {
+                                if (addressDic.TryGetValue(testName, out string addressRowZ))
+                                {
+
+                                    int r = ws.Cells[address].Start.Row - ws.Cells[addressRowZ].Start.Row;
+                                    ws.Cells[address].FormulaR1C1 = $"=IF(R[{r * -1}]C>{num}, \"Pass\",\"Fail\" )";
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            ws.Cells[address].Value = valueForce > 5 ? "Pass" : "NG";
+                        }
                     }
                     numbers.Add(valueForce);
                 }
                 if (addressDic.TryGetValue("Judgement failure mode", out addressRow))
                 {
                     address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    ws.Cells[address].Value = primeMode;
+                    //ws.Cells[address].Value = primeMode;
+                    if (addressDic.TryGetValue("Flex torn", out string addMode7))
+                    {
+                        string addressMode7 = ws.Cells[ws.Cells[addMode7].End.Row, column].Address;
+                        if (addressDic.TryGetValue($"Solder joint {caching}", out string addMode1))
+                        {
+                            string addressMode1 = ws.Cells[ws.Cells[addMode1].End.Row, column].Address;
 
+                            addMode1 = ExportProcess.AddColumn(addMode1, -1);
+                            addMode7 = ExportProcess.AddColumn(addMode7, -1);
+                            int r1 = ws.Cells[addMode1].End.Row - ws.Cells[address].End.Row;
+                            int c1 = ws.Cells[addMode1].End.Column - ws.Cells[address].End.Column;
+                            int r7 = ws.Cells[addMode7].End.Row - ws.Cells[address].End.Row;
+                            int c7 = ws.Cells[addMode7].End.Column - ws.Cells[address].End.Column;
+
+
+                            int row1 = ws.Cells[addressMode1].End.Row - ws.Cells[address].End.Row;
+                            int col1 = ws.Cells[addressMode1].End.Column - ws.Cells[address].End.Column;
+                            int row7 = ws.Cells[addressMode7].End.Row - ws.Cells[address].End.Row;
+                            int col7 = ws.Cells[addressMode7].End.Column - ws.Cells[address].End.Column;
+
+                            ws.Cells[address].FormulaR1C1 = $"=INDEX(R[{r1}]C[{c1}]:R[{r7}]C[{c7}],MATCH(MAX(R[{row1}]C[{col1}]:R[{row7}]C[{col7}]),R[{row1}]C[{col1}]:R[{row7}]C[{col7}],0))";
+                        }
+                    }
                 }
                 if (addressDic.TryGetValue("Final judgement", out addressRow))
                 {
                     address = ws.Cells[ws.Cells[addressRow].End.Row, column].Address;
-                    if (valueForce > 5 && (primeMode.Contains("5") || primeMode.Contains("2")))
+                    if (addressDic.TryGetValue("Intermetallic break", out string addressRowZ))
                     {
-                        ws.Cells[address].Value = "Pass";
+                        int r = ws.Cells[addressRowZ].End.Row - ws.Cells[addressRow].End.Row;
+                        ws.Cells[address].FormulaR1C1 = $"=IF(R[{r}]C > 0, \"SEM/EDX analysis 1 piece\", \"Pass\")";
                     }
-                    else
-                    {
-                        ws.Cells[address].Value = "Fail";
 
-                    }
+                    //if (valueForce > 5 && (primeMode.Contains("5") || primeMode.Contains("2")))
+                    //{
+                    //    ws.Cells[address].Value = "Pass";
+                    //}
+                    //else
+                    //{
+                    //    ws.Cells[address].Value = "Fail";
+
+                    //}
 
                 }
 
@@ -2061,213 +2141,14 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         public void export_ACF_Wetting(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
         {
-
-            DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { ItemCode, "ACF", "NPI" }));
-            if (dt_spec.Rows.Count > 0)
-            {
-                int count_sample = int.Parse(dt_spec.Rows[0]["Count_sample"].ToString());
-                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet" }, new string[] { ItemCode, "ACF" });
-
-                DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, "ACF_WETTING", TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo }));
-                if (Data_tbl.Rows.Count > 0)
-                {
-                    List<string> lst_machine = Data_tbl.AsEnumerable().Select(x => x.Field<string>("Machine")).Distinct().ToList();
-                    int count_machine_DB = lst_machine.Count();
-                    int count_machine_format = dt_spec.Rows[0]["Location"].ToString().Split('_').Length - 1;
-
-                    int r_begin = int.Parse(dt_spec.Rows[0]["Location"].ToString().Split('_')[0].Split(';')[0]);
-                    int c_begin = int.Parse(dt_spec.Rows[0]["Location"].ToString().Split('_')[0].Split(';')[1]);
-
-                    // Range line = (Range)ws.Row[r_begin];
-                    ws.InsertRow(r_begin, 1);
-                    if (count_machine_DB > count_machine_format)
-                    {
-                        insert_row_excel(ws, r_begin, r_begin + 6);
-                        ws.InsertRow(r_begin, 7);
-                    }
-                    foreach (string machine in lst_machine)
-                    {
-
-                        Dictionary<int, List<Double>> dic_list = new Dictionary<int, List<double>> { };
-                        List<double> lst_after_plasma_ACF = new List<double> { };
-                        List<double> lst_after_plasma_GND = new List<double> { };
-                        List<double> lst_Before_Packing_ACF = new List<double> { };
-                        List<double> lst_Before_Packing_GND = new List<double> { };
-
-
-                        ws.Cells[r_begin, 1].Value = "Result data machine " + machine;
-
-                        DataTable tbl_machine = TDMK_Code.Datatable_Filter(sqlcon, "ACF_WETTING", TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Machine" }, new string[] { ItemCode, LotNo, machine }));
-                        int col_data = c_begin + 9;
-                        for (int i = 0; i < tbl_machine.Rows.Count; i = i + 2)
-                        {
-                            if (col_data < col_data + count_sample)
-                            {
-
-                                if (myCode.checkDBNull(tbl_machine.Rows[i]["After_Plasma"]) != "")
-                                {
-                                    ws.Cells[r_begin + 2, col_data].Value = double.Parse(tbl_machine.Rows[i]["After_Plasma"].ToString());
-                                    ws.Cells[r_begin + 2, col_data].Style.Numberformat.Format = "0.00";
-                                    lst_after_plasma_ACF.Add(double.Parse(myCode.checkDBNull(myCode.checkDBNull(tbl_machine.Rows[i]["After_Plasma"]))));
-                                }
-
-                                if (myCode.checkDBNull(tbl_machine.Rows[i + 1]["After_Plasma"]) != "")
-                                {
-                                    ws.Cells[r_begin + 3, col_data].Value = double.Parse(tbl_machine.Rows[i + 1]["After_Plasma"].ToString());
-                                    ws.Cells[r_begin + 3, col_data].Style.Numberformat.Format = "0.00";
-                                    lst_after_plasma_GND.Add(double.Parse(myCode.checkDBNull(tbl_machine.Rows[i + 1]["After_Plasma"])));
-                                }
-
-                                if (myCode.checkDBNull(tbl_machine.Rows[i]["Before_Packing"]) != "")
-                                {
-                                    ws.Cells[r_begin + 4, col_data].Value = double.Parse(tbl_machine.Rows[i]["Before_Packing"].ToString());
-                                    ws.Cells[r_begin + 4, col_data].Style.Numberformat.Format = "0.00";
-                                    lst_Before_Packing_ACF.Add(double.Parse(myCode.checkDBNull(tbl_machine.Rows[i]["Before_Packing"])));
-                                }
-
-                                if (myCode.checkDBNull(tbl_machine.Rows[i + 1]["Before_Packing"]) != "")
-                                {
-                                    ws.Cells[r_begin + 5, col_data].Value = double.Parse(tbl_machine.Rows[i + 1]["Before_Packing"].ToString());
-                                    ws.Cells[r_begin + 5, col_data].Style.Numberformat.Format = "0.00";
-                                    lst_Before_Packing_GND.Add(double.Parse(myCode.checkDBNull(tbl_machine.Rows[i + 1]["Before_Packing"])));
-                                }
-
-                                col_data++;
-                            }
-                        }
-                        dic_list.Add(2, lst_after_plasma_ACF);
-                        dic_list.Add(3, lst_after_plasma_GND);
-                        dic_list.Add(4, lst_Before_Packing_ACF);
-                        dic_list.Add(5, lst_Before_Packing_GND);
-
-
-                        foreach (var lst in dic_list)
-                        {
-                            string max = lst.Value.Max().ToString();
-                            string min = lst.Value.Min().ToString();
-                            string Average = Math.Round(lst.Value.Average(), 2).ToString();
-                            double STDEV = CalculateStandardDeviation(lst.Value);
-
-                            string _spec = ws.Cells[r_begin + lst.Key, c_begin + 2].Value.ToString();
-                            double Mean = double.Parse(_spec.Replace("<", "").Replace(">", "").Replace("°", "").Replace(" ", ""));
-                            double cpk = Math.Round((Mean - lst.Value.Average()) / (3 * STDEV), 2);
-
-                            ws.Cells[r_begin + lst.Key, c_begin + 3].Value = min;
-                            ws.Cells[r_begin + lst.Key, c_begin + 4].Value = max;
-                            ws.Cells[r_begin + lst.Key, c_begin + 5].Value = Average;
-                            ws.Cells[r_begin + lst.Key, c_begin + 6].Value = STDEV;
-                            ws.Cells[r_begin + lst.Key, c_begin + 7].Value = cpk;
-                            if (cpk > 1.33)
-                            {
-                                ws.Cells[r_begin + lst.Key, c_begin + 8].Value = "OK";
-                            }
-                            else
-                            {
-                                ws.Cells[r_begin + lst.Key, c_begin + 8].Value = "NG";
-                            }
-
-                        }
-
-                        r_begin = r_begin + 7;
-                    }
-                }
-            }
-
-
+            ACFService service = new ACFService();
+            service.ExportWCA(ws, ItemCode, LotNo);
         }
 
         public void Export_ACF_Peel(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
         {
-            DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, "ACF_BONDING", TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo }));
-            DataTable tbl_Data = new DataTable();
-            if (dt_analysis.Rows.Count > 0)
-            {
-                string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Remark")).Distinct().ToArray();
-                string filter = "";
-                foreach (string item in arr_val)
-                {
-                    if (item.Contains("NPI"))
-                    {
-                        filter = item;
-                        tbl_Data = dt_analysis.AsEnumerable().Where(r => r.Field<string>("Remark") == filter).CopyToDataTable();
-                        break;
-                    }
-                }
-            }
-            if (tbl_Data.Rows.Count > 0)
-            {
-                ExcelRangeBase sel_rgn = ws.Cells[1, 1];
-                string find_addr = Find_addr_peel("Before tape test", sel_rgn);
-                if (find_addr == "")
-                    find_addr = Find_addr_peel("Glass coupon", sel_rgn);
-                //string find_addr = Find_addr_peel("ACF Bonding", sel_rgn);
-                if (find_addr != "")
-                {
 
-                    ExcelRangeBase rgn_ = ws.Cells[find_addr];
-                    // ExcelRangeBase cur_rgn = ws.Cells[find_addr].Offset(1, 1);
-                    ExcelRangeBase cur_rgn = ws.Cells[find_addr].Offset(0, 1);
-                    //if (myCode.checkDBNull(rgn_.Offset(1, 0).Value).Contains("Product"))
-                    //{
-                    //    //cur_rgn = cur_rgn.Offset(1, 0);
-                    //    cur_rgn = cur_rgn.Offset(0, 1);
-                    //}
-
-
-
-                    if (cur_rgn != null)
-                    {
-                        Export_DatatableImage_Excel_ACF(tbl_Data, "Image_Before", ws, cur_rgn, false);
-                        Export_DatatableImage_Excel_ACF(tbl_Data, "Image_After", ws, cur_rgn.Offset(1, 0), false);
-                        Export_DatatableImage_Excel_Graph_ACF(tbl_Data, "Graph", ws, cur_rgn.Offset(2, 0), false);
-                        List<string> lst_data = tbl_Data.AsEnumerable().Select(x => x.Field<string>("Data")).ToList();
-                        for (int i = 0; i < tbl_Data.Rows.Count; i++)
-                        {
-                            cur_rgn.Offset(3, i).Value = lst_data[i];
-                        }
-
-
-                        int count_sample = tbl_Data.Rows.Count;
-
-                        //List<string> lst_judge = new List<string> { };
-                        //for (int i = 0; i < count_sample; i++)
-                        //{
-
-                        //    if (dgv_peel.Rows[i].Cells["Data"].Style.BackColor == Color.Red)
-                        //    {
-                        //        lst_judge.Add("Fail");
-                        //        judgeall_peel = false;
-
-                        //    }
-                        //    else
-                        //    {
-                        //        lst_judge.Add("Pass");
-                        //    }
-                        //}
-
-
-                        for (int i = 1; i < 13; i++)
-                        {
-                            if (myCode.checkDBNull(cur_rgn.Offset(i, -1).Value).Replace(" ", "").ToUpper().Contains("MINFORCE"))
-                            {
-                                ExcelRangeBase cell_min = cur_rgn.Offset(i, 0);
-                                ExcelRangeBase cell_max = cur_rgn.Offset(i + 1, 0);
-                                ExcelRangeBase cell_ave = cur_rgn.Offset(i + 2, 0);
-                                int c_offset = count_sample;
-                                cell_min.FormulaR1C1 = "=MIN(R[-" + (i - 3).ToString() + "]C[0]:R[-" + (i - 3).ToString() + "]C[" + (c_offset - 1).ToString() + "])";
-                                cell_max.FormulaR1C1 = "=MAX(R[-" + (i - 2).ToString() + "]C[0]:R[-" + (i - 2).ToString() + "]C[" + (c_offset - 1).ToString() + "])";
-                                cell_ave.FormulaR1C1 = "=AVERAGE(R[-" + (i - 1).ToString() + "]C[0]:R[-" + (i - 1).ToString() + "]C[" + (c_offset - 1).ToString() + "])";
-                                break;
-                            }
-                        }
-
-
-                    }
-
-                }
-            }
-
-
+            new ACFService().ExportBoding(ws, ItemCode, LotNo);
         }
 
         public void Export_ACFFlatness(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
@@ -2276,6 +2157,19 @@ namespace Export_FPCA_OK2ship_Auto_System
             DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, "ACF_FLATNESS", filter_str);
 
 
+            ProductIDService.FillProductID(src_dt, ItemCode, LotNo, "ACF_FLATNESS");
+            if (src_dt.Columns.Contains("ProductID"))
+            {
+                IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[] { "Flex ID" }, true);
+                if (dic.TryGetValue("Flex ID", out string value))
+                {
+                    int i = 1;
+                    foreach (DataRow row in src_dt.Rows)
+                    {
+                        ws.Cells[ExportProcess.AddRow(value, i++ + 1)].Value = row["ProductID"];
+                    }
+                }
+            }
             if (src_dt.Rows.Count > 0)
             {
                 ExcelRangeBase curr_rgn = ws.Cells[1, 1];
@@ -2289,8 +2183,6 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                             for (int c = 1; c < 5; c++)
                             {
-                                //if (myCode.checkDBNull(curr_rgn.Offset(1, c).Offset(-1, 0).Value).Contains("Point"))
-                                //{
                                 if (myCode.checkDBNull(curr_rgn.Offset(2, c).Offset(-1, 0).Value).Contains("Point"))
                                 {
                                     curr_rgn = curr_rgn.Offset(2, c);
@@ -2302,7 +2194,6 @@ namespace Export_FPCA_OK2ship_Auto_System
                                     goto lbl_export;
                                 }
                             }
-
                         }
                     }
                 }
@@ -2320,110 +2211,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         }
         public void Export_ACF_Roughness(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
         {
-            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo });
-            DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, "Roughness", filter_str);
-
-
-            if (src_dt.Rows.Count > 0)
-            {
-
-                List<List<string>> lst_rghness = lst_roughness(src_dt);
-                ExcelRangeBase curr_rgn_1 = ws.Cells[1, 1];
-
-
-                List<int> vitri_sa = new List<int> { };
-                List<int> vitri_sq = new List<int> { };
-                List<int> vitri_sdr = new List<int> { };
-                string[] arr_info = ACF_pad_location(ws).Split('+');
-                string vitri_ACF_pad = arr_info[0];
-
-                int row = int.Parse(arr_info[0]);
-                int r_count = int.Parse(arr_info[arr_info.Length - 1]);
-                curr_rgn_1 = curr_rgn_1.Offset(row, 0);
-
-                for (int i = 1; i < arr_info.Length; i++)
-                {
-                    if (arr_info[i].Contains("sa"))
-                    {
-                        vitri_sa.Add(i);
-                    }
-                    if (arr_info[i].Contains("sq"))
-                    {
-                        vitri_sq.Add(i);
-                    }
-                    if (arr_info[i].Contains("sdr"))
-                    {
-                        vitri_sdr.Add(i);
-                    }
-                }
-
-                int m = 0;
-                int k;
-                while (m < 32)
-                {
-                    for (int c = 0; c < 4; c++)
-                    {
-                        for (int i = 2; i <= 9; i++)
-                        {
-                            k = 0;
-                            foreach (int j in vitri_sa)
-                            {
-                                if (myCode.IsNumeric(lst_rghness[k][m]))
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = double.Parse(lst_rghness[k][m]);
-                                    curr_rgn_1.Offset(j, i).Style.Numberformat.Format = "0.00";
-                                }
-                                else
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = lst_rghness[k][m];
-                                }
-
-                                k += 3;
-                            }
-                            k = 1;
-                            foreach (int j in vitri_sq)
-                            {
-                                if (myCode.IsNumeric(lst_rghness[k][m]))
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = double.Parse(lst_rghness[k][m]);
-                                    curr_rgn_1.Offset(j, i).Style.Numberformat.Format = "0.00";
-                                }
-                                else
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = lst_rghness[k][m];
-
-                                }
-                                //curr_rgn_1.Offset(j, i).Value = lst_rghness[k][m];
-                                k += 3;
-                            }
-                            k = 2;
-                            foreach (int j in vitri_sdr)
-                            {
-                                if (myCode.IsNumeric(lst_rghness[k][m]))
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = double.Parse(lst_rghness[k][m]);
-                                    curr_rgn_1.Offset(j, i).Style.Numberformat.Format = "0.00";
-                                }
-                                else
-                                {
-                                    curr_rgn_1.Offset(j, i).Value = lst_rghness[k][m];
-                                }
-                                //curr_rgn_1.Offset(j, i).Value = lst_rghness[k][m];
-                                k += 3;
-                            }
-                            m++;
-                        }
-
-                        curr_rgn_1 = curr_rgn_1.Offset(r_count, 0);
-
-                    }
-                }
-
-
-
-
-
-            }
+            new ACFService().ExportRoughness(ItemCode, LotNo, ws);
 
         }
 

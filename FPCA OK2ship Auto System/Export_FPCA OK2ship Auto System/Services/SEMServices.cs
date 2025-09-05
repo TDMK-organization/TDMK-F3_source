@@ -449,12 +449,20 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         ExportProcess.AddBorderToImage(worksheet, $"Bin2001{iz}", Color.Green);
                     }
 
-                    byte[] imgData500bin = (byte[])dt.Rows[iz]["Binarization200250"];
-                    if (dic.TryGetValue("Binarization 3", out addressCol))
+                    try
                     {
-                        addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                        ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
-                        ExportProcess.AddBorderToImage(worksheet, $"Bin5001{iz}", Color.Green);
+
+                        byte[] imgData500bin = (byte[])dt.Rows[iz]["Binarization200250"];
+                        if (dic.TryGetValue("Binarization 3", out addressCol))
+                        {
+                            addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                            ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
+                            ExportProcess.AddBorderToImage(worksheet, $"Bin5001{iz}", Color.Green);
+                        }
+                    }
+                    catch
+                    {
+
                     }
 
                     //Insert black %
