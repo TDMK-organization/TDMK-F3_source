@@ -179,7 +179,7 @@ namespace OK2SHIP_SMT.UserControls
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DICTIONARY = GetData();
+            DICTIONARY = GetData(); MessageBox.Show("Complete!");
         }
     }
 }

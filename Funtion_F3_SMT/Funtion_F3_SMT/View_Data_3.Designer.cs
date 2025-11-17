@@ -39,6 +39,7 @@
             this.btnLoadb = new System.Windows.Forms.Button();
             this.btn_save = new System.Windows.Forms.Button();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.LegacyMode = new System.Windows.Forms.CheckBox();
             this.lbl_Login = new System.Windows.Forms.Label();
             this.btnEdit = new System.Windows.Forms.Button();
             this.btn_export = new System.Windows.Forms.Button();
@@ -268,6 +269,7 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.LegacyMode);
             this.splitContainer2.Panel1.Controls.Add(this.lbl_Login);
             // 
             // splitContainer2.Panel2
@@ -276,6 +278,16 @@
             this.splitContainer2.Size = new System.Drawing.Size(143, 93);
             this.splitContainer2.SplitterDistance = 25;
             this.splitContainer2.TabIndex = 43;
+            // 
+            // LegacyMode
+            // 
+            this.LegacyMode.AutoSize = true;
+            this.LegacyMode.Location = new System.Drawing.Point(0, 5);
+            this.LegacyMode.Name = "LegacyMode";
+            this.LegacyMode.Size = new System.Drawing.Size(91, 17);
+            this.LegacyMode.TabIndex = 43;
+            this.LegacyMode.Text = "Legacy Mode";
+            this.LegacyMode.UseVisualStyleBackColor = true;
             // 
             // lbl_Login
             // 
@@ -1158,6 +1170,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
@@ -1262,5 +1275,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel15;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.CheckBox LegacyMode;
     }
 }

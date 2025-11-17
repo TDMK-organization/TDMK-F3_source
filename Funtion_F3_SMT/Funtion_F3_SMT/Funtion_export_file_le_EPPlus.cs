@@ -109,11 +109,14 @@ namespace Funtion_F3_SMT
                                     vari = 1;
                                 }
                                 address = ws.Cells[ws.Cells[address.Split('-')[vari]].End.Row, ws.Cells[addSample].End.Column].Address;
-                                ws.Cells[address].Value = row["ProductID"];
+                                if (Data_tbl.Columns.Contains("ProductID"))
+                                {
+                                    ws.Cells[address].Value = row["ProductID"];
+                                }
                                 address = ExportProcess.AddRow(address, 2 - vari);
-                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])row[$"Image1"], $"NGANG1{Guid.NewGuid()}");
+                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row[$"Image1"], ImageFormat.Jpeg), $"NGANG1{Guid.NewGuid()}");
                                 address = ExportProcess.AddRow(address, 1);
-                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])row[$"Image2"], $"NGANG2{Guid.NewGuid()}");
+                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row[$"Image2"], ImageFormat.Jpeg), $"NGANG2{Guid.NewGuid()}");
                                 try
                                 {
                                     string[] data = row["Data"].ToString().Replace(" ", "").TrimEnd(';').Split(';');
@@ -142,9 +145,13 @@ namespace Funtion_F3_SMT
                             if (dic.TryGetValue($"Sample {samplePcs}", out string addSample))
                             {
                                 address = ws.Cells[ws.Cells[address].End.Row, ws.Cells[addSample].End.Column].Address;
-                                ws.Cells[address].Value = row["ProductID"];
+                                if (Data_tbl.Columns.Contains("ProductID"))
+                                {
+                                    ws.Cells[address].Value = row["ProductID"];
+                                }
+
                                 address = ExportProcess.AddRow(address, 1);
-                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])row["Image1"], $"{Guid.NewGuid()}");
+                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["Image1"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
                                 try
                                 {
                                     string[] data = row["Data"].ToString().Replace(" ", "").TrimEnd(';').Split(';');
@@ -194,9 +201,9 @@ namespace Funtion_F3_SMT
                                     ws.Cells[address].Value = row["ProductID"].ToString();
                                 }
                                 address = ExportProcess.AddRow(address, 1);
-                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])row["Image1"], $"{Guid.NewGuid()}");
+                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["Image1"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
                                 address = ExportProcess.AddRow(address, 1);
-                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])row["Image2"], $"{Guid.NewGuid()}");
+                                ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["Image2"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
                                 try
                                 {
                                     string[] data = row["Data"].ToString().Replace(" ", "").Split('/');
@@ -2374,6 +2381,10 @@ namespace Funtion_F3_SMT
                         {
                             InsertPicture_Name(ws, ws.Cells[address], (byte[])item["Image"], $"{rowIndex} - picture");
                         }
+                        if (item["Image"] != DBNull.Value && item["Image"] is Image)
+                        {
+                            InsertPicture_Name(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)item["Image"], ImageFormat.Jpeg), $"{rowIndex} - picture");
+                        }
                     }
                     if (addressDic.TryGetValue("Graph", out addressRow))
                     {
@@ -2381,6 +2392,10 @@ namespace Funtion_F3_SMT
                         if (item["Graph"] != DBNull.Value && item["Graph"] is byte[])
                         {
                             InsertPicture_Name(ws, ws.Cells[address], (byte[])item["Graph"], $"{rowIndex} - Graph");
+                        }
+                        if (item["Graph"] != DBNull.Value && item["Graph"] is Image)
+                        {
+                            InsertPicture_Name(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)item["Graph"], ImageFormat.Jpeg), $"{rowIndex} - Graph");
                         }
                     }
                     if (addressDic.TryGetValue(testName, out addressRow))
@@ -2407,7 +2422,7 @@ namespace Funtion_F3_SMT
                     }
                     catch
                     {
-                       
+
                     }
                     if (addressDic.TryGetValue($"Solder joint {caching}", out addressRow))
                     {
@@ -3837,24 +3852,18 @@ namespace Funtion_F3_SMT
 
         public void export_ACF_Wetting(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
         {
-            try
-            {
-                ACFService service = new ACFService();
-                service.ExportWCA(ws, ItemCode, LotNo);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+
+            ACFService service = new ACFService();
+            service.ExportWCA(ws, ItemCode, LotNo);
 
         }
 
-        public void Export_ACF_Peel_NPI(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
+        public void Export_ACF_Peel_NPI(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon, bool nas_mode)
         {
             try
             {
 
-                new ACFService().ExportBoding(ws, ItemCode, LotNo);
+                new ACFService().ExportBoding(ws, ItemCode, LotNo, nas_mode);
             }
             catch (Exception ex)
             {
@@ -4004,11 +4013,14 @@ namespace Funtion_F3_SMT
 
         }
 
-        public void Export_ACFFlatness(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
+        public void Export_ACFFlatness(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon, bool nas_mode)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo });
-            DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, "ACF_FLATNESS", filter_str);
-
+            DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, "ACF_FLATNESS" + (nas_mode ? "_NAS" : ""), filter_str);
+            if (src_dt.Rows.Count < 0)
+            {
+                throw new Exception("No data");
+            }
 
             ProductIDService.FillProductID(src_dt, ItemCode, LotNo, "ACF_FLATNESS");
             if (src_dt.Columns.Contains("ProductID"))
@@ -4062,9 +4074,9 @@ namespace Funtion_F3_SMT
                 }
             }
         }
-        public void Export_ACF_Roughness(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
+        public void Export_ACF_Roughness(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon, bool nas_mode)
         {
-            new ACFService().ExportRoughness(ItemCode, LotNo, ws);
+            new ACFService().ExportRoughness(ItemCode, LotNo, ws, nas_mode);
         }
 
         public Boolean check_roughness_data(DataTable Data_tbl)
@@ -5396,7 +5408,7 @@ namespace Funtion_F3_SMT
 
 
 
-        public void export_NPI_ACF(string file_format, string report_folder, string itemcode, string lotno, string process_name, SqlConnection sqlcon)
+        public void export_NPI_ACF(string file_format, string report_folder, string itemcode, string lotno, string process_name, SqlConnection sqlcon, bool nas_mode)
         {
             string export_path = System.IO.Path.Combine(report_folder, itemcode + "-" + lotno + ".xlsx");
 
@@ -5444,24 +5456,39 @@ namespace Funtion_F3_SMT
                     ExcelWorksheet worksheet0 = wb_format.Worksheets[mySheet];
                     report_saved.Worksheets.Add(mySheet, worksheet0);
                     ExcelWorksheet ws = report_saved.Worksheets[0];
-                    export_ACF_Wetting(ws, itemcode, lotno, sqlcon);
-                    Export_ACF_Peel_NPI(ws, itemcode, lotno, sqlcon);
+                    try
+                    {
+                        export_ACF_Wetting(ws, itemcode, lotno, sqlcon);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"ACF Wetting: {ex.Message}");
+                    }
                     try
                     {
 
-                        Export_ACFFlatness(ws, itemcode, lotno, sqlcon);
+                        Export_ACF_Peel_NPI(ws, itemcode, lotno, sqlcon, nas_mode);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message);
+                        MessageBox.Show($"ACF Peel: {ex.Message}");
                     }
                     try
                     {
-                        Export_ACF_Roughness(ws, itemcode, lotno, sqlcon);
+
+                        Export_ACFFlatness(ws, itemcode, lotno, sqlcon, nas_mode);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message);
+                        MessageBox.Show($"ACF Flatness: {ex.Message}");
+                    }
+                    try
+                    {
+                        Export_ACF_Roughness(ws, itemcode, lotno, sqlcon, nas_mode);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"ACF Roughness: {ex.Message}");
                     }
                 }
 
@@ -5480,9 +5507,9 @@ namespace Funtion_F3_SMT
                 excelApp.Visible = true;
                 excelApp.Workbooks.Open(export_path);
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show(new Form { TopMost = true }, "Lỗi khi mở file báo cáo", "Thông báo");
+                MessageBox.Show(new Form { TopMost = true }, $"Lỗi khi mở file báo cáo {ex.Message}", "Thông báo");
             }
             MessageBox.Show(new Form { TopMost = true }, "Xuất báo cáo thành công", "Thông báo");
 

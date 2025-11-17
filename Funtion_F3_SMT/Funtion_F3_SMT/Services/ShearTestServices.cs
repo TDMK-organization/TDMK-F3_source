@@ -1,5 +1,4 @@
-﻿using OK2SHIP_SMT.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -9,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace OK2SHIP_SMT.Services
 {
-    public class PeelTestWOSUSService
+    public class ShearTestServices
     {
-        private DBContext _dBContext = new DBContext();
-        
         public static DataTable getStructor()
         {
             DataTable dataTable = new DataTable();
@@ -37,24 +34,5 @@ namespace OK2SHIP_SMT.Services
             dataTable.Columns.Add("Remark", typeof(string));
             return dataTable;
         }
-        public bool checkPeelTest(string itemCode, string lotNo)
-        {
-            DataTable dataTable = _dBContext.LoadDataTable("PEEL_TEST_NAS", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
-            if (dataTable.Rows.Count <= 0)
-            {
-                return false;
-            }
-            string json = dataTable.Rows[0]["Data"].ToString();
-            DataTable dt = ConverterService.JsonToDataTable(json);
-            foreach (DataRow row in dt.Rows)
-            {
-                int num = int.Parse(row["Mode 1: Solder joint crack"].ToString().Split('%')[0]);
-                if (num > 50)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
     }
-}
+    }

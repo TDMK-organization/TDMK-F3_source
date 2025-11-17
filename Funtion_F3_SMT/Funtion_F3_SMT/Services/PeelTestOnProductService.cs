@@ -31,7 +31,7 @@ namespace OK2SHIP_SMT.Services
             dataTable.Columns.Add("Id", typeof(int));
             dataTable.Columns.Add("ItemCode");
             dataTable.Columns.Add("LotNo");
-            dataTable.Columns.Add("Picture", typeof(byte[]));
+            dataTable.Columns.Add("Picture", typeof(Image));
             return dataTable;
 
         }
@@ -94,8 +94,8 @@ namespace OK2SHIP_SMT.Services
         public void MakerSpec(string itemCode, string lotNo)
         {
             List<DataTable> listDt = new List<DataTable>();
-            listDt.Add(_dbContext.LoadDataTable("SPEC_COMMENT_3", new[] { "ItemCode", "Sheet" }, new[] { itemCode, "LINER_PEEL_TEST_ON_PRODUCT" }));
-            listDt.Add(_dbContext.LoadDataTable("SPEC_COMMENT_3", new[] { "ItemCode", "Sheet" }, new[] { itemCode, "PSA_PEEL_TEST_ON_PRODUCT" }));
+            listDt.Add(_dbContext.LoadDataTable("SPEC_COMMENT_3", new[] { "ItemCode", "Sheet", "Remark" }, new[] { itemCode, "LINER_PEEL_TEST_ON_PRODUCT", "NPI" }));
+            listDt.Add(_dbContext.LoadDataTable("SPEC_COMMENT_3", new[] { "ItemCode", "Sheet", "Remark" }, new[] { itemCode, "PSA_PEEL_TEST_ON_PRODUCT", "NPI" }));
             string _key = $"{itemCode} - {lotNo}";
             _SPEC.Add(_key, setUpSpec());
             Dictionary<string, DataRow> dic = new Dictionary<string, DataRow>();
@@ -200,7 +200,7 @@ namespace OK2SHIP_SMT.Services
         {
             string itemCode = "", lotNo = "";
             string[] s = folderName.Split('-', '_');
-            if (s.Length > 5)
+            if (s.Length > 4)
             {
                 itemCode = s[1];
                 try
@@ -266,6 +266,7 @@ namespace OK2SHIP_SMT.Services
                         break;
                     case "BF":
                     case "LINER TRUOC KEO":
+                    case "ANH BF":
                         List<KeyValuePair<Image, string>> listIamge = FileFolderRepository.ListAllPictureInAFolder(locationItem, ".jpg");
                         listIamge.Sort(delegate (KeyValuePair<Image, string> item1, KeyValuePair<Image, string> item2)
                         {
@@ -290,7 +291,7 @@ namespace OK2SHIP_SMT.Services
                                 row["Id"] = i++;
                                 row["ItemCode"] = _ITEMCODE;
                                 row["LotNo"] = _LOTNO;
-                                row["Picture"] = TDMK_ImageConverter.ImageToByteArray(itemZ.Key, ImageFormat.Jpeg);
+                                row["Picture"] = itemZ.Key;
                                 dt.Rows.Add(row);
                             }
                             _BEFOREIMAGE[key] = dt;
@@ -304,7 +305,7 @@ namespace OK2SHIP_SMT.Services
                                 row["Id"] = i++;
                                 row["ItemCode"] = _ITEMCODE;
                                 row["LotNo"] = _LOTNO;
-                                row["Picture"] = TDMK_ImageConverter.ImageToByteArray(itemZ.Key, ImageFormat.Jpeg);
+                                row["Picture"] = itemZ.Key;
                                 dt.Rows.Add(row);
                             }
                             _BEFOREIMAGE.Add(key, dt);
@@ -366,8 +367,8 @@ namespace OK2SHIP_SMT.Services
             dt.Columns.Add("ProductID");
             dt.Columns.Add("ItemCode");
             dt.Columns.Add("LotNo");
-            dt.Columns.Add("Picture", typeof(byte[]));
-            dt.Columns.Add("Graph", typeof(byte[]));
+            dt.Columns.Add("Picture", typeof(Image));
+            dt.Columns.Add("Graph", typeof(Image));
             dt.Columns.Add("Peak(gf)");
             dt.Columns.Add("Average(gf)");
             dt.Columns.Add("Peak(N)");
@@ -385,7 +386,12 @@ namespace OK2SHIP_SMT.Services
         public DataTable readSubTapeFolder(string location, string keyDic)
         {
             DataTable dataTable = MakerTable();
-            List<KeyValuePair<Image, string>> list = FileFolderRepository.ListAllPictureInAFolder(location, ".jpg");
+            string locaImg = location;
+            if (FileFolderRepository.GetSubFolders(location).Contains($"{location}\\ANH"))
+            {
+                locaImg += "\\ANH\\";
+            }
+            List<KeyValuePair<Image, string>> list = FileFolderRepository.ListAllPictureInAFolder(locaImg, ".jpg");
             List<string> files = FileFolderRepository.GetFileByExtension(location, "xlsx").ToList();
             list.Sort(delegate (KeyValuePair<Image, string> item1, KeyValuePair<Image, string> item2)
             {
@@ -436,6 +442,7 @@ namespace OK2SHIP_SMT.Services
 
                 }
             }
+            int z = 0;
             while (i < files.Count || i < list.Count)
             {
                 DataRow row = dataTable.NewRow();
@@ -443,13 +450,14 @@ namespace OK2SHIP_SMT.Services
                 row["ItemCode"] = _ITEMCODE;
                 row["LotNo"] = _LOTNO;
                 row["KeyDic"] = keyDic;
-                if (i < list.Count)
+                if (z < list.Count)
                 {
-                    row["Picture"] = TDMK_ImageConverter.ImageToByteArray((Image)list[i].Key, ImageFormat.Jpeg);
+                    row["Picture"] = (Image)list[z].Key;
+                    z++;
                 }
                 if (i < files.Count)
                 {
-                    KeyValuePair<byte[], string> paire = solveFileData(files[i]);
+                    KeyValuePair<Image, string> paire = solveFileData(files[i]);
                     row["Graph"] = paire.Key;
                     if (keyDic.Contains("PSA"))
                     {
@@ -521,9 +529,9 @@ namespace OK2SHIP_SMT.Services
             }
             return dataTable;
         }
-        private KeyValuePair<byte[], string> solveFileData(string location)
+        private KeyValuePair<Image, string> solveFileData(string location)
         {
-            KeyValuePair<byte[], string> pair = new KeyValuePair<byte[], string>();
+            KeyValuePair<Image, string> pair = new KeyValuePair<Image, string>();
 
             ExcelPackage.LicenseContext = LicenseContext.Commercial;
             using (ExcelPackage package = new ExcelPackage(location))
@@ -555,7 +563,7 @@ namespace OK2SHIP_SMT.Services
                         }
                         value += "," + ws.Cells[address].Value.ToString().Trim();
                     }
-                    pair = new KeyValuePair<byte[], string>(image, value);
+                    pair = new KeyValuePair<Image, string>(TDMK_ImageConverter.ByteArrayToImage(image), value);
                 }
             }
             return pair;
@@ -597,39 +605,70 @@ namespace OK2SHIP_SMT.Services
         //public DataTable _SPEC = new DataTable();
         //public Dictionary<string, DataTable> _DIC = new Dictionary<string, DataTable>();
         //public DataTable _BEFOREIMAGE;
+        public DataTable getStructor()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("ProductID", typeof(string));
+            dt.Columns.Add("ItemCode", typeof(string));
+            dt.Columns.Add("LotNo", typeof(string));
+            dt.Columns.Add("Graph", typeof(Image));
+            dt.Columns.Add("Picture", typeof(Image));
+            dt.Columns.Add("Peak(gf)", typeof(string));
+            dt.Columns.Add("Average(gf)", typeof(string));
+            dt.Columns.Add("Peak(N)", typeof(string));
+            dt.Columns.Add("Average(N)", typeof(string));
+            dt.Columns.Add("JudgementForce", typeof(string));
+            dt.Columns.Add("JudgementMode", typeof(string));
+            dt.Columns.Add("KeyDic", typeof(string));
+            return dt;
+        }
         public void SaveData(bool prime = false)
         {
             DataTable dt = new DataTable();
             if (!prime)
             {
-                dt = _dbContext.LoadDataTable("PT_ONPRODUCT", new[] { "ItemCode", "LotNo" }, new[] { _ITEMCODE, _LOTNO });
+                dt = _dbContext.LoadDataTable("PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" }, new[] { _ITEMCODE, _LOTNO });
                 if (dt.Rows.Count > 0)
                 {
                     throw new Exception("1402 - Đã có dữ liệu bạn muốn tiếp tục?");
                 }
             }
-            else
-            {
-                dt = _dbContext.GetTableStructure("PT_ONPRODUCT");
-            }
+            dt = getStructor();
             foreach (string key in _DIC.Keys)
             {
                 if (!key.ToUpper().Contains("REFER"))
                 {
                     foreach (DataRow rowZ in _DIC[key].Rows)
                     {
-                        DataRow row = dt.NewRow();
+                        DataRow rowA = dt.NewRow();
                         foreach (DataColumn col in _DIC[key].Columns)
                         {
-                            row[col.ColumnName] = rowZ[col.ColumnName];
+                            rowA[col.ColumnName] = rowZ[col.ColumnName];
                         }
-                        dt.Rows.Add(row);
+                        dt.Rows.Add(rowA);
                     }
                 }
             }
-            int res = _dbContext.BuckDataTable(dt, "PT_ONPRODUCT", new[] { "ItemCode", "LotNo" }, null, "Id");
-            res += _dbContext.BuckDataTable(_SPEC[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_SEPC", new[] { "ItemCode", "LotNo" }, null, "Id");
-            res += _dbContext.BuckDataTable(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_BEFOREIMAGE", new[] { "ItemCode", "LotNo" }, null, "Id");
+            NasRepository nas = new NasRepository();
+            string location = nas.HandleImageDataTable(dt, "PT_ONPRODUCT", _ITEMCODE, _LOTNO);
+            string location_spec = nas.HandleImageDataTable(_SPEC[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_SEPC", _ITEMCODE, _LOTNO);
+            string location_before = nas.HandleImageDataTable(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_BEFOREIMAGE", _ITEMCODE, _LOTNO);
+            DataTable dataTable = _dbContext.GetTableStructure("PT_ONPRODUCT_NAS");
+            DataRow row = dataTable.NewRow();
+            row["ItemCode"] = _ITEMCODE;
+            row["LotNo"] = _LOTNO;
+            row["LocationImage"] = location;
+            row["LocationSpec"] = location_spec;
+            row["LoactionBefore"] = location_before;
+            row["Data"] = ConverterService.DataTableToJson(dt);
+            row["DataSpec"] = ConverterService.DataTableToJson(_SPEC[$"{_ITEMCODE} - {_LOTNO}"]);
+            row["DataBefore"] = ConverterService.DataTableToJson(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"]);
+            dataTable.Rows.Add(row);
+            int res = _dbContext.BuckDataTable(dataTable, "PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" }, null, "ID");
+            //int res = _dbContext.BuckDataTable(dt, "PT_ONPRODUCT", new[] { "ItemCode", "LotNo" }, null, "Id");
+            //res += _dbContext.BuckDataTable(_SPEC[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_SEPC", new[] { "ItemCode", "LotNo" }, null, "Id");
+            //res += _dbContext.BuckDataTable(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_BEFOREIMAGE", new[] { "ItemCode", "LotNo" }, null, "Id");
 
 
 
@@ -649,7 +688,7 @@ namespace OK2SHIP_SMT.Services
             throw new Exception($"{res} lưu thành công!");
         }
 
-        public void LoadData(bool refer = false)
+        public void LoadData(bool legacy, bool refer = false)
         {
             string msg = "";
             string ITEMCODE = _ITEMCODE.Trim();
@@ -687,9 +726,40 @@ namespace OK2SHIP_SMT.Services
                 ITEMCODE = item.Split('-')[0].Trim();
                 LOTNO = item.Split('-')[1].Trim();
                 string keyZ = $"{ITEMCODE} - {LOTNO}";
-                _BEFOREIMAGE.Add(keyZ, _dbContext.LoadDataTable("PT_ONPRODUCT_BEFOREIMAGE", new[] { "ItemCode", "LotNo" }, new[] { ITEMCODE, LOTNO }));
-                _SPEC.Add(keyZ, _dbContext.LoadDataTable("PT_ONPRODUCT_SEPC", new[] { "ItemCode", "LotNo" }, new[] { ITEMCODE, LOTNO }));
-                DataTable dataTable = _dbContext.LoadDataTable("PT_ONPRODUCT", new[] { "ItemCode", "LotNo" }, new[] { ITEMCODE, LOTNO });
+                DataTable dataTable = new DataTable();
+                if (legacy)
+                {
+
+                    _BEFOREIMAGE.Add(keyZ, _dbContext.LoadDataTable("PT_ONPRODUCT_BEFOREIMAGE", new[] { "ItemCode", "LotNo" }, new[] { ITEMCODE, LOTNO }));
+                    _SPEC.Add(keyZ, _dbContext.LoadDataTable("PT_ONPRODUCT_SEPC", new[] { "ItemCode", "LotNo" }, new[] { ITEMCODE, LOTNO }));
+                    dataTable = _dbContext.LoadDataTable("PT_ONPRODUCT", new[] { "ItemCode", "LotNo" }, new[] { ITEMCODE, LOTNO });
+                }
+                else
+                {
+                    dataTable = _dbContext.LoadDataTable("PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" }, new[] { ITEMCODE, LOTNO });
+                    if (dataTable.Rows.Count <= 0)
+                    {
+                        if (!refer)
+                        {
+                            throw new Exception("No Data");
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    DataRow rowZ = dataTable.Rows[0];
+                    NasRepository _nas = new NasRepository();
+                    DataTable beforeDT = ConverterService.JsonToDataTable(rowZ["DataBefore"].ToString());
+                    _nas.MergeDataTable(beforeDT, "PT_ONPRODUCT_BEFOREIMAGE", ITEMCODE, LOTNO, rowZ["LoactionBefore"].ToString());
+                    _BEFOREIMAGE.Add(keyZ, beforeDT);
+                    DataTable specDT = ConverterService.JsonToDataTable(rowZ["DataSpec"].ToString());
+                    _nas.MergeDataTable(specDT, "PT_ONPRODUCT_SEPC", ITEMCODE, LOTNO, rowZ["LocationSpec"].ToString());
+                    _SPEC.Add(keyZ, specDT);
+                    dataTable = ConverterService.JsonToDataTable(rowZ["Data"].ToString());
+                    _nas.MergeDataTable(dataTable, "PT_ONPRODUCT_NAS", ITEMCODE, LOTNO, rowZ["LocationImage"].ToString());
+
+                }
                 //_DIC
                 foreach (DataRow row in dataTable.Rows)
                 {
@@ -720,7 +790,7 @@ namespace OK2SHIP_SMT.Services
 
         }
 
-        public void Export()
+        public void Export(bool legacy)
         {
             string msg = "";
             if (_DIC == null || _DIC.Count <= 0)
@@ -728,7 +798,7 @@ namespace OK2SHIP_SMT.Services
                 try
                 {
 
-                    LoadData(true);
+                    LoadData(legacy);
                 }
                 catch
                 {
@@ -894,12 +964,12 @@ namespace OK2SHIP_SMT.Services
                                 address = ExportProcess.AddRow(address, 1);
                                 if (valueDT.Rows.Count > i)
                                 {
-                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])valueDT.Rows[i]["Picture"], $"{Guid.NewGuid()}");
+                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)valueDT.Rows[i]["Picture"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
                                 }
 
                             }
-                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], (byte[])row["Picture"], $"{Guid.NewGuid()}");
-                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], (byte[])row["Graph"], $"{Guid.NewGuid()}");
+                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], TDMK_ImageConverter.ImageToByteArray((Image)row["Picture"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], TDMK_ImageConverter.ImageToByteArray((Image)row["Graph"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
                             if (liner)
                             {
                                 address = ExportProcess.AddRow(address, 1);
@@ -976,7 +1046,7 @@ namespace OK2SHIP_SMT.Services
 
         public void SetUpExport(ExcelWorksheet ws, bool liner = false)
         {
-            List<string> list = new[] { "TAPE", "Flex SN", "Sample 32", "CPK" }.ToList();
+            List<string> list = new[] { "Tape", "Flex SN", "Sample 32", "CPK" }.ToList();
             string caseZ = "";
             if (liner)
             {
@@ -992,7 +1062,7 @@ namespace OK2SHIP_SMT.Services
 
             int addBase = ws.Cells[dic[caseZ].Split('-')[0]].End.Row;
             List<string> ne = new List<string>();
-            foreach (var item in dic["TAPE"].Split('-'))
+            foreach (var item in dic["Tape"].Split('-'))
             {
                 int r = ws.Cells[item].End.Row;
                 if (r > addBase)
@@ -1000,7 +1070,7 @@ namespace OK2SHIP_SMT.Services
                     ne.Add(item);
                 }
             }
-            dic["TAPE"] = string.Join("-", ne.ToArray());
+            dic["Tape"] = string.Join("-", ne.ToArray());
             string[] keys = _DIC.Keys.ToArray();
             Dictionary<string, string> listZ = new Dictionary<string, string>();
             foreach (string key in keys)
@@ -1024,16 +1094,16 @@ namespace OK2SHIP_SMT.Services
                 //}
 
             }
-            keys = dic["TAPE"].Split('-');
+            keys = dic["Tape"].Split('-');
 
             for (int i = keys.Length - 1; i >= 0; i--)
             {
                 //Debugger.Break();
                 string tape = ws.Cells[keys[i]].Value.ToString().Split('(', ')')[1].Trim();
-                int z = listZ[tape].Split(',').Count() - 1;
+                int z = listZ[tape.ToUpper()].Split(',').Count() - 1;
                 for (int iZ = 0; iZ < z; iZ++)
                 {
-                    string tapeAdd = dic["TAPE"].Split('-')[i];
+                    string tapeAdd = dic["Tape"].Split('-')[i];
                     string dist = ExportProcess.AddRow(ExportProcess.AddColumn(dic["CPK"].Split('-')[i], -1), 1);
                     string flexSN = dic["Flex SN"].Split('-')[i];
                     string sample = dic["Sample 32"].Split('-')[i];

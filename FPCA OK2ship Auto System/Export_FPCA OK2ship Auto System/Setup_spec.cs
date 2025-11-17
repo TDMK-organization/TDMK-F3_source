@@ -901,7 +901,7 @@ namespace Export_FPCA_OK2ship_Auto_System
 
             for (int i = 1; i < 100; i++)
             {
-                for (int j = 1; j < 5; j++)
+                for (int j = 1; j < 7; j++)
                 {
                     if (myCode.checkDBNull(ws.Cells[i, j].Value).Contains("Sample"))
                     {

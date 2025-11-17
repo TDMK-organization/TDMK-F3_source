@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -19,7 +21,7 @@ namespace OK2SHIP_SMT.Services
         {
 
             int SpecNum = int.Parse(spec.Rows[0]["Count_Sample"].ToString());
-            string[] healder = new[] { "IO PIN", "GROUNDING PIN_LEFT", "GROUNDING PIN_RIGHT", "Sample 1" };
+            string[] healder = new[] { "IO PIN", "GROUNDING PIN_LEFT", "GROUNDING PIN_RIGHT", "Sample 1", "Average", "Min", "Max" };
             IDictionary<string, string> dic = ExportProcess.FindAddressByText(workSheet, healder);
 
             Dictionary<string, string> _heal = new Dictionary<string, string>();
@@ -53,12 +55,35 @@ namespace OK2SHIP_SMT.Services
                         break;
                     case "GROUNDING PIN_LEFT":
                         originalTable = dataTable.AsEnumerable()
-                                                  .Where(row => row.Field<string>("region") == "GAP DOC")
+                                                  .Where(row => row.Field<string>("region") == "GAP TRU")
+                                                  .OrderBy(row =>
+                                                  {
+                                                      string sampleValue = row.Field<string>("Sample");
+                                                      // Kiểm tra và chuyển đổi. Nếu chuyển đổi thất bại hoặc null/empty, coi là 0 (hoặc giá trị thấp nhất)
+                                                      if (int.TryParse(sampleValue, out int result))
+                                                      {
+                                                          return result;
+                                                      }
+                                                      return int.MinValue;
+                                                  })
+                                                  .Take(5)
                                                 .CopyToDataTable();
                         break;
                     case "GROUNDING PIN_RIGHT":
                         originalTable = dataTable.AsEnumerable()
-                                                  .Where(row => row.Field<string>("region") == "GAP DOC")
+                                                  .Where(row => row.Field<string>("region") == "GAP TRU")
+                                                     .OrderBy(row =>
+                                                     {
+                                                         string sampleValue = row.Field<string>("Sample");
+                                                         // Kiểm tra và chuyển đổi. Nếu chuyển đổi thất bại hoặc null/empty, coi là 0 (hoặc giá trị thấp nhất)
+                                                         if (int.TryParse(sampleValue, out int result))
+                                                         {
+                                                             return result;
+                                                         }
+                                                         return int.MinValue;
+                                                     })
+                                                     .Skip(5)
+                                                  .Take(5)
                                                 .CopyToDataTable();
                         break;
 
@@ -69,7 +94,7 @@ namespace OK2SHIP_SMT.Services
                 {
                     string addressP = ExportProcess.AddColumn(address, i);
                     // Kiểm tra và ghi product ID
-                    if (prime || workSheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressP, -1),-1)].Text.Contains("Flex"))
+                    if (prime || workSheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressP, -1), -1)].Text.Contains("Flex"))
                     {
                         prime = true;
                         if (originalTable.Columns.Contains("ProductID"))
@@ -83,9 +108,26 @@ namespace OK2SHIP_SMT.Services
                     }
 
                     addressP = ExportProcess.AddRow(addressP, 1);
-                    ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], (byte[])originalTable.Rows[i]["Image"], $"{Guid.NewGuid()}");
+                    bool imageMode = !originalTable.Columns["Image"].GetType().ToString().Contains("byte");
+                    if (imageMode)
+                    {
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], TDMK_ImageConverter.ImageToByteArray((Image)originalTable.Rows[i]["Image"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+
+                    }
+                    else
+                    {
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], (byte[])originalTable.Rows[i]["Image"], $"{Guid.NewGuid()}");
+                    }
                     addressP = ExportProcess.AddRow(addressP, 1);
-                    ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], (byte[])originalTable.Rows[i]["Image1"], $"{Guid.NewGuid()}");
+                    if (imageMode)
+                    {
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], TDMK_ImageConverter.ImageToByteArray((Image)originalTable.Rows[i]["Image1"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+
+                    }
+                    else
+                    {
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], (byte[])originalTable.Rows[i]["Image1"], $"{Guid.NewGuid()}");
+                    }
                     string[] data1 = originalTable.Rows[i]["Data"].ToString().Split('/')[0].Trim().TrimEnd(';').Split(';');
                     try
                     {
@@ -100,7 +142,15 @@ namespace OK2SHIP_SMT.Services
                         throw new Exception($"Lỗi khi ghi data {ex.Message}");
                     }
                     addressP = ExportProcess.AddRow(addressP, 1);
-                    ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], (byte[])originalTable.Rows[i]["Image2"], $"{Guid.NewGuid()}");
+                    if (imageMode)
+                    {
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], TDMK_ImageConverter.ImageToByteArray((Image)originalTable.Rows[i]["Image2"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+
+                    }
+                    else
+                    {
+                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], (byte[])originalTable.Rows[i]["Image2"], $"{Guid.NewGuid()}");
+                    }
                     string[] data2 = originalTable.Rows[i]["Data"].ToString().Split('/')[1].Trim().TrimEnd(';').Split(';');
                     try
                     {
@@ -121,7 +171,53 @@ namespace OK2SHIP_SMT.Services
                 }
 
             }
+            foreach (string key in new[] { "Average", "Min", "Max" })
+            {
+                foreach (string adress in dic[key].Split('-'))
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        string address = ExportProcess.AddRow(adress, i + 1);
+                        workSheet.Cells[address].Value = 0.1;
+                        switch (key)
+                        {
+                            case "Average":
+                                workSheet.Cells[address].FormulaR1C1 = $"=AVERAGE(RC[-5]:RC[-1])";
+                                break;
+                            case "Min":
+                                workSheet.Cells[address].FormulaR1C1 = $"=min(RC[-6]:RC[-2])";
+                                break;
+                            case "Max":
+                                workSheet.Cells[address].FormulaR1C1 = $"=max(RC[-7]:RC[-3])";
+                                break;
+                            default:
+                                Debugger.Break();
+                                break;
+                        }
 
+                    }
+                }
+            }
+
+
+        }
+        public static DataTable getConstructor()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("ItemCode", typeof(string));
+            dt.Columns.Add("LotNo", typeof(string));
+            dt.Columns.Add("Sheet", typeof(string));
+            dt.Columns.Add("Region", typeof(string));
+            dt.Columns.Add("Sample", typeof(string));
+            dt.Columns.Add("Image", typeof(Image));
+            dt.Columns.Add("Image1", typeof(Image));
+            dt.Columns.Add("Image2", typeof(Image));
+            dt.Columns.Add("Data", typeof(string));
+            dt.Columns.Add("Operator", typeof(string));
+            dt.Columns.Add("Time_Update", typeof(string));
+            dt.Columns.Add("Remark", typeof(string));
+            return dt;
         }
         public static Dictionary<string, List<string>> Get_ProductID(string location, string itemCode, string lotNo)
         {
@@ -130,17 +226,17 @@ namespace OK2SHIP_SMT.Services
                 return new Dictionary<string, List<string>>();
             }
             Dictionary<string, List<string>> list = new Dictionary<string, List<string>>();
-            ProductIDService service = new ProductIDService(itemCode, lotNo, location, new[] { "GAPConnector" }, new[] { itemCode });
+            ProductIDService service = new ProductIDService(itemCode, lotNo, location, new[] { "GAP" }, new[] { itemCode });
             List<string> listZ = service.getListProductID(service._listFile[itemCode]);
-            if (listZ.Count  >= 10)
+            if (listZ.Count >= 10)
             {
                 List<string> doc = new List<string>();
-                for(int i = 0; i < 5; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     doc.Add(listZ[i]);
                 }
                 List<string> tru = new List<string>();
-                for(int i = 0; i < 10; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     tru.Add(listZ[i]);
                 }

@@ -168,7 +168,7 @@ namespace OK2SHIP_SMT.UserControls
             if (_PRIME)
             {
                 _service2 = new PeelTestOnProductService(txt_ItemCode.Text, txt_lotNo.Text);
-                _service2.LoadData(true);
+                _service2.LoadData(Legacy.Checked, true);
             }
             else
             {
@@ -198,7 +198,7 @@ namespace OK2SHIP_SMT.UserControls
                     {
 
                     }
-                    _service2.Export();
+                    _service2.Export(Legacy.Checked);
                 }
                 else
                 {
@@ -239,7 +239,7 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void btn_load_Click(object sender, EventArgs e)
         {
-            loadData(txt_ItemCode.Text, txt_lotNo.Text);
+            loadData(txt_ItemCode.Text, txt_lotNo.Text, Legacy.Checked);
             checkingDataGridView(new DataGridView());
 
         }
@@ -606,7 +606,7 @@ namespace OK2SHIP_SMT.UserControls
             }
         }
 
-        private void loadData(string itemCode, string lotNo)
+        private void loadData(string itemCode, string lotNo, bool legacy)
         {
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
@@ -618,7 +618,7 @@ namespace OK2SHIP_SMT.UserControls
             if (_PRIME)
             {
                 _service2 = new PeelTestOnProductService(itemCode, lotNo);
-                _service2.LoadData();
+                _service2.LoadData(legacy);
             }
             else
             {

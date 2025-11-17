@@ -47,8 +47,13 @@ namespace OK2SHIP_SMT.Services
                     {
                         string name = col.ColumnName.Replace("&CONVERTER", "");
                         int point = int.Parse(row[col].ToString()) - 1;
-                        byte[] img = (byte[])dataTableImage.Rows[point]["Image"];
-                        rowZ[name] = img;
+                        try
+                        {
+
+                            byte[] img = (byte[])dataTableImage.Rows[point]["Image"];
+                            rowZ[name] = img;
+                        }
+                        catch { }
                     }
                     else
                     {
@@ -92,7 +97,13 @@ namespace OK2SHIP_SMT.Services
                         var image = row[colName];
                         if (datatable.Columns[colName].DataType.FullName != "System.Byte[]")
                         {
-                            image = TDMK_ImageConverter.ImageToByteArray((Image)row[colName], ImageFormat.Jpeg);
+                            try
+                            {
+
+                                image = TDMK_ImageConverter.ImageToByteArray((Image)row[colName], ImageFormat.Jpeg);
+                            }
+                            catch (Exception ex) { }
+
 
                         }
 
@@ -181,7 +192,7 @@ namespace OK2SHIP_SMT.Services
                         if (column.ColumnName.Contains("$CONVERTERIMAGE"))
                         {
                             string nameNew = column.ColumnName.Trim().Split('$')[0];
-                            dataResult.Columns.Add(nameNew, typeof(byte[]));
+                            dataResult.Columns.Add(nameNew, typeof(Image));
                             dic.Add(nameNew, column.ColumnName);
                         }
                         else

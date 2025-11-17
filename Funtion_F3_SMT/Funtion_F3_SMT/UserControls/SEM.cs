@@ -6,12 +6,14 @@ using OK2SHIP_SMT.Views;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using ZedGraph;
 namespace OK2SHIP_SMT.UserControls
 {
     public partial class SEM : UserControl
@@ -158,7 +160,6 @@ namespace OK2SHIP_SMT.UserControls
                 case "X-Ray picture":
                     try
                     {
-
                         DataTable dtz = (DataTable)UC_XrayPicture.dataGridView.DataSource;
                         XRayPictureService x = new XRayPictureService();
                         try
@@ -168,9 +169,9 @@ namespace OK2SHIP_SMT.UserControls
                         catch (Exception ex)
                         {
                             string[] spt = ex.Message.Split('-');
-                            if (spt[0].Contains("1234") && MessageBox.Show($"{spt[2].Trim()}", "Cảnh báo!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            if (spt[0].Contains("1234") && MessageBox.Show($"{spt[1].Trim()}", "Cảnh báo!", MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
-                                x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text, int.Parse(spt[1]));
+                                x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text, 2);
                             }
                             else
                             {
@@ -239,7 +240,7 @@ namespace OK2SHIP_SMT.UserControls
                         }
                         else
                         {
-                            throw ex;
+                            MessageBox.Show($"SEM: {ex.Message}");
                         }
                     }
                     int i = 1;
@@ -321,7 +322,7 @@ namespace OK2SHIP_SMT.UserControls
                     OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting();
                     try
                     {
-                        oqc.SaveProcess(dataTables);
+                        oqc.SaveProcess(dataTables, tb_ItemCode.Text.Trim(), tb_Lotno.Text.Trim());
                         MessageBox.Show("Lưu dữ liệu thành công");
                     }
                     catch (Exception ex)
@@ -332,7 +333,7 @@ namespace OK2SHIP_SMT.UserControls
                             DialogResult dialogResult = MessageBox.Show("Dữ liệu thừa bạn có muốn tiếp tục lưu", "Thông báo", MessageBoxButtons.OK);
                             if (dialogResult == DialogResult.OK)
                             {
-                                oqc.SaveProcess(dataTables, true);
+                                oqc.SaveProcess(dataTables, tb_ItemCode.Text.Trim(), tb_Lotno.Text.Trim(), true);
                             }
                             break;
                         }
@@ -358,7 +359,7 @@ namespace OK2SHIP_SMT.UserControls
                 switch (this.PROCESS)
                 {
                     case "X-Ray picture":
-                        status = new XRayPictureService().Export(tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text);
+                        status = new XRayPictureService().Export(tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text, legacyMode.Checked);
                         break;
                     case "Environment en-durance":
                         status = new EEDService().Export(tb_ItemCode.Text, tb_Lotno.Text);
@@ -375,7 +376,7 @@ namespace OK2SHIP_SMT.UserControls
                     case "SEM BSE & Binarization":
                         try
                         {
-                            status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, false);
+                            status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, false, legacyMode.Checked);
                         }
                         catch (Exception ex)
                         {
@@ -385,7 +386,7 @@ namespace OK2SHIP_SMT.UserControls
                                 DialogResult dialogResult = MessageBox.Show("Dữ liệu thiếu bạn có muốn tiếp tục xuất dữ liệu", "Thông báo", MessageBoxButtons.YesNoCancel);
                                 if (dialogResult == DialogResult.Yes)
                                 {
-                                    status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, true);
+                                    status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, true, legacyMode.Checked);
                                 }
                             }
                             else
@@ -442,7 +443,7 @@ namespace OK2SHIP_SMT.UserControls
                 {
                     case "X-Ray picture":
                         XRayPictureService xray = new XRayPictureService();
-                        DataTable xrayData = xray.Load(tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text);
+                        DataTable xrayData = xray.Load(tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text, legacyMode.Checked);
                         UC_XrayPicture.setData(xrayData);
                         break;
                     case "Environment en-durance":
@@ -479,7 +480,7 @@ namespace OK2SHIP_SMT.UserControls
 
                     case "SEM BSE & Binarization":
                         SEMServices sem = new SEMServices();
-                        DataTable dtz = sem.LoadDataProcess(tb_ItemCode.Text, tb_Lotno.Text);
+                        DataTable dtz = sem.LoadDataProcess(tb_ItemCode.Text, tb_Lotno.Text, legacyMode.Checked);
                         if (dtz.Rows.Count <= 0)
                         {
                             MessageBox.Show($"{tb_ItemCode} {tb_Lotno.Text} không có dữ liệu!");
@@ -493,14 +494,19 @@ namespace OK2SHIP_SMT.UserControls
                         splitContainer2.Panel2.Controls.Add(dgv_Combobox);
                         break;
                     case "OQC B2B Mating-Unmating":
-                        OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting();
-                        DataTable dt = oqc.LoadProcess(tb_ItemCode.Text, tb_Lotno.Text);
-                        if (dt.Rows.Count <= 0)
+                        using (OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting())
                         {
-                            MessageBox.Show($"{tb_ItemCode} {tb_Lotno.Text} không có dữ liệu!");
-                            return;
+
+                            DataTable dt = oqc.LoadProcess(tb_ItemCode.Text, tb_Lotno.Text, legacyMode.Checked);
+                            if (dt.Rows.Count <= 0)
+                            {
+                                MessageBox.Show($"{tb_ItemCode} {tb_Lotno.Text} không có dữ liệu!");
+                                return;
+                            }
+                            dgv_Combobox.DataSource = new DataTable();
+                            GC.Collect();
+                            dgv_Combobox = new CustomDataGridView(dt, new Dictionary<string, string[]> { { "FailureMode", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
                         }
-                        dgv_Combobox = new CustomDataGridView(dt, new Dictionary<string, string[]> { { "FailureMode", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
                         dgv_Combobox.CellClick += cellContentClick;
                         splitContainer2.Panel2.Controls.Clear();
                         splitContainer2.Panel2.Controls.Add(dgv_Combobox);
@@ -524,11 +530,19 @@ namespace OK2SHIP_SMT.UserControls
 
                 if (cell is DataGridViewImageCell)
                 {
-                    Image image = TDMK_ImageConverter.ByteArrayToImage((byte[])cell.Value);
+                    try
+                    {
 
-                    // Hiển thị hình ảnh trong PictureBox
-                    pictureBox.Image = image;
-                    pictureBox.SizeMode = PictureBoxSizeMode.Zoom; // Tùy chỉnh kích thước hình ảnh
+                        Image image = (Image)cell.Value;
+
+                        // Hiển thị hình ảnh trong PictureBox
+                        pictureBox.Image = image;
+                        pictureBox.SizeMode = PictureBoxSizeMode.Zoom; // Tùy chỉnh kích thước hình ảnh
+                    }
+                    catch
+                    {
+
+                    }
 
                 }
             }
@@ -774,6 +788,7 @@ namespace OK2SHIP_SMT.UserControls
 
         private bool checkData(string location, string itemCode, string lotNo, string process)
         {
+            //location = location.Replace("\\\\UMT", "");
             //Check itemcode lotno validate
             if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
             {
@@ -788,7 +803,7 @@ namespace OK2SHIP_SMT.UserControls
             }
             if (browseStatusFile && !File.Exists(location))
             {
-                throw new Exception("File not found");
+                throw new Exception("Chưa có product ID");
             }
             /////////////////
             // check itemcode lot no of filename is match
@@ -815,6 +830,7 @@ namespace OK2SHIP_SMT.UserControls
                         LotNo = LotNo.Split('_')[0];
                     }
                     LotNo = ValidateService.lotNoHandle(LotNo);
+
                     break;
                 case "Thermal cycling, Heat soak, Thermal shock":
                     break;
@@ -829,7 +845,11 @@ namespace OK2SHIP_SMT.UserControls
                     if (!LotNo.Contains("_"))
                     {
                         string no = fileName[3].Split('_')[0];
-                        LotNo += '-' + no;
+
+                        if (int.TryParse(no.Replace(" ", ""), out int _a))
+                        {
+                            LotNo += '-' + no;
+                        }
                     }
                     else
                     {
@@ -862,14 +882,29 @@ namespace OK2SHIP_SMT.UserControls
                         dgv_Combobox.CellValueChanged += dataGridView_CellValueChanged;
                         break;
                     case "SEM BSE & Binarization":
-                        ((DataGridViewImageColumn)dgv_Combobox.Columns["SEM200250"]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                        ((DataGridViewImageColumn)dgv_Combobox.Columns["SEM500700"]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                        ((DataGridViewImageColumn)dgv_Combobox.Columns["SEM5K"]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                        ((DataGridViewImageColumn)dgv_Combobox.Columns["Binarization200250"]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                        ((DataGridViewImageColumn)dgv_Combobox.Columns["Binarization500700"]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                        dgv_Combobox.Columns["Black200250"].DefaultCellStyle.Format = "0.00";
-                        dgv_Combobox.Columns["Black500700"].DefaultCellStyle.Format = "0.00";
-                        dgv_Combobox.CellFormatting += DataGridView1_CellFormatting;
+                        foreach (string item in new[] { "SEM200250", "SEM500700", "SEM5K", "Binarization200250", "Binarization500700" })
+                        {
+                            try
+                            {
+
+                                ((DataGridViewImageColumn)dgv_Combobox.Columns[item]).ImageLayout = DataGridViewImageCellLayout.Zoom;
+                            }
+                            catch
+                            {
+
+                            }
+                        }
+                        try
+                        {
+
+                            dgv_Combobox.Columns["Black200250"].DefaultCellStyle.Format = "0.00";
+                            dgv_Combobox.Columns["Black500700"].DefaultCellStyle.Format = "0.00";
+                        }
+                        catch
+                        {
+
+                        }
+
                         break;
                     default:
                         break;
@@ -906,7 +941,6 @@ namespace OK2SHIP_SMT.UserControls
             {
                 switch (process)
                 {
-
                     case "X-Ray picture":
                         XRayPictureService xRayPictureService = new XRayPictureService();
                         try
@@ -1003,10 +1037,11 @@ namespace OK2SHIP_SMT.UserControls
 
                         break;
                     case "SEM BSE & Binarization":
+                        DataTable dtM = new DataTable();
                         checkData(location, itemCode, lotNo, process);
                         try
                         {
-                            dt = semServices.SEMProcessRead(location, itemCode, lotNo, false);
+                            dtM = semServices.SEMProcessRead(location, itemCode, lotNo, false);
                         }
                         catch (Exception ex)
                         {
@@ -1015,18 +1050,56 @@ namespace OK2SHIP_SMT.UserControls
                                 DialogResult dr = MessageBox.Show("Dữ liệu đã tồn tại bạn có muốn tiếp tục", "Thông báo", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                                 if (dr == DialogResult.Yes)
                                 {
-                                    dt = semServices.SEMProcessRead(location, itemCode, lotNo, true);
+                                    dtM = semServices.SEMProcessRead(location, itemCode, lotNo, true);
 
                                 }
                             }
+                            else
+                            {
+                                MessageBox.Show($"Error: {ex.Message}");
+                            }
                         }
-                        dt = semServices.JudgementCheck(dt);
-                        dgv_Combobox = new CustomDataGridView(dt, new Dictionary<string, string[]> { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
+                        dtM = semServices.JudgementCheck(dtM);
+                        if (dgv_Combobox.Rows.Count > 0 && (dgv_Combobox.Rows[0].Cells["LotNo"].Value.ToString().Contains(lotNo)) && (dgv_Combobox.Rows[0].Cells["ItemCode"].Value.ToString() == itemCode) && MessageBox.Show("Do you want write continue data?", "Warning!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            DataTable dct = (DataTable)dgv_Combobox.DataSource;
+                            foreach (DataRow row in dtM.Rows)
+                            {
+                                DataRow rowNew = dct.NewRow();
+                                foreach (DataColumn columnZ in dct.Columns)
+                                {
+                                    rowNew[columnZ.ColumnName] = row[columnZ.ColumnName];
+                                }
+                                rowNew["ID"] = dct.Rows.Count + 1;
+                                dct.Rows.Add(rowNew);
+                            }
+                            //foreach (DataGridViewRow rowZ in dgv_Combobox.Rows)
+                            //{
+                            //    DataRow row = dtM.NewRow();
+                            //    foreach (DataGridViewColumn columnZ in dgv_Combobox.Columns)
+                            //    {
+                            //        if (columnZ.Name.Contains("ID"))
+                            //        {
+                            //            int idA = int.Parse(rowZ.Cells[columnZ.Name].Value.ToString());
+                            //            row[columnZ.Name] = idA + dgv_Combobox.Rows.Count ;
+
+                            //        }
+                            //        else
+                            //        {
+                            //            row[columnZ.Name] = rowZ.Cells[columnZ.Name].Value;
+                            //        }
+                            //    }
+                            //    dtM.Rows.Add(row);
+                            //}
+                            dtM = dct;
+                        }
+
+                        dgv_Combobox = new CustomDataGridView(dtM, new Dictionary<string, string[]> { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
+
                         dgv_Combobox.CellClick += cellContentClick;
                         MakeGood();
                         splitContainer2.Panel2.Controls.Clear();
                         splitContainer2.Panel2.Controls.Add(dgv_Combobox);
-
                         break;
                     case "Bar Code Verification":
                         checkData(location, itemCode, lotNo, process);
@@ -1043,7 +1116,7 @@ namespace OK2SHIP_SMT.UserControls
                     case "OQC B2B Mating-Unmating":
                         checkData(location, itemCode, lotNo, process);
                         OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting();
-                        dt = oqc.ProcessRead(location, itemCode, lotNo, tb_productID.Text);
+                        dt = oqc.ProcessRead(location + "\\UMT", itemCode, lotNo, tb_productID.Text);
 
                         dgv_Combobox = new CustomDataGridView(dt, new Dictionary<string, string[]> { { "FailureMode", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
                         dgv_Combobox.CellClick += cellContentClick;
@@ -1236,6 +1309,83 @@ namespace OK2SHIP_SMT.UserControls
                 fileDialog.Title = "Chọn tệp";
                 fileDialog.ShowDialog();
                 tb_locationFolder.Text = fileDialog.FileName;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (UserSession.Instance.Role.Equals("admin"))
+            {
+
+                DBContext _db = new DBContext();
+                if (MessageBox.Show($"Bạn có muốn xóa{tb_ItemCode.Text.Trim()} - {tb_Lotno.Text.Trim()}", "Thông báo", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+                {
+                    int i = _db.DeleteData("OQC_B2B_Mating_Unmating", new[] { "ItemCode", "lotNo" }, new[] { tb_ItemCode.Text.Trim(), tb_Lotno.Text.Trim() });
+                    if (i != 0)
+                    {
+                        MessageBox.Show("Xóa Thành Công!");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Xóa không thành coogn!");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Đăng nhập admin");
+            }
+        }
+
+        private void tb_locationFolder_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+
+                switch (PROCESS)
+                {
+                    case "SEM BSE & Binarization":
+
+                        string itemCode, lotNo;
+                        string s = tb_locationFolder.Text;
+                        if (string.IsNullOrEmpty(s))
+                        {
+                            return;
+                        }
+                        string[] fileName = Path.GetFileNameWithoutExtension(s.Replace("\r\n", "").Trim()).Split('-');
+                        itemCode = fileName[1];
+                        lotNo = fileName[2];
+                        if (!lotNo.Contains("_"))
+                        {
+                            string no = fileName[3].Split('_')[0];
+                            lotNo += '-' + no;
+                        }
+                        else
+                        {
+                            lotNo = lotNo.Split('_')[0];
+                        }
+                        lotNo = ValidateService.lotNoHandle(lotNo);
+                        tb_ItemCode.Text = itemCode;
+                        tb_Lotno.Text = lotNo;
+                        break;
+                    default: break;
+                }
+            }
+            catch
+            {
+                MessageBox.Show($"{PROCESS}: Không thể tự động lấy itemcode lotno!");
+            }
+        }
+
+        private void tb_ItemCode_TextChanged(object sender, EventArgs e)
+        {
+
+            switch (PROCESS)
+            {
+                case "SEM BSE & Binarization":
+                    dgv_Combobox.DataSource = new DataTable();
+                    break;
+                default: break;
             }
         }
 

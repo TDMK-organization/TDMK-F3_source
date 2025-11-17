@@ -108,8 +108,12 @@ namespace OK2SHIP_SMT.Services
                 else
                 {
 
-                    DataTable z = ConverterService.ConvertDataTableImage(zz, dataImage);
-                    dIC.Add(item, z);
+                    try
+                    {
+                        DataTable z = ConverterService.ConvertDataTableImage(zz, dataImage);
+                        dIC.Add(item, z);
+                    }
+                    catch { }
                 }
 
             }
@@ -141,7 +145,7 @@ namespace OK2SHIP_SMT.Services
                             worksheet.Cells[ExportProcess.AddColumn(valueZA, 1)].Value = val / 100;
                             worksheet.Cells[ExportProcess.AddColumn(valueZA, 1)].Style.Numberformat.Format = "#0.00%";
 
-                        }
+                        }   
                     }
                     #region Process
                     DataTable dataTable = dIC["Process"];
@@ -255,6 +259,9 @@ namespace OK2SHIP_SMT.Services
                                     {
 
                                         ExcelRangeBase newz = worksheet.Cells[worksheet.Cells[add].Address];
+                                        try
+                                        {
+
                                         if (row[col] is byte[])
                                         {
                                             ExportProcess.InsertImageToCell(worksheet, newz, (byte[])row[col], $"{Guid.NewGuid()}");
@@ -262,6 +269,11 @@ namespace OK2SHIP_SMT.Services
                                         else
                                         {
                                             ExportProcess.InsertImageToCell(worksheet, newz, TDMK_ImageConverter.ImageToByteArray((Image)row[col], ImageFormat.Png), $"{Guid.NewGuid()}");
+                                        }
+                                        }
+                                        catch
+                                        {
+
                                         }
                                         newz.Value = row["Defect Name"];
                                         add = ExportProcess.AddColumn(add, 1);
@@ -276,7 +288,7 @@ namespace OK2SHIP_SMT.Services
                                         }
                                         if (col.ColumnName.Equals("Defect Rate"))
                                         {
-                                           
+
                                             int r = worksheet.Cells[SaveADD].Start.Row - worksheet.Cells[add].Start.Row + 1;
                                             int c = worksheet.Cells[SaveADD].Start.Column - worksheet.Cells[add].Start.Column + 1;
                                             worksheet.Cells[add].FormulaR1C1 = $"=RC[-1]/R[{r}]C[{c}]";

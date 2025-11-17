@@ -22,7 +22,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace OK2SHIP_SMT.Services
 {
-    public class OQCB2BMatingUnmatting
+    public class OQCB2BMatingUnmatting : IDisposable
     {
         private DBContext _context = new DBContext();
 
@@ -31,27 +31,133 @@ namespace OK2SHIP_SMT.Services
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.Commercial;
 
         }
-
+        public DataTable getDataTableStructor()
+        {
+            DataTable table = new DataTable();
+            table.Columns.Add("ID", typeof(int));
+            table.Columns.Add("T0", typeof(Image));
+            table.Columns.Add("T1", typeof(Image));
+            table.Columns.Add("T30", typeof(Image));
+            table.Columns.Add("T0U", typeof(Image));
+            table.Columns.Add("T1U", typeof(Image));
+            table.Columns.Add("T30U", typeof(Image));
+            table.Columns.Add("Force", typeof(double));
+            table.Columns.Add("FailureMode", typeof(string));
+            table.Columns.Add("Judgement", typeof(string));
+            table.Columns.Add("Graph", typeof(Image));
+            table.Columns.Add("ProductID", typeof(string));
+            return table;
+        }
         public DataTable ProcessRead(string location, string itemCode, string lotNo, string productIDLocation)
         {
+            //location = location.Replace("\\UMT", "");
             DataTable dataTable = new DataTable();
             string[] files = Directory.GetDirectories(location);
-            string fileT1 = files.FirstOrDefault(x => new DirectoryInfo(x).Name.Equals("T1"));
+            string fileT1 = files.FirstOrDefault(x => new DirectoryInfo(x).Name.Equals("T1") || new DirectoryInfo(x).Name.Equals("L1"));
             string[] fileCSVT1 = FileFolderRepository.ListAllFileInFolder(fileT1, ".xlsx").ToArray();
 
-            Dictionary<string, IList<KeyValuePair<Image, string>>> listPicture = FileFolderRepository.ListAllPictureInFolder(location);
-            dataTable = _context.GetTableStructure("OQC_B2B_Mating_Unmating");
-            int i = 0;
+            Dictionary<string, IList<KeyValuePair<Image, string>>> listPictureZ = FileFolderRepository.ListAllPictureInFolder(location);
+            Dictionary<string, IList<KeyValuePair<Image, string>>> listPicture = new Dictionary<string, IList<KeyValuePair<Image, string>>>();
+            ///sortting
+            foreach (string key in listPictureZ.Keys)
+            {
+                var regex = new Regex(@"(\d+)(?:\.\w+)?$");
+
+                var z = listPictureZ[key].Select(pair =>
+                {
+                    var match = regex.Match(pair.Value);
+                    if (match.Success && int.TryParse(match.Groups[1].Value, out int number))
+                    {
+                        return new { Pair = pair, SortValue = number, Success = true };
+                    }
+                    else
+                    {
+                        return new { Pair = pair, SortValue = int.MaxValue, Success = false };
+                    }
+                })
+                .OrderBy(x => x.SortValue)
+
+               .Select((x, index) =>
+               {
+                   // 1. Lấy Image (Key) gốc
+                   var originalImage = x.Pair.Key;
+
+                   // 2. Tính số thứ tự (bắt đầu từ 1)
+                   int fileNumber = index + 1;
+
+                   // 3. Định dạng tên file mới (Ví dụ: "image_1.jpg")
+                   string fileExtension = ".jpg";
+
+                   // Bạn có thể tùy chỉnh tiền tố và đuôi file ở đây
+                   string newFileName = $"{fileNumber}{fileExtension}";
+
+                   // 4. Trả về KeyValuePair<Image, string> mới với tên file đã được đổi
+                   return new KeyValuePair<Image, string>(originalImage, newFileName);
+               })
+    .ToList();
+                listPicture[key] = z;
+            }
+            dataTable = getDataTableStructor();
+            int i = 0, firstID0 = -1, firstID1 = -1, firstID30 = -1;
+            int cfirstID0 = 0, cfirstID1 = 0, cfirstID30 = 0;
+            int clastID0 = 0, clastID1 = 0, clastID30 = 0;
+
             Dictionary<int, int> PrimeCheck = new Dictionary<int, int>();
+
             foreach (var item in listPicture)
             {
                 string folderName = FileFolderRepository.GetFolderName(item.Key);
-                if (folderName.Equals("T0") || folderName.Equals("T1") || folderName.Equals("T30"))
+                if (folderName.Equals("T0") || folderName.Equals("T1") || folderName.Equals("T30") || folderName.Equals("L0") || folderName.Equals("L1") || folderName.Equals("L30"))
                 {
+                    int t = int.Parse(folderName.Substring(1));
+                    if (folderName.Contains('L'))
+                    {
+                        folderName = folderName.Replace("L", "T");
+                    }
                     foreach (var jtem in item.Value)
                     {
                         string nameFile = jtem.Value;
                         int id = getId(nameFile);
+                        int firstID = 0, cFirstID = 0;
+                        switch (t)
+                        {
+                            case 1:
+                                if (firstID1 == -1)
+                                {
+                                    firstID1 = id;
+                                    clastID0 = id;
+
+                                }
+                                if (id - clastID0 > 1)
+                                {
+                                    cfirstID0 += id - clastID1;
+                                }
+                                clastID0 = id;
+                                firstID = firstID1;
+                                cFirstID = cfirstID1;
+                                break;
+                            case 0:
+                                if (firstID0 == -1)
+                                {
+                                    firstID0 = id;
+                                }
+                                firstID = firstID0;
+                                cFirstID = cfirstID0;
+                                break;
+                            case 30:
+                                if (firstID30 == -1)
+                                {
+                                    firstID30 = id;
+                                }
+                                firstID = firstID30;
+                                cFirstID = cfirstID30;
+                                break;
+                        }
+
+                        id = id - firstID;
+                        // 1 - 10 10 - 20
+                        bool primePlus = ((int)id / 10) % 2 == 1;
+                        id = id % 10 + 1;
                         if (id <= 0)
                         {
                             throw new Exception("Lỗi đổi tên file ảnh thành id");
@@ -62,13 +168,13 @@ namespace OK2SHIP_SMT.Services
                         if (PrimeCheck.TryGetValue(id, out value))
                         {
                             //chọn mục ảnh
-                            if (nameFile.Contains("+"))
+                            if (primePlus)
                             {
-                                dataTable.Rows[value][folderName + "U"] = TDMK_ImageConverter.ImageToByteArray(jtem.Key, ImageFormat.Jpeg);
+                                dataTable.Rows[value][folderName + "U"] = jtem.Key;
                             }
                             else
                             {
-                                dataTable.Rows[value][folderName] = TDMK_ImageConverter.ImageToByteArray(jtem.Key, ImageFormat.Jpeg);
+                                dataTable.Rows[value][folderName] = jtem.Key;
                             }
                         }
                         // nếu chưa tồn tại row
@@ -79,21 +185,19 @@ namespace OK2SHIP_SMT.Services
                             // fill dữ liệu vào row
                             DataRow row = dataTable.NewRow();
                             row["ID"] = id;
-                            row["ItemCode"] = itemCode;
-                            row["lotNo"] = lotNo;
                             //chọn mục ảnh
-                            if (nameFile.Contains("+"))
+                            if (primePlus)
                             {
-                                row[folderName + "U"] = TDMK_ImageConverter.ImageToByteArray(jtem.Key, ImageFormat.Jpeg);
+                                row[folderName + "U"] = jtem.Key;
                             }
                             else
                             {
-                                row[folderName] = TDMK_ImageConverter.ImageToByteArray(jtem.Key, ImageFormat.Jpeg);
+                                row[folderName] = jtem.Key;
                             }
                             // thêm row vao datatable
                             row["Judgement"] = "NG";
                             dataTable.Rows.Add(row);
-                            // Debugger.Break();
+                            //Debugger.Break();
                             i++;
                         }
                     }
@@ -110,7 +214,7 @@ namespace OK2SHIP_SMT.Services
                         {
                             Image image;
                             Double force = ReadFileGraph(item, out image);
-                            dataTable.Rows[index]["Graph"] = TDMK_ImageConverter.ImageToByteArray(image, ImageFormat.Jpeg);
+                            dataTable.Rows[index]["Graph"] = image;
                             dataTable.Rows[index]["Force"] = force;
 
                         }
@@ -118,10 +222,9 @@ namespace OK2SHIP_SMT.Services
                 }
             }
             int iz = 1;
-            foreach (DataRow item in dataTable.Rows)
-            {
-                item["Id"] = iz++;
-            }
+            DataView dv = dataTable.DefaultView;
+            dv.Sort = "ID ASC";
+            DataTable sortedDt = dv.ToTable();
             productIDLocation = productIDLocation.Trim();
             try
             {
@@ -131,7 +234,7 @@ namespace OK2SHIP_SMT.Services
                     ProductIDService productID = new ProductIDService(itemCode, lotNo, productIDLocation, new[] { "OQC", "B2B", "Matting", "Un-Matting" }, new[] { itemCode });
                     IList<string> list = productID.getListProductID(productID._listFile[itemCode]);
                     int iZ = 0;
-                    foreach (DataRow row in dataTable.Rows)
+                    foreach (DataRow row in sortedDt.Rows)
                     {
                         if (iZ < list.Count)
                         {
@@ -147,7 +250,7 @@ namespace OK2SHIP_SMT.Services
                 MessageBox.Show("Kiểm tra lại product ID");
             }
             //Debugger.Break();
-            return dataTable;
+            return sortedDt;
         }
 
         private double ReadFileGraph(string locationFile, out Image image)
@@ -186,84 +289,109 @@ namespace OK2SHIP_SMT.Services
             return 0;
         }
 
-        public void SaveProcess(DataTable dataTables, bool prime = false)
+        public void SaveProcess(DataTable dataTables, string itemCode, string lotNo, bool prime = false)
         {
             string err = "";
-            if (!prime)
-            {
-                int valuesT0 = dataTables.AsEnumerable()
-                             .Select(row => row.Field<byte[]>("T0"))
-                             .ToList().Count(item => item != null);
-                int valuesT1 = dataTables.AsEnumerable()
-                             .Select(row => row.Field<byte[]>("T1"))
-                             .ToList().Count(item => item != null);
-                int valuesT30 = dataTables.AsEnumerable()
-                             .Select(row => row.Field<byte[]>("T30"))
-                             .ToList().Count(item => item != null);
-                int valuesT0U = dataTables.AsEnumerable()
-                             .Select(row => row.Field<byte[]>("T0U"))
-                             .ToList().Count(item => item != null);
-                int valuesT1U = dataTables.AsEnumerable()
-                             .Select(row => row.Field<byte[]>("T1U"))
-                             .ToList().Count(item => item != null);
-                int valuesT30U = dataTables.AsEnumerable()
-                             .Select(row => row.Field<byte[]>("T30U"))
-                             .ToList().Count(item => item != null);
-                if (valuesT0 < 10 || valuesT0U < 10)
-                {
-                    err += "Không đủ dữ liệu T0\n";
-                }
-                if (valuesT1 < 10 || valuesT1U < 10)
-                {
-                    err += "Không đủ dữ liệu T1\n";
-                }
-                if (valuesT30 < 10 || valuesT30U < 10)
-                {
-                    err += "Không đủ dữ liệu T30\n";
-                }
-                if (!string.IsNullOrEmpty(err))
-                {
-                    throw new Exception(err);
-                }
+            //if (!prime)
+            //{
+            //    int valuesT0 = dataTables.AsEnumerable()
+            //                 .Select(row => row.Field<Image>("T0"))
+            //                 .ToList().Count(item => item != null);
+            //    int valuesT1 = dataTables.AsEnumerable()
+            //                 .Select(row => row.Field<byte[]>("T1"))
+            //                 .ToList().Count(item => item != null);
+            //    int valuesT30 = dataTables.AsEnumerable()
+            //                 .Select(row => row.Field<byte[]>("T30"))
+            //                 .ToList().Count(item => item != null);
+            //    int valuesT0U = dataTables.AsEnumerable()
+            //                 .Select(row => row.Field<byte[]>("T0U"))
+            //                 .ToList().Count(item => item != null);
+            //    int valuesT1U = dataTables.AsEnumerable()
+            //                 .Select(row => row.Field<byte[]>("T1U"))
+            //                 .ToList().Count(item => item != null);
+            //    int valuesT30U = dataTables.AsEnumerable()
+            //                 .Select(row => row.Field<byte[]>("T30U"))
+            //                 .ToList().Count(item => item != null);
+            //    if (valuesT0 < 10 || valuesT0U < 10)
+            //    {
+            //        err += "Không đủ dữ liệu T0\n";
+            //    }
+            //    if (valuesT1 < 10 || valuesT1U < 10)
+            //    {
+            //        err += "Không đủ dữ liệu T1\n";
+            //    }
+            //    if (valuesT30 < 10 || valuesT30U < 10)
+            //    {
+            //        err += "Không đủ dữ liệu T30\n";
+            //    }
+            //    if (!string.IsNullOrEmpty(err))
+            //    {
+            //        throw new Exception(err);
+            //    }
 
-                if (valuesT0 > 10 || valuesT0U > 10)
-                {
-                    err += "Thừa đủ dữ liệu T0\n";
-                }
-                if (valuesT1 > 10 || valuesT1U > 10)
-                {
-                    err += "Thừa đủ dữ liệu T1\n";
-                }
-                if (valuesT30 > 10 || valuesT30U > 10)
-                {
-                    err += "Thừa đủ dữ liệu T30\n";
-                }
-                if (!string.IsNullOrEmpty(err))
-                {
-                    throw new Exception("1404-" + err);
-                }
-            }
+            //    if (valuesT0 > 10 || valuesT0U > 10)
+            //    {
+            //        err += "Thừa đủ dữ liệu T0\n";
+            //    }
+            //    if (valuesT1 > 10 || valuesT1U > 10)
+            //    {
+            //        err += "Thừa đủ dữ liệu T1\n";
+            //    }
+            //    if (valuesT30 > 10 || valuesT30U > 10)
+            //    {
+            //        err += "Thừa đủ dữ liệu T30\n";
+            //    }
+            //    if (!string.IsNullOrEmpty(err))
+            //    {
+            //        throw new Exception("1404-" + err);
+            //    }
+            //}
 
             DBContext db = new DBContext();
             dataTables = dataTables.AsEnumerable()
                         .OrderBy(row => row.Field<int>("id")) // Sắp xếp theo ID tăng dần
                         .Take(10) // Lấy 10 phần tử đầu tiên
                         .CopyToDataTable();
-
-            db.BuckDataTable(dataTables, "OQC_B2B_Mating_Unmating", new string[] { "ItemCode", "lotNo" }, null, "ID");
+            NasRepository _nas = new NasRepository();
+            string location = _nas.HandleImageDataTable(dataTables, "OQC_B2B_Mating_Unmating_Nas", itemCode, lotNo);
+            DataTable dt = _context.GetTableStructure("OQC_B2B_Mating_Unmating_Nas");
+            DataRow rowZ = dt.NewRow();
+            rowZ["ItemCode"] = itemCode;
+            rowZ["LotNo"] = lotNo;
+            rowZ["Data"] = ConverterService.DataTableToJson(dataTables);
+            rowZ["LoactionImg"] = location;
+            dt.Rows.Add(rowZ);
+            db.BuckDataTable(dt, "OQC_B2B_Mating_Unmating_Nas", new string[] { "ItemCode", "lotNo" }, null, "ID");
         }
 
-        public DataTable LoadProcess(string itemCode, string lotNo)
+        public DataTable LoadProcess(string itemCode, string lotNo, bool legacy = false)
         {
             DataTable dataTable = new DataTable();
-            dataTable = _context.LoadDataTable("OQC_B2B_Mating_Unmating", new string[] { "ItemCode", "lotNo" }, new string[] { itemCode, lotNo });
-            int i = 1;
-            foreach (DataRow item in dataTable.Rows)
+            if (legacy)
             {
-                item["ID"] = i++;
-                item["Judgement"] = checkARow(item) ? "OK" : "NG";
-            }
 
+                dataTable = _context.LoadDataTable("OQC_B2B_Mating_Unmating", new string[] { "ItemCode", "lotNo" }, new string[] { itemCode, lotNo });
+                int i = 1;
+                foreach (DataRow item in dataTable.Rows)
+                {
+                    item["ID"] = i++;
+                    item["Judgement"] = checkARow(item) ? "OK" : "NG";
+                }
+
+            }
+            else
+            {
+                dataTable = _context.LoadDataTable("OQC_B2B_Mating_Unmating_NAS", new string[] { "ItemCode", "lotNo" }, new string[] { itemCode, lotNo });
+                if (dataTable.Rows.Count <= 0)
+                {
+                    throw new Exception("No data");
+                }
+                string json = dataTable.Rows[0]["Data"].ToString();
+                string location = dataTable.Rows[0]["LoactionImg"].ToString();
+                dataTable = ConverterService.JsonToDataTable(json);
+                NasRepository _nas = new NasRepository();
+                _nas.MergeDataTable(dataTable, "OQC_B2B_Mating_Unmating_NAS", itemCode, lotNo, location);
+            }
             return dataTable;
         }
         public static bool checkARow(DataRow row)
@@ -308,7 +436,7 @@ namespace OK2SHIP_SMT.Services
             return -1;
         }
 
-        public string Export(string itemcode, string lotno)
+        public string Export(string itemcode, string lotno, bool legacy = false)
         {
             string addressNum = "";
             ExportProcess exportProcess = new ExportProcess();
@@ -321,14 +449,14 @@ namespace OK2SHIP_SMT.Services
                     string[] rowHeader = { "Picture T0", "Picture T30", "Unmating force", "Picture T1", "Graph unmating at T1", "Failure mode", "Judgement" };
                     IDictionary<string, string> addressHeader = DictionaryService.MergeDictionaries<string, string>(ExportProcess.FindAddressByText(workSheet, colHeader.ToArray(), true), ExportProcess.FindAddressByText(workSheet, rowHeader.ToArray()));
 
-                    DataTable dataTable = _context.LoadDataTable("OQC_B2B_Mating_Unmating", new string[] { "ItemCode", "lotNo" }, new string[] { itemcode, lotno });
+                    DataTable dataTable = LoadProcess(itemcode, lotno, legacy);
                     int i = 1;
                     foreach (DataRow row in dataTable.Rows)
                     {
                         string col = addressHeader[$"Sample {i}"];
 
                         //// cho vào T0
-                        byte[] Image = (byte[])row["T0"];
+                        byte[] Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T0"], ImageFormat.Jpeg);
                         //adress T0
                         if (addressHeader.TryGetValue("Flex SN", out string ValueZZ))
                         {
@@ -349,11 +477,11 @@ namespace OK2SHIP_SMT.Services
                         }
 
                         //// Insert Image in T0U
-                        Image = (byte[])row["T0U"];
+                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T0U"], ImageFormat.Jpeg);
                         address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0USample{i}");
                         //// Insert Image in 30
-                        Image = (byte[])row["T30"];
+                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T30"], ImageFormat.Jpeg);
                         address = addressHeader[$"Picture T30"];
                         if (address.Contains("-"))
                         {
@@ -362,11 +490,11 @@ namespace OK2SHIP_SMT.Services
                         address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30Sample{i}");
                         //// Insert Image in 30U
-                        Image = (byte[])row["T30U"];
+                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T30U"], ImageFormat.Jpeg);
                         address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30USample{i}");
                         //// Insert Image in 30
-                        Image = (byte[])row["T1"];
+                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T1"], ImageFormat.Jpeg);
                         address = addressHeader[$"Picture T1"];
                         if (address.Contains("-"))
                         {
@@ -375,11 +503,11 @@ namespace OK2SHIP_SMT.Services
                         address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1Sample{i}");
                         //// Insert Image in 30U
-                        Image = (byte[])row["T1U"];
+                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T1U"], ImageFormat.Jpeg);
                         address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1USample{i}");
                         //// Insert Image in 30
-                        Image = (byte[])row["Graph"];
+                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["Graph"], ImageFormat.Jpeg);
                         address = addressHeader[$"Graph unmating at T1"];
                         address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"GraphT1Sample{i}");
@@ -387,7 +515,7 @@ namespace OK2SHIP_SMT.Services
                         if (addressHeader.TryGetValue("Unmating force", out address))
                         {
                             address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                            double num = (double)row["Force"];
+                            double num = double.Parse(row["Force"].ToString());
                             workSheet.Cells[address].Value = num;
                             addressNum += $"{address}, ";
 
@@ -430,6 +558,11 @@ namespace OK2SHIP_SMT.Services
                 }
             }
             return "done";
+        }
+
+        public void Dispose()
+        {
+            GC.Collect();
         }
     }
 }

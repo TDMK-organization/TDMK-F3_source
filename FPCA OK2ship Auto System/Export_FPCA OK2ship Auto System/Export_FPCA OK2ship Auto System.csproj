@@ -87,8 +87,10 @@
     <Compile Include="Services\AssyYieldService.cs" />
     <Compile Include="Services\BarCodeVertification.cs" />
     <Compile Include="Services\EEDService.cs" />
+    <Compile Include="Services\ExportService.cs" />
     <Compile Include="Services\GAPConnectorService.cs" />
     <Compile Include="Services\ImpedanceService.cs" />
+    <Compile Include="Repositories\NasRepository.cs" />
     <Compile Include="Services\OQCB2BMatingUnmatting.cs" />
     <Compile Include="Services\PackagingService.cs" />
     <Compile Include="Services\PeelTestOnProductService.cs" />
@@ -114,6 +116,12 @@
     <Compile Include="TestFunction.Designer.cs">
       <DependentUpon>TestFunction.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\ExportManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ExportManager.Designer.cs">
+      <DependentUpon>ExportManager.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -135,6 +143,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TestFunction.resx">
       <DependentUpon>TestFunction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ExportManager.resx">
+      <DependentUpon>ExportManager.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

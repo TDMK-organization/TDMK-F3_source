@@ -31,7 +31,16 @@ namespace OK2SHIP_SMT.Services
                 }
                 string[] lo = FileFolderRepository.GetFolderName(location).Split(new[] { '-', '_' });
                 string _itemCode = lo[1];
-                string _lotNo = lo[2] + (lo[3].Count() <= 2 ? lo[3] : "");
+                string _lotNo = lo[2] + (int.TryParse(lo[3], out int z) ? lo[3] : "");
+                try
+                {
+
+                    _lotNo = int.Parse(_lotNo).ToString("D5");
+                }
+                catch
+                {
+
+                }
                 if (!(itemCode.Equals(_itemCode) && _lotNo.Equals(lotNo)))
                 {
                     return false;
@@ -39,7 +48,7 @@ namespace OK2SHIP_SMT.Services
             }
             return true;
         }
-        public int Save(DataTable dataTable, string itemCode, string lotNo,string type, int prime = -1)
+        public int Save(DataTable dataTable, string itemCode, string lotNo, string type, int prime = -1)
         {
             if (dataTable.Rows.Count <= 0)
             {
@@ -56,25 +65,22 @@ namespace OK2SHIP_SMT.Services
                 if (log.Rows.Count > 0)
                 {
                     string z = log.Rows[0]["Area"].ToString();
-                    throw new Exception($" 1234 - {int.Parse(z)} - Đã tồn tại dữ liệu bạn có muốn tiếp tục!");
+                    throw new Exception($" 1234 - Đã tồn tại dữ liệu bạn có muốn tiếp tục!");
                 }
             }
 
-            area = _dbContext.GetID(_NAME_SQL + "_Image") + 1;
-            DataTable resDataTable = _dbContext.GetTableStructure(_NAME_SQL);
-            DataTable dataTableImage = _dbContext.GetTableStructure(_NAME_SQL + "_Image");
+            DataTable resDataTable = _dbContext.GetTableStructure(_NAME_SQL + "_NAS");
+            NasRepository nas = new NasRepository();
+            string location = nas.HandleImageDataTable(dataTable, _NAME_SQL, itemCode, lotNo);
+
             DataRow dr = resDataTable.NewRow();
-            int id = area;
-            string json = ConvertDataTable(dataTable, dataTableImage, ref id, area);
             dr["ItemCode"] = itemCode;
             dr["LotNo"] = lotNo;
-            dr["Data"] = json;
-            dr["Area"] = area;
+            dr["Data"] = ConverterService.DataTableToJson(dataTable);
+            dr["Area"] = location;
             dr["Type"] = type;
             resDataTable.Rows.Add(dr);
-            res += _dbContext.BuckDataTable(dataTableImage, _NAME_SQL + "_Image", new[] { "Area" });
-            _dbContext.DeleteData(_NAME_SQL + "_Image", "Area", new[] { prime.ToString() });
-            res += _dbContext.BuckDataTable(resDataTable, _NAME_SQL, new[] { "ItemCode", "LotNo", "Type" }, null, "ID");
+            res += _dbContext.BuckDataTable(resDataTable, _NAME_SQL + "_NAS", new[] { "ItemCode", "LotNo", "Type" }, null, "ID");
             return res;
         }
         public string ConvertDataTable(DataTable datatable, DataTable dataTableImage, ref int id, int area)
@@ -199,7 +205,7 @@ namespace OK2SHIP_SMT.Services
             dataTable.Columns.Add("Result");
             dataTable.Columns.Add("ProductID");
             dataTable.Columns.Add("Type");
-            dataTable.Columns.Add("Image", typeof(byte[]));
+            dataTable.Columns.Add("Image", typeof(Image));
             foreach (string folder in subFolder)
             {
                 IList<KeyValuePair<Image, string>> list = FileFolderRepository.ListAllPictureInAFolder(folder, ".png");
@@ -213,7 +219,7 @@ namespace OK2SHIP_SMT.Services
                     try
                     {
 
-                    row["ProductID"] = pid[id - 1];
+                        row["ProductID"] = pid[id - 1];
                     }
                     catch
                     {
@@ -221,14 +227,14 @@ namespace OK2SHIP_SMT.Services
                     }
                     row["ID"] = id++;
                     row["Type"] = type;
-                    row["Image"] = TDMK_ImageConverter.ImageToByteArray(item.Key, ImageFormat.Png);
+                    row["Image"] = item.Key;
                     dataTable.Rows.Add(row);
                 }
             }
             return dataTable;
         }
 
-        public DataTable Load(string itemCode, string lotNo, string type)
+        public DataTable Load(string itemCode, string lotNo, string type, bool prime = false)
         {
             if (string.IsNullOrEmpty(type.Trim()))
             {
@@ -240,27 +246,51 @@ namespace OK2SHIP_SMT.Services
             {
                 throw new Exception("Không được để trống itemcode lotno");
             }
-            DataTable dataTable = _dbContext.LoadDataTable(_NAME_SQL, new[] { "ItemCode", "LotNo", "Type" }, new[] { itemCode, lotNo , type}, new[] { "Area", "Data" });
+            DataTable dataTable = _dbContext.LoadDataTable(_NAME_SQL + (prime ? "" : "_NAS"), new[] { "ItemCode", "LotNo", "Type" }, new[] { itemCode, lotNo, type }, null);
             if (dataTable.Rows.Count == 0)
             {
                 throw new Exception("Không tìm thấy dữ liệu");
             }
-            DataTable dataImage = _dbContext.LoadDataTable(_NAME_SQL + "_IMAGE", new[] { "Area" }, new[] { dataTable.Rows[0]["Area"].ToString() }, new[] { "Image", "ID" });
-            DataTable dataTableRes = ConvertDataTable(ConverterService.JsonToDataTable((string)dataTable.Rows[0]["Data"]), dataImage);
+            if (!prime)
+            {
+                DataTable res = dataTable;
+                NasRepository _nas = new NasRepository();
+                res = ConverterService.JsonToDataTable(dataTable.Rows[0]["Data"].ToString());
+                _nas.MergeDataTable(res, _NAME_SQL, itemCode, lotNo, dataTable.Rows[0]["Area"].ToString());
+                return res;
+            }
+            else
+            {
+                DataTable dataImage = _dbContext.LoadDataTable(_NAME_SQL + "_IMAGE", new[] { "Area" }, new[] { dataTable.Rows[0]["Area"].ToString() }, new[] { "Image", "ID" });
+                DataTable dataTableRes = ConvertDataTable(ConverterService.JsonToDataTable((string)dataTable.Rows[0]["Data"]), dataImage);
+                return dataTableRes;
+            }
 
-            return dataTableRes;
 
         }
-
-        public string Export(string itemCode, string lotNo, string type)
+        
+        public string Export(string itemCode, string lotNo, string type, bool prime = false)
         {
             ExportProcess exportProcess = new ExportProcess();
-            using (ExcelPackage ex = exportProcess.FindFormatProcess("X-Ray picture", itemCode, lotNo))
+            string nameSheet = "X-Ray picture";
+            switch (type)
             {
-                using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, "X-Ray picture"))
+                case "Flex bending":
+                    nameSheet = "Flex Bending - X-Ray pictures";
+                    break;
+                case "Thermal Cycling And Bend":
+                    nameSheet = "TC & bending - X-Ray pictures";
+                    break;
+                case "Heat Soak And Bend":
+                    nameSheet = "HS & bending - X-Ray pictures";
+                    break;
+            }
+            using (ExcelPackage ex = exportProcess.FindFormatProcess(nameSheet, itemCode, lotNo))
+            {
+                using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, nameSheet))
                 {
-                    DataTable dataTable = Load(itemCode, lotNo, type);
-                    string[] header = new[] { "#", "Bending", "Flex SN" };
+                    DataTable dataTable = Load(itemCode, lotNo, type, prime);
+                    string[] header = new[] { "Sample", "Bending", "Flex SN" };
                     IDictionary<string, string> keyValuePairs = ExportProcess.FindAddressByText(workSheet, header);
                     //
                     Dictionary<string, string> headler = new Dictionary<string, string>();
@@ -269,7 +299,7 @@ namespace OK2SHIP_SMT.Services
                     foreach (string item in keyValuePairs["Bending"].Split('-'))
                     {
                         string key = workSheet.Cells[item].Value.ToString().Replace("Bending", "").Replace(" ", "");
-                        string[] addz = keyValuePairs["#"].Split('-');
+                        string[] addz = keyValuePairs["Sample"].Split('-').Skip(1).ToArray();
                         List<string> list = new List<string>();
                         foreach (string item1 in addz)
                         {
@@ -280,7 +310,7 @@ namespace OK2SHIP_SMT.Services
 
                     foreach (DataRow row in dataTable.Rows)
                     {
-                        if(keyValuePairs.TryGetValue("Flex SN", out string da))
+                        if (keyValuePairs.TryGetValue("Flex SN", out string da))
                         {
                             da = ExportProcess.AddColumn(da, int.Parse(row["ID"].ToString()));
                             workSheet.Cells[da].Value = row["ProductID"];
@@ -291,26 +321,14 @@ namespace OK2SHIP_SMT.Services
                             if (value != "")
                             {
                                 var address = workSheet.Cells[value.Split('-')[0]];
-                                ExportProcess.InsertImageToCell(workSheet, address, (byte[])row["Image"], $"{Guid.NewGuid()}");
-                                
+                                ExportProcess.InsertImageToCell(workSheet, address, TDMK_ImageConverter.ImageToByteArray((Image)row["Image"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+
                                 headler[area] = headler[area].Replace($"{address.Address}-", "");
                                 workSheet.Cells[ExportProcess.AddRow(address.Address, 1)].Value = row["Result"].ToString();
                             }
                         }
                     }
-                    string nameSheet = "X-Ray picture";
-                    switch (type) {
-                        case "Flex bending":
-                            nameSheet = "X-ray after Bending";
-                            break;
-                        case "Thermal Cycling And Bend":
-                            nameSheet = "X-ray after TC & Bending";
-                            break;
-                        case "Heat Soak And Bend":
-                            nameSheet = "X-ray after HS & Bending";
-                            break;
-                }
-                    workSheet.Name = nameSheet;
+                
                     exportProcess.SaveExcelWorksheet(ex, nameSheet, $"{itemCode.Trim()}-{lotNo.Trim()}");
                 }
             }

@@ -23,9 +23,9 @@ namespace Funtion_F3_SMT
     public partial class Select_Image : Form
     {
         public SEI_Lib myCode = new SEI_Lib();
-        public byte[] data_image = null;
-        public byte[] data_image1 = null;
-        public byte[] data_image2 = null;
+        public Image data_image = null;
+        public Image data_image1 = null;
+        public Image data_image2 = null;
         public DataTable dt_image = new DataTable();
 
         public string region = "";
@@ -36,7 +36,7 @@ namespace Funtion_F3_SMT
         int sochan = 0;
 
 
-        byte[] img_null = null;
+        Image img_null = null;
 
 
         public Select_Image(Check_en sender, judge b, shear_data shear, setchan s)
@@ -77,19 +77,19 @@ namespace Funtion_F3_SMT
             set { r_inx = value; }
         }
 
-        public byte[] data
+        public Image data
         {
             get { return data_image; }
             set { data_image = value; }
         }
 
-        //public byte[] data1
+        //public Image data1
         //{
         //    get { return data_image1; }
         //    set { data_image1 = value; }
         //}
 
-        //public byte[] data2
+        //public Image data2
         //{
         //    get { return data_image2; }
         //    set { data_image2 = value; }
@@ -137,27 +137,25 @@ namespace Funtion_F3_SMT
                 }
             }
 
-            List<byte[]> lst_data_image = new List<byte[]> { };
+            List<Image> lst_data_image = new List<Image> { };
 
             foreach (string col_name in lst_col)
             {
-                lst_data_image.Add((byte[])dt_image.Rows[r_inx][col_name]);
+                lst_data_image.Add((Image)dt_image.Rows[r_inx][col_name]);
 
             }
 
-            //data_image = (byte[])dt_image.Rows[r_inx]["Image1"];
-            //data_image1 = (byte[])dt_image.Rows[r_inx]["Image2"];
+            //data_image = (Image)dt_image.Rows[r_inx]["Image1"];
+            //data_image1 = (Image)dt_image.Rows[r_inx]["Image2"];
 
 
             bool select_mode = (bool)dt_image.Rows[r_inx]["Select"];
             cb_NG.Checked = !select_mode;
 
             lblImage_Graph.Text = "Region: " + dt_image.Rows[r_inx]["Region"].ToString() + " ----" + "Sample: " + dt_image.Rows[r_inx]["Sample"].ToString();
-            using (MemoryStream ms = new MemoryStream(lst_data_image[0]))
-            {
-                image_detail.Image = Image.FromStream(ms);
 
-            }
+            image_detail.Image = lst_data_image[0];
+
 
             dgv_Image.Rows.Add(lst_data_image.ToArray());
 
@@ -255,8 +253,8 @@ namespace Funtion_F3_SMT
         {
             Bitmap img = new Bitmap(100, 50, PixelFormat.Format32bppArgb);
             //var img = Bitmap.FromFile(Path.Combine(System.Windows.Forms.Application.StartupPath, "Img_null", "Img_null.jpg"));
-            ImageConverter imgcon = new ImageConverter();
-            img_null = (byte[])imgcon.ConvertTo(img, typeof(byte[]));
+    
+            img_null = img;
             if (sheet == "SHEAR_TEST")
             {
                 lbl_data.Enabled = true;
@@ -287,10 +285,8 @@ namespace Funtion_F3_SMT
                 dgv_Image.Visible = false;
                 lblImage_Graph.Text = "Region: " + dt_image.Rows[r_inx]["Region"].ToString() + " ----" + "Sample: " + dt_image.Rows[r_inx]["Sample"].ToString();
 
-                using (MemoryStream ms = new MemoryStream((byte[])dt_image.Rows[r_inx][column_name]))
-                {
-                    image_detail.Image = Image.FromStream(ms);
-                }
+
+                image_detail.Image = (Image)dt_image.Rows[r_inx][column_name];
                 string col_select = "";
                 if (column_name == "Image")
                 {
@@ -345,13 +341,11 @@ namespace Funtion_F3_SMT
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if ((byte[])dgv_Image.CurrentCell.Value != img_null)
+            if ((Image)dgv_Image.CurrentCell.Value != img_null)
             {
-                using (MemoryStream ms = new MemoryStream((byte[])dgv_Image.CurrentCell.Value))
-                {
-                    image_detail.Image = Image.FromStream(ms);
 
-                }
+                image_detail.Image = (Image)dgv_Image.CurrentCell.Value;
+
             }
 
         }
@@ -392,10 +386,8 @@ namespace Funtion_F3_SMT
                     dgv_Image.Visible = false;
                     lblImage_Graph.Text = "Region: " + dt_image.Rows[r_inx]["Region"].ToString() + " ----" + "Sample: " + dt_image.Rows[r_inx]["Sample"].ToString();
 
-                    using (MemoryStream ms = new MemoryStream((byte[])dt_image.Rows[r_inx][column_name]))
-                    {
-                        image_detail.Image = Image.FromStream(ms);
-                    }
+
+                    image_detail.Image = (Image)dt_image.Rows[r_inx][column_name];
 
                     string col_select = "";
                     if (column_name == "Image")
@@ -462,10 +454,8 @@ namespace Funtion_F3_SMT
                     dgv_Image.Visible = false;
                     lblImage_Graph.Text = "Region: " + dt_image.Rows[r_inx]["Region"].ToString() + " ----" + "Sample: " + dt_image.Rows[r_inx]["Sample"].ToString();
 
-                    using (MemoryStream ms = new MemoryStream((byte[])dt_image.Rows[r_inx][column_name]))
-                    {
-                        image_detail.Image = Image.FromStream(ms);
-                    }
+
+                    image_detail.Image = (Image)dt_image.Rows[r_inx][column_name];
 
                     string col_select = "";
                     if (column_name == "Image")

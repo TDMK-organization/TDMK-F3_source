@@ -65,7 +65,10 @@ namespace OK2SHIP_SMT.Services
             location = location.Trim();
             pid = pid.Trim();
             ProductIDService pidService = new ProductIDService(_itemCode, _lotNo, pid, new[] { "Air Bubble" }, new[] { _itemCode });
-
+            if(pidService._listFile.Count() <= 0)
+            {
+                throw new Exception("Không có product ID");
+            }
             List<string> pidList = new List<string>();
             if (pidService._listFile.TryGetValue(_itemCode, out string Value))
             {

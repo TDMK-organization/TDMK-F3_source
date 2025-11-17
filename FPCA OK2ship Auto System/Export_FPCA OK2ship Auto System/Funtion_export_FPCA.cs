@@ -2139,23 +2139,26 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         // export ACF 
 
-        public void export_ACF_Wetting(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
+        public void export_ACF_Wetting(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon, bool nas_mode)
         {
             ACFService service = new ACFService();
             service.ExportWCA(ws, ItemCode, LotNo);
         }
 
-        public void Export_ACF_Peel(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
+        public void Export_ACF_Peel(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon,  bool nas_mode)
         {
 
-            new ACFService().ExportBoding(ws, ItemCode, LotNo);
+            new ACFService().ExportBoding(ws, ItemCode, LotNo, nas_mode);
         }
 
-        public void Export_ACFFlatness(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
+        public void Export_ACFFlatness(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon, bool nas_mode)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo });
-            DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, "ACF_FLATNESS", filter_str);
-
+            DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, "ACF_FLATNESS" + (nas_mode ? "_NAS" : ""), filter_str);
+            if (src_dt.Rows.Count < 0)
+            {
+                throw new Exception("No data");
+            }
 
             ProductIDService.FillProductID(src_dt, ItemCode, LotNo, "ACF_FLATNESS");
             if (src_dt.Columns.Contains("ProductID"))
@@ -2209,9 +2212,9 @@ namespace Export_FPCA_OK2ship_Auto_System
                 }
             }
         }
-        public void Export_ACF_Roughness(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon)
+        public void Export_ACF_Roughness(ExcelWorksheet ws, string ItemCode, string LotNo, SqlConnection sqlcon, bool nas_mode)
         {
-            new ACFService().ExportRoughness(ItemCode, LotNo, ws);
+            new ACFService().ExportRoughness(ItemCode, LotNo, ws, nas_mode);
 
         }
 

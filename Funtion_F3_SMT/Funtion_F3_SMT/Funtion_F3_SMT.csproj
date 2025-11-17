@@ -124,7 +124,7 @@
     </Compile>
     <Compile Include="Funtion_export_file_le_EPPlus.cs" />
     <Compile Include="JudgementProcess.cs" />
-    <Compile Include="Libary\TDMK_EPPLUS.cs" />
+    <Compile Include="Library\TDMK_EPPLUS.cs" />
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -149,6 +149,7 @@
     <Compile Include="Repositories\DBContext.cs" />
     <Compile Include="Repositories\ExportProcess.cs" />
     <Compile Include="Repositories\FileFolderRepository.cs" />
+    <Compile Include="Repositories\NasRepository.cs" />
     <Compile Include="Repositories\TDMK_BinaryFile.cs" />
     <Compile Include="Select_Image.cs">
       <SubType>Form</SubType>
@@ -163,15 +164,18 @@
     <Compile Include="Services\BarCodeVertification.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\ConverterService.cs" />
+    <Compile Include="Services\CrossSectionService.cs" />
     <Compile Include="Services\DataBaseService.cs" />
     <Compile Include="Services\DictionaryService.cs" />
     <Compile Include="Services\EEDService.cs" />
     <Compile Include="Services\GAPConnectorService.cs" />
     <Compile Include="Services\ImpedanceService.cs" />
+    <Compile Include="Services\IQCUmatingPullTestService.cs" />
     <Compile Include="Services\PackagingService.cs" />
     <Compile Include="Services\PeelTestOnProductService.cs" />
     <Compile Include="Services\PeelTestWOSUS.cs" />
     <Compile Include="Services\ProductIDService.cs" />
+    <Compile Include="Services\ShearTestServices.cs" />
     <Compile Include="Services\TableOfContentService.cs" />
     <Compile Include="Services\TCHSTSService.cs" />
     <Compile Include="Services\TDMK_ImageConverter.cs" />
@@ -496,6 +500,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Logo %282%29.png" />
+    <Content Include="null.png" />
     <Content Include="TDMK.ico" />
   </ItemGroup>
   <ItemGroup>

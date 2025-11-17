@@ -49,6 +49,7 @@ using System.Xml;
 using OK2SHIP_SMT.Libary;
 using OK2SHIP_SMT.Services;
 using ZedGraph;
+using OK2SHIP_SMT.Repositories;
 //using TDMK_EPPLUS_7;
 
 
@@ -75,6 +76,7 @@ namespace Funtion_F3_SMT
         string admin_mode = "LOGIN";
         string data_loc = "";
         byte[] img_null = null;
+        Image image_null = new Bitmap(AppContext.BaseDirectory + "\\null.png");
         string col_name_click = "";
         string server_name = "";
         string server_acc = "";
@@ -516,20 +518,17 @@ namespace Funtion_F3_SMT
 
             return _sqlcon_OK2SHIP;
         }
-        public byte[] get_image_excel(ExcelWorksheet wrk_sheet)
+        public Image get_image_excel(ExcelWorksheet wrk_sheet)
         {
             //myExcel.Shape cur_image = wrk_sheet.Shapes.Item("Picture 1");
             //cur_image.Copy();
-            Byte[] data = new Byte[0];
             Image myImg = TDMK_EPPLUS.get_pic(wrk_sheet, "Picture 1");
-            ImageConverter imgCon = new ImageConverter();
-            data = (byte[])imgCon.ConvertTo(myImg, typeof(byte[]));
-            return data;
+            return myImg;
         }
 
-        public List<byte[]> get_image_excel_ShearTest(myExcel.Worksheet wrk_sheet, ref List<string> lst_data)
+        public List<Image> get_image_excel_ShearTest(myExcel.Worksheet wrk_sheet, ref List<string> lst_data)
         {
-            List<byte[]> lst_grp = new List<byte[]> { };
+            List<Image> lst_grp = new List<Image> { };
             foreach (myExcel.Shape cur_image in wrk_sheet.Shapes)
             {
                 try
@@ -545,30 +544,37 @@ namespace Funtion_F3_SMT
                 Image myImg = Clipboard.GetImage();
                 ImageConverter imgCon = new ImageConverter();
                 data = (byte[])imgCon.ConvertTo(myImg, typeof(byte[]));
-
-                Bitmap bmp;
-                using (var ms = new MemoryStream(data))
+                try
                 {
 
+                    Bitmap bmp;
+                    using (var ms = new MemoryStream(data))
+                    {
 
-                    bmp = new Bitmap(ms);
+
+                        bmp = new Bitmap(ms);
 
 
+                    }
+
+                    string val = Extract_data(bmp);
+                    if (myCode.IsNumeric(val))
+                    {
+                        val = (double.Parse(val) / 1000).ToString();
+                    }
+                    else
+                    {
+                        val = "";
+                    }
+
+                    lst_data.Add(val);
                 }
-
-                string val = Extract_data(bmp);
-                if (myCode.IsNumeric(val))
+                catch
                 {
-                    val = (double.Parse(val) / 1000).ToString();
-                }
-                else
-                {
-                    val = "";
+                    lst_data.Add("");
                 }
 
-                lst_data.Add(val);
-
-                lst_grp.Add(data);
+                lst_grp.Add(myImg);
             }
 
             return lst_grp;
@@ -712,36 +718,35 @@ namespace Funtion_F3_SMT
             return bmPhoto;
         }
 
-        public void Get_Image_comment3(string in_src, ref SortedDictionary<int, byte[]> lst_result_sorted)
+        public void Get_Image_comment3(string in_src, ref SortedDictionary<int, Image> lst_result_sorted)
         {
             DirectoryInfo tar_d = new DirectoryInfo(in_src);
-            SortedDictionary<int, byte[]> lst_result = new SortedDictionary<int, byte[]> { };
+            SortedDictionary<int, Image> lst_result = new SortedDictionary<int, Image> { };
             FileInfo[] temp_lst = tar_d.GetFiles("*.jpg").Concat(tar_d.GetFiles("*.jpeg")).ToArray();
             if (temp_lst.Length > 0)
             {
                 for (int i = 0; i < temp_lst.Length; i++)
                 {
-                    using (var sel_img = Image.FromFile(temp_lst[i].FullName))
+                    Image sel_img = Image.FromFile(temp_lst[i].FullName);
+
+                    ImageConverter imgcon = new ImageConverter();
+                    string f_na = Path.GetFileNameWithoutExtension(temp_lst[i].Name).TrimEnd(new char[] { ',', '.', ' ' });
+
+                    char[] ch_arr = f_na.ToCharArray();
+                    for (int t = 0; t < ch_arr.Length; t++)
                     {
-                        ImageConverter imgcon = new ImageConverter();
-                        byte[] img_data = (byte[])imgcon.ConvertTo(sel_img, typeof(byte[]));
-                        string f_na = Path.GetFileNameWithoutExtension(temp_lst[i].Name).TrimEnd(new char[] { ',', '.', ' ' });
-
-                        char[] ch_arr = f_na.ToCharArray();
-                        for (int t = 0; t < ch_arr.Length; t++)
+                        string a = ch_arr[t].ToString();
+                        if (!myCode.IsNumeric(a))
                         {
-                            string a = ch_arr[t].ToString();
-                            if (!myCode.IsNumeric(a))
-                            {
-                                f_na = f_na.Replace(a, "");
-                            }
-                        }
-
-                        if (!lst_result.ContainsKey(Convert.ToInt32(f_na)))
-                        {
-                            lst_result.Add(Convert.ToInt32(f_na), img_data);
+                            f_na = f_na.Replace(a, "");
                         }
                     }
+
+                    if (!lst_result.ContainsKey(Convert.ToInt32(f_na)))
+                    {
+                        lst_result.Add(Convert.ToInt32(f_na), sel_img);
+                    }
+
                 }
 
                 int k = 0;
@@ -758,7 +763,7 @@ namespace Funtion_F3_SMT
         public void Get_comment3_logfile_Multi_onproduct(string in_src, ref SortedDictionary<string, Funtion_SMT.Peeltest_data> dic_lst_result)
         {
             DirectoryInfo tar_d = new DirectoryInfo(in_src);
-            SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+            SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
             Get_Image_comment3(in_src, ref dic_image);
             FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
             if (temp_lst.Length > 0)
@@ -803,7 +808,7 @@ namespace Funtion_F3_SMT
         public void insert_tbl_old(DirectoryInfo tar_d, ref DataTable tbl_in, string str_parent, string in_src, string infor, bool d)
         {
             SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-            SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+            SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
             Get_Image_comment3(tar_d.FullName, ref dic_image);
             FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
             if (temp_lst.Length > 0)
@@ -846,12 +851,12 @@ namespace Funtion_F3_SMT
             {
                 if (k < dic_image.Count)
                 {
-                    byte[] img = img_null;
+                    Image img = image_null;
                     if (dic_image.ContainsKey(k))
                     {
                         img = dic_image[k];
                     }
-                    byte[] graph = data.Value.grap_data;
+                    Image graph = data.Value.grap_data;
                     string val = data.Value.data_val;
 
                     if (d)
@@ -876,7 +881,7 @@ namespace Funtion_F3_SMT
         public void insert_tbl(DirectoryInfo tar_d, ref DataTable tbl_in, string str_parent, string in_src, string infor, bool d)
         {
             SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-            SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+            SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
             Get_Image_comment3(tar_d.FullName, ref dic_image);
             FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
             if (temp_lst.Length > 0)
@@ -919,13 +924,13 @@ namespace Funtion_F3_SMT
             {
                 //if (k < dic_image.Count)
                 //{
-                byte[] img = img_null;
+                Image img = image_null;
                 if (dic_image.ContainsKey(k))
                 {
                     img = dic_image[k];
                 }
 
-                byte[] graph = data.Value.grap_data;
+                Image graph = data.Value.grap_data;
                 string val = data.Value.data_val;
 
                 if (d)
@@ -952,7 +957,7 @@ namespace Funtion_F3_SMT
         public void insert_tbl_folder_ANH(DirectoryInfo tar_d, ref DataTable tbl_in, string str_parent, string in_src, string infor, bool d)
         {
             SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-            SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+            SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
             Get_Image_comment3(tar_d.FullName, ref dic_image);
             FileInfo[] temp_lst = new DirectoryInfo(tar_d.Parent.FullName).GetFiles("*.xlsx");
             if (temp_lst.Length > 0)
@@ -992,12 +997,12 @@ namespace Funtion_F3_SMT
             {
                 if (k < dic_image.Count)
                 {
-                    byte[] img = img_null;
+                    Image img = image_null;
                     if (dic_image.ContainsKey(k))
                     {
                         img = dic_image[k];
                     }
-                    byte[] graph = data.Value.grap_data;
+                    Image graph = data.Value.grap_data;
                     string val = data.Value.data_val;
 
                     if (d)
@@ -1034,7 +1039,7 @@ namespace Funtion_F3_SMT
                 foreach (DirectoryInfo tar_d in arr_dic_child)
                 {
                     SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-                    SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+                    SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
                     Get_Image_comment3(tar_d.FullName, ref dic_image);
                     FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
                     if (temp_lst.Length > 0)
@@ -1068,8 +1073,8 @@ namespace Funtion_F3_SMT
                     {
                         if (k < dic_image.Count)
                         {
-                            byte[] img = dic_image[k];
-                            byte[] graph = data.Value.grap_data;
+                            Image img = dic_image[k];
+                            Image graph = data.Value.grap_data;
                             string val = data.Value.data_val;
                             Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet, tar_d.Name, data.Key, img, graph, val, txtOperator.Text, DateTime.Now.ToString(), txtLogfile.Text, true, true);
 
@@ -1082,7 +1087,7 @@ namespace Funtion_F3_SMT
             else
             {
                 SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-                SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+                SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
                 Get_Image_comment3(tar_parent.FullName, ref dic_image);
                 FileInfo[] temp_lst = tar_parent.GetFiles("*.xlsx");
                 if (temp_lst.Length > 0)
@@ -1124,8 +1129,8 @@ namespace Funtion_F3_SMT
                     if (k < dic_image.Count)
                     {
                         //  byte[] img = data.Value.image_data;
-                        byte[] img = dic_image[k];
-                        byte[] graph = data.Value.grap_data;
+                        Image img = dic_image[k];
+                        Image graph = data.Value.grap_data;
                         string val = data.Value.data_val;
                         Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet, tar_parent.Name, data.Key, img, graph, val, txtOperator.Text, DateTime.Now.ToString(), txtLogfile.Text, true, true);
                         ID++;
@@ -1273,8 +1278,8 @@ namespace Funtion_F3_SMT
 
                     SortedDictionary<int, SortedDictionary<int, string>> logfile_result = new SortedDictionary<int, SortedDictionary<int, string>>();
                     Get_logfile_Multi(dir_child.FullName, ref logfile_result);
-                    SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                    SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                    SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                    SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                     Get_Image_Multi(dir_child.FullName, ref Image_result);
                     Get_Image_Multi_2(dir_child.FullName, ref Image_result_2);
 
@@ -1282,13 +1287,13 @@ namespace Funtion_F3_SMT
                     int log_inx = 0;
                     foreach (var log in logfile_result)
                     {
-                        byte[] data_image = null;
+                        Image data_image = null;
                         if (Image_result.ContainsKey(log.Key))
                         {
                             data_image = Image_result[log.Key];
                         }
 
-                        byte[] data_image_2 = null;
+                        Image data_image_2 = null;
                         if (Image_result_2.ContainsKey(log.Key))
                         {
                             data_image_2 = Image_result_2[log.Key];
@@ -1321,9 +1326,9 @@ namespace Funtion_F3_SMT
 
                     Get_logfile_Multi_GAP1(dir_child.FullName, ref logfile_result1);
                     Get_logfile_Multi_GAP2(dir_child.FullName, ref logfile_result2);
-                    SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                    SortedDictionary<int, byte[]> Image_result_1 = new SortedDictionary<int, byte[]>();
-                    SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                    SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                    SortedDictionary<int, Image> Image_result_1 = new SortedDictionary<int, Image>();
+                    SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                     Get_Image_Multi_gap(dir_child.FullName, ref Image_result);
                     Get_Image_Multi_gap1(dir_child.FullName, ref Image_result_1);
                     Get_Image_Multi_gap2(dir_child.FullName, ref Image_result_2);
@@ -1332,20 +1337,20 @@ namespace Funtion_F3_SMT
                     foreach (var log in logfile_result1)
                     {
 
-                        byte[] data_image = img_null;
+                        Image data_image = image_null;
                         if (Image_result.ContainsKey(log.Key))
                         {
                             data_image = Image_result[log.Key];
                         }
 
 
-                        byte[] data_image_1 = img_null;
+                        Image data_image_1 = image_null;
                         if (Image_result_1.ContainsKey(log.Key))
                         {
                             data_image_1 = Image_result_1[log.Key];
                         }
 
-                        byte[] data_image_2 = img_null;
+                        Image data_image_2 = image_null;
                         if (Image_result_2.ContainsKey(log.Key))
                         {
                             data_image_2 = Image_result_2[log.Key];
@@ -1367,7 +1372,7 @@ namespace Funtion_F3_SMT
                                 data += log_val.Value + " ; ";
                             }
                         }
-                        if (data_image != img_null && data_image_1 != img_null && data_image_2 != img_null)
+                        if (data_image != image_null && data_image_1 != image_null && data_image_2 != image_null)
                         {
                             Data_tbl.Rows.Add(log_inx + 1, txtItemCode.Text, txtLotNo.Text, sheet, dir_child.Name, log.Key, data_image, data_image_1, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), dir_child.FullName, true);
                         }
@@ -1453,7 +1458,8 @@ namespace Funtion_F3_SMT
         public DataTable load_data_logfile_gap_connector(string in_src, string infor)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-            DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, "GAP_CONNECTOR", filter_str).Clone();
+            //THUY: THAY DOI CACH LAY CAU TRUC 
+            DataTable Data_tbl = GAPConnectorService.getConstructor();
             Data_tbl.Columns.Add("Select", typeof(bool));
             bool primePID = false;
             Dictionary<string, List<string>> listProductID = new Dictionary<string, List<string>>();
@@ -1468,7 +1474,7 @@ namespace Funtion_F3_SMT
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Khong co product ID", "Product ID");
             }
 
             DirectoryInfo tar_parent = new DirectoryInfo(in_src);
@@ -1489,9 +1495,9 @@ namespace Funtion_F3_SMT
 
                                     Get_logfile_Multi_GAP1(dir_child_2.FullName, ref logfile_result1);
                                     Get_logfile_Multi_GAP2(dir_child_2.FullName, ref logfile_result2);
-                                    SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                                    SortedDictionary<int, byte[]> Image_result_1 = new SortedDictionary<int, byte[]>();
-                                    SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                                    SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                                    SortedDictionary<int, Image> Image_result_1 = new SortedDictionary<int, Image>();
+                                    SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                                     Get_Image_Multi_gap(dir_child_2.FullName, ref Image_result);
                                     Get_Image_Multi_gap1(dir_child_2.FullName, ref Image_result_1);
                                     Get_Image_Multi_gap2(dir_child_2.FullName, ref Image_result_2);
@@ -1500,19 +1506,19 @@ namespace Funtion_F3_SMT
                                     foreach (var log in logfile_result1)
                                     {
 
-                                        byte[] data_image = img_null;
+                                        Image data_image = image_null;
                                         if (Image_result.ContainsKey(log.Key))
                                         {
                                             data_image = Image_result[log.Key];
                                         }
 
-                                        byte[] data_image_1 = img_null;
+                                        Image data_image_1 = image_null;
                                         if (Image_result_1.ContainsKey(log.Key))
                                         {
                                             data_image_1 = Image_result_1[log.Key];
                                         }
 
-                                        byte[] data_image_2 = img_null;
+                                        Image data_image_2 = image_null;
                                         if (Image_result_2.ContainsKey(log.Key))
                                         {
                                             data_image_2 = Image_result_2[log.Key];
@@ -1533,7 +1539,7 @@ namespace Funtion_F3_SMT
                                                 data += log_val.Value + " ; ";
                                             }
                                         }
-                                        if (data_image != img_null && data_image_1 != img_null && data_image_2 != img_null)
+                                        if (data_image != image_null && data_image_1 != image_null && data_image_2 != image_null)
                                         {
                                             Data_tbl.Rows.Add(log_inx + 1, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name + "_" + dir_child_2.Name, log.Key, data_image, data_image_1, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
                                         }
@@ -1555,9 +1561,9 @@ namespace Funtion_F3_SMT
 
                         Get_logfile_Multi_GAP1(dir_child.FullName, ref logfile_result1);
                         Get_logfile_Multi_GAP2(dir_child.FullName, ref logfile_result2);
-                        SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                        SortedDictionary<int, byte[]> Image_result_1 = new SortedDictionary<int, byte[]>();
-                        SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                        SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                        SortedDictionary<int, Image> Image_result_1 = new SortedDictionary<int, Image>();
+                        SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                         Get_Image_Multi_gap(dir_child.FullName, ref Image_result);
                         Get_Image_Multi_gap1(dir_child.FullName, ref Image_result_1);
                         Get_Image_Multi_gap2(dir_child.FullName, ref Image_result_2);
@@ -1566,20 +1572,20 @@ namespace Funtion_F3_SMT
                         foreach (var log in logfile_result1)
                         {
 
-                            byte[] data_image = img_null;
+                            Image data_image = image_null;
                             if (Image_result.ContainsKey(log.Key))
                             {
                                 data_image = Image_result[log.Key];
                             }
 
 
-                            byte[] data_image_1 = img_null;
+                            Image data_image_1 = image_null;
                             if (Image_result_1.ContainsKey(log.Key))
                             {
                                 data_image_1 = Image_result_1[log.Key];
                             }
 
-                            byte[] data_image_2 = img_null;
+                            Image data_image_2 = image_null;
                             if (Image_result_2.ContainsKey(log.Key))
                             {
                                 data_image_2 = Image_result_2[log.Key];
@@ -1601,7 +1607,7 @@ namespace Funtion_F3_SMT
                                     data += log_val.Value + " ; ";
                                 }
                             }
-                            if (data_image != img_null && data_image_1 != img_null && data_image_2 != img_null)
+                            if (data_image != image_null && data_image_1 != image_null && data_image_2 != image_null)
                             {
                                 string GAP = dir_child.Name.ToString().Replace("GAP", "").Trim();
                                 if (primePID)
@@ -1650,9 +1656,9 @@ namespace Funtion_F3_SMT
 
                                 Get_logfile_Multi_GAP1(dir_child_2.FullName, ref logfile_result1);
                                 Get_logfile_Multi_GAP2(dir_child_2.FullName, ref logfile_result2);
-                                SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                                SortedDictionary<int, byte[]> Image_result_1 = new SortedDictionary<int, byte[]>();
-                                SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                                SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                                SortedDictionary<int, Image> Image_result_1 = new SortedDictionary<int, Image>();
+                                SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                                 Get_Image_Multi_gap(dir_child_2.FullName, ref Image_result);
                                 Get_Image_Multi_gap1(dir_child_2.FullName, ref Image_result_1);
                                 Get_Image_Multi_gap2(dir_child_2.FullName, ref Image_result_2);
@@ -1661,20 +1667,20 @@ namespace Funtion_F3_SMT
                                 foreach (var log in logfile_result1)
                                 {
 
-                                    byte[] data_image = img_null;
+                                    Image data_image = image_null;
                                     if (Image_result.ContainsKey(log.Key))
                                     {
                                         data_image = Image_result[log.Key];
                                     }
 
 
-                                    byte[] data_image_1 = img_null;
+                                    Image data_image_1 = image_null;
                                     if (Image_result_1.ContainsKey(log.Key))
                                     {
                                         data_image_1 = Image_result_1[log.Key];
                                     }
 
-                                    byte[] data_image_2 = img_null;
+                                    Image data_image_2 = image_null;
                                     if (Image_result_2.ContainsKey(log.Key))
                                     {
                                         data_image_2 = Image_result_2[log.Key];
@@ -1696,7 +1702,7 @@ namespace Funtion_F3_SMT
                                             data += log_val.Value + " ; ";
                                         }
                                     }
-                                    if (data_image != img_null && data_image_1 != img_null && data_image_2 != img_null)
+                                    if (data_image != image_null && data_image_1 != image_null && data_image_2 != image_null)
                                     {
                                         Data_tbl.Rows.Add(log_inx + 1, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name + "_" + dir_child_2.Name, log.Key, data_image, data_image_1, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
                                     }
@@ -1714,9 +1720,9 @@ namespace Funtion_F3_SMT
 
                         Get_logfile_Multi_GAP1(dir_child.FullName, ref logfile_result1);
                         Get_logfile_Multi_GAP2(dir_child.FullName, ref logfile_result2);
-                        SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                        SortedDictionary<int, byte[]> Image_result_1 = new SortedDictionary<int, byte[]>();
-                        SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                        SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                        SortedDictionary<int, Image> Image_result_1 = new SortedDictionary<int, Image>();
+                        SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                         Get_Image_Multi_gap(dir_child.FullName, ref Image_result);
                         Get_Image_Multi_gap1(dir_child.FullName, ref Image_result_1);
                         Get_Image_Multi_gap2(dir_child.FullName, ref Image_result_2);
@@ -1725,20 +1731,20 @@ namespace Funtion_F3_SMT
                         foreach (var log in logfile_result1)
                         {
 
-                            byte[] data_image = img_null;
+                            Image data_image = image_null;
                             if (Image_result.ContainsKey(log.Key))
                             {
                                 data_image = Image_result[log.Key];
                             }
 
 
-                            byte[] data_image_1 = img_null;
+                            Image data_image_1 = image_null;
                             if (Image_result_1.ContainsKey(log.Key))
                             {
                                 data_image_1 = Image_result_1[log.Key];
                             }
 
-                            byte[] data_image_2 = img_null;
+                            Image data_image_2 = image_null;
                             if (Image_result_2.ContainsKey(log.Key))
                             {
                                 data_image_2 = Image_result_2[log.Key];
@@ -1760,7 +1766,7 @@ namespace Funtion_F3_SMT
                                     data += log_val.Value + " ; ";
                                 }
                             }
-                            if (data_image != img_null && data_image_1 != img_null && data_image_2 != img_null)
+                            if (data_image != image_null && data_image_1 != image_null && data_image_2 != image_null)
                             {
                                 Data_tbl.Rows.Add(log_inx + 1, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name, log.Key, data_image, data_image_1, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
                             }
@@ -1773,11 +1779,16 @@ namespace Funtion_F3_SMT
             }
             return Data_tbl;
         }
-
+        /// <summary>
+        /// chỉ sử dụng để get dữ liệu từ logfile
+        /// </summary>
+        /// <param name="in_src"></param>
+        /// <param name="infor"></param>
+        /// <returns></returns>
         public DataTable load_data_logfile_cross_section(string in_src, string infor)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-            DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, "CROSS_SECTION", filter_str).Clone();
+            DataTable Data_tbl = new CrossSectionService().getStructorTable();
             Data_tbl.Columns.Add("Select", typeof(bool));
             DataTable sort_dt = Data_tbl.Clone();
 
@@ -1806,8 +1817,8 @@ namespace Funtion_F3_SMT
                             {
                                 SortedDictionary<int, SortedDictionary<int, string>> logfile_result = new SortedDictionary<int, SortedDictionary<int, string>>();
                                 Get_logfile_Multi_ngang(dir_child.FullName, ref logfile_result);
-                                SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                                SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                                SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                                SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                                 Get_Image_Multi(dir_child.FullName, ref Image_result);
                                 Get_Image_Multi_2(dir_child.FullName, ref Image_result_2);
 
@@ -1815,13 +1826,13 @@ namespace Funtion_F3_SMT
 
                                 foreach (var log in logfile_result)
                                 {
-                                    byte[] data_image = img_null;
+                                    Image data_image = new Bitmap(1, 1);
                                     if (Image_result.ContainsKey(log.Key))
                                     {
                                         data_image = Image_result[log.Key];
                                     }
 
-                                    byte[] data_image_2 = img_null;
+                                    Image data_image_2 = new Bitmap(1, 1);
                                     if (Image_result_2.ContainsKey(log.Key))
                                     {
                                         data_image_2 = Image_result_2[log.Key];
@@ -1850,14 +1861,14 @@ namespace Funtion_F3_SMT
                                 {
                                     SortedDictionary<int, SortedDictionary<int, string>> logfile_result = new SortedDictionary<int, SortedDictionary<int, string>>();
                                     Get_logfile_Multi_Tru_ngang(tar_d.FullName, ref logfile_result);
-                                    SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                                    SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                                    SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                                    SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                                     Get_Image_Multi_Tru_ngang(tar_d.FullName, ref Image_result);
 
 
                                     foreach (var log in logfile_result)
                                     {
-                                        byte[] data_image = img_null;
+                                        Image data_image = new Bitmap(1, 1);
                                         if (Image_result.ContainsKey(log.Key))
                                         {
                                             data_image = Image_result[log.Key];
@@ -1868,7 +1879,7 @@ namespace Funtion_F3_SMT
                                         {
                                             data += log_val.Value + " ; ";
                                         }
-                                        if (data_image != img_null && data != "")
+                                        if (data != "")
                                         {
                                             Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child_2.Name.Replace(" ", "").ToUpper() + "_" + dir_child.Name.Replace(" ", "").ToUpper() + "_" + tar_d.Name.Replace(" ", "").ToUpper(), log.Key, data_image, img_null, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
                                             ID++;
@@ -1886,21 +1897,20 @@ namespace Funtion_F3_SMT
                                     SortedDictionary<int, SortedDictionary<int, string>> logfile_result2 = new SortedDictionary<int, SortedDictionary<int, string>>();
                                     Get_logfile_Multi_TRU_DOC1(tar_d.FullName, ref logfile_result1);
                                     Get_logfile_Multi_TRU_DOC2(tar_d.FullName, ref logfile_result2);
-                                    SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                                    SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                                    SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                                    SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                                     Get_Image_Multi_Tru_ngang(tar_d.FullName, ref Image_result);
                                     Get_Image_Multi_2(tar_d.FullName, ref Image_result_2);
 
 
                                     foreach (var log in logfile_result1)
                                     {
-                                        byte[] data_image = img_null;
+                                        Image data_image = new Bitmap(1, 1);
                                         if (Image_result.ContainsKey(log.Key))
                                         {
                                             data_image = Image_result[log.Key];
                                         }
-
-                                        byte[] data_image_2 = img_null;
+                                        Image data_image_2 = new Bitmap(1, 1);
                                         if (Image_result_2.ContainsKey(log.Key))
                                         {
                                             data_image_2 = Image_result_2[log.Key];
@@ -1923,11 +1933,9 @@ namespace Funtion_F3_SMT
                                             }
 
 
-                                            if (data_image != img_null && data_image_2 != img_null)
-                                            {
-                                                Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child_2.Name.Replace(" ", "").ToUpper() + "_" + dir_child.Name.Replace(" ", "").ToUpper() + "_" + tar_d.Name.Replace(" ", "").ToUpper(), log.Key, data_image, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
-                                                ID++;
-                                            }
+
+                                            Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child_2.Name.Replace(" ", "").ToUpper() + "_" + dir_child.Name.Replace(" ", "").ToUpper() + "_" + tar_d.Name.Replace(" ", "").ToUpper(), log.Key, data_image, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
+                                            ID++;
                                         }
 
 
@@ -1949,8 +1957,8 @@ namespace Funtion_F3_SMT
                     {
                         SortedDictionary<int, SortedDictionary<int, string>> logfile_result = new SortedDictionary<int, SortedDictionary<int, string>>();
                         Get_logfile_Multi_ngang(dir_child.FullName, ref logfile_result);
-                        SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                        SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                        SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                        SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                         Get_Image_Multi(dir_child.FullName, ref Image_result);
                         Get_Image_Multi_2(dir_child.FullName, ref Image_result_2);
 
@@ -1958,13 +1966,13 @@ namespace Funtion_F3_SMT
 
                         foreach (var log in logfile_result)
                         {
-                            byte[] data_image = img_null;
+                            Image data_image = new Bitmap(1, 1);
                             if (Image_result.ContainsKey(log.Key))
                             {
                                 data_image = Image_result[log.Key];
                             }
 
-                            byte[] data_image_2 = img_null;
+                            Image data_image_2 = new Bitmap(1, 1);
                             if (Image_result_2.ContainsKey(log.Key))
                             {
                                 data_image_2 = Image_result_2[log.Key];
@@ -1994,14 +2002,14 @@ namespace Funtion_F3_SMT
                         {
                             SortedDictionary<int, SortedDictionary<int, string>> logfile_result = new SortedDictionary<int, SortedDictionary<int, string>>();
                             Get_logfile_Multi_Tru_ngang(tar_d.FullName, ref logfile_result);
-                            SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                            SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                            SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                            SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                             Get_Image_Multi_Tru_ngang(tar_d.FullName, ref Image_result);
 
                             int log_inx = 0;
                             foreach (var log in logfile_result)
                             {
-                                byte[] data_image = img_null;
+                                Image data_image = new Bitmap(1, 1);
                                 if (Image_result.ContainsKey(log.Key))
                                 {
                                     data_image = Image_result[log.Key];
@@ -2012,9 +2020,9 @@ namespace Funtion_F3_SMT
                                 {
                                     data += log_val.Value + " ; ";
                                 }
-                                if (data_image != img_null && data != "")
+                                if (data != "")
                                 {
-                                    Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name.Replace(" ", "").ToUpper() + "_" + tar_d.Name.Replace(" ", "").ToUpper(), log.Key, data_image, img_null, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
+                                    Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name.Replace(" ", "").ToUpper() + "_" + tar_d.Name.Replace(" ", "").ToUpper(), log.Key, data_image, new Bitmap(1, 1), data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
                                     ID++;
                                 }
 
@@ -2030,21 +2038,21 @@ namespace Funtion_F3_SMT
                             SortedDictionary<int, SortedDictionary<int, string>> logfile_result2 = new SortedDictionary<int, SortedDictionary<int, string>>();
                             Get_logfile_Multi_TRU_DOC1(tar_d.FullName, ref logfile_result1);
                             Get_logfile_Multi_TRU_DOC2(tar_d.FullName, ref logfile_result2);
-                            SortedDictionary<int, byte[]> Image_result = new SortedDictionary<int, byte[]>();
-                            SortedDictionary<int, byte[]> Image_result_2 = new SortedDictionary<int, byte[]>();
+                            SortedDictionary<int, Image> Image_result = new SortedDictionary<int, Image>();
+                            SortedDictionary<int, Image> Image_result_2 = new SortedDictionary<int, Image>();
                             Get_Image_Multi_Tru_ngang(tar_d.FullName, ref Image_result);
                             Get_Image_Multi_2(tar_d.FullName, ref Image_result_2);
 
                             int log_inx = 0;
                             foreach (var log in logfile_result1)
                             {
-                                byte[] data_image = img_null;
+                                Image data_image = new Bitmap(1, 1);
                                 if (Image_result.ContainsKey(log.Key))
                                 {
                                     data_image = Image_result[log.Key];
                                 }
 
-                                byte[] data_image_2 = img_null;
+                                Image data_image_2 = new Bitmap(1, 1);
                                 if (Image_result_2.ContainsKey(log.Key))
                                 {
                                     data_image_2 = Image_result_2[log.Key];
@@ -2067,11 +2075,9 @@ namespace Funtion_F3_SMT
                                     }
 
 
-                                    if (data_image != img_null && data_image_2 != img_null)
-                                    {
-                                        Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name.Replace(" ", "").ToUpper() + "_" + tar_d.Name.Replace(" ", "").ToUpper(), log.Key, data_image, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
-                                        ID++;
-                                    }
+
+                                    Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, dir_child.Name.Replace(" ", "").ToUpper() + "_" + tar_d.Name.Replace(" ", "").ToUpper(), log.Key, data_image, data_image_2, data, txtOperator.Text, DateTime.Now.ToString(), in_src, true);
+                                    ID++;
                                 }
                                 log_inx++;
 
@@ -2085,7 +2091,7 @@ namespace Funtion_F3_SMT
             }
 
             // kiểm tra PRODUCT ID
-            Debugger.Break();
+            //Debugger.Break();
             try
             {
                 DataTable dtZ = sort_dt;
@@ -2104,7 +2110,7 @@ namespace Funtion_F3_SMT
                     }
                     row["Sample"] = iz++;
                 }
-                ProductIDService productService = new ProductIDService(txtItemCode.Text, txtLotNo.Text, textBox1.Text, new[] { "IPQC", "Xsection", "B2B" }, new[] { txtItemCode.Text });
+                ProductIDService productService = new ProductIDService(txtItemCode.Text, txtLotNo.Text, textBox1.Text, new[] { "Xsection" }, new[] { txtItemCode.Text });
                 if (productService._listFile.TryGetValue(txtItemCode.Text, out string location))
                 {
                     List<string> list = productService.getListProductID(location);
@@ -2123,6 +2129,8 @@ namespace Funtion_F3_SMT
                                     case "NGANG":
                                     case "TRUNGANG_P":
                                     case "TRUNGANG_T":
+                                    case "TRUNGANG_PHAI":
+                                    case "TRUNGANG_TRAI":
                                         if (sam <= 20)
                                         {
                                             if (sam <= 10)
@@ -2136,14 +2144,18 @@ namespace Funtion_F3_SMT
                                         }
                                         break;
                                     case "TRU_T":
+                                    case "TRU_TRAI":
                                     case "DOC_T":
+                                    case "DOC_TRAI":
                                         if (sam <= 10)
                                         {
                                             r = $"TRUDOC_T{sam}";
                                         }
                                         break;
                                     case "TRU_P":
+                                    case "TRU_PHAI":
                                     case "DOC_P":
+                                    case "DOC_PHAI":
                                         if (sam <= 10)
                                         {
                                             r = $"TRUDOC_P{sam}";
@@ -2505,7 +2517,7 @@ namespace Funtion_F3_SMT
             }
 
         }
-        public void Get_Image_Multi(string in_src, ref SortedDictionary<int, byte[]> lst_result)
+        public void Get_Image_Multi(string in_src, ref SortedDictionary<int, Image> lst_result)
         {
             DirectoryInfo tar_d = new DirectoryInfo(in_src);
 
@@ -2515,15 +2527,13 @@ namespace Funtion_F3_SMT
                 for (int i = 0; i < temp_lst.Length; i++)
                 {
                     var sel_img = Bitmap.FromFile(temp_lst[i].FullName);
-                    ImageConverter imgcon = new ImageConverter();
-                    byte[] img_data = (byte[])imgcon.ConvertTo(sel_img, typeof(byte[]));
                     string f_na = Path.GetFileNameWithoutExtension(temp_lst[i].Name).TrimEnd(new char[] { ',', '.', ' ' });
                     if (f_na.Contains("-") == false && f_na.Contains("+") == false)
                     {
                         if (myCode.IsNumeric(f_na))
                         {
                             int f_inx = Convert.ToInt32(f_na);
-                            lst_result.Add(f_inx, img_data);
+                            lst_result.Add(f_inx, sel_img);
                         }
                     }
                 }
@@ -2542,7 +2552,7 @@ namespace Funtion_F3_SMT
             }
 
         }
-        public void Get_Image_Multi_gap(string in_src, ref SortedDictionary<int, byte[]> lst_result)
+        public void Get_Image_Multi_gap(string in_src, ref SortedDictionary<int, Image> lst_result)
         {
             DirectoryInfo tar_d = new DirectoryInfo(in_src);
 
@@ -2553,7 +2563,7 @@ namespace Funtion_F3_SMT
                 {
                     var sel_img = Bitmap.FromFile(temp_lst[i].FullName);
                     ImageConverter imgcon = new ImageConverter();
-                    byte[] img_data = (byte[])imgcon.ConvertTo(sel_img, typeof(byte[]));
+                    Image img_data = sel_img;
                     string f_na = Path.GetFileNameWithoutExtension(temp_lst[i].Name).TrimEnd(new char[] { ',', '.', ' ' });
                     if (f_na.Contains("@"))
                     {
@@ -2594,7 +2604,7 @@ namespace Funtion_F3_SMT
             //}
 
         }
-        public void Get_Image_Multi_gap1(string in_src, ref SortedDictionary<int, byte[]> lst_result)
+        public void Get_Image_Multi_gap1(string in_src, ref SortedDictionary<int, Image> lst_result)
         {
             DirectoryInfo tar_d = new DirectoryInfo(in_src);
 
@@ -2605,7 +2615,7 @@ namespace Funtion_F3_SMT
                 {
                     var sel_img = Bitmap.FromFile(temp_lst[i].FullName);
                     ImageConverter imgcon = new ImageConverter();
-                    byte[] img_data = (byte[])imgcon.ConvertTo(sel_img, typeof(byte[]));
+                    Image img_data = sel_img;
                     string f_na = Path.GetFileNameWithoutExtension(temp_lst[i].Name).TrimEnd(new char[] { ',', '.', ' ' });
                     if (f_na.Replace(" ", "").Contains("-1"))
                     {
@@ -2635,7 +2645,7 @@ namespace Funtion_F3_SMT
 
         }
 
-        public void Get_Image_Multi_gap2(string in_src, ref SortedDictionary<int, byte[]> lst_result)
+        public void Get_Image_Multi_gap2(string in_src, ref SortedDictionary<int, Image> lst_result)
         {
             DirectoryInfo tar_d = new DirectoryInfo(in_src);
 
@@ -2646,7 +2656,7 @@ namespace Funtion_F3_SMT
                 {
                     var sel_img = Bitmap.FromFile(temp_lst[i].FullName);
                     ImageConverter imgcon = new ImageConverter();
-                    byte[] img_data = (byte[])imgcon.ConvertTo(sel_img, typeof(byte[]));
+                    Image img_data = sel_img;
                     string f_na = Path.GetFileNameWithoutExtension(temp_lst[i].Name).TrimEnd(new char[] { ',', '.', ' ' });
                     if (f_na.Replace(" ", "").Contains("-2"))
                     {
@@ -2675,7 +2685,7 @@ namespace Funtion_F3_SMT
             }
 
         }
-        public void Get_Image_Multi_Tru_ngang(string in_src, ref SortedDictionary<int, byte[]> lst_result)
+        public void Get_Image_Multi_Tru_ngang(string in_src, ref SortedDictionary<int, Image> lst_result)
         {
             DirectoryInfo tar_d = new DirectoryInfo(in_src);
 
@@ -2685,8 +2695,7 @@ namespace Funtion_F3_SMT
                 for (int i = 0; i < temp_lst.Length; i++)
                 {
                     var sel_img = Bitmap.FromFile(temp_lst[i].FullName);
-                    ImageConverter imgcon = new ImageConverter();
-                    byte[] img_data = (byte[])imgcon.ConvertTo(sel_img, typeof(byte[]));
+                    Image img_data = sel_img;
                     string f_na = Path.GetFileNameWithoutExtension(temp_lst[i].Name).TrimEnd(new char[] { ',', '.', ' ' });
                     //if (f_na.Contains("-") == false && f_na.Contains("+") == false)
                     //{
@@ -2717,7 +2726,7 @@ namespace Funtion_F3_SMT
             }
 
         }
-        public void Get_Image_Multi_2(string in_src, ref SortedDictionary<int, byte[]> lst_result)
+        public void Get_Image_Multi_2(string in_src, ref SortedDictionary<int, Image> lst_result)
         {
             DirectoryInfo tar_d = new DirectoryInfo(in_src);
             FileInfo[] temp_lst = tar_d.GetFiles("*.jpg");
@@ -2727,7 +2736,7 @@ namespace Funtion_F3_SMT
                 {
                     var sel_img = Bitmap.FromFile(temp_lst[i].FullName);
                     ImageConverter imgcon = new ImageConverter();
-                    byte[] img_data = (byte[])imgcon.ConvertTo(sel_img, typeof(byte[]));
+                    Image img_data = sel_img;
                     string f_na = Path.GetFileNameWithoutExtension(temp_lst[i].Name).TrimEnd(new char[] { ',', '.', ' ' });
                     if (f_na.Replace(" ", "").Contains("-1"))
                     {
@@ -2873,7 +2882,7 @@ namespace Funtion_F3_SMT
                 {
 
                     SortedDictionary<string, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<string, Funtion_SMT.Peeltest_data>();
-                    SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+                    SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
                     Get_Image_comment3(tar_d.FullName, ref dic_image);
                     FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
                     if (temp_lst.Length > 0)
@@ -2905,8 +2914,8 @@ namespace Funtion_F3_SMT
 
                     foreach (var data in dic_lst_result)
                     {
-                        byte[] img = data.Value.image_data;
-                        byte[] graph = data.Value.grap_data;
+                        Image img = data.Value.image_data;
+                        Image graph = data.Value.grap_data;
                         string val = data.Value.data_val;
                         Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet.ToUpper().Replace("-", "").Replace(" ", ""), data.Key.Split('_')[0], data.Key.Split('_')[1], img, graph, val, "100%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), txtLogfile.Text, true);
                         ID++;
@@ -2916,7 +2925,7 @@ namespace Funtion_F3_SMT
             else
             {
                 SortedDictionary<string, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<string, Funtion_SMT.Peeltest_data>();
-                SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+                SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
                 Get_Image_comment3(tar_parent.FullName, ref dic_image);
                 FileInfo[] temp_lst = tar_parent.GetFiles("*.xlsx");
                 if (temp_lst.Length > 0)
@@ -2948,8 +2957,8 @@ namespace Funtion_F3_SMT
 
                 foreach (var data in dic_lst_result)
                 {
-                    byte[] img = data.Value.image_data;
-                    byte[] graph = data.Value.grap_data;
+                    Image img = data.Value.image_data;
+                    Image graph = data.Value.grap_data;
                     string val = data.Value.data_val;
                     Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet, 1, data.Key, img, graph, val, "100%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), txtLogfile.Text, true);
                     ID++;
@@ -3050,7 +3059,7 @@ namespace Funtion_F3_SMT
                     if (tar_d.Name.Replace(" ", "").ToUpper().Contains("ANH"))
                     {
                         SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-                        SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+                        SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
                         Get_Image_comment3(tar_d.FullName, ref dic_image);
                         FileInfo[] temp_lst = d.GetFiles("*.xlsx");
 
@@ -3082,8 +3091,8 @@ namespace Funtion_F3_SMT
                         {
                             if (k < dic_image.Count)
                             {
-                                byte[] img = dic_image[k];
-                                byte[] graph = data.Value.grap_data;
+                                Image img = dic_image[k];
+                                Image graph = data.Value.grap_data;
                                 string val = data.Value.data_val;
                                 Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, "1", data.Key, img, graph, val, "0.00%", "0.00%", "0.00%", "0.00%", "100%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                                 ID++;
@@ -3095,7 +3104,7 @@ namespace Funtion_F3_SMT
                     else
                     {
                         SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-                        SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+                        SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
 
                         DirectoryInfo[] arr_dic_child_2 = tar_d.GetDirectories();
                         if (arr_dic_child_2.Length > 0)
@@ -3144,8 +3153,8 @@ namespace Funtion_F3_SMT
                         {
                             if (k < dic_image.Count)
                             {
-                                byte[] img = dic_image[k];
-                                byte[] graph = data.Value.grap_data;
+                                Image img = dic_image[k];
+                                Image graph = data.Value.grap_data;
                                 string val = data.Value.data_val;
                                 Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, tar_d.Name, data.Key, img, graph, val, "0.00%", "0.00%", "0.00%", "0.00%", "100%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                                 ID++;
@@ -3160,7 +3169,7 @@ namespace Funtion_F3_SMT
             else
             {
                 SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-                SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+                SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
                 Get_Image_comment3(d.FullName, ref dic_image);
                 FileInfo[] temp_lst = d.GetFiles("*.xlsx");
 
@@ -3199,8 +3208,8 @@ namespace Funtion_F3_SMT
                 {
                     if (k < dic_image.Count)
                     {
-                        byte[] img = dic_image[k];
-                        byte[] graph = data.Value.grap_data;
+                        Image img = dic_image[k];
+                        Image graph = data.Value.grap_data;
                         string val = data.Value.data_val;
                         Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, 1, data.Key, img, graph, val, "0.00%", "0.00%", "0.00%", "0.00%", "100%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                         ID++;
@@ -3222,7 +3231,7 @@ namespace Funtion_F3_SMT
                 foreach (DirectoryInfo tar_d in arr_dic_child)
                 {
                     SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-                    SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+                    SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
                     Get_Image_comment3(tar_d.FullName, ref dic_image);
                     FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
 
@@ -3255,8 +3264,8 @@ namespace Funtion_F3_SMT
                     {
                         if (k < dic_image.Count)
                         {
-                            byte[] img = dic_image[k];
-                            byte[] graph = data.Value.grap_data;
+                            Image img = dic_image[k];
+                            Image graph = data.Value.grap_data;
                             string val = data.Value.data_val;
                             Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, tar_d.Name, data.Key, img, graph, val, "100%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                             ID++;
@@ -3270,7 +3279,7 @@ namespace Funtion_F3_SMT
             else
             {
                 SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-                SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+                SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
                 Get_Image_comment3(d.FullName, ref dic_image);
                 FileInfo[] temp_lst = d.GetFiles("*.xlsx");
 
@@ -3311,8 +3320,8 @@ namespace Funtion_F3_SMT
                 {
                     if (k < dic_image.Count)
                     {
-                        byte[] img = dic_image[k];
-                        byte[] graph = data.Value.grap_data;
+                        Image img = dic_image[k];
+                        Image graph = data.Value.grap_data;
                         string val = data.Value.data_val;
                         Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, 1, data.Key, img, graph, val, "100%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                         ID++;
@@ -3327,7 +3336,7 @@ namespace Funtion_F3_SMT
         public DataTable load_data_logfile_Peel_Pull(string in_src, string tb_name, string infor, string locationProductID = null)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-            DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, tb_name, filter_str).Clone();
+            DataTable Data_tbl = PeelTestWOSUSService.getStructor();
             Data_tbl.Columns.Add("Select_Img", typeof(bool));
             Data_tbl.Columns.Add("Select_Grp", typeof(bool));
             DirectoryInfo tar_parent = new DirectoryInfo(in_src);
@@ -3422,7 +3431,7 @@ namespace Funtion_F3_SMT
                 {
 
                     SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-                    SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+                    SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
                     Get_Image_comment3(tar_d.FullName, ref dic_image);
                     FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
 
@@ -3457,8 +3466,8 @@ namespace Funtion_F3_SMT
                     {
                         if (k < dic_image.Count)
                         {
-                            byte[] img = dic_image[k];
-                            byte[] graph = data.Value.grap_data;
+                            Image img = dic_image[k];
+                            Image graph = data.Value.grap_data;
                             string val = data.Value.data_val;
                             Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, tar_d.Name, data.Key, img, graph, val, txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                             ID++;
@@ -3474,7 +3483,7 @@ namespace Funtion_F3_SMT
             else
             {
                 SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-                SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+                SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
                 Get_Image_comment3(tar_parent.FullName, ref dic_image);
                 FileInfo[] temp_lst = tar_parent.GetFiles("*.xlsx");
 
@@ -3512,8 +3521,8 @@ namespace Funtion_F3_SMT
                 {
                     if (k < dic_image.Count)
                     {
-                        byte[] img = dic_image[k];
-                        byte[] graph = data.Value.grap_data;
+                        Image img = dic_image[k];
+                        Image graph = data.Value.grap_data;
                         string val = data.Value.data_val;
                         Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, 1, data.Key, img, graph, val, txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                         ID++;
@@ -3523,10 +3532,11 @@ namespace Funtion_F3_SMT
             }
             return Data_tbl;
         }
+
         public DataTable load_data_logfile_unmating_pulltest(string in_src, string tb_name, string infor)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-            DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, tb_name, filter_str).Clone();
+            DataTable Data_tbl = IQCUmatingPullTestService.getStructor();
             Data_tbl.Columns.Add("Select_Img", typeof(bool));
             Data_tbl.Columns.Add("Select_Grp", typeof(bool));
 
@@ -3534,7 +3544,7 @@ namespace Funtion_F3_SMT
             int ID = 1;
 
             SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-            SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+            SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
             /****/
             FileInfo[] temp_lst_image = tar_parent.GetFiles("*.jpg").Concat(tar_parent.GetFiles("*.jpeg")).ToArray();
             if (temp_lst_image.Length > 0)
@@ -3601,8 +3611,8 @@ namespace Funtion_F3_SMT
 
             for (int k = 1; k <= dic_image.Count; k++)
             {
-                byte[] img = dic_image[k - 1];
-                byte[] graph = img_null;
+                Image img = dic_image[k - 1];
+                Image graph = image_null;
                 string val = "";
                 if (k <= dic_lst_result.Count)
                 {
@@ -3622,7 +3632,7 @@ namespace Funtion_F3_SMT
         public void get_data_logifle_coupon_old(DirectoryInfo tar_d, int ID, ref DataTable Data_tbl, string in_src, string infor)
         {
             SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-            SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+            SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
             Get_Image_comment3(tar_d.FullName, ref dic_image);
             FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
             if (temp_lst.Length > 0)
@@ -3657,8 +3667,8 @@ namespace Funtion_F3_SMT
             {
                 if (k < dic_image.Count)
                 {
-                    byte[] img = dic_image[k];
-                    byte[] graph = data.Value.grap_data;
+                    Image img = dic_image[k];
+                    Image graph = data.Value.grap_data;
                     string val = data.Value.data_val;
                     Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, tar_d.Name, data.Key, img, graph, val, txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                     ID++;
@@ -3728,7 +3738,7 @@ namespace Funtion_F3_SMT
         public void get_data_logifle_coupon(DirectoryInfo tar_d, int ID, ref DataTable Data_tbl, string str_parent, string in_src, string infor, bool d)
         {
             SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-            SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+            SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
             Get_Image_comment3(tar_d.FullName, ref dic_image);
             FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
             if (temp_lst.Length > 0)
@@ -3767,12 +3777,12 @@ namespace Funtion_F3_SMT
             {
                 //if (k < dic_image.Count)
                 //{
-                byte[] img = img_null;
+                Image img = image_null;
                 if (dic_image.ContainsKey(k))
                 {
                     img = dic_image[k];
                 }
-                byte[] graph = data.Value.grap_data;
+                Image graph = data.Value.grap_data;
                 string val = data.Value.data_val;
                 string region = "_";
                 if (d)
@@ -3791,7 +3801,7 @@ namespace Funtion_F3_SMT
         public void get_data_logifle_coupon_folder_ANH(DirectoryInfo tar_d, int ID, ref DataTable Data_tbl, string str_parent, string in_src, string infor, bool d)
         {
             SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-            SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+            SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
             Get_Image_comment3(tar_d.FullName, ref dic_image);
             FileInfo[] temp_lst = new DirectoryInfo(tar_d.Parent.FullName).GetFiles("*.xlsx");
             if (temp_lst.Length > 0)
@@ -3830,12 +3840,12 @@ namespace Funtion_F3_SMT
             {
                 if (k < dic_image.Count)
                 {
-                    byte[] img = img_null;
+                    Image img = image_null;
                     if (dic_image.ContainsKey(k))
                     {
                         img = dic_image[k];
                     }
-                    byte[] graph = data.Value.grap_data;
+                    Image graph = data.Value.grap_data;
                     string val = data.Value.data_val;
                     string region = "_";
                     if (d)
@@ -3922,8 +3932,8 @@ namespace Funtion_F3_SMT
         public void Get_Sheartest_logfile_Multi(string in_src, ref SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result, string textfind)
         {
             DirectoryInfo tar_d = new DirectoryInfo(in_src);
-            SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
-            List<byte[]> lst_graph = new List<byte[]> { };
+            SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
+            List<Image> lst_graph = new List<Image> { };
 
             Get_Image_comment3(in_src, ref dic_image);
             FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
@@ -3974,7 +3984,7 @@ namespace Funtion_F3_SMT
         public DataTable load_data_logfile_sheartest(string in_src, string infor)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-            DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, "SHEAR_TEST", filter_str).Clone();
+            DataTable Data_tbl = ShearTestServices.getStructor();
             Data_tbl.Columns.Add("Select_Img", typeof(bool));
             Data_tbl.Columns.Add("Select_Grp", typeof(bool));
 
@@ -3987,8 +3997,8 @@ namespace Funtion_F3_SMT
                 foreach (DirectoryInfo tar_d in arr_dic_child)
                 {
                     SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-                    SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
-                    List<byte[]> lst_graph = new List<byte[]> { };
+                    SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
+                    List<Image> lst_graph = new List<Image> { };
                     Get_Image_comment3(tar_d.FullName, ref dic_image);
                     FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
                     if (temp_lst.Length > 0)
@@ -4024,8 +4034,8 @@ namespace Funtion_F3_SMT
                     int sample = 1;
                     foreach (var data in dic_lst_result)
                     {
-                        byte[] img = data.Value.image_data;
-                        byte[] graph = data.Value.grap_data;
+                        Image img = data.Value.image_data;
+                        Image graph = data.Value.grap_data;
                         string val = data.Value.data_val;
                         Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, tar_d.Name, sample, img, graph, val, "0.00%", "0.00%", "0.00%", "0.00%", "100%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                         ID++;
@@ -4036,8 +4046,8 @@ namespace Funtion_F3_SMT
             else
             {
                 SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_lst_result = new SortedDictionary<int, Funtion_SMT.Peeltest_data>();
-                SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
-                List<byte[]> lst_graph = new List<byte[]> { };
+                SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
+                List<Image> lst_graph = new List<Image> { };
                 Get_Image_comment3(tar_parent.FullName, ref dic_image);
                 FileInfo[] temp_lst = tar_parent.GetFiles("*.xlsx");
                 if (temp_lst.Length > 0)
@@ -4074,8 +4084,8 @@ namespace Funtion_F3_SMT
                 int sample = 1;
                 foreach (var data in dic_lst_result)
                 {
-                    byte[] img = data.Value.image_data;
-                    byte[] graph = data.Value.grap_data;
+                    Image img = data.Value.image_data;
+                    Image graph = data.Value.grap_data;
                     string val = data.Value.data_val;
                     Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, "1", sample, img, graph, val, "0.00%", "0.00%", "0.00%", "0.00%", "100%", "0.00%", "0.00%", txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                     ID++;
@@ -4117,7 +4127,7 @@ namespace Funtion_F3_SMT
         public void Get_comment3_logfile_Multi(string in_src, ref SortedDictionary<string, Funtion_SMT.Peeltest_data> dic_lst_result, string textfind)
         {
             DirectoryInfo tar_d = new DirectoryInfo(in_src);
-            SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]>();
+            SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image>();
             Get_Image_comment3(in_src, ref dic_image);
             FileInfo[] temp_lst = tar_d.GetFiles("*.xlsx");
             if (temp_lst.Length > 0)
@@ -4268,8 +4278,8 @@ namespace Funtion_F3_SMT
             int ID = TDMK_Code.SQL_MAX(tbl_name_comment3, "ID", sqlcon) + 1;
             foreach (var data in dic_result)
             {
-                byte[] img = data.Value.image_data;
-                byte[] graph = data.Value.grap_data;
+                Image img = data.Value.image_data;
+                Image graph = data.Value.grap_data;
                 string val = data.Value.data_val;
 
                 Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet.ToUpper().Replace("-", "").Replace(" ", ""), img, graph, val, "", "", "", false);
@@ -4598,7 +4608,11 @@ namespace Funtion_F3_SMT
                                             dr["Operator"] = dataTable.Rows[i]["Operator"];
                                             dr["Time_Update"] = dataTable.Rows[i]["Time_Update"];
                                             dr["Remark"] = dataTable.Rows[i]["Remark"];
-                                            dr["ProductID"] = dataTable.Rows[i]["ProductID"];
+                                            try
+                                            {
+                                                dr["ProductID"] = dataTable.Rows[i]["ProductID"];
+                                            }
+                                            catch { }
                                             dt_select.Rows.Add(dr);
                                             ID++;
 
@@ -4730,20 +4744,24 @@ namespace Funtion_F3_SMT
 
         private void btnLoadB_Click(object sender, EventArgs e)
         {
-
+            GC.Collect();
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && cb_Type.SelectedIndex != -1)
             {
+                string itemCode = "", lotNo = "";
                 lbl_judge.BackColor = Color.Transparent;
                 lbl_judge.Text = "";
                 lbl_judge_logfile.BackColor = Color.Transparent;
                 string infor = "/" + txt_ItemName.Text + "_" + txt_line.Text + "_" + txt_ca.Text + "_" + txt_date.Text + "_" + txt_worker.Text + "_" + cb_Type.SelectedItem.ToString();
-                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txtItemCode.Text, txtLotNo.Text, sheet + infor });
-
+                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txtItemCode.Text.PadRight(10), txtLotNo.Text.PadRight(10), sheet + infor });
+                itemCode = txtItemCode.Text;
+                lotNo = txtLotNo.Text;
                 if (sheet.Contains("UNMATING") || sheet.Contains("COUPON"))
                 {
                     if (txt_itemcode_nvl.Text != "" && txt_lotno_nvl.Text != "")
                     {
-                        filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txt_itemcode_nvl.Text, txt_lotno_nvl.Text, sheet + infor });
+                        itemCode = txt_itemcode_nvl.Text;
+                        lotNo = txt_lotno_nvl.Text;
+                        filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txt_itemcode_nvl.Text.PadRight(20), txt_lotno_nvl.Text.PadRight(10), sheet + infor });
                     }
                     else
                     {
@@ -4754,11 +4772,18 @@ namespace Funtion_F3_SMT
                 }
 
 
-                DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), filter_str);
+                DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "") + (!LegacyMode.Checked == true ? "_NAS" : ""), filter_str);
 
+                if (!LegacyMode.Checked && dt_analysis.Rows.Count > 0)
+                {
+                    string data = dt_analysis.Rows[0]["Data"].ToString();
+                    string location = dt_analysis.Rows[0]["LocationImg"].ToString();
+                    dt_analysis = ConverterService.JsonToDataTable(data);
+                    NasRepository nas = new NasRepository();
+                    nas.MergeDataTable(dt_analysis, sheet, itemCode, lotNo, location);
+                }
                 string sheetZ = sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "");
-                string itemCode = txtItemCode.Text;
-                string lotNo = txtLotNo.Text;
+
                 try
                 {
                     ProductIDService.FillProductID(dt_analysis, itemCode, lotNo, sheetZ);
@@ -5387,8 +5412,9 @@ namespace Funtion_F3_SMT
             }
             if (dt_spec.Rows.Count > 0)
             {
+                string a = dt_spec.Rows[0]["Location"].ToString();
                 //string spec = dt_spec.Rows[0]["Location"].ToString().Split('+')[3].Split(';')[0].Split('(')[1].Split(')')[0].Replace(" ", string.Empty).Replace("N", string.Empty).Replace("≥", string.Empty).Replace(">", string.Empty).Replace("<", string.Empty);
-                string spec = get_number_spec2(dt_spec.Rows[0]["Location"].ToString().Split('+')[3].Split(';')[0].Split('(')[1].Split(')')[0].Replace(" ", string.Empty).Replace("N", ""));
+                string spec = get_number_spec2(dt_spec.Rows[0]["Location"].ToString().Split('+')[1].Split(';')[0].Split('(')[1].Split(')')[0].Replace(" ", string.Empty).Replace("N", ""));
 
                 if (TDMK_Code.IsNumeric(spec))
                 {
@@ -7084,8 +7110,13 @@ namespace Funtion_F3_SMT
 
                         btnEdit.Visible = false;
                         edit_mode = false;
+                        string sheetZ = sheet;
+                        if (sheet.Equals("PEEL_TEST") && _PRIME_PEEL_TEST)
+                        {
+                            sheetZ = "PEEL_TEST_WITHOUT_SUS";
+                        }
 
-                        DataTable dt_data = TDMK_Code.Datatable_Filter(sqlcon, sheet, filter_str);
+                        DataTable dt_data = TDMK_Code.Datatable_Filter(sqlcon, sheetZ + "_NAS", filter_str);
                         bool chk = true;
                         if (dt_data.Rows.Count > 0)
                             chk = false;
@@ -7721,7 +7752,6 @@ namespace Funtion_F3_SMT
 
         private void btn_save_Click(object sender, EventArgs e)
         {
-
             if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST")
             {
                 if (txt_setchan.Text == "0" || !myCode.IsNumeric(txt_setchan.Text))
@@ -7740,6 +7770,7 @@ namespace Funtion_F3_SMT
 
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && cb_Type.SelectedIndex != -1 && txt_qty.Text != "")
             {
+                string itemCode = txtItemCode.Text, lotNo = txtLotNo.Text;
                 string infor = "";
                 string filter_str = "";
                 infor = "/" + txt_ItemName.Text + "_" + txt_line.Text + "_" + txt_ca.Text + "_" + txt_date.Text + "_" + txt_worker.Text + "_" + cb_Type.SelectedItem.ToString();
@@ -7749,6 +7780,8 @@ namespace Funtion_F3_SMT
                     if (txt_itemcode_nvl.Text != "" && txt_lotno_nvl.Text != "")
                     {
                         filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txt_itemcode_nvl.Text, txt_lotno_nvl.Text, sheet + infor });
+                        itemCode = txt_itemcode_nvl.Text;
+                        lotNo = txt_lotno_nvl.Text;
 
                     }
                     else
@@ -7760,7 +7793,7 @@ namespace Funtion_F3_SMT
                 }
 
             lblsave:
-                DataTable dt = TDMK_Code.Datatable_Filter(sqlcon, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), filter_str);
+                DataTable dt = TDMK_Code.Datatable_Filter(sqlcon, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "") + "_NAS", filter_str);
                 //DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, sheet, cb_Type.SelectedItem.ToString() }));
                 if (dt.Rows.Count == 0)
                 {
@@ -7784,17 +7817,16 @@ namespace Funtion_F3_SMT
                             if (chk)
                             {
                                 DataTable tbl_data_analysis = (DataTable)dgv_Analysis.DataSource;
-                                int i = TDMK_Code.SQL_MAX(sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), "ID", sqlcon) + 1;
-                                foreach (DataRow dr in tbl_data_analysis.Rows)
-                                {
-                                    dr[0] = i;
-                                    i++;
-                                }
+                                int i = TDMK_Code.SQL_MAX(sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "") + (!LegacyMode.Checked == true ? "_Nas" : ""), "ID", sqlcon) + 1;
+                                //foreach (DataRow dr in tbl_data_analysis.Rows)
+                                //{
+                                //    dr[0] = i;
+                                //    i++;
+                                //}
                                 if (tbl_data_analysis.Columns.Contains("ProductID"))
                                 {
                                     string str = ProductIDService.ConverterProductID(tbl_data_analysis);
-                                    string itemCode = txtItemCode.Text;
-                                    string lotNo = txtLotNo.Text;
+                         
                                     string process = sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "");
                                     try
                                     {
@@ -7807,7 +7839,31 @@ namespace Funtion_F3_SMT
                                     }
                                     tbl_data_analysis.Columns.Remove("ProductID");
                                 }
-                                BatchBulkCopy(sqlcon, tbl_data_analysis, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""));
+
+                                NasRepository nas = new NasRepository();
+                                string location = nas.HandleImageDataTable(tbl_data_analysis, sheet, itemCode, lotNo);
+                                string json = ConverterService.DataTableToJson(tbl_data_analysis);
+                                DataRow row = dt.NewRow();
+                                string sheetZ = tbl_data_analysis.Rows[0]["Sheet"].ToString();
+                                int s = location.Length;
+                                //row["ID"] = i;
+                              
+                                row["ItemCode"] = itemCode;
+                                row["LotNo"] = lotNo;
+                                row["Data"] = json;
+                                row["Sheet"] = sheetZ;
+                                row["LocationImg"] = location;
+                                dt.Rows.Add(row);
+                                try
+                                {
+
+                                    new DBContext().BuckDataTable(dt, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "") + "_NAS", new[] { "ItemCode", "LotNo" }, null, "ID");
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show($"Error: {ex.Message}");
+                                }
+                                //BatchBulkCopy(sqlcon, dt, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "") + "_NAS");
 
                                 int st = 1;
                                 foreach (DataRow dr in tbl_data_analysis.Rows)
@@ -7849,6 +7905,7 @@ namespace Funtion_F3_SMT
                         }
                     }
                     else
+
                     {
                         MessageBox.Show(new Form { TopMost = true }, "Không có dữ liệu. Không thể lưu", "Thông báo");
                     }
@@ -7861,7 +7918,7 @@ namespace Funtion_F3_SMT
                         {
                             if (UserSession.Instance.IsLoggedIn)
                             {
-                                TDMK_Code.Delelte_FilteredItem_arr(sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), sqlcon, filter_str);
+                                TDMK_Code.Delelte_FilteredItem_arr(sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "") + "_NAS", sqlcon, filter_str);
                                 //   TDMK_Code.Delelte_FilteredItem_arr(sheet + "_LOGFILE", sqlcon, filter_str);
                                 goto lblsave;
                             }
@@ -7878,7 +7935,7 @@ namespace Funtion_F3_SMT
                         {
                             if (admin_mode == "Admin mode")
                             {
-                                TDMK_Code.Delelte_FilteredItem_arr(sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), sqlcon, filter_str);
+                                TDMK_Code.Delelte_FilteredItem_arr(sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "") + "_NAS", sqlcon, filter_str);
 
                                 btnEdit.BackColor = Color.GreenYellow;
                                 goto lblsave;
@@ -11644,13 +11701,16 @@ namespace Funtion_F3_SMT
                     if (dt_spec.Rows.Count > 0)
                     {
                         string infor = "/" + txt_ItemName.Text + "_" + txt_line.Text + "_" + txt_ca.Text + "_" + txt_date.Text + "_" + txt_worker.Text + "_" + cb_Type.SelectedItem.ToString();
-                        string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txtItemCode.Text, txtLotNo.Text, sheet + infor });
+                        string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txtItemCode.Text.PadRight(10), txtLotNo.Text.PadRight(10), sheet + infor });
 
+                        string itemCodeZ = txtItemCode.Text, lotNoZ = txtLotNo.Text;
                         if (sheet.Contains("UNMATING") || sheet.Contains("COUPON"))
                         {
                             if (txt_itemcode_nvl.Text != "" && txt_lotno_nvl.Text != "")
                             {
-                                filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txt_itemcode_nvl.Text, txt_lotno_nvl.Text, sheet + infor });
+                                filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txt_itemcode_nvl.Text.PadRight(20), txt_lotno_nvl.Text.PadRight(10), sheet + infor });
+                                itemCodeZ = txt_itemcode_nvl.Text;
+                                lotNoZ = txt_lotno_nvl.Text;
                             }
                             else
                             {
@@ -11660,7 +11720,15 @@ namespace Funtion_F3_SMT
 
                         }
 
-                        DataTable Data_all = TDMK_Code.Datatable_Filter(sqlcon, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""), filter_str);
+                        DataTable Data_all = TDMK_Code.Datatable_Filter(sqlcon, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "") + (!LegacyMode.Checked == true ? "_NAS" : ""), filter_str);
+                        if (!LegacyMode.Checked && Data_all.Rows.Count > 0)
+                        {
+                            string data = Data_all.Rows[0]["Data"].ToString();
+                            string location = Data_all.Rows[0]["LocationImg"].ToString();
+                            Data_all = ConverterService.JsonToDataTable(data);
+                            NasRepository nas = new NasRepository();
+                            nas.MergeDataTable(Data_all, sheet, itemCodeZ, lotNoZ, location);
+                        }
                         try
                         {
                             ProductIDService.FillProductID(Data_all, txtItemCode.Text, txtLotNo.Text, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : ""));

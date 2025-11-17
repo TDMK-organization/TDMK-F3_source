@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -165,7 +167,23 @@ namespace OK2SHIP_SMT.Services
             }
             return new KeyValuePair<Dictionary<string, DataTable>, Dictionary<string, List<DateTime>>>(dic, dic_list);
         }
+        public static DataTable getStructorPeel()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("ItemCode", typeof(string));
+            dt.Columns.Add("LotNo", typeof(string));
+            dt.Columns.Add("Pcs_No", typeof(string));
+            dt.Columns.Add("Image_Before", typeof(Image));
+            dt.Columns.Add("Image_After", typeof(Image));
+            dt.Columns.Add("Graph", typeof(Image));
+            dt.Columns.Add("Data", typeof(string));
+            dt.Columns.Add("Operator", typeof(string));
+            dt.Columns.Add("Time_Update", typeof(string));
+            dt.Columns.Add("Remark", typeof(string));
 
+            return dt;
+        }
         public void GetProductID(string itemCode, string lotNo, string location, string type, DataTable data_tbl)
         {
             if (string.IsNullOrEmpty(location) || string.IsNullOrEmpty(type) || data_tbl == null || data_tbl.Columns.Count == 0)
@@ -192,6 +210,10 @@ namespace OK2SHIP_SMT.Services
         public void ExportWCA(ExcelWorksheet ws, string itemCode, string lotNo)
         {
             KeyValuePair<Dictionary<string, DataTable>, Dictionary<string, List<DateTime>>> diz = LoadWCA(itemCode, lotNo, "NPI");
+            if (diz.Key.Keys.Count <= 0)
+            {
+                throw new Exception("No Data");
+            }
             string[] strZ = new[] { "Result data machine", "After Packing 60 days", "Sample 32" };
             #region Insert col
             IDictionary<string, string> dicZ = ExportProcess.FindAddressByText(ws, strZ);
@@ -291,9 +313,9 @@ namespace OK2SHIP_SMT.Services
             #endregion
             return;
         }
-        public DataTable loadBonding(string itemCode, string lotNo)
+        public DataTable loadBonding(string itemCode, string lotNo, bool nas_status)
         {
-            DataTable dataTable = _dbContext.LoadDataTable("Roughness", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
+            DataTable dataTable = _dbContext.LoadDataTable("Roughness" + (nas_status ? "_NAS" : ""), new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
             ProductIDService.FillProductID(dataTable, itemCode, lotNo, "Roughness");
             int i = 1;
             foreach (DataRow row in dataTable.Rows)
@@ -302,13 +324,37 @@ namespace OK2SHIP_SMT.Services
             }
             return dataTable;
         }
-        public DataTable loadPeel(string itemCode, string lotNo)
+        public DataTable loadPeel(string itemCode, string lotNo, bool prime = true)
         {
-            DataTable dataTable = _dbContext.LoadDataTable("ACF_BONDING", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
-            ProductIDService.FillProductID(dataTable, itemCode, lotNo, "ACF_BONDING");
-            return dataTable;
+            try
+            {
+                DataTable dataTable = _dbContext.LoadDataTable("ACF_BONDING" + (!prime ? "" : "_NAS"), new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
+                if (prime)
+                {
+
+                    string json = dataTable.Rows[0]["Data"].ToString();
+                    string locationImg = dataTable.Rows[0]["LocationImg"].ToString();
+                    dataTable = ConverterService.JsonToDataTable(json);
+                    NasRepository nas = new NasRepository();
+                    nas.MergeDataTable(dataTable, "ACF_BONDING_NAS", itemCode.PadRight(10), lotNo.PadRight(10), locationImg);
+                }
+                try
+                {
+
+                    ProductIDService.FillProductID(dataTable, itemCode, lotNo, "ACF_BONDING");
+                }
+                catch
+                {
+
+                }
+                return dataTable;
+            }
+            catch
+            {
+                throw new Exception("Không có dữ liệu ACF BONDING trong database");
+            }
         }
-        public void ExportRoughness(string itemCode, string lotNo, ExcelWorksheet ws)
+        public void ExportRoughness(string itemCode, string lotNo, ExcelWorksheet ws, bool nas_mode)
         {
             List<string> list = new[] { "Surface Roughness Measurement", "Max", "Min", "Mean", "Std Dev", "Cpk" }.ToList();
             for (int i = 1; i <= 32; i++)
@@ -328,7 +374,11 @@ namespace OK2SHIP_SMT.Services
                 List<string> sa3 = new List<string>();
                 List<string> sq3 = new List<string>();
                 List<string> sdr3 = new List<string>();
-                DataTable dataTable = loadBonding(itemCode, lotNo);
+                DataTable dataTable = loadBonding(itemCode, lotNo, nas_mode);
+                if(dataTable.Rows.Count <= 0)
+                {
+                    throw new Exception("No Data");
+                }
                 foreach (DataRow row in dataTable.Rows)
                 {
                     if (dic.TryGetValue($"Sample {row["ID"]}", out string addressX))
@@ -545,7 +595,7 @@ namespace OK2SHIP_SMT.Services
             return dic;
         }
 
-        public void ExportBoding(ExcelWorksheet ws, string itemCode, string lotNo)
+        public void ExportBoding(ExcelWorksheet ws, string itemCode, string lotNo, bool nas_mode)
         {
             List<string> list = new List<string>();
             for (int i = 1; i <= 32; i++)
@@ -561,6 +611,10 @@ namespace OK2SHIP_SMT.Services
             {
                 int rowSRM = ws.Cells[address].End.Row;
                 DataTable dataTable = loadPeel(itemCode, lotNo);
+                if (dataTable.Rows.Count <= 0)
+                {
+                    throw new Exception("No Data");
+                }
                 List<string> dataList = new List<string>();
                 foreach (DataRow row in dataTable.Rows)
                 {
@@ -576,10 +630,13 @@ namespace OK2SHIP_SMT.Services
                                 address = item;
                             }
                         }
-                        ws.Cells[ExportProcess.AddRow(address, -1)].Value = row["ProductID"];
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], (byte[])row["Image_Before"], $"{Guid.NewGuid()}");
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], (byte[])row["Image_After"], $"{Guid.NewGuid()}");
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 3)], (byte[])row["Graph"], $"{Guid.NewGuid()}");
+                        if (dataTable.Columns.Contains("ProductID"))
+                        {
+                            ws.Cells[ExportProcess.AddRow(address, -1)].Value = row["ProductID"];
+                        }
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], TDMK_ImageConverter.ImageToByteArray((Image)row["Image_Before"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], TDMK_ImageConverter.ImageToByteArray((Image)row["Image_After"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 3)], TDMK_ImageConverter.ImageToByteArray((Image)row["Graph"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
                         try
                         {
                             ws.Cells[ExportProcess.AddRow(address, 4)].Value = double.Parse(row["Data"].ToString());

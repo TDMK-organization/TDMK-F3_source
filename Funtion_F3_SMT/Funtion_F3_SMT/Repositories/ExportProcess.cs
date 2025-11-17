@@ -283,12 +283,12 @@ namespace OK2SHIP_SMT.Repositories
         }
         public string SaveExcelWorksheet(ExcelPackage excelPackage, string sheetName, string nameFile, string type = "NPI", bool open = true)
         {
-            string[] sheetNames = sheetName.Split(':');
+            string[] sheetNames = sheetName.Replace(" ", "_").ToUpper().Split(':');
             DateTime nowDate = DateTime.Now;
             IList<ExcelWorksheet> worksheets = new List<ExcelWorksheet>();
             foreach (var item in excelPackage.Workbook.Worksheets)
             {
-                if (!sheetNames.Contains(item.Name.Trim()))
+                if (!sheetNames.Contains(item.Name.Trim().Replace(" ", "_").ToUpper()))
                 {
                     worksheets.Add(item);
                 }
@@ -384,7 +384,7 @@ namespace OK2SHIP_SMT.Repositories
         {
             foreach (ExcelWorksheet sheet in excelPackage.Workbook.Worksheets)
             {
-                if (sheet.Name.Trim().Equals(sheetName))
+                if (sheet.Name.Trim().Replace(" ", "_").ToUpper().Equals(sheetName.Replace(" ", "_").ToUpper()))
                 {
                     return sheet;
                 }
@@ -448,7 +448,7 @@ namespace OK2SHIP_SMT.Repositories
             {
                 for (int j = startRow; j <= row; j++)
                 {
-                    string cellValue = workSheet.Cells[j, i].Text.Trim().Replace("\n", "");
+                    string cellValue = workSheet.Cells[j, i].Text.Trim().Replace("\n", "").ToUpper();
                     if (!string.IsNullOrEmpty(cellValue.ToString()))
                     {
                         foreach (string str in colHeaderz)
@@ -457,11 +457,11 @@ namespace OK2SHIP_SMT.Repositories
                             bool prime = false;
                             if (eq)
                             {
-                                prime = cellValue.Equals(str);
+                                prime = cellValue.Equals(str.ToUpper());
                             }
                             else
                             {
-                                prime = cellValue.Contains(str);
+                                prime = cellValue.Contains(str.ToUpper());
                             }
                             if (prime)
                             {

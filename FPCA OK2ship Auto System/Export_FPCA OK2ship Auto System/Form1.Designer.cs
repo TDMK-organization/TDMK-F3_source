@@ -51,10 +51,13 @@
             this.spMain = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cb_legacy = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btn_convert = new System.Windows.Forms.Button();
             this.btn_export = new System.Windows.Forms.Button();
             this.spDataView = new System.Windows.Forms.SplitContainer();
+            this.ExportManager = new System.Windows.Forms.TabPage();
+            this.btn_open = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_progress)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_View)).BeginInit();
@@ -73,6 +76,7 @@
             this.spDataView.Panel1.SuspendLayout();
             this.spDataView.Panel2.SuspendLayout();
             this.spDataView.SuspendLayout();
+            this.ExportManager.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbAll
@@ -258,6 +262,7 @@
             // 
             this.tabMain.Controls.Add(this.tabSelFunc);
             this.tabMain.Controls.Add(this.tabExport);
+            this.tabMain.Controls.Add(this.ExportManager);
             this.tabMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabMain.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabMain.Location = new System.Drawing.Point(0, 0);
@@ -401,6 +406,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.cb_legacy);
             this.groupBox3.Controls.Add(this.cbl_sheet);
             this.groupBox3.Controls.Add(this.cbAll);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -411,6 +417,17 @@
             this.groupBox3.TabIndex = 21;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = " Lựa chọn sheet xuất dữ liệu";
+            // 
+            // cb_legacy
+            // 
+            this.cb_legacy.AutoSize = true;
+            this.cb_legacy.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_legacy.Location = new System.Drawing.Point(6, 31);
+            this.cb_legacy.Name = "cb_legacy";
+            this.cb_legacy.Size = new System.Drawing.Size(91, 22);
+            this.cb_legacy.TabIndex = 17;
+            this.cb_legacy.Text = "LEGACY";
+            this.cb_legacy.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -474,6 +491,27 @@
             this.spDataView.SplitterDistance = 52;
             this.spDataView.TabIndex = 45;
             // 
+            // ExportManager
+            // 
+            this.ExportManager.Controls.Add(this.btn_open);
+            this.ExportManager.Location = new System.Drawing.Point(4, 27);
+            this.ExportManager.Name = "ExportManager";
+            this.ExportManager.Padding = new System.Windows.Forms.Padding(3);
+            this.ExportManager.Size = new System.Drawing.Size(882, 725);
+            this.ExportManager.TabIndex = 2;
+            this.ExportManager.Text = "Export Manager";
+            this.ExportManager.UseVisualStyleBackColor = true;
+            // 
+            // btn_open
+            // 
+            this.btn_open.Location = new System.Drawing.Point(330, 260);
+            this.btn_open.Name = "btn_open";
+            this.btn_open.Size = new System.Drawing.Size(210, 51);
+            this.btn_open.TabIndex = 0;
+            this.btn_open.Text = "Open Manager";
+            this.btn_open.UseVisualStyleBackColor = true;
+            this.btn_open.Click += new System.EventHandler(this.btn_open_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -503,6 +541,7 @@
             this.spDataView.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.spDataView)).EndInit();
             this.spDataView.ResumeLayout(false);
+            this.ExportManager.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -534,6 +573,9 @@
         private System.Windows.Forms.Button btn_export;
         private System.Windows.Forms.Label lblBending;
         private System.Windows.Forms.Label lblType3;
+        private System.Windows.Forms.TabPage ExportManager;
+        private System.Windows.Forms.CheckBox cb_legacy;
+        private System.Windows.Forms.Button btn_open;
     }
 }
 

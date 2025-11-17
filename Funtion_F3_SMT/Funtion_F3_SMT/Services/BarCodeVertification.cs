@@ -1,5 +1,6 @@
 ﻿using OfficeOpenXml;
 using OK2SHIP_SMT.Repositories;
+using Patagames.Ocr.Enums;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -23,48 +24,122 @@ namespace OK2SHIP_SMT.Services
         public DataTable ReadProcess(string locationFolder, string itemCode, string lotNo)
         {
             DataTable dataTable = new DataTable();
-
-            try
+            if (locationFolder.Contains(".csv"))
             {
-                string[] colView = { "DateTime", "Module", "Overall Grade" };
-                DataTable dataTables = FileFolderRepository.ConvertCsvToDataTable(locationFolder, 100).DefaultView.ToTable(false, colView);
-                dataTable = dataTables.AsEnumerable()
-                                      .Where(row => row.Field<string>("Overall Grade") == "A")
-                                      .Take(100)
-                                      .CopyToDataTable();
-                dataTable.Columns.Add("ID");
-                //convert DateTime
-                dataTable.Columns.Add("Datetime", typeof(String));
-                foreach (DataRow row in dataTable.Rows)
+                try
                 {
-                    if (DateTime.TryParse(row["DateTime"].ToString(), out DateTime dateTimeValue))
+                    string[] colView = { "DateTime", "Module", "Overall Grade" };
+                    DataTable dataTables = FileFolderRepository.ConvertCsvToDataTable(locationFolder, 100).DefaultView.ToTable(false, colView);
+                    dataTable = dataTables.AsEnumerable()
+                                          .Where(row => row.Field<string>("Overall Grade") == "A")
+                                          .Take(100)
+                                          .CopyToDataTable();
+                    dataTable.Columns.Add("ID");
+                    //convert DateTime
+                    dataTable.Columns.Add("Datetime", typeof(String));
+                    foreach (DataRow row in dataTable.Rows)
                     {
-                        row["Datetime"] = checkDOM(row["Module"].ToString()).ToString("MMM-dd");
+                        if (DateTime.TryParse(row["DateTime"].ToString(), out DateTime dateTimeValue))
+                        {
+                            row["Datetime"] = checkDOM(row["Module"].ToString()).ToString("MMM-dd");
+                        }
+                        else
+                        {
+                            // Handle conversion failure (e.g., assign DateTime.MinValue)
+                            row["Datetime"] = DateTime.MinValue;
+                        }
                     }
-                    else
-                    {
-                        // Handle conversion failure (e.g., assign DateTime.MinValue)
-                        row["Datetime"] = DateTime.MinValue;
-                    }
-                }
 
-                // Remove old column
-                dataTable.Columns.Remove("DateTime");
-                //
+                    // Remove old column
+                    dataTable.Columns.Remove("DateTime");
+                    //
+                    dataTable.Columns.Add("ItemCode");
+                    dataTable.Columns.Add("LotNo");
+                    int id = 1;
+                    foreach (DataRow item in dataTable.Rows)
+                    {
+                        item["ItemCode"] = itemCode;
+                        item["LotNo"] = lotNo;
+                        item["ID"] = id++;
+                    }
+                    //Debugger.Break();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            else
+            {
+                Debugger.Break();
+                dataTable.Columns.Add("ID");
+                dataTable.Columns.Add("Module");
+                dataTable.Columns.Add("Overall Grade");
+                dataTable.Columns.Add("Datetime");
                 dataTable.Columns.Add("ItemCode");
                 dataTable.Columns.Add("LotNo");
-                int id = 1;
-                foreach (DataRow item in dataTable.Rows)
+                try
                 {
-                    item["ItemCode"] = itemCode;
-                    item["LotNo"] = lotNo;
-                    item["ID"] = id++;
+                    using (ExcelPackage package = ExportProcess.openPackage(locationFolder))
+                    {
+                        using (ExcelWorksheet worksheet = package.Workbook.Worksheets["Barcode"])
+                        {
+                            string[] nameColumn = { "No", "Qr code", "Grade", "Check time" };
+                            IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, nameColumn, true);
+                            int maxRow = worksheet.Dimension.End.Row;
+                            int counting = 100, row = 1;
+                            string address = "";
+                            if (dic.TryGetValue("Grade", out address))
+                            {
+                                while (counting != 0 || row <= maxRow)
+                                {
+                                    if (worksheet.Cells[ExportProcess.AddRow(address, row)].Value == null)
+                                    {
+                                        break;
+                                    }
+                                    if (worksheet.Cells[ExportProcess.AddRow(address, row)].Value.ToString().Trim().Equals("A"))
+                                    {
+                                        DataRow dr = dataTable.NewRow();
+                                        //ID
+                                        dr["ID"] = dataTable.Rows.Count + 1;
+                                        //Module
+                                        if (dic.TryGetValue("Qr code", out string addrModule))
+                                        {
+                                            dr["Module"] = worksheet.Cells[ExportProcess.AddRow(addrModule, row)].Value.ToString().Trim();
+                                        }
+                                        //Overall Grade
+                                        dr["Overall Grade"] = worksheet.Cells[ExportProcess.AddRow(address, row)].Value.ToString().Trim();
+                                        //Datetime
+                                        if (dic.TryGetValue("Check time", out string addrDateTime))
+                                        {
+                                            if (DateTime.TryParse(worksheet.Cells[ExportProcess.AddRow(addrDateTime, row)].Value.ToString().Trim(), out DateTime dateTimeValue))
+                                            {
+                                                dr["Datetime"] = checkDOM(dr["Module"].ToString()).ToString("MMM-dd");
+                                            }
+                                            else
+                                            {
+                                                // Handle conversion failure (e.g., assign DateTime.MinValue)
+                                                dr["Datetime"] = DateTime.MinValue;
+                                            }
+                                        }
+                                        //ItemCode
+                                        dr["ItemCode"] = itemCode;
+                                        //LotNo
+                                        dr["LotNo"] = lotNo;
+                                        dataTable.Rows.Add(dr);
+                                        counting--;
+                                        row++;
+                                    }
+                                }
+                            }
+
+                        }
+                    }
                 }
-                //Debugger.Break();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                catch
+                {
+                    throw new Exception("Barcode: Read file error!");
+                }
             }
             return dataTable;
         }
@@ -109,7 +184,7 @@ namespace OK2SHIP_SMT.Services
                     IDictionary<string, string> addressDic = ExportProcess.FindAddressByText(workSheet, strings);
                     string factoryCode = workSheet.Cells[workSheet.Cells[addressDic["Factory code"]].End.Row, workSheet.Cells[addressDic["Factory code"]].End.Column + 2].Text.ToString();
                     string ECode = workSheet.Cells[workSheet.Cells[addressDic["EEEEEEE code"]].End.Row + 1, workSheet.Cells[addressDic["EEEEEEE code"]].End.Column].Text.ToString();
-                    string addressItem = addressDic["Item name"].Split('-')[1];
+                    string addressItem = addressDic["Item name"].Split('-')[addressDic["Item name"].Split('-').Count() - 1];
                     string itemName = workSheet.Cells[workSheet.Cells[addressItem].End.Row + 1, workSheet.Cells[addressItem].End.Column].Text.ToString();
                     return $"{itemName}-{factoryCode}-{ECode}";
                 }
@@ -140,17 +215,34 @@ namespace OK2SHIP_SMT.Services
                     IList<string> listCodeRule = new List<string>();
                     if (primeCodeRule)
                     {
+                        string addz = add.Split('-')[0];
+                        foreach (string item in add.Split('-'))
+                        {
+                            if (workSheet.Cells[item].End.Row > workSheet.Cells[addz].End.Row)
+                            {
+                                addz = item;
+                            }
+                        }
+                        add = addz;
                         int startS = 0;
                         string code = dt.Rows[0]["Module"].ToString();
                         workSheet.Cells[ExportProcess.AddRow(add, -1)].Value = code;
+                  
                         while (workSheet.Cells[ExportProcess.AddRow(add, 1)].Value != null)
                         {
-                            add = ExportProcess.AddRow(add, 1);
-                            string codeRule = workSheet.Cells[add].Value == null ? null : workSheet.Cells[add].Value.ToString();
-                            listCodeRule.Add(codeRule);
-                            workSheet.Cells[ExportProcess.AddColumn(add, 2)].Value = code.Substring(startS, codeRule.Length);
-                            workSheet.Cells[ExportProcess.AddColumn(add, 3)].Value = ValidateService.isDigitAndChar(code.Substring(startS, codeRule.Length)) ? "OK" : "NG";
-                            startS += codeRule.Length;
+                            try
+                            {
+                                add = ExportProcess.AddRow(add, 1);
+                                string codeRule = workSheet.Cells[add].Value == null ? null : workSheet.Cells[add].Value.ToString();
+                                listCodeRule.Add(codeRule);
+                                workSheet.Cells[ExportProcess.AddColumn(add, 2)].Value = code.Substring(startS, codeRule.Length);
+                                workSheet.Cells[ExportProcess.AddColumn(add, 3)].Value = ValidateService.isDigitAndChar(code.Substring(startS, codeRule.Length)) ? "OK" : "NG";
+                                startS += codeRule.Length;
+                            }
+                            catch
+                            {
+                                Debugger.Break();
+                            }
                         }
                     }
                     TableOfContentService tbd = new TableOfContentService();
@@ -162,7 +254,10 @@ namespace OK2SHIP_SMT.Services
                     }
                     string EEEEECode = tbc_DT.Rows[0]["EEEECode"].ToString().TrimEnd('\n').TrimEnd('\r');
                     string FactoryCode = tbc_DT.Rows[0]["FactoryCode"].ToString();
-
+                    if (string.IsNullOrEmpty(EEEEECode) || string.IsNullOrEmpty(FactoryCode))
+                    {
+                        throw new Exception("EEEEECode or FactoryCode is null");
+                    }
                     foreach (DataRow item in dt.Rows)
                     {
                         i++;
@@ -262,7 +357,7 @@ namespace OK2SHIP_SMT.Services
         public DataTable CheckSum(DataTable dataTable)
         {
 
-            if(dataTable == null)
+            if (dataTable == null)
             {
                 return dataTable;
             }
@@ -442,7 +537,7 @@ namespace OK2SHIP_SMT.Services
 
             DBContext _db = new DBContext();
             DataTable dt = _db.LoadDataTable("TABLE_OF_CONTENT_SETTING", new[] { "ItemName" }, new[] { itemName }, new[] { "ItemName", "EEEECode", "FactoryCode" });
-            if(dt.Rows.Count <= 0)
+            if (dt.Rows.Count <= 0)
             {
                 throw new Exception($"Chưa cài đặt table of content itemName {itemName} trên hệ thống!");
             }
@@ -451,7 +546,7 @@ namespace OK2SHIP_SMT.Services
                 row["FactoryCode"] = factoryCode;
                 row["EEEECode"] = eCode;
             }
-            return _db.Update("TABLE_OF_CONTENT_SETTING", dt, new[] { "ItemName" });
+            return _db.BuckDataTable(dt,"TABLE_OF_CONTENT_SETTING", new[] { "ItemName" });
         }
     }
 }

@@ -15,6 +15,7 @@ namespace OK2SHIP_SMT.Services
 {
     class SEMServices
     {
+        private NasRepository _nas = new NasRepository();
 
         private DBContext _context = new DBContext();
         private List<KeyValuePair<int, Image>> getDataFolder(string dir, List<bool> ConverterString = null)
@@ -70,7 +71,7 @@ namespace OK2SHIP_SMT.Services
 
             return imageList;
         }
-        public DataTable LoadDataProcess(string itemCode, string lotNo)
+        public DataTable LoadDataProcess(string itemCode, string lotNo, bool prime = false)
         {
             DataTable table = new DataTable();
             try
@@ -81,12 +82,29 @@ namespace OK2SHIP_SMT.Services
                     throw new Exception("ItemCode hoặc LotNo không được để trống");
                 }
 
-                table = _context.LoadDataTable("SEM_BSE_Binarization_Logfile", new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotNo });
-                int i = 0;
-                foreach (DataRow item in table.Rows)
+                table = _context.LoadDataTable("SEM_BSE_Binarization_Logfile" + (prime ? "" : "_NAS"), new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotNo });
+                if (table.Rows.Count <= 0)
                 {
-                    i++;
-                    item["Id"] = i;
+                    table = getDataTableStructor();
+                }
+                else
+                {
+                    if (!prime)
+                    {
+                        try
+                        {
+                            string json = table.Rows[0]["Data"].ToString();
+                            string address = table.Rows[0]["AddressImg"].ToString();
+                            table = ConverterService.JsonToDataTable(json);
+                            NasRepository nas = new NasRepository();
+                            nas.MergeDataTable(table, "SEM_BSE_Binarization_Logfile", itemCode, lotNo, address);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception($"Lỗi khi đọc dữ liệu: {ex.Message}");
+                        }
+                    }
+
                 }
             }
             catch (Exception ex)
@@ -132,7 +150,7 @@ namespace OK2SHIP_SMT.Services
             lotno = lotno.Trim();
             if (!prime)
             {
-                DataTable table = _context.LoadDataTable("SEM_BSE_Binarization_Logfile", new string[] { "ItemCode", "LotNo" }, new string[] { itemcode, lotno }, new[] { "ItemCode" });
+                DataTable table = getDataTableStructor();
 
                 if (table.Rows.Count > 0)
                 {
@@ -189,7 +207,7 @@ namespace OK2SHIP_SMT.Services
                     dic.Add(s, getDataFolder(dir, new List<bool> { false }));
                 }
             }
-            dt = _context.GetTableStructure("SEM_BSE_Binarization_Logfile");
+            dt = getDataTableStructor();
             //int id = TDMK_SQL.SQL_MAX("SEM_BSE_Binarization_Logfile", "Id", sqlConneciton);
             // row trên datatable
             Dictionary<int, int> coupleOf = new Dictionary<int, int>();
@@ -256,6 +274,25 @@ namespace OK2SHIP_SMT.Services
             }
             return dt.AsEnumerable().OrderBy(row => row.Field<int>("id")).CopyToDataTable(); ;
         }
+
+        private DataTable getDataTableStructor()
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("ID", typeof(int));
+            dataTable.Columns.Add("ItemCode", typeof(string));
+            dataTable.Columns.Add("LotNo", typeof(string));
+            dataTable.Columns.Add("SEM200250", typeof(Image));
+            dataTable.Columns.Add("SEM500700", typeof(Image));
+            dataTable.Columns.Add("SEM5K", typeof(Image));
+            dataTable.Columns.Add("Judgement", typeof(string));
+            dataTable.Columns.Add("Binarization200250", typeof(Image));
+            dataTable.Columns.Add("Black200250", typeof(double));
+            dataTable.Columns.Add("Binarization500700", typeof(Image));
+            dataTable.Columns.Add("Black500700", typeof(double));
+            dataTable.Columns.Add("CheckResults", typeof(string));
+            return dataTable;
+        }
+
         private void addDT(DataTable datatable, DataTable blackValue, Dictionary<int, int> couple, string colName)
         {
             int i = 1;
@@ -284,14 +321,14 @@ namespace OK2SHIP_SMT.Services
                 int id = item.Key, row;
                 if (couple.TryGetValue(id, out row))
                 {
-                    datatable.Rows[row][colName] = TDMK_ImageConverter.ImageToByteArray(item.Value, ImageFormat.Jpeg);
+                    datatable.Rows[row][colName] = item.Value;
                 }
                 else
                 {
                     couple.Add(id, datatable.Rows.Count);
                     var newRow = datatable.NewRow();
                     newRow["Id"] = id;
-                    newRow[colName] = TDMK_ImageConverter.ImageToByteArray(item.Value, ImageFormat.Jpeg);
+                    newRow[colName] = item.Value;
                     datatable.Rows.Add(newRow);
                 }
             }
@@ -336,10 +373,9 @@ namespace OK2SHIP_SMT.Services
             string lotno = dataTable.Rows[0]["LotNo"].ToString();
 
             // 1.2 Load data from database
-            DataTable dt = _context.LoadDataTable("SEM_BSE_Binarization_Logfile", new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotno }, new string[] { "ItemCode", "LotNo" });
+            DataTable dt = _context.LoadDataTable("SEM_BSE_Binarization_Logfile_NAS", new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotno });
 
             // 1.3 Nếu dữ liệu đã tồn tại và không được phép lưu thì trả về thông báo để hỏi người dùng
-
 
             if (!prime && dt.Rows.Count > 0)
             {
@@ -347,12 +383,22 @@ namespace OK2SHIP_SMT.Services
             }
 
             //2. Save data to database if prime = true
-            //2.1 Lưu và thay thế
-            int count = _context.BuckDataTable(dataTable, "SEM_BSE_Binarization_Logfile", new string[] { "ItemCode", "LotNo" }, null, "Id");
-
+            //2.1 Lưu nas
+            string location = _nas.HandleImageDataTable(dataTable, "SEM_BSE_Binarization_Logfile", itemCode, lotno);
+            //2.2 Extract Data
+            string json = ConverterService.DataTableToJson(dataTable);
+            DataRow row = dt.NewRow();
+            dt.Rows.Clear();
+            row["ItemCode"] = itemCode;
+            row["LotNo"] = lotno;
+            row["Data"] = json;
+            row["AddressImg"] = location;
+            dt.Rows.Add(row);
+            //2.2 Luwu database
+            int count = _context.BuckDataTable(dt, "SEM_BSE_Binarization_Logfile_NAS", new string[] { "ItemCode", "LotNo" }, null, "Id");
         }
 
-        public string Export(string itemCode, string lotNo, bool primeAcpt)
+        public string Export(string itemCode, string lotNo, bool primeAcpt, bool prime = false)
         {
             //1. Kiểm tra ItemCode Lotno
             if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
@@ -361,7 +407,7 @@ namespace OK2SHIP_SMT.Services
             }
 
             //2. Load data from database
-            DataTable dt = _context.LoadDataTable("SEM_BSE_Binarization_Logfile", new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotNo });
+            DataTable dt = LoadDataProcess(itemCode, lotNo, prime);
             int countData = dt.Rows.Count;
             if (countData <= 0)
             {
@@ -417,13 +463,13 @@ namespace OK2SHIP_SMT.Services
                             if (dic.TryGetValue("SEM 5000", out addressCol))
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                byte[] imgData = (byte[])dt.Rows[iz]["SEM5K"];
+                                byte[] imgData = TDMK_ImageConverter.ImageToByteArray((Image)dt.Rows[iz]["SEM5K"], ImageFormat.Jpeg);
                                 ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData, $"SEM500{iz}");
                             }
 
 
                             /// Insert SEM200-250
-                            byte[] imgData250 = (byte[])dt.Rows[iz]["SEM200250"];
+                            byte[] imgData250 = TDMK_ImageConverter.ImageToByteArray((Image)dt.Rows[iz]["SEM200250"], ImageFormat.Jpeg);
 
 
                             if (dic.TryGetValue("SEM 200-250", out addressCol))
@@ -449,7 +495,7 @@ namespace OK2SHIP_SMT.Services
                             try
                             {
 
-                                byte[] imgData500 = (byte[])dt.Rows[iz]["SEM500700"];
+                                byte[] imgData500 = TDMK_ImageConverter.ImageToByteArray((Image)dt.Rows[iz]["SEM500700"], ImageFormat.Jpeg);
                                 if (dic.TryGetValue("SEM 500-700", out addressCol))
                                 {
                                     addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
@@ -469,7 +515,7 @@ namespace OK2SHIP_SMT.Services
                             try
                             {
                                 //Insert Binarization Image
-                                byte[] imgData200bin = (byte[])dt.Rows[iz]["Binarization500700"];
+                                byte[] imgData200bin = TDMK_ImageConverter.ImageToByteArray((Image)dt.Rows[iz]["Binarization500700"], ImageFormat.Jpeg);
 
                                 if (dic.TryGetValue("Binarization 2", out addressCol))
                                 {
@@ -485,7 +531,7 @@ namespace OK2SHIP_SMT.Services
                             try
                             {
 
-                                byte[] imgData500bin = (byte[])dt.Rows[iz]["Binarization200250"];
+                                byte[] imgData500bin = TDMK_ImageConverter.ImageToByteArray((Image)dt.Rows[iz]["Binarization200250"], ImageFormat.Jpeg);
                                 if (dic.TryGetValue("Binarization 3", out addressCol))
                                 {
                                     addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
@@ -499,26 +545,29 @@ namespace OK2SHIP_SMT.Services
                             }
 
                             //Insert black %
-                            double x2 = (double)dt.Rows[iz]["Black500700"] / 100;
-                            if (dic.TryGetValue("% Black", out addressCol))
+                            if (double.TryParse(dt.Rows[iz]["Black500700"].ToString(), out double d))
                             {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                worksheet.Cells[addressCol].Value = x2;
-                                addressNum += addressCol + ',';
+                                double x2 = d / 100;
+                                if (dic.TryGetValue("% Black", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    worksheet.Cells[addressCol].Value = x2;
+                                    addressNum += addressCol + ',';
 
+                                }
+
+
+                                //Insert Binarization Check  Results
+
+                                if (dic.TryGetValue("Binarization Check  Results", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    worksheet.Cells[addressCol].Value = (Jd.Equals("Level 3") && x2 < 0.43) ? "OK" : "NG";
+                                }
+                                //add row sample
+                                addressRow = ExportProcess.AddRow(addressRow, 1);
+                                iz++;
                             }
-
-
-                            //Insert Binarization Check  Results
-
-                            if (dic.TryGetValue("Binarization Check  Results", out addressCol))
-                            {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                worksheet.Cells[addressCol].Value = (Jd.Equals("Level 3") && x2 < 0.43) ? "OK" : "NG";
-                            }
-                            //add row sample
-                            addressRow = ExportProcess.AddRow(addressRow, 1);
-                            iz++;
                         }
                         if (dic.TryGetValue("Max", out string addressRowz))
                         {

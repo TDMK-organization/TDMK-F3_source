@@ -27,12 +27,12 @@ namespace OK2SHIP_SMT.Services
         {
             // Constructor private để ngăn việc tạo instance từ bên ngoài
             IsLoggedIn = false;
-#if DEBUG
-            Role = "admin";
-            Username = "TDMK_ADMIN";
-            IsLoggedIn = true;
-            User_ID = "ADMIN";
-#endif
+//#if DEBUG
+//            Role = "admin";
+//            Username = "TDMK_ADMIN";
+//            IsLoggedIn = true;
+//            User_ID = "ADMIN";
+//#endif
 
         }
 

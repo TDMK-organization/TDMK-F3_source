@@ -52,6 +52,7 @@
             this.txtOperator = new System.Windows.Forms.TextBox();
             this.btn_export = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
+            this.Legacy = new System.Windows.Forms.CheckBox();
             this.tab_main = new System.Windows.Forms.TabControl();
             this.tab_wetting = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
@@ -418,6 +419,7 @@
             this.tableLayoutPanel8.Controls.Add(this.txtOperator, 4, 0);
             this.tableLayoutPanel8.Controls.Add(this.btn_export, 1, 0);
             this.tableLayoutPanel8.Controls.Add(this.label4, 3, 0);
+            this.tableLayoutPanel8.Controls.Add(this.Legacy, 2, 0);
             this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel8.Location = new System.Drawing.Point(3, 45);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
@@ -492,6 +494,16 @@
             this.label4.TabIndex = 39;
             this.label4.Text = "Operator";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // Legacy
+            // 
+            this.Legacy.AutoSize = true;
+            this.Legacy.Location = new System.Drawing.Point(217, 3);
+            this.Legacy.Name = "Legacy";
+            this.Legacy.Size = new System.Drawing.Size(61, 17);
+            this.Legacy.TabIndex = 42;
+            this.Legacy.Text = "Legacy";
+            this.Legacy.UseVisualStyleBackColor = true;
             // 
             // tab_main
             // 
@@ -1717,5 +1729,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckBox Legacy;
     }
 }

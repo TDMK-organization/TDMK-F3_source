@@ -150,8 +150,16 @@ namespace OK2SHIP_SMT.UserControls
                 }
                 DataRow row = dataTable.NewRow();
                 row["Station"] = value;
-                row["Defect Description"] = imageMAIN;
+
                 row["Defect Name"] = string.IsNullOrEmpty(textBox5.Text) ? "" : textBox5.Text;
+                try
+                {
+                    row["Defect Description"] = imageMAIN;
+                }
+                catch
+                {
+
+                }
                 row["Defects Qty"] = string.IsNullOrEmpty(textBox4.Text) ? "0" : textBox4.Text;
                 row["Defect Rate"] = string.IsNullOrEmpty(textBox6.Text) ? "0" : textBox6.Text;
                 row["Root Cause"] = string.IsNullOrEmpty(textBox7.Text) ? "0" : textBox7.Text;

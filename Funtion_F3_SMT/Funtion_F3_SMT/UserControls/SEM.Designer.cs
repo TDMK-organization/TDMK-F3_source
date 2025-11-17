@@ -62,6 +62,8 @@
             this.btn_Export = new System.Windows.Forms.Button();
             this.btn_LoadData = new System.Windows.Forms.Button();
             this.tlp_fillter = new System.Windows.Forms.TableLayoutPanel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.legacyMode = new System.Windows.Forms.CheckBox();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -91,6 +93,7 @@
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.tbl_Function.SuspendLayout();
+            this.tlp_fillter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -307,6 +310,7 @@
             this.tb_ItemCode.Name = "tb_ItemCode";
             this.tb_ItemCode.Size = new System.Drawing.Size(107, 31);
             this.tb_ItemCode.TabIndex = 1;
+            this.tb_ItemCode.TextChanged += new System.EventHandler(this.tb_ItemCode_TextChanged);
             // 
             // lbLotNo
             // 
@@ -377,6 +381,7 @@
             this.tb_locationFolder.Name = "tb_locationFolder";
             this.tb_locationFolder.Size = new System.Drawing.Size(442, 22);
             this.tb_locationFolder.TabIndex = 5;
+            this.tb_locationFolder.TextChanged += new System.EventHandler(this.tb_locationFolder_TextChanged);
             this.tb_locationFolder.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.tb_loactionFolder_MouseDoubleClick);
             // 
             // lb_loactionFile
@@ -510,6 +515,7 @@
             this.tbl_Function.Name = "tbl_Function";
             this.tbl_Function.RowCount = 1;
             this.tbl_Function.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tbl_Function.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.tbl_Function.Size = new System.Drawing.Size(512, 55);
             this.tbl_Function.TabIndex = 2;
             // 
@@ -541,6 +547,8 @@
             this.tlp_fillter.ColumnCount = 2;
             this.tlp_fillter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlp_fillter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlp_fillter.Controls.Add(this.button1, 0, 0);
+            this.tlp_fillter.Controls.Add(this.legacyMode, 1, 0);
             this.tlp_fillter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlp_fillter.Location = new System.Drawing.Point(3, 3);
             this.tlp_fillter.Name = "tlp_fillter";
@@ -548,6 +556,27 @@
             this.tlp_fillter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlp_fillter.Size = new System.Drawing.Size(164, 49);
             this.tlp_fillter.TabIndex = 1;
+            // 
+            // button1
+            // 
+            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button1.Location = new System.Drawing.Point(3, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(76, 43);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Delete Data";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // legacyMode
+            // 
+            this.legacyMode.AutoSize = true;
+            this.legacyMode.Location = new System.Drawing.Point(85, 3);
+            this.legacyMode.Name = "legacyMode";
+            this.legacyMode.Size = new System.Drawing.Size(76, 17);
+            this.legacyMode.TabIndex = 2;
+            this.legacyMode.Text = "Legacy Mode";
+            this.legacyMode.UseVisualStyleBackColor = true;
             // 
             // dataGridView
             // 
@@ -598,6 +627,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.tbl_Function.ResumeLayout(false);
+            this.tlp_fillter.ResumeLayout(false);
+            this.tlp_fillter.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
 
@@ -640,5 +671,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.TextBox tb_productID;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox legacyMode;
     }
 }

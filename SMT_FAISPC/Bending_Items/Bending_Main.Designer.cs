@@ -591,7 +591,7 @@ namespace Bending_Items
             // 
             // txtItemName
             // 
-            this.txtItemName.Location = new System.Drawing.Point(258, 216);
+            this.txtItemName.Location = new System.Drawing.Point(258, 218);
             this.txtItemName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtItemName.Name = "txtItemName";
             this.txtItemName.Size = new System.Drawing.Size(69, 20);

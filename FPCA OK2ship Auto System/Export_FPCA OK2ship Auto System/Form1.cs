@@ -28,6 +28,7 @@ using Export_FPCA_OK2ship_Auto_System.Services;
 using Export_FPCA_OK2ship_Auto_System.Libary;
 using TDMK_SQL;
 using Export_FPCA_OK2ship_Auto_System.Repositories;
+using Export_FPCA_OK2ship_Auto_System.Views;
 
 
 
@@ -803,7 +804,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                     try
                                                     {
 
-                                                        F_expNPI.export_ACF_Wetting(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
+                                                        F_expNPI.export_ACF_Wetting(ws, txtItemCode.Text, txtLotNo.Text, sqlcon, !cb_legacy.Checked);
                                                     }
                                                     catch (Exception ex)
                                                     {
@@ -812,7 +813,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                     try
                                                     {
 
-                                                        F_expNPI.Export_ACF_Peel(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
+                                                        F_expNPI.Export_ACF_Peel(ws, txtItemCode.Text, txtLotNo.Text, sqlcon, !cb_legacy.Checked);
                                                     }
                                                     catch (Exception ex)
                                                     {
@@ -821,7 +822,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                     try
                                                     {
 
-                                                        F_expNPI.Export_ACFFlatness(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
+                                                        F_expNPI.Export_ACFFlatness(ws, txtItemCode.Text, txtLotNo.Text, sqlcon, !cb_legacy.Checked);
                                                     }
                                                     catch (Exception ex)
                                                     {
@@ -829,7 +830,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                     }
                                                     try
                                                     {
-                                                        F_expNPI.Export_ACF_Roughness(ws, txtItemCode.Text, txtLotNo.Text, sqlcon);
+                                                        F_expNPI.Export_ACF_Roughness(ws, txtItemCode.Text, txtLotNo.Text, sqlcon, !cb_legacy.Checked);
                                                     }
                                                     catch (Exception ex)
                                                     {
@@ -1585,6 +1586,15 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         private void tabMain_SelectedIndexChanged(object sender, EventArgs e)
         {
+        }
+
+        private void btn_open_Click(object sender, EventArgs e)
+        {
+            using (ExportManager form = new ExportManager())
+            {
+                form.ShowDialog();
+            }
+
         }
     }
 }

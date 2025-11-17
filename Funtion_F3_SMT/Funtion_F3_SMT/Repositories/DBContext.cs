@@ -19,7 +19,7 @@ namespace OK2SHIP_SMT.Repositories
     {
         private SqlConnection SqlConnection;
         IniFile TDMK_init;
-
+        private string _nasAddress = "";
         private TDMK_SQL_Lib TDMK_SQL = new TDMK_SQL_Lib();
         /// <summary>
         /// Tạo một bảng mới trong database MSSQL với tên được cung cấp và cấu trúc cơ bản.
@@ -206,6 +206,7 @@ namespace OK2SHIP_SMT.Repositories
             string server_name = TDMK_init.Read("Server", "SMT_Config");
             string server_acc = TDMK_init.Read("Account", "SMT_Config");
             string server_pass = TDMK_init.Read("Password", "SMT_Config");
+            _nasAddress = TDMK_init.Read("NasAddress", "SMT_Config");
             SqlConnection = initial_data($";Connection Timeout=6000;Data Source={server_name};Initial Catalog={catalog};User ID={server_acc};Password='{server_pass}';Encrypt=True;TrustServerCertificate=True;");
             ///////////////////////
             try
@@ -230,7 +231,6 @@ namespace OK2SHIP_SMT.Repositories
         /// <returns></returns>
         public int Update(string TableName, DataTable dt_set, string[] nameColCondition)
         {
-
             // Tạo câu lệnh SQL UPDATE
             List<string> listColCondition = new List<string>();
             foreach (DataRow row in dt_set.Rows)

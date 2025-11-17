@@ -4,6 +4,7 @@ using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Excel;
 using OfficeOpenXml;
 using OK2SHIP_SMT.Libary;
+using OK2SHIP_SMT.Repositories;
 using OK2SHIP_SMT.Services;
 using OK2SHIP_SMT.ToolBoxs;
 using OK2SHIP_SMT.UserControls;
@@ -1455,7 +1456,7 @@ namespace OK2SHIP_SMT
                             string report_folder = Path.Combine(data_loc, "Report", cb_Type.SelectedItem.ToString(), "ACF");
                             if (!System.IO.Directory.Exists(report_folder))
                                 System.IO.Directory.CreateDirectory(report_folder);
-                            F_export_EPPlus.export_NPI_ACF(file_format, report_folder, txtItemCode.Text, txtLotNo.Text, "ACF", sqlcon);
+                            F_export_EPPlus.export_NPI_ACF(file_format, report_folder, txtItemCode.Text, txtLotNo.Text, "ACF", sqlcon, !Legacy.Checked);
                         }
                         else
                         {
@@ -1503,6 +1504,8 @@ namespace OK2SHIP_SMT
             try
             {
                 new ACFService().Save(txtItemCode.Text, txtLotNo.Text, dic, dic_list, cb_Type.Text);
+                MessageBox.Show("Save successfully!");
+
             }
             catch (Exception ex)
             {
@@ -1702,19 +1705,53 @@ namespace OK2SHIP_SMT
 
         public void Load_data_SMT(string tbl_name, DataGridView dgv_data)
         {
-            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
+            string itemCode = txtItemCode.Text.ToString();
+            string lotNo = txtLotNo.Text.ToString();
+            if (tbl_name == "ACF_FLATNESS" && !Legacy.Checked)
+            {
+                tbl_name = "ACF_FLATNESS_NAS";
+                itemCode = itemCode.PadRight(10);
+                lotNo = lotNo.PadRight(10);
+            }
+            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotNo });
 
             DataTable dt_analysis = tbl_name != "ACF_BONDING" ? TDMK_Code.Datatable_Filter(sqlcon, tbl_name, filter_str) : new DataTable();
+
             if (tbl_name == "ACF_BONDING")
             {
-                dt_analysis = new ACFService().loadPeel(txtItemCode.Text, txtLotNo.Text);
+                dt_analysis = new ACFService().loadPeel(txtItemCode.Text, txtLotNo.Text, Legacy.Checked);
+
+            }
+
+            if (tbl_name == "Roughness")
+            {
+                itemCode = itemCode.PadRight(10);
+                lotNo = lotNo.PadRight(10);
+                filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotNo });
+
+                dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, tbl_name + "_NAS", filter_str);
+                if(dt_analysis.Rows.Count > 0)
+                {
+                    string json = dt_analysis.Rows[0]["Data"].ToString();
+                   dt_analysis = ConverterService.JsonToDataTable(json);
+                }
+            }
+
+            if (tbl_name == "ACF_FLATNESS_NAS")
+            {
+                string json = dt_analysis.Rows[0]["Data"].ToString();
+                dt_analysis = ConverterService.JsonToDataTable(json);
             }
             if (dt_analysis.Rows.Count > 0)
             {
                 if (!dt_analysis.Columns.Contains("ProductID"))
                 {
+                    try
+                    {
 
-                    ProductIDService.FillProductID(dt_analysis, txtItemCode.Text, txtLotNo.Text, tbl_name);
+                        ProductIDService.FillProductID(dt_analysis, txtItemCode.Text, txtLotNo.Text, tbl_name);
+                    }
+                    catch { }
                 }
                 int ID = 1;
                 foreach (DataRow dr in dt_analysis.Rows)
@@ -1750,7 +1787,6 @@ namespace OK2SHIP_SMT
         {
             try
             {
-
                 ACFService service = new ACFService();
                 txt_ItemName.Text = service.loadItemNamebyItemCode(txtItemCode.Text);
             }
@@ -2066,7 +2102,15 @@ namespace OK2SHIP_SMT
                             }
                             if (Data_tbl.Rows.Count > 0)
                             {
-                                new ACFService().GetProductID(txtItemCode.Text, txtLotNo.Text, textBox1.Text, "Flatness", Data_tbl);
+                                try
+                                {
+
+                                    new ACFService().GetProductID(txtItemCode.Text, txtLotNo.Text, textBox1.Text, "Flatness", Data_tbl);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show("ProductID Null");
+                                }
                             }
                             dgv_Flatness.DataSource = Data_tbl;
                             myCode.Disable_Sort_DGV(dgv_Flatness);
@@ -2109,55 +2153,69 @@ namespace OK2SHIP_SMT
 
         private void btnsave_Flatness_Click(object sender, EventArgs e)
         {
-            if (txtItemCode.Text != "" && txtLotNo.Text != "" && dgv_Flatness.DataSource != null)
+            try
             {
-                DataTable tbl_data = (DataTable)dgv_Flatness.DataSource;
 
-                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-            lblsave:
-                DataTable dt = TDMK_Code.Datatable_Filter(sqlcon, "ACF_FLATNESS", filter_str);
-                if (dt.Rows.Count == 0)
+                if (txtItemCode.Text != "" && txtLotNo.Text != "" && dgv_Flatness.DataSource != null)
                 {
-                    if (tbl_data.Rows.Count > 0)
-                    {
-                        int i = TDMK_Code.SQL_MAX("ACF_FLATNESS", "ID", sqlcon) + 1;
-                        foreach (DataRow dr in tbl_data.Rows)
-                        {
-                            dr[0] = i;
-                            i++;
-                        }
-                        if (tbl_data.Columns.Contains("ProductID"))
-                        {
-                            string pid = ProductIDService.ConverterProductID(tbl_data, "Id");
-                            tbl_data.Columns.Remove("ProductID");
-                            ProductIDService.InsertProductID(txtItemCode.Text, txtLotNo.Text, "ACF_FLATNESS", pid);
-                        }
-                        BatchBulkCopy(sqlcon, (DataTable)dgv_Flatness.DataSource, "ACF_FLATNESS");
-                        MessageBox.Show(new Form { TopMost = true }, "Lưu dữ liệu thành công!", "Warning");
-                    }
-                    else
-                    {
-                        MessageBox.Show(new Form { TopMost = true }, "Không có dữ liệu", "Warning");
-                    }
-                }
-                else
-                {
+                    DataTable tbl_data = (DataTable)dgv_Flatness.DataSource;
 
-                    if (MessageBox.Show(new Form { TopMost = true }, "Dữ liệu đã tồn tại. Bạn có muốn cập nhật không?", "Warning", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
+                lblsave:
+                    DataTable dt = TDMK_Code.Datatable_Filter(sqlcon, "ACF_FLATNESS_NAS", filter_str);
+                    if (dt.Rows.Count == 0)
                     {
-                        if (UserSession.Instance.IsLoggedIn)
+                        if (tbl_data.Rows.Count > 0)
                         {
-                            TDMK_Code.Delelte_FilteredItem_arr("ACF_FLATNESS", sqlcon, filter_str);
-                            goto lblsave;
+                            int i = TDMK_Code.SQL_MAX("ACF_FLATNESS", "ID", sqlcon) + 1;
+                            foreach (DataRow dr in tbl_data.Rows)
+                            {
+                                dr[0] = i;
+                                i++;
+                            }
+                            if (tbl_data.Columns.Contains("ProductID"))
+                            {
+                                string pid = ProductIDService.ConverterProductID(tbl_data, "Id");
+                                tbl_data.Columns.Remove("ProductID");
+                                ProductIDService.InsertProductID(txtItemCode.Text, txtLotNo.Text, "ACF_FLATNESS", pid);
+                            }
+                            DataRow row = dt.NewRow();
+                            row["Data"] = ConverterService.DataTableToJson(tbl_data);
+                            row["ItemCode"] = txtItemCode.Text;
+                            row["LotNo"] = txtLotNo.Text;
+                            dt.Rows.Add(row);
+                            new DBContext().BuckDataTable(dt, "ACF_FLATNESS_NAS", new[] { "ItemCode", "LotNo" }, null, "ID");
+                            //BatchBulkCopy(sqlcon, (DataTable)dgv_Flatness.DataSource, "ACF_FLATNESS");
+                            MessageBox.Show(new Form { TopMost = true }, "Lưu dữ liệu thành công!", "Warning");
                         }
                         else
                         {
-                            MessageBox.Show("Vui lòng đăng nhập để cập nhật dữ liệu", "Warning");
-
+                            MessageBox.Show(new Form { TopMost = true }, "Không có dữ liệu", "Warning");
                         }
                     }
+                    else
+                    {
 
+                        if (MessageBox.Show(new Form { TopMost = true }, "Dữ liệu đã tồn tại. Bạn có muốn cập nhật không?", "Warning", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            if (UserSession.Instance.IsLoggedIn)
+                            {
+                                TDMK_Code.Delelte_FilteredItem_arr("ACF_FLATNESS", sqlcon, filter_str);
+                                goto lblsave;
+                            }
+                            else
+                            {
+                                MessageBox.Show("Vui lòng đăng nhập để cập nhật dữ liệu", "Warning");
+
+                            }
+                        }
+
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error Save: {ex.Message}");
             }
         }
 
@@ -2308,26 +2366,22 @@ namespace OK2SHIP_SMT
             return result;
         }
 
-        public byte[] get_image_excel(ExcelWorksheet wrk_sheet)
+        public Image get_image_excel(ExcelWorksheet wrk_sheet)
         {
             Byte[] data = new Byte[0];
             Image myImg = TDMK_EPPLUS.get_pic(wrk_sheet, "Picture 1");// Clipboard.GetImage();
-            ImageConverter imgCon = new ImageConverter();
-            data = (byte[])imgCon.ConvertTo(myImg, typeof(byte[]));
-            return data;
+            return myImg;
         }
-        public void Get_Image_bonding(string in_src, ref SortedDictionary<int, byte[]> lst_result_sorted)
+        public void Get_Image_bonding(string in_src, ref SortedDictionary<int, Image> lst_result_sorted)
         {
             DirectoryInfo tar_d = new DirectoryInfo(in_src);
-            SortedDictionary<int, byte[]> lst_result = new SortedDictionary<int, byte[]> { };
+            SortedDictionary<int, Image> lst_result = new SortedDictionary<int, Image> { };
             FileInfo[] temp_lst = tar_d.GetFiles("*.jpg").Concat(tar_d.GetFiles("*.jpeg")).ToArray();
             if (temp_lst.Length > 0)
             {
                 for (int i = 0; i < temp_lst.Length; i++)
                 {
                     var sel_img = Bitmap.FromFile(temp_lst[i].FullName);
-                    ImageConverter imgcon = new ImageConverter();
-                    byte[] img_data = (byte[])imgcon.ConvertTo(sel_img, typeof(byte[]));
                     string f_na = Path.GetFileNameWithoutExtension(temp_lst[i].Name).TrimEnd(new char[] { ',', '.', ' ' });
 
                     char[] ch_arr = f_na.ToCharArray();
@@ -2342,7 +2396,7 @@ namespace OK2SHIP_SMT
 
                     if (!lst_result.ContainsKey(Convert.ToInt32(f_na)))
                     {
-                        lst_result.Add(Convert.ToInt32(f_na), img_data);
+                        lst_result.Add(Convert.ToInt32(f_na), sel_img);
                     }
                 }
 
@@ -2414,7 +2468,7 @@ namespace OK2SHIP_SMT
             int qty = int.Parse(txt_qty_peel.Text);
 
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode" }, new string[] { txtItemCode.Text });
-            DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, "ACF_BONDING", filter_str).Clone();
+            DataTable Data_tbl = ACFService.getStructorPeel();
             DirectoryInfo tar_parent = new DirectoryInfo(in_src);
             DirectoryInfo[] arr_dir_child = tar_parent.GetDirectories();
             string[] ListFolderName = new string[arr_dir_child.Length];
@@ -2426,13 +2480,13 @@ namespace OK2SHIP_SMT
 
             if (arr_dir_child.Length > 0)
             {
-                Dictionary<string, SortedDictionary<int, byte[]>> lst_result = new Dictionary<string, SortedDictionary<int, byte[]>> { };
+                Dictionary<string, SortedDictionary<int, Image>> lst_result = new Dictionary<string, SortedDictionary<int, Image>> { };
                 Dictionary<string, SortedDictionary<int, Funtion_SMT.Peeltest_data>> dic_grp_data_all = new Dictionary<string, SortedDictionary<int, Funtion_SMT.Peeltest_data>> { };
                 foreach (DirectoryInfo tar_d2 in arr_dir_child)
                 {
                     if (tar_d2.Name.ToUpper() == "BEFORE" || tar_d2.Name.ToUpper() == "AFTER")
                     {
-                        SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]> { };
+                        SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image> { };
                         Get_Image_bonding(tar_d2.FullName, ref dic_image);
                         lst_result.Add(tar_d2.Name.ToUpper(), dic_image);
 
@@ -2473,7 +2527,7 @@ namespace OK2SHIP_SMT
             }
             else
             {
-                SortedDictionary<int, byte[]> dic_image = new SortedDictionary<int, byte[]> { };
+                SortedDictionary<int, Image> dic_image = new SortedDictionary<int, Image> { };
                 Get_Image_bonding(tar_parent.FullName, ref dic_image);
                 SortedDictionary<int, Funtion_SMT.Peeltest_data> dic_grp_data = new SortedDictionary<int, Funtion_SMT.Peeltest_data> { };
                 get_data_bonding(tar_parent, ref dic_grp_data);
@@ -2504,22 +2558,30 @@ namespace OK2SHIP_SMT
                 if (dt_spec.Rows.Count > 0)
                 {
                     DataTable dt = load_data_logfile_peel(txtLogfile_peel.Text);
-                    ProductIDService service = new ProductIDService(txtItemCode.Text, txtLotNo.Text, textBox2.Text, new[] { "OQC", "ACF" }, new[] { "Bonding" });
-                    if (service._listFile.Count > 0)
+                    try
                     {
-                        List<string> s = service.getListProductID(service._listFile["Bonding"]);
-                        if (!dt.Columns.Contains("ProductID"))
+
+                        ProductIDService service = new ProductIDService(txtItemCode.Text, txtLotNo.Text, textBox2.Text, new[] { "OQC", "ACF" }, new[] { "Bonding" });
+                        if (service._listFile.Count > 0)
                         {
-                            dt.Columns.Add("ProductID", typeof(string));
-                        }
-                        int i = 0;
-                        foreach (DataRow row in dt.Rows)
-                        {
-                            if (i < s.Count)
+                            List<string> s = service.getListProductID(service._listFile["Bonding"]);
+                            if (!dt.Columns.Contains("ProductID"))
                             {
-                                row["ProductID"] = s[i++];
+                                dt.Columns.Add("ProductID", typeof(string));
+                            }
+                            int i = 0;
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                if (i < s.Count)
+                                {
+                                    row["ProductID"] = s[i++];
+                                }
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Product ID: {ex.Message}");
                     }
                     dgv_peel.DataSource = dt;
                     if (dgv_peel.DataSource != null)
@@ -2551,7 +2613,12 @@ namespace OK2SHIP_SMT
                 string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
                 if (tbl_name == "ACF_BONDING")
                 {
+                    tbl_name += "_NAS";
                     filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Remark" }, new string[] { txtItemCode.Text, txtLotNo.Text, txt_ItemName.Text + "_" + txt_date_peel.Text + "_" + txt_worker_peel.Text + "_" + cb_Type.SelectedItem.ToString() });
+                }
+                if (tbl_name == "Roughness")
+                {
+                    tbl_name = "Roughness_NAS";
                 }
             lblsave:
                 DataTable dt = TDMK_Code.Datatable_Filter(sqlcon, tbl_name, filter_str);
@@ -2559,20 +2626,40 @@ namespace OK2SHIP_SMT
                 {
                     if (tbl_data.Rows.Count > 0)
                     {
-                        int i = TDMK_Code.SQL_MAX(tbl_name, "ID", sqlcon) + 1;
-                        foreach (DataRow dr in tbl_data.Rows)
-                        {
-                            dr[0] = i;
-                            i++;
-                        }
+
                         if (tbl_data.Columns.Contains("ProductID"))
                         {
                             string content = ProductIDService.ConverterProductID(tbl_data, "Id");
                             ProductIDService.InsertProductID(txtItemCode.Text, txtLotNo.Text, tbl_name, content);
                             tbl_data.Columns.Remove("ProductID");
                         }
-                        BatchBulkCopy(sqlcon, (DataTable)dgv_data.DataSource, tbl_name);
+                        if (tbl_name == "ACF_BONDING_NAS")
+                        {
+                            NasRepository nas = new NasRepository();
+                            string location = nas.HandleImageDataTable(tbl_data, tbl_name, txtItemCode.Text, txtLotNo.Text);
+                            string json = ConverterService.DataTableToJson(tbl_data);
+                            DataRow row = dt.NewRow();
+                            row["ItemCode"] = txtItemCode.Text;
+                            row["LotNo"] = txtLotNo.Text;
+                            row["Remark"] = tbl_data.Rows[0]["Remark"];
+                            row["Data"] = json;
+                            row["LocationImg"] = location;
+                            dt.Rows.Add(row);
+                        }
+                        else
+                        {
+                            NasRepository nas = new NasRepository();
+                            string location = nas.HandleImageDataTable(tbl_data, tbl_name, txtItemCode.Text, txtLotNo.Text);
+                            string json = ConverterService.DataTableToJson(tbl_data);
+                            DataRow row = dt.NewRow();
+                            row["ItemCode"] = txtItemCode.Text;
+                            row["LotNo"] = txtLotNo.Text;
+                            row["Data"] = json;
+                            dt.Rows.Add(row);
+                        }
+                        new DBContext().BuckDataTable(dt, $"{tbl_name}", new[] { "ItemCode", "LotNo" }, null, "ID");
                         MessageBox.Show(new Form { TopMost = true }, "Lưu thành công", "Thông báo");
+                        dgv_data.DataSource = new DataTable();
                     }
                     else
                     {
@@ -2643,6 +2730,8 @@ namespace OK2SHIP_SMT
                         {
 
                             save_data("ACF_BONDING", dgv_peel);
+                            MessageBox.Show("Save successfully!");
+
                         }
                         else
                         {
@@ -2815,6 +2904,10 @@ namespace OK2SHIP_SMT
 
         private void btn_export_bonding_Click(object sender, EventArgs e)
         {
+            if (cb_Type.SelectedItem.ToString().Contains("NPI"))
+            {
+                return;
+            }
             if (cb_Type.SelectedItem.ToString().Contains("MASS") && txtItemCode.Text != "" && txtLotNo.Text != "" && txt_qty_peel.Text != "")
             {
                 if (dgv_peel.DataSource != null)
@@ -3373,6 +3466,8 @@ namespace OK2SHIP_SMT
             if (dgv_roughness_data.DataSource != null)
             {
                 save_data("Roughness", dgv_roughness_data);
+                MessageBox.Show("Save successfully!");
+
             }
             else
             {
@@ -3402,8 +3497,16 @@ namespace OK2SHIP_SMT
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ACFService service = new ACFService();
-            txt_ItemName.Text = service.loadItemNamebyItemCode(txtItemCode.Text);
+            try
+            {
+
+                ACFService service = new ACFService();
+                txt_ItemName.Text = service.loadItemNamebyItemCode(txtItemCode.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void dataGridView_CellLeave(object sender, DataGridViewCellEventArgs e)

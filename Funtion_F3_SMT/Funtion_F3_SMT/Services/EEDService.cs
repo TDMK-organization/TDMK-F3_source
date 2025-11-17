@@ -209,7 +209,7 @@ namespace OK2SHIP_SMT.Services
         private void FillDataInTape(ExcelWorksheet worksheet, DataTable dataTable, DataTable spec, string address, int sample, string name, string tape)
         {
             string addressImageSample = ExportProcess.getRangeBaseAddressByCellAddress(worksheet, ExportProcess.AddRow(address, 1));
-            byte[] imgBck = (byte[])((DataRow)spec.AsEnumerable().FirstOrDefault(row => row.Field<string>("Name") == name && row.Field<string>("TAPE") == tape))["Image Sample"];
+            byte[] imgBck = TDMK_ImageConverter.ImageToByteArray((Image)((DataRow)spec.AsEnumerable().FirstOrDefault(row => row.Field<string>("Name") == name && row.Field<string>("TAPE") == tape))["Image Sample"], ImageFormat.Jpeg);
             ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressImageSample], imgBck, $"BACK{tape}-{name}");
             int id = 0;
             string sampleAddress = ExportProcess.AddColumn(address, 2);
@@ -220,11 +220,20 @@ namespace OK2SHIP_SMT.Services
                     break;
                 }
                 string image = ExportProcess.AddRow(sampleAddress, 1);
-                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[image], (byte[])dataRow["Image"], $"Image{tape}-{name}-{id}");
+
+                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[image], TDMK_ImageConverter.ImageToByteArray((Image)dataRow["Image"], ImageFormat.Jpeg), $"Image{tape}-{name}-{id}");
                 string graph = ExportProcess.AddRow(image, 1);
-                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[graph], (byte[])dataRow["Graph"], $"Graph{tape}-{name}-{id}");
+                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[graph], TDMK_ImageConverter.ImageToByteArray((Image)dataRow["Graph"], ImageFormat.Jpeg), $"Graph{tape}-{name}-{id}");
                 string productID = ExportProcess.AddRow(image, -2);
-                worksheet.Cells[productID].Value = dataRow["ProductID"];
+                try
+                {
+
+                    worksheet.Cells[productID].Value = dataRow["ProductID"];
+                }
+                catch
+                {
+
+                }
                 sampleAddress = ExportProcess.AddColumn(sampleAddress, 1);
                 string peak = ExportProcess.AddRow(graph, 1);
                 worksheet.Cells[peak].Value = double.Parse(dataRow["Peak"].ToString());
@@ -491,7 +500,14 @@ namespace OK2SHIP_SMT.Services
 
             throw new Exception("Folder này không có dữ liệu khớp");
         }
-
+        public DataTable getDTImgStructor()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("Area", typeof(int));
+            dt.Columns.Add("Image", typeof(Image));
+            return dt;
+        }
         public int save(string itemCode, string lotNo, DataTable before, Dictionary<string, Dictionary<string, DataTable>> dic, int prime = -1)
         {
             int res = 0;
@@ -514,7 +530,7 @@ namespace OK2SHIP_SMT.Services
 
             id = _dBContext.GetID(_TABLE_NAME + "_IMG") + 1;
 
-            DataTable imageDT = _dBContext.GetTableStructure(_TABLE_NAME + "_IMG");
+            DataTable imageDT = getDTImgStructor();
             int area = id;
             #region before
             string list = $"{area.ToString()}#" + ConvertDataTable(before, imageDT, ref id, area);
@@ -536,8 +552,17 @@ namespace OK2SHIP_SMT.Services
             rowz["LotNo"] = lotNo;
             rowz["Data"] = list;
             DATA.Rows.Add(rowz);
-            res += _dBContext.BuckDataTable(imageDT, _TABLE_NAME + "_IMG", new[] { "Area" });
-            res += _dBContext.DeleteData(_TABLE_NAME + "_IMG", "Area", new[] { prime.ToString() });
+            NasRepository _nas = new NasRepository();
+            string location = _nas.HandleImageDataTable(imageDT, $"{_TABLE_NAME}", itemCode, lotNo);
+            string Data = ConverterService.DataTableToJson(imageDT);
+            DataTable imgDT = _dBContext.GetTableStructure($"{_TABLE_NAME}_IMG_NAS");
+            DataRow roDT = imgDT.NewRow();
+            roDT["Area"] = area;
+            roDT["Data"] = Data;
+            roDT["LocationImg"] = location;
+            imgDT.Rows.Add(roDT);
+            res += _dBContext.BuckDataTable(imgDT, $"{_TABLE_NAME}_IMG_NAS", new[] { "Area" }, null, "ID");
+            //res += _dBContext.BuckDataTable(imageDT, _TABLE_NAME + "_IMG", new[] { "Area" });
             res += _dBContext.BuckDataTable(DATA, _TABLE_NAME, new[] { "ItemCode", "LotNo" }, null, "ID");
             #endregion
             return res;
@@ -571,10 +596,10 @@ namespace OK2SHIP_SMT.Services
                     {
                         DataRow newRow = dataTableImage.NewRow();
                         string colName = col.ColumnName.Replace("&CONVERTER", "");
-                        var image = row[colName];
-                        if (datatable.Columns[colName].DataType.FullName != "System.Byte[]")
+                        Image image = (Image)row[colName];
+                        if (datatable.Columns[colName].DataType.FullName != "System.Drawing.Image")
                         {
-                            image = TDMK_ImageConverter.ImageToByteArray((Image)row[colName], ImageFormat.Jpeg);
+                            image = TDMK_ImageConverter.ByteArrayToImage((byte[])row[colName]);
 
                         }
 
@@ -601,7 +626,7 @@ namespace OK2SHIP_SMT.Services
             {
                 if (col.ColumnName.Contains("&CONVERTER"))
                 {
-                    res.Columns.Add(col.ColumnName.Replace("&CONVERTER", ""), typeof(byte[]));
+                    res.Columns.Add(col.ColumnName.Replace("&CONVERTER", ""), typeof(Image));
                 }
                 else
                 {
@@ -618,7 +643,7 @@ namespace OK2SHIP_SMT.Services
                     {
                         string name = col.ColumnName.Replace("&CONVERTER", "");
                         int point = int.Parse(row[col].ToString()) - int.Parse(dataTableImage.Rows[0]["ID"].ToString());
-                        byte[] img = (byte[])dataTableImage.Rows[point]["Image"];
+                        Image img = (Image)dataTableImage.Rows[point]["Image"];
                         rowZ[name] = img;
                     }
                     else
@@ -631,7 +656,7 @@ namespace OK2SHIP_SMT.Services
 
             return res;
         }
-        public Dictionary<string, Dictionary<string, DataTable>> Load(string itemCode, string lotNo, ref DataTable before)
+        public Dictionary<string, Dictionary<string, DataTable>> Load(string itemCode, string lotNo, ref DataTable before, bool legacy = false)
         {
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
@@ -646,7 +671,20 @@ namespace OK2SHIP_SMT.Services
             }
             string[] json = table.Rows[0]["Data"].ToString().Trim().Split('#');
             string area = json[0];
-            DataTable tableImage = _dBContext.LoadDataTable(_TABLE_NAME + "_IMG", new[] { "Area" }, new[] { area }, new[] { "ID", "Image" });
+            DataTable tableImage = new DataTable();
+            if (legacy)
+            {
+                tableImage = _dBContext.LoadDataTable(_TABLE_NAME + "_IMG", new[] { "Area" }, new[] { area }, new[] { "ID", "Image" });
+            }
+            else
+            {
+                tableImage = _dBContext.LoadDataTable(_TABLE_NAME + "_IMG_NAS", new[] { "Area" }, new[] { area }, null);
+                DataTable dtZ = ConverterService.JsonToDataTable(tableImage.Rows[0]["Data"].ToString());
+                NasRepository _nas = new NasRepository();
+                _nas.MergeDataTable(dtZ, _TABLE_NAME, itemCode, lotNo, tableImage.Rows[0]["LocationImg"].ToString());
+                tableImage = dtZ;
+                //_nas.MergeDataTable(, "" );
+            }
             before = ConvertDataTable(ConverterService.JsonToDataTable(json[1]), tableImage);
 
             Dictionary<string, Dictionary<string, DataTable>> dic = new Dictionary<string, Dictionary<string, DataTable>>();

@@ -373,7 +373,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 for (int j = startRow; j <= row; j++)
                 {
-                    string cellValue = workSheet.Cells[j, i].Text.Trim().Replace("\n", "");
+                    string cellValue = workSheet.Cells[j, i].Text.Trim().Replace("\n", "").ToUpper();
                     if (!string.IsNullOrEmpty(cellValue.ToString()))
                     {
                         foreach (string str in colHeaderz)
@@ -382,11 +382,11 @@ namespace Export_FPCA_OK2ship_Auto_System
                             bool prime = false;
                             if (eq)
                             {
-                                prime = cellValue.Equals(str);
+                                prime = cellValue.Equals(str.ToUpper());
                             }
                             else
                             {
-                                prime = cellValue.Contains(str);
+                                prime = cellValue.Contains(str.ToUpper());
                             }
                             if (prime)
                             {
