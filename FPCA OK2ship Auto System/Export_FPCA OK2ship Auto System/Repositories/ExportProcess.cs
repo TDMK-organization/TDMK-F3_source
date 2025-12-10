@@ -1,38 +1,51 @@
 ﻿using IniLibs;
+using OfficeOpenXml;
+using OfficeOpenXml.Drawing;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OfficeOpenXml;
-using System.Reflection;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Drawing.Imaging;
-using OfficeOpenXml.Drawing;
-using System.Data;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 namespace Export_FPCA_OK2ship_Auto_System
 {
-    class ExportProcess
+    class ExportProcess : IDisposable
     {
         private string FORMAT_LOACTION = null;
         private string EXPORT_LOACTION = null;
+        private string EXPORT_LOACTION_LAST = null;
         IniFile TDMK_init = new IniFile();
         private string _EXTENSION = "";
         public ExportProcess(string type = "NPI")
         {
             ExcelPackage.LicenseContext = LicenseContext.Commercial;
             //config file
-            string app_path = System.Windows.Forms.Application.StartupPath.Replace(@"\FPCA OK2SHIP Auto System\VHX-IMADA", "");
+            string app_path = System.Windows.Forms.Application.StartupPath.Replace(@"\FPCA OK2SHIP Auto System", "");
             string config_path = Path.Combine(app_path, "config.ini");
             TDMK_init = new IniFile(config_path);
             FORMAT_LOACTION = TDMK_init.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data\\Format\\{type}";
-            EXPORT_LOACTION = TDMK_init.Read("Report_Location", "SMT_Config") + $"\\SEEV Data\\Report\\{type}";
+            EXPORT_LOACTION = TDMK_init.Read("NasAddress", "SMT_Config").Replace("\\ImageF3", "") + $"\\Report\\{type}\\SOFTWARE(NOTOUCH)";
+            EXPORT_LOACTION_LAST = TDMK_init.Read("Report_Location", "SMT_Config") + $"\\SEEV Data\\Report\\{type}";
         }
-        public void CopyColumn(ExcelWorksheet worksheet, ExcelRangeBase rangeStart, string address)
+
+        public string getExportLocation()
+        {
+            return EXPORT_LOACTION;
+        }
+        public void Dispose()
+        {
+
+        }
+
+        public static void CopyColumn(ExcelWorksheet worksheet, ExcelRangeBase rangeStart, string address)
         {
             worksheet.Cells[rangeStart.Address].Copy(worksheet.Cells[address]);
             worksheet.Cells[rangeStart.Address].CopyStyles(worksheet.Cells[address]);
@@ -155,6 +168,17 @@ namespace Export_FPCA_OK2ship_Auto_System
 
             return Path.GetExtension(filePath);
         }
+        public static ExcelWorksheet FindWorkSheet(ExcelPackage package, string nameWorksheet)
+        {
+            foreach (ExcelWorksheet workSheet in package.Workbook.Worksheets)
+            {
+                if (workSheet.Name.Replace(" ", "").ToUpper() == nameWorksheet.Replace(" ", "").ToUpper())
+                {
+                    return workSheet;
+                }
+            }
+            throw new Exception($"Không tồn tại worksheet với tên: {nameWorksheet}");
+        }
 
         public ExcelPackage FindFormatProcess(string process, string itemcode, string lotno)
         {
@@ -221,50 +245,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             throw new Exception("Eroo");
 
         }
-        public void SaveExcelWorksheet(ExcelPackage excelPackage, string sheetName, string nameFile, string type = "NPI")
-        {
-            string[] sheetNames = sheetName.Split(':');
-            DateTime nowDate = DateTime.Now;
-            IList<ExcelWorksheet> worksheets = new List<ExcelWorksheet>();
-            foreach (var item in excelPackage.Workbook.Worksheets)
-            {
 
-                if (!sheetNames.Contains(item.Name.Trim()))
-                {
-                    worksheets.Add(item);
-                }
-            }
-            foreach (ExcelWorksheet item in worksheets)
-            {
-                excelPackage.Workbook.Worksheets.Delete(item.Name);
-            }
-            //excelPackage.Workbook.Worksheets.Delete("Rev History");
-            int month = nowDate.Month;
-
-            // Lưu package vào địa chỉ được chỉ định
-            string[] str = nameFile.Split('.');
-            string folderName = $"{EXPORT_LOACTION}\\{sheetNames[0]}\\THANG {month}\\";
-
-            if (!Directory.Exists(folderName))
-            {
-                try
-                {
-                    // Tạo thư mục nếu nó không tồn tại
-                    Directory.CreateDirectory(folderName);
-                }
-                catch (Exception ex)
-                {
-                    // Xử lý lỗi nếu không thể tạo thư mục
-                    throw new Exception($"Lỗi: Không thể tạo thư mục '{folderName}'. Lỗi: {ex.Message}");
-                }
-            }
-
-            FileInfo file = new FileInfo($"{folderName}{nameFile}{_EXTENSION}");
-            excelPackage.SaveAs(file);
-            Process.Start(file.FullName);
-
-
-        }
 
         public static void InsertImageToCell(ExcelWorksheet wsSheet1, ExcelRangeBase tar_rgn, byte[] img_data, string pic_name)
         {
@@ -425,7 +406,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         /// <param name="colHeader"></param>
         /// <param name="eq"></param>
         /// <returns>text with value is list of address of column</returns>
-        
+
         public static void AddBorderToImage(ExcelWorksheet worksheet, string imageName, Color color, int size = 1, eLineStyle styleLine = eLineStyle.Solid)
         {
 
@@ -520,7 +501,67 @@ namespace Export_FPCA_OK2ship_Auto_System
             destinationRowRange.Style.Border.Right.Style = sourceRowRange.Style.Border.Right.Style;
         }
 
+        public void SaveExcelWorksheet(ExcelPackage excelPackage, string sheetName, string nameFile, string type = "NPI", bool prime = true, string extension = "")
+        {
+            string[] sheetNames = sheetName.Split(':');
+            IList<ExcelWorksheet> worksheets = new List<ExcelWorksheet>();
+            foreach (var item in excelPackage.Workbook.Worksheets)
+            {
 
+                if (!sheetNames.Contains(item.Name.Trim()))
+                {
+                    worksheets.Add(item);
+                }
+            }
+            foreach (ExcelWorksheet item in worksheets)
+            {
+                excelPackage.Workbook.Worksheets.Delete(item.Name);
+            }
+            //excelPackage.Workbook.Worksheets.Delete("Rev History");
 
+            // Lưu package vào địa chỉ được chỉ định
+            string[] str = nameFile.Split('.');
+
+            string folderName = $"{EXPORT_LOACTION}\\{sheetNames[0].Replace('-', '_')}\\";
+
+            if (!Directory.Exists(folderName))
+            {
+                try
+                {
+                    // Tạo thư mục nếu nó không tồn tại
+                    Directory.CreateDirectory(folderName);
+                }
+                catch (Exception ex)
+                {
+                    // Xử lý lỗi nếu không thể tạo thư mục
+                    throw new Exception($"Lỗi: Không thể tạo thư mục '{folderName}'. Lỗi: {ex.Message}");
+                }
+            }
+            if (string.IsNullOrEmpty(extension))
+            {
+                extension = _EXTENSION;
+            }
+
+            FileInfo file = new FileInfo($"{folderName}{nameFile}{extension}");
+            excelPackage.SaveAs(file);
+            if (prime)
+            {
+                Process.Start(file.FullName);
+            }
+
+        }
+        public void SaveExcelPackage(ExcelPackage package, string nameFile, string location = "", bool isOpen = true)
+        {
+            if (string.IsNullOrEmpty(location))
+            {
+                location = EXPORT_LOACTION_LAST;
+            }
+            FileInfo file = new FileInfo($"{location}\\{nameFile}{_EXTENSION}");
+            package.SaveAs(file);
+            if (isOpen)
+            {
+                Process.Start(file.FullName);
+            }
+        }
     }
 }

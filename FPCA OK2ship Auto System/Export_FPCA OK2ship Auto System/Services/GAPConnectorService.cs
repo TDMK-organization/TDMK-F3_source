@@ -1,8 +1,11 @@
 ﻿using Export_FPCA_OK2ship_Auto_System.Repositories;
+using Export_FPCA_OK2ship_Auto_System.Services.TDMK_services;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +14,64 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 {
     public class GAPConnectorService
     {
-        public void Export(ExcelWorksheet workSheet, DataTable dataTable, DataTable spec)
+        public string Export(string itemCode, string lotNo)
+        {
+            string msg = "";
+            try
+            {
+                using (DataTable dataTable = Load(itemCode, lotNo))
+                {
+                    DataTable spec = LoadSpec(itemCode);
+                    using (ExportProcess process = new ExportProcess())
+                    {
+                        using (ExcelPackage package = process.FindFormatWithItemCode(itemCode))
+                        {
+                            using (ExcelWorksheet workSheet = ExportProcess.FindWorkSheet(package, "GAP Connector"))
+                            {
+                                Export(workSheet, dataTable, spec);
+                                process.SaveExcelWorksheet(package, "GAP Connector", $"{itemCode}_{lotNo}", "NPI", false);
+                                msg += $"OK";
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                msg = $"{ex.Message}";
+            }
+            return msg;
+        }
+        public DataTable LoadSpec(string itemCode)
+        {
+            DBContext db = new DBContext();
+            DataTable dt = db.LoadDataTable("SPEC_COMMENT_3", new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { itemCode, "GAP_CONNECTOR", "NPI" });
+            return dt;
+        }
+
+        public DataTable Load(string itemCode, string lotNo)
+        {
+            DBContext db = new DBContext();
+            DataTable dt = db.LoadDataTable("GAP_CONNECTOR_NAS", new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotNo });
+            if (dt.Rows.Count < 0)
+            {
+                throw new Exception($"NO DATA");
+            }
+            string location = dt.Rows[0]["LocationImg"].ToString();
+            dt = TDMK_ConverterService.JsonToDataTable(dt.Rows[0]["Data"].ToString());
+            new NasRepository().MergeDataTable(dt, "GAP_CONNECTOR", itemCode, lotNo, location);
+
+            try
+            {
+                ProductIDService.FillProductID(dt, itemCode, lotNo, "GAP_CONNECTOR");
+            }
+            catch
+            {
+
+            }
+            return dt;
+        }
+        public string Export(ExcelWorksheet workSheet, DataTable dataTable, DataTable spec)
         {
 
             int SpecNum = int.Parse(spec.Rows[0]["Count_Sample"].ToString());
@@ -119,8 +179,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 }
 
             }
-
+            return "OK";
         }
-      
+
     }
 }

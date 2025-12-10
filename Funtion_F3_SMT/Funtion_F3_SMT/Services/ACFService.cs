@@ -316,7 +316,17 @@ namespace OK2SHIP_SMT.Services
         public DataTable loadBonding(string itemCode, string lotNo, bool nas_status)
         {
             DataTable dataTable = _dbContext.LoadDataTable("Roughness" + (nas_status ? "_NAS" : ""), new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
-            ProductIDService.FillProductID(dataTable, itemCode, lotNo, "Roughness");
+            if (nas_status)
+            {
+                Debugger.Break();
+                string json = dataTable.Rows[0]["Data"].ToString();
+                dataTable = ConverterService.JsonToDataTable(json);
+            }
+            try
+            {
+                ProductIDService.FillProductID(dataTable, itemCode, lotNo, "Roughness");
+            }
+            catch { }
             int i = 1;
             foreach (DataRow row in dataTable.Rows)
             {
@@ -324,11 +334,11 @@ namespace OK2SHIP_SMT.Services
             }
             return dataTable;
         }
-        public DataTable loadPeel(string itemCode, string lotNo, bool prime = true)
+        public DataTable loadPeel(string itemCode, string lotNo, string type, bool prime = true)
         {
             try
             {
-                DataTable dataTable = _dbContext.LoadDataTable("ACF_BONDING" + (!prime ? "" : "_NAS"), new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
+                DataTable dataTable = _dbContext.LoadDataTable("ACF_BONDING" + (!prime ? "" : "_NAS"), new[] { "ItemCode", "LotNo", "Remark" }, new[] { itemCode, lotNo , type});
                 if (prime)
                 {
 
@@ -375,7 +385,7 @@ namespace OK2SHIP_SMT.Services
                 List<string> sq3 = new List<string>();
                 List<string> sdr3 = new List<string>();
                 DataTable dataTable = loadBonding(itemCode, lotNo, nas_mode);
-                if(dataTable.Rows.Count <= 0)
+                if (dataTable.Rows.Count <= 0)
                 {
                     throw new Exception("No Data");
                 }
@@ -595,7 +605,7 @@ namespace OK2SHIP_SMT.Services
             return dic;
         }
 
-        public void ExportBoding(ExcelWorksheet ws, string itemCode, string lotNo, bool nas_mode)
+        public void ExportBoding(ExcelWorksheet ws, string itemCode, string lotNo, bool nas_mode, string type = "NPI")
         {
             List<string> list = new List<string>();
             for (int i = 1; i <= 32; i++)
@@ -610,7 +620,7 @@ namespace OK2SHIP_SMT.Services
             if (dic.TryGetValue("ACF Bonding", out string address))
             {
                 int rowSRM = ws.Cells[address].End.Row;
-                DataTable dataTable = loadPeel(itemCode, lotNo);
+                DataTable dataTable = loadPeel(itemCode, lotNo, type);
                 if (dataTable.Rows.Count <= 0)
                 {
                     throw new Exception("No Data");

@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Data;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -30,7 +32,154 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             return row["ItemName"].ToString().Trim();
         }
 
+        public string Export(string itemCode, string lotNo)
+        {
+            string msg = "";
+            using (ExportProcess process = new ExportProcess())
+            {
+                using (ExcelPackage package = process.FindFormatProcess("", itemCode, lotNo))
+                {
+                    using (ExcelWorksheet ws = process.FindSheet(package, "ACF"))
+                    {
+                        try
+                        {
 
+                            ExportWCA(ws, itemCode, lotNo);
+                        }
+                        catch (Exception ex)
+                        {
+                            msg += $"WCA: {ex.Message}";
+                        }
+                        try
+                        {
+                            ExportRoughness(itemCode, lotNo, ws, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            msg += $"Roughness: {ex.Message}";
+                        }
+                        try
+                        {
+
+                            ExportBoding(ws, itemCode, lotNo, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            msg += $"WCA: {ex.Message}";
+                        }
+                        try
+                        {
+                            ExportFlatness(ws, itemCode, lotNo);
+                        }
+                        catch (Exception ex)
+                        {
+                            msg += $"Flatness: {ex.Message}";
+                        }
+                        try
+                        {
+                            process.SaveExcelWorksheet(package, "ACF", $"{itemCode}_{lotNo}", "NPI", false);
+                            msg += "OK";
+                        }
+                        catch (Exception ex)
+                        {
+                            msg += $"SAVE: {ex.Message}";
+                        }
+                    }
+                }
+            }
+            return msg;
+        }
+        public void ExportFlatness(ExcelWorksheet ws, string ItemCode, string LotNo, bool nas_mode = true)
+        {
+            DataTable src_dt = _dbContext.LoadDataTable("ACF_FLATNESS" + (nas_mode ? "_NAS" : ""), new[] { "ItemCode", "LotNo" }, new[] { ItemCode, LotNo });
+            if (src_dt.Rows.Count <= 0)
+            {
+                throw new Exception("No data");
+            }
+            if (nas_mode)
+            {
+                string json = src_dt.Rows[0]["Data"].ToString();
+                src_dt = TDMK_ConverterService.JsonToDataTable(json);
+            }
+            ProductIDService.FillProductID(src_dt, ItemCode, LotNo, "ACF_FLATNESS");
+            if (src_dt.Columns.Contains("ProductID"))
+            {
+                IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[] { "Flex SN", "ACF Flatness" });
+                if (dic.TryGetValue("Flex SN", out string value))
+                {
+                    int rowAVE = 0, sumAve = 0;
+                    foreach (string zi in dic["ACF Flatness"].ToString().Split('-'))
+                    {
+                        sumAve += ws.Cells[zi].End.Row;
+                    }
+                    rowAVE = sumAve / dic["ACF Flatness"].ToString().Split('-').Count();
+                    int minz = int.MaxValue;
+                    string add = "";
+                    foreach (string zi in dic["Flex SN"].ToString().Split('-'))
+                    {
+                        int z = Math.Abs(rowAVE - ws.Cells[zi].End.Row);
+                        if (z < minz)
+                        {
+                            minz = z;
+                            add = zi;
+                        }
+                    }
+                    int i = 1;
+                    value = add;
+                    foreach (DataRow row in src_dt.Rows)
+                    {
+                        ws.Cells[ExportProcess.AddRow(value, i++ + 1)].Value = row["ProductID"];
+                    }
+                }
+            }
+            if (src_dt.Rows.Count > 0)
+            {
+                ExcelRangeBase curr_rgn = ws.Cells[1, 1];
+                for (int i = 0; i < 100; i++)
+                {
+                    if (curr_rgn.Offset(i, 0).Value != null)
+                    {
+                        if (curr_rgn.Offset(i, 0).Value.ToString().Replace(" ", "").ToUpper().Contains("ACF Flatness".Replace(" ", "").ToUpper()) && !curr_rgn.Offset(i, 0).Value.ToString().Replace(" ", "").ToUpper().Contains("Measurement".Replace(" ", "").ToUpper()))
+                        {
+                            curr_rgn = curr_rgn.Offset(i, 1);
+
+                            for (int c = 1; c < 5; c++)
+                            {
+                                if (checkDBNull(curr_rgn.Offset(2, c).Offset(-1, 0).Value).Contains("Point"))
+                                {
+                                    curr_rgn = curr_rgn.Offset(2, c);
+                                    goto lbl_export;
+                                }
+                                else if (checkDBNull(curr_rgn.Offset(1, c).Offset(-1, 0).Value).Contains("Point"))
+                                {
+                                    curr_rgn = curr_rgn.Offset(1, c);
+                                    goto lbl_export;
+                                }
+                            }
+                        }
+                    }
+                }
+            lbl_export:
+                for (int i = 0; i < 5; i++)
+                {
+                    for (int j = 0; j < 11; j++)
+                    {
+                        curr_rgn.Offset(i, j).Value = double.Parse(src_dt.Rows[i][4 + j].ToString());
+                        curr_rgn.Offset(i, j).Style.Numberformat.Format = "0.00";
+                    }
+                    curr_rgn.Offset(i, 11).Value = src_dt.Rows[i][4 + 11].ToString();
+                }
+            }
+        }
+        public string checkDBNull(object src_str)
+        {
+            if (src_str != null)
+            {
+                return src_str.ToString();
+            }
+
+            return "";
+        }
         public static DataTable ReadWettingContactAngle(DataTable dataTable, string data)
         {
             if (dataTable == null || dataTable.Columns.Count < 0)
@@ -98,7 +247,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             DataTable dataTable = _dbContext.LoadDataTable("ACF_WCA", new[] { "ItemCode", "LotNo", "Type" }, new[] { itemCode, lotNo, type });
             return dataTable;
         }
-       
+
 
         public KeyValuePair<Dictionary<string, DataTable>, Dictionary<string, List<DateTime>>> LoadWCA(string itemCode, string lotNo, string type)
         {
@@ -292,7 +441,16 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
         public DataTable loadBonding(string itemCode, string lotNo, bool nas_status)
         {
             DataTable dataTable = _dbContext.LoadDataTable("Roughness" + (nas_status ? "_NAS" : ""), new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
-            ProductIDService.FillProductID(dataTable, itemCode, lotNo, "Roughness");
+            if (nas_status)
+            {
+                string json = dataTable.Rows[0]["Data"].ToString();
+                dataTable = TDMK_ConverterService.JsonToDataTable(json);
+            }
+            try
+            {
+                ProductIDService.FillProductID(dataTable, itemCode, lotNo, "Roughness");
+            }
+            catch { }
             int i = 1;
             foreach (DataRow row in dataTable.Rows)
             {
@@ -300,11 +458,11 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
             return dataTable;
         }
-        public DataTable loadPeel(string itemCode, string lotNo, bool prime = true)
+        public DataTable loadPeel(string itemCode, string lotNo, string type, bool prime = true)
         {
             try
             {
-                DataTable dataTable = _dbContext.LoadDataTable("ACF_BONDING" + (!prime ? "" : "_NAS"), new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
+                DataTable dataTable = _dbContext.LoadDataTable("ACF_BONDING" + (!prime ? "" : "_NAS"), new[] { "ItemCode", "LotNo", "Remark" }, new[] { itemCode, lotNo, type });
                 if (prime)
                 {
 
@@ -571,7 +729,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             return dic;
         }
 
-        public void ExportBoding(ExcelWorksheet ws, string itemCode, string lotNo, bool nas_mode)
+        public void ExportBoding(ExcelWorksheet ws, string itemCode, string lotNo, bool nas_mode, string type = "NPI")
         {
             List<string> list = new List<string>();
             for (int i = 1; i <= 32; i++)
@@ -586,7 +744,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             if (dic.TryGetValue("ACF Bonding", out string address))
             {
                 int rowSRM = ws.Cells[address].End.Row;
-                DataTable dataTable = loadPeel(itemCode, lotNo);
+                DataTable dataTable = loadPeel(itemCode, lotNo, type);
                 if (dataTable.Rows.Count <= 0)
                 {
                     throw new Exception("No Data");
@@ -610,9 +768,9 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         {
                             ws.Cells[ExportProcess.AddRow(address, -1)].Value = row["ProductID"];
                         }
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], TDMK_ImageConverter.ImageToByteArray((Image)row["Image_Before"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], TDMK_ImageConverter.ImageToByteArray((Image)row["Image_After"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 3)], TDMK_ImageConverter.ImageToByteArray((Image)row["Graph"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], (byte[])row["Image_Before"], $"{Guid.NewGuid()}");
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], (byte[])row["Image_After"], $"{Guid.NewGuid()}");
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 3)], (byte[])row["Graph"], $"{Guid.NewGuid()}");
                         try
                         {
                             ws.Cells[ExportProcess.AddRow(address, 4)].Value = double.Parse(row["Data"].ToString());

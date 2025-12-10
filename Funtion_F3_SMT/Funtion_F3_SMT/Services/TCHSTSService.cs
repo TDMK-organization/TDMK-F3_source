@@ -522,7 +522,6 @@ namespace OK2SHIP_SMT.Services
         public void ExportLogFile(string itemCode, string lotNo, string type)
         {
 
-            return;
         }
         #endregion
     }

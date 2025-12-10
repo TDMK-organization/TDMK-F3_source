@@ -185,27 +185,13 @@ namespace OK2SHIP_SMT.UserControls
             {
                 if (_PRIME)
                 {
-                    try
-                    {
-
-                        if (_service2._ITEMCODE == null || _service2._LOTNO == null || !_service2._ITEMCODE.Trim().Equals(txt_ItemCode.Text.Trim()) || !_service2._LOTNO.Trim().Equals(txt_lotNo.Text.Trim()))
-
-                        {
-                            _service2 = new PeelTestOnProductService(txt_ItemCode.Text, txt_lotNo.Text);
-                        }
-                    }
-                    catch
-                    {
-
-                    }
+                    _service2 = new PeelTestOnProductService(txt_ItemCode.Text, txt_lotNo.Text);
                     _service2.Export(Legacy.Checked);
                 }
                 else
                 {
-                    if (_service._itemCode == null || _service._lotNo == null || !_service._itemCode.Trim().Equals(txt_ItemCode.Text.Trim()) || !_service._lotNo.Trim().Equals(txt_lotNo.Text.Trim()))
-                    {
-                        _service = new AirBubbleService(txt_ItemCode.Text, txt_lotNo.Text);
-                    }
+
+                    _service = new AirBubbleService(txt_ItemCode.Text, txt_lotNo.Text);
                     _service.Export();
 
                 }

@@ -211,6 +211,13 @@ namespace OK2SHIP_SMT.Services
                         case "IMPEDANCE_VAL":
                             list.Add("LotNo");
                             break;
+                        case "IMPEDANCE_SPEC":
+                        case "TRACEWIDTH_SPEC":
+                            if (dataTable.Columns.IndexOf("Format_Type") != -1)
+                            {
+                                dataTable.Columns.Remove("Format_Type");
+                            }
+                            break;
                         default:
                             break;
                     }
@@ -287,11 +294,17 @@ namespace OK2SHIP_SMT.Services
 
                         if (_dic.TryGetValue("Actual Impedance", out string addressZ))
                         {
-                            string address = addressZ.Split('-')[0];
-                            int i = 0;
+                            int i = 0, j = -1;
                             string region = dataTableZ.Rows[0]["Region"].ToString();
+                            string address = "";
                             foreach (DataRow item in dataTableZ.Rows)
                             {
+                                if (item["Pcs_No"].ToString().Trim().Equals("1"))
+                                {
+                                    j++;
+                                    i = 0;
+                                    address = addressZ.Split('-')[j];
+                                }
                                 if (!item["Region"].ToString().Equals(region))
                                 {
                                     region = item["Region"].ToString();

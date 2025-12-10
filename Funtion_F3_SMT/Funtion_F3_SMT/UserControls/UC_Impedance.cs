@@ -261,7 +261,21 @@ namespace OK2SHIP_SMT.UserControls
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                try
+                {
+
+                    if (ex.Message.Contains("1234") && MessageBox.Show(ex.Message, "Warning", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+                    {
+                        ImpedanceService impedanceService = new ImpedanceService();
+                        res = impedanceService.Save(txt_itemcode.Text, txt_lotNo.Text, _dic, true);
+                    }
+
+                }
+                catch (Exception eZx)
+                {
+
+                    MessageBox.Show(eZx.Message);
+                }
                 return;
             }
             if (res > 0)

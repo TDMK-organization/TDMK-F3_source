@@ -1249,11 +1249,27 @@ namespace Funtion_F3_SMT
             return Data_tbl;
 
         }
-
+        private DataTable GetConstructorLinerOnProduct()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("ItemCode", typeof(string));
+            dt.Columns.Add("LotNo", typeof(string));
+            dt.Columns.Add("Sheet", typeof(string));
+            dt.Columns.Add("Region", typeof(string));
+            dt.Columns.Add("Sample", typeof(string));
+            dt.Columns.Add("Image", typeof(Image));
+            dt.Columns.Add("Graph", typeof(Image));
+            dt.Columns.Add("Data", typeof(string));
+            dt.Columns.Add("Operator", typeof(string));
+            dt.Columns.Add("Time_Update", typeof(string));
+            dt.Columns.Add("Remark", typeof(string));
+            return dt;
+        }
         public DataTable load_data_logfile_onproduct(string in_src, string infor)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-            DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, sheet, filter_str).Clone();
+            DataTable Data_tbl = GetConstructorLinerOnProduct();
             Data_tbl.Columns.Add("Select_Img", typeof(bool));
             Data_tbl.Columns.Add("Select_Grp", typeof(bool));
 
@@ -4752,7 +4768,7 @@ namespace Funtion_F3_SMT
                 lbl_judge.Text = "";
                 lbl_judge_logfile.BackColor = Color.Transparent;
                 string infor = "/" + txt_ItemName.Text + "_" + txt_line.Text + "_" + txt_ca.Text + "_" + txt_date.Text + "_" + txt_worker.Text + "_" + cb_Type.SelectedItem.ToString();
-                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txtItemCode.Text.PadRight(10), txtLotNo.Text.PadRight(10), sheet + infor });
+                string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { LegacyMode.Checked ? txtItemCode.Text : txtItemCode.Text.PadRight(10), LegacyMode.Checked ? txtLotNo.Text : txtLotNo.Text.PadRight(10), (LegacyMode.Checked ? sheet + infor : cb_Type.SelectedItem.ToString()) });
                 itemCode = txtItemCode.Text;
                 lotNo = txtLotNo.Text;
                 if (sheet.Contains("UNMATING") || sheet.Contains("COUPON"))
@@ -4761,7 +4777,11 @@ namespace Funtion_F3_SMT
                     {
                         itemCode = txt_itemcode_nvl.Text;
                         lotNo = txt_lotno_nvl.Text;
-                        filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txt_itemcode_nvl.Text.PadRight(20), txt_lotno_nvl.Text.PadRight(10), sheet + infor });
+                        if (sheet == "IQC_PSA_PEELING_COUPON" || sheet == "IQC_UNMATING_PULL_TEST" || sheet == "IQC_LINER_PEELING_COUPON")
+                        {
+                            infor = "";
+                        }
+                        filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txt_itemcode_nvl.Text.PadRight(10), txt_lotno_nvl.Text.PadRight(30), (LegacyMode.Checked ? sheet + infor : cb_Type.SelectedItem.ToString()) });
                     }
                     else
                     {
@@ -5414,7 +5434,15 @@ namespace Funtion_F3_SMT
             {
                 string a = dt_spec.Rows[0]["Location"].ToString();
                 //string spec = dt_spec.Rows[0]["Location"].ToString().Split('+')[3].Split(';')[0].Split('(')[1].Split(')')[0].Replace(" ", string.Empty).Replace("N", string.Empty).Replace("≥", string.Empty).Replace(">", string.Empty).Replace("<", string.Empty);
-                string spec = get_number_spec2(dt_spec.Rows[0]["Location"].ToString().Split('+')[1].Split(';')[0].Split('(')[1].Split(')')[0].Replace(" ", string.Empty).Replace("N", ""));
+                string spec = "";
+                try
+                {
+                    spec = get_number_spec2(dt_spec.Rows[0]["Location"].ToString().Split('+')[1].Split(';')[0].Split('(')[1].Split(')')[0].Replace(" ", string.Empty).Replace("N", ""));
+                }
+                catch
+                {
+                    spec = "4";
+                }
 
                 if (TDMK_Code.IsNumeric(spec))
                 {
@@ -7826,7 +7854,7 @@ namespace Funtion_F3_SMT
                                 if (tbl_data_analysis.Columns.Contains("ProductID"))
                                 {
                                     string str = ProductIDService.ConverterProductID(tbl_data_analysis);
-                         
+
                                     string process = sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "");
                                     try
                                     {
@@ -7844,10 +7872,10 @@ namespace Funtion_F3_SMT
                                 string location = nas.HandleImageDataTable(tbl_data_analysis, sheet, itemCode, lotNo);
                                 string json = ConverterService.DataTableToJson(tbl_data_analysis);
                                 DataRow row = dt.NewRow();
-                                string sheetZ = tbl_data_analysis.Rows[0]["Sheet"].ToString();
+                                string sheetZ = cb_Type.Text.ToString().Trim();
                                 int s = location.Length;
                                 //row["ID"] = i;
-                              
+
                                 row["ItemCode"] = itemCode;
                                 row["LotNo"] = lotNo;
                                 row["Data"] = json;
@@ -11701,14 +11729,15 @@ namespace Funtion_F3_SMT
                     if (dt_spec.Rows.Count > 0)
                     {
                         string infor = "/" + txt_ItemName.Text + "_" + txt_line.Text + "_" + txt_ca.Text + "_" + txt_date.Text + "_" + txt_worker.Text + "_" + cb_Type.SelectedItem.ToString();
-                        string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txtItemCode.Text.PadRight(10), txtLotNo.Text.PadRight(10), sheet + infor });
+                        string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txtItemCode.Text.PadRight(10), txtLotNo.Text.PadRight(10), cb_Type.Text });
 
                         string itemCodeZ = txtItemCode.Text, lotNoZ = txtLotNo.Text;
                         if (sheet.Contains("UNMATING") || sheet.Contains("COUPON"))
                         {
                             if (txt_itemcode_nvl.Text != "" && txt_lotno_nvl.Text != "")
                             {
-                                filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txt_itemcode_nvl.Text.PadRight(20), txt_lotno_nvl.Text.PadRight(10), sheet + infor });
+                                filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" }, new string[] { txt_itemcode_nvl.Text.PadRight(10), txt_lotno_nvl.Text.PadRight(30), cb_Type.Text });
+
                                 itemCodeZ = txt_itemcode_nvl.Text;
                                 lotNoZ = txt_lotno_nvl.Text;
                             }
@@ -11719,7 +11748,8 @@ namespace Funtion_F3_SMT
                             }
 
                         }
-
+                       
+                        
                         DataTable Data_all = TDMK_Code.Datatable_Filter(sqlcon, sheet + (_PRIME_PEEL_TEST ? "_WITHOUT_SUS" : "") + (!LegacyMode.Checked == true ? "_NAS" : ""), filter_str);
                         if (!LegacyMode.Checked && Data_all.Rows.Count > 0)
                         {

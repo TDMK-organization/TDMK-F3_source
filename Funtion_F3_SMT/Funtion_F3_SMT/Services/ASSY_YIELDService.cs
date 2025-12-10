@@ -120,20 +120,34 @@ namespace OK2SHIP_SMT.Services
             return dIC;
 
         }
-
+        public void ExportTableOfContent(ExcelWorksheet worksheet, string itemCode, string lotName)
+        {
+            Debugger.Break();
+            DataTable db = _dbContext.LoadDataTable("TABLE_OF_CONTENT_SETTING", new[] { "ItemCode" }, new[] { itemCode });
+            if (db.Rows.Count < 1)
+            {
+                return;
+            }
+            IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, new[] { "Build Config" , "Program Name", "Lot #", "ODB++ & Revision", "MCO & Revision" });
+            worksheet.Cells[ExportProcess.AddColumn(dic["Program Name"].ToString(), 1)].Value = db.Rows[0]["ProgramName"];
+            worksheet.Cells[ExportProcess.AddColumn(dic["Lot #"].ToString(), 1)].Value = lotName;
+            worksheet.Cells[ExportProcess.AddColumn(dic["ODB++ & Revision"].ToString(), 1)].Value = db.Rows[0]["ODBRevision"];
+            worksheet.Cells[ExportProcess.AddColumn(dic["MCO & Revision"].ToString(), 1)].Value = db.Rows[0]["MCORevision"];
+            worksheet.Cells[ExportProcess.AddColumn(dic["Build Config"].ToString(), 1)].Value = db.Rows[0]["Build"];
+        }
         public void Export(string itemCode, string lotNo)
         {
             if (UserSession.Instance.IsLoggedIn == false)
             {
                 throw new AuthenticationException("Hãy đăng nhập");
             }
-
             Dictionary<string, DataTable> dIC = Load(itemCode, lotNo);
             ExportProcess exportProcess = new ExportProcess();
             using (ExcelPackage package = exportProcess.FindFormatProcess("Assy Yield", itemCode, lotNo))
             {
                 using (ExcelWorksheet worksheet = exportProcess.FindSheet(package, "Assy Yield"))
                 {
+                    ExportTableOfContent(worksheet, itemCode, lotNo);
                     string[] healder = new string[] { "Production Yield Target:", "Station", "Input", "Passed and shipped to next process", "Rejected", "Evaluation", "IPQC", "ORT", "WIP", "Others" };
                     IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, healder, true);
                     if (dic.TryGetValue("Production Yield Target:", out string valueZA))
@@ -145,7 +159,7 @@ namespace OK2SHIP_SMT.Services
                             worksheet.Cells[ExportProcess.AddColumn(valueZA, 1)].Value = val / 100;
                             worksheet.Cells[ExportProcess.AddColumn(valueZA, 1)].Style.Numberformat.Format = "#0.00%";
 
-                        }   
+                        }
                     }
                     #region Process
                     DataTable dataTable = dIC["Process"];
@@ -262,14 +276,14 @@ namespace OK2SHIP_SMT.Services
                                         try
                                         {
 
-                                        if (row[col] is byte[])
-                                        {
-                                            ExportProcess.InsertImageToCell(worksheet, newz, (byte[])row[col], $"{Guid.NewGuid()}");
-                                        }
-                                        else
-                                        {
-                                            ExportProcess.InsertImageToCell(worksheet, newz, TDMK_ImageConverter.ImageToByteArray((Image)row[col], ImageFormat.Png), $"{Guid.NewGuid()}");
-                                        }
+                                            if (row[col] is byte[])
+                                            {
+                                                ExportProcess.InsertImageToCell(worksheet, newz, (byte[])row[col], $"{Guid.NewGuid()}");
+                                            }
+                                            else
+                                            {
+                                                ExportProcess.InsertImageToCell(worksheet, newz, TDMK_ImageConverter.ImageToByteArray((Image)row[col], ImageFormat.Png), $"{Guid.NewGuid()}");
+                                            }
                                         }
                                         catch
                                         {

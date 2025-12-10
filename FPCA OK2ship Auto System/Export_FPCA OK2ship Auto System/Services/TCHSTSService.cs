@@ -264,6 +264,30 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     return "";
             }
         }
+        public string Export(string itemCode, string lotNo, string category)
+        {
+            using (ExportProcess process = new ExportProcess())
+            {
+                using (ExcelPackage package = process.FindFormatProcess(category, itemCode, lotNo))
+                {
+                    using (ExcelWorksheet worksheet = process.FindSheet(package, category))
+                    {
+                        string msg = "";
+                        try
+                        {
+                            Export(worksheet, itemCode, lotNo, category);
+                        }
+                        catch (Exception ex)
+                        {
+                            msg = ex.Message;
+                        }
+                        process.SaveExcelWorksheet(package, category, $"{itemCode}_{lotNo}", "NPI", false);
+                        msg += "OK";
+                        return msg;
+                    }
+                }
+            }
+        }
         public void Export(ExcelWorksheet workSheet, string itemCode, string lotNo, string type)
         {
             itemCode = itemCode.Trim();

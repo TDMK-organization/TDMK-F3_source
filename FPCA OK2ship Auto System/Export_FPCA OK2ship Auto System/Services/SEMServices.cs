@@ -1,4 +1,5 @@
 ﻿using Export_FPCA_OK2ship_Auto_System.Repositories;
+using Export_FPCA_OK2ship_Auto_System.Services.TDMK_services;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Export_FPCA_OK2ship_Auto_System.Services
 {
@@ -515,7 +517,66 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 }
             }
         }
-        public string Export(string itemCode, string lotNo, bool primeAcpt)
+        private DataTable getDataTableStructor()
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("ID", typeof(int));
+            dataTable.Columns.Add("ItemCode", typeof(string));
+            dataTable.Columns.Add("LotNo", typeof(string));
+            dataTable.Columns.Add("SEM200250", typeof(byte[]));
+            dataTable.Columns.Add("SEM500700", typeof(byte[]));
+            dataTable.Columns.Add("SEM5K", typeof(byte[]));
+            dataTable.Columns.Add("Judgement", typeof(string));
+            dataTable.Columns.Add("Binarization200250", typeof(byte[]));
+            dataTable.Columns.Add("Black200250", typeof(double));
+            dataTable.Columns.Add("Binarization500700", typeof(byte[]));
+            dataTable.Columns.Add("Black500700", typeof(double));
+            dataTable.Columns.Add("CheckResults", typeof(string));
+            return dataTable;
+        }
+        public DataTable LoadDataProcess(string itemCode, string lotNo, bool prime = false)
+        {
+            DataTable table = new DataTable();
+            try
+            {
+                //1. Kiểm tra ItemCode Lotno
+                if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
+                {
+                    throw new Exception("ItemCode hoặc LotNo không được để trống");
+                }
+
+                table = _context.LoadDataTable("SEM_BSE_Binarization_Logfile" + (prime ? "" : "_NAS"), new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotNo });
+                if (table.Rows.Count <= 0)
+                {
+                    table = getDataTableStructor();
+                }
+                else
+                {
+                    if (!prime)
+                    {
+                        try
+                        {
+                            string json = table.Rows[0]["Data"].ToString();
+                            string address = table.Rows[0]["AddressImg"].ToString();
+                            table = TDMK_ConverterService.JsonToDataTable(json);
+                            NasRepository nas = new NasRepository();
+                            nas.MergeDataTable(table, "SEM_BSE_Binarization_Logfile", itemCode, lotNo, address);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception($"Lỗi khi đọc dữ liệu: {ex.Message}");
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return table;
+        }
+        public string Export(string itemCode, string lotNo, bool prime = false)
         {
             //1. Kiểm tra ItemCode Lotno
             if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
@@ -524,13 +585,13 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
 
             //2. Load data from database
-            DataTable dt = _context.LoadDataTable("SEM_BSE_Binarization_Logfile", new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotNo });
+            DataTable dt = LoadDataProcess(itemCode, lotNo, false);
             int countData = dt.Rows.Count;
             if (countData <= 0)
             {
                 throw new Exception($"{itemCode}-{lotNo} Không tồn tại dữ liệu");
             }
-            if (!primeAcpt)
+            if (!prime)
             {
                 if (countData < 22)
                 {
@@ -609,58 +670,82 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             }
 
                             /// Insert SEM500-700
-
-                            byte[] imgData500 = (byte[])dt.Rows[iz]["SEM500700"];
-                            if (dic.TryGetValue("SEM 500-700", out addressCol))
+                            try
                             {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700{iz}");
+
+                                byte[] imgData500 = (byte[])dt.Rows[iz]["SEM500700"];
+                                if (dic.TryGetValue("SEM 500-700", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700{iz}");
+                                }
+                                if (dic.TryGetValue("SEM BSE 500-700", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700BIN{iz}");
+                                }
                             }
-                            if (dic.TryGetValue("SEM BSE 500-700", out addressCol))
+                            catch
                             {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500, $"SEM500700BIN{iz}");
+
+
                             }
-
-                            //Insert Binarization Image
-                            byte[] imgData200bin = (byte[])dt.Rows[iz]["Binarization500700"];
-
-                            if (dic.TryGetValue("Binarization 2", out addressCol))
+                            try
                             {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData200bin, $"Bin2001{iz}");
-                                ExportProcess.AddBorderToImage(worksheet, $"Bin2001{iz}", Color.Green);
+                                //Insert Binarization Image
+                                byte[] imgData200bin = (byte[])dt.Rows[iz]["Binarization500700"];
+
+                                if (dic.TryGetValue("Binarization 2", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData200bin, $"Bin2001{iz}");
+                                    ExportProcess.AddBorderToImage(worksheet, $"Bin2001{iz}", Color.Green);
+                                }
                             }
-
-                            byte[] imgData500bin = (byte[])dt.Rows[iz]["Binarization200250"];
-                            if (dic.TryGetValue("Binarization 3", out addressCol))
+                            catch
                             {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
-                                ExportProcess.AddBorderToImage(worksheet, $"Bin5001{iz}", Color.Green);
+
+                            }
+                            try
+                            {
+
+                                byte[] imgData500bin = (byte[])dt.Rows[iz]["Binarization200250"];
+                                if (dic.TryGetValue("Binarization 3", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData500bin, $"Bin5001{iz}");
+                                    ExportProcess.AddBorderToImage(worksheet, $"Bin5001{iz}", Color.Green);
+                                }
+                            }
+                            catch
+                            {
+
                             }
 
                             //Insert black %
-                            double x2 = (double)dt.Rows[iz]["Black500700"] / 100;
-                            if (dic.TryGetValue("% Black", out addressCol))
+                            if (double.TryParse(dt.Rows[iz]["Black500700"].ToString(), out double d))
                             {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                worksheet.Cells[addressCol].Value = x2;
-                                addressNum += addressCol + ',';
+                                double x2 = d / 100;
+                                if (dic.TryGetValue("% Black", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    worksheet.Cells[addressCol].Value = x2;
+                                    addressNum += addressCol + ',';
 
+                                }
+
+
+                                //Insert Binarization Check  Results
+
+                                if (dic.TryGetValue("Binarization Check  Results", out addressCol))
+                                {
+                                    addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
+                                    worksheet.Cells[addressCol].Value = (Jd.Equals("Level 3") && x2 < 0.43) ? "OK" : "NG";
+                                }
+                                //add row sample
+                                addressRow = ExportProcess.AddRow(addressRow, 1);
+                                iz++;
                             }
-
-
-                            //Insert Binarization Check  Results
-
-                            if (dic.TryGetValue("Binarization Check  Results", out addressCol))
-                            {
-                                addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                worksheet.Cells[addressCol].Value = (Jd.Equals("Level 3") && x2 < 0.43) ? "OK" : "NG";
-                            }
-                            //add row sample
-                            addressRow = ExportProcess.AddRow(addressRow, 1);
-                            iz++;
                         }
                         if (dic.TryGetValue("Max", out string addressRowz))
                         {
@@ -691,14 +776,13 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     }
                     try
                     {
-
-                        exportProcess.SaveExcelWorksheet(ex, "SEM BSE & Binarization", $"{itemCode.Trim()}-{lotNo.Trim()}");
+                        exportProcess.SaveExcelWorksheet(ex, "SEM BSE & Binarization", $"{itemCode.Trim()}_{lotNo.Trim()}", "NPI", false);
                     }
                     catch (Exception exz)
                     {
-                        throw new Exception($"Lỗi khi mở file export: bạn có thể đang mở file export! {exz}");
+                        return $"Lỗi khi mở file export: bạn có thể đang mở file export! {exz}";
                     }
-                    return "Xuất thành công";
+                    return "OK";
                 }
             }
             throw new NotImplementedException();

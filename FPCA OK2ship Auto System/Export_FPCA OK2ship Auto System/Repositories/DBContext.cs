@@ -1,6 +1,7 @@
 ﻿using IniLibs;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -40,7 +41,41 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
             SqlConnection.Open();
 
         }
+        public DataTable ExecuteQueryToDataTable(string sqlQuery, SqlParameter[] parameters = null)
+        {
 
+            // Khởi tạo đối tượng DataTable để lưu kết quả
+            DataTable dt = new DataTable();
+
+            using (SqlCommand command = new SqlCommand(sqlQuery, SqlConnection))
+            {
+                try
+                {
+                    // 1. Thêm tham số (nếu có)
+                    if (parameters != null)
+                    {
+                        command.Parameters.AddRange(parameters);
+                    }
+
+                    // 3. Sử dụng SqlDataAdapter để thực thi truy vấn và đổ dữ liệu
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
+                    dataAdapter.Fill(dt);
+                }
+                catch (SqlException ex)
+                {
+                    // Xử lý các lỗi liên quan đến SQL (ví dụ: truy vấn sai, bảng không tồn tại)
+                    throw new Exception("Lỗi khi thực thi SQL: " + ex.Message, ex);
+                }
+                catch (Exception ex)
+                {
+                    // Xử lý các lỗi khác
+                    throw new Exception("Lỗi hệ thống: " + ex.Message, ex);
+                }
+            }
+
+
+            return dt;
+        }
         public int GetID(string tableName, string id = "id")
         {
             using (SqlCommand command = new SqlCommand($"SELECT MAX({id}) FROM [{tableName}]", SqlConnection))

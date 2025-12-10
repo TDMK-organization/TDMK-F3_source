@@ -82,7 +82,7 @@ namespace OK2SHIP_SMT.Services
                 {
                     using (ExcelPackage package = ExportProcess.openPackage(locationFolder))
                     {
-                        using (ExcelWorksheet worksheet = package.Workbook.Worksheets["Barcode"])
+                        using (ExcelWorksheet worksheet = package.Workbook.Worksheets[0])
                         {
                             string[] nameColumn = { "No", "Qr code", "Grade", "Check time" };
                             IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, nameColumn, true);
@@ -536,7 +536,7 @@ namespace OK2SHIP_SMT.Services
             eCode = eCode.Trim();
 
             DBContext _db = new DBContext();
-            DataTable dt = _db.LoadDataTable("TABLE_OF_CONTENT_SETTING", new[] { "ItemName" }, new[] { itemName }, new[] { "ItemName", "EEEECode", "FactoryCode" });
+            DataTable dt = _db.LoadDataTable("TABLE_OF_CONTENT_SETTING", new[] { "ItemName" }, new[] { itemName });
             if (dt.Rows.Count <= 0)
             {
                 throw new Exception($"Chưa cài đặt table of content itemName {itemName} trên hệ thống!");

@@ -45,8 +45,13 @@ namespace Export_FPCA_OK2ship_Auto_System.Services.TDMK_services
                     {
                         string name = col.ColumnName.Replace("&CONVERTER", "");
                         int point = int.Parse(row[col].ToString()) - 1;
-                        byte[] img = (byte[])dataTableImage.Rows[point]["Image"];
-                        rowZ[name] = img;
+                        try
+                        {
+
+                            byte[] img = (byte[])dataTableImage.Rows[point]["Image"];
+                            rowZ[name] = img;
+                        }
+                        catch { }
                     }
                     else
                     {

@@ -854,7 +854,7 @@ namespace OK2SHIP_SMT.Services
                         //peek key no refer
                         foreach (string key in _DIC.Keys)
                         {
-                            if (!key.Contains("REFER") && key.Split('-')[0].Trim().Equals(tape) && key.Split('_')[1].Trim().ToUpper().Equals(stage.ToUpper()))
+                            if (!key.Contains("REFER") && key.ToUpper().Split('-')[0].Trim().Equals(tape.ToUpper()) && key.Split('_')[1].Trim().ToUpper().Equals(stage.ToUpper()))
                             {
                                 // maker name
                                 ws.Cells[item].Value = $"{valueZ.Split('_')[0]}_ {key.Split('-', '_')[1]} {valueZ.Split('_')[1]}";
@@ -1003,6 +1003,9 @@ namespace OK2SHIP_SMT.Services
                     if (!liner)
                     {
                         string addressZ = ExportProcess.AddRow(ExportProcess.AddColumn(item, 2), 10);
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), -1)].Value = $"{peakMin} ~ {peakMax}";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), -1)].Value = $"{averageMin} ~ {averageMax}";
+                        
                         ws.Cells[addressZ].FormulaR1C1 = $"=MIN(R[-7]C:R[-7]C[31])";
                         ws.Cells[ExportProcess.AddColumn(addressZ, 1)].FormulaR1C1 = $"=MIN(R[-6]C[-1]:R[-6]C[30])";
                         ws.Cells[ExportProcess.AddRow(addressZ, 1)].FormulaR1C1 = $"=MAX(R[-8]C:R[-8]C[31])";
@@ -1017,6 +1020,11 @@ namespace OK2SHIP_SMT.Services
                     else
                     {
                         string addressZ = ExportProcess.AddRow(ExportProcess.AddColumn(item, 2), 13);
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), -1)].Value = $"{peakGFMin} ~ {peakGFMax}";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), -1)].Value = $"{peakMin} ~ {peakMax}";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), -1)].Value = $"{averageGFMin} ~ {averageGFMax}";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), -1)].Value = $"{averageMin} ~ {averageMax}";
+
                         ws.Cells[addressZ].FormulaR1C1 = $"=MIN(R[-9]C:R[-9]C[31])";
                         ws.Cells[ExportProcess.AddColumn(addressZ, 1)].FormulaR1C1 = $"=MIN(R[-7]C[-1]:R[-7]C[31])";
                         ws.Cells[ExportProcess.AddColumn(addressZ, 2)].FormulaR1C1 = $"=MIN(R[-8]C[-2]:R[-8]C[29])";
@@ -1079,7 +1087,7 @@ namespace OK2SHIP_SMT.Services
                 //{
                 if (key.Contains(liner ? "LINER" : "PSA"))
                 {
-                    string tapeZ = key.Split('-')[0].Trim();
+                    string tapeZ = key.Split('-')[0].Trim().ToUpper();
                     if (listZ.TryGetValue(tapeZ, out string value))
                     {
                         value += "," + key;

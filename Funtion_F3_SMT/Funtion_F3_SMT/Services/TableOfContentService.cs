@@ -59,9 +59,8 @@ namespace OK2SHIP_SMT.Services
                 dataTable.Columns.Add(textCol[i], typeof(string));
             }
 
-            string[] textRow = new string[] { "Declaration", "Deviation summary", "Flex Assembly", "FAI", "CPK", "Mic peeling force test", "Connector shear off test", "Peeling test for BGA component", "Shear Force test for BGA Component", "B2B CONNECTOR PEELING TEST ", "Clip Peeling test ", "E75 IO Mating/Unmating test", "Thermal Cycling", "Heat Soak and Recovery", "Thermal stress", "Hotbar loop test", "Thermal shock", "Flex bending test ", "Bending after thermal cycling", "Bending after heat soak ", "Click Ratio", "Wetting contact angle", "ACF flatness", "ACF peel test", "Surface roughness", "Bar code checking (Grade and Rule)", "Package Drop Test /Vibration Result", "Process flow" };
-            string[] textRow1 = new string[] { "Declaration", "Deviation", "< Yeild Bridge >", "<Measument>", "<Measument>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "Tact switch", "ACF", "ACF", "ACF", "ACF", "Bar code", "< Pakaging >", "Process Flow" };
-            string[] textRow2 = new string[] { "N/A", "N/A", "N/A", "MCO", "MCO", "Flex CPP", "Flex CPP", "Flex CPP", "Flex CPP", "Flex CPP", "CPP", "NA", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "MCO", "080-03911", "080-03911", "080-03911", "080-03911", "080-03910", "080-03920", "CPP" };
+            string[] textRow = new string[] { "Declaration", "Deviation summary", "Flex Assembly", "FAI", "CPK", "Mic peeling force test", "Connector shear off test", "Peeling test for BGA component", "Shear Force test for BGA Component", "B2B CONNECTOR PEELING TEST ", "Clip Peeling test", "E75 IO Mating/Unmating test", "Thermal Cycling", "Heat Soak and Recovery", "Thermal stress", "Hotbar loop test", "Thermal shock", "Flex bending test", "Bending after thermal cycling", "Bending after heat soak", "Click Ratio", "Wetting contact angle", "ACF flatness", "ACF peel test", "Surface roughness", "Bar code checking (Grade and Rule)", "Package Drop Test /Vibration Result", "Process flow" };
+            string[] textRow1 = new string[] { "Declaration", "Deviation", "< Yeild Bridge >", "<Measument>", "<Measument>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "Tact switch", "ACF", "ACF", "ACF", "ACF", "Bar code", "< Pakaging >", "Process Flow" }; string[] textRow2 = new string[] { "N/A", "N/A", "N/A", "MCO", "MCO", "Flex CPP", "Flex CPP", "Flex CPP", "Flex CPP", "Flex CPP", "CPP", "NA", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "MCO", "080-03911", "080-03911", "080-03911", "080-03911", "080-03910", "080-03920", "CPP" };
             string[] textRow3 = new string[] { "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "30days max after shipping", "30days max after shipping", "30days max after shipping", "30days max after shipping", "5days max after shipping", "30days max after shipping", "Prior to ship", "30days max after shipping", "30days max after shipping", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship" };
             string[] textRow4 = new string[] { "", "", "NA", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "NA", "NA" };
             string[] textRow5 = new string[] { "", "", "NA", "32", "32", "10", "10", "10", "10", "10", "10", "45", "45", "45", "5", "10", "45", "20", "20", "20", "32", "5", "5", "5", "32", "5", "NA", "NA" };
@@ -154,7 +153,7 @@ namespace OK2SHIP_SMT.Services
                 using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, "Table of Contents"))
                 {
                     string[] path1 = new string[] { "Program Name:", "MCO & Revision:", "ODB++ & Revision", "Build Config:", "Lot #:", "Ok2Build date:", "Delivery Qty:", "Ok2send date:", "Shipping to", "Shipping form:", "X-out Rate:", "EEEE Code" };
-                    string[] path2 = new string[] { "Submission", "Declaration", "Deviation summary", "Flex Assembly", "FAI", "CPK", "Mic peeling force test", "Connector shear off test", "Peeling test for BGA component", "Shear Force test for BGA Component", "B2B CONNECTOR PEELING TEST ", "Clip Peeling test ", "E75 IO Mating/Unmating test", "Thermal Cycling", "Heat Soak and Recovery", "Thermal stress", "Hotbar loop test", "Thermal shock", "Flex bending test ", "Bending after thermal cycling", "Bending after heat soak ", "Click Ratio", "Wetting contact angle", "ACF flatness", "ACF peel test", "Surface roughness", "Bar code checking (Grade and Rule)", "Package Drop Test /Vibration Result", "Process flow" };
+                    string[] path2 = new string[] { "Submission", "Declaration", "Deviation summary", "Flex Assembly", "FAI", "CPK", "Mic peeling force test", "Connector shear off test", "Peeling test for BGA component", "Shear Force test for BGA Component", "B2B CONNECTOR PEELING TEST", "Clip Peeling test ", "E75 IO Mating/Unmating test", "Thermal Cycling", "Heat Soak and Recovery", "Thermal stress", "Hotbar loop test", "Thermal shock", "Flex bending test ", "Bending after thermal cycling", "Bending after heat soak ", "Click Ratio", "Wetting contact angle", "ACF flatness", "ACF peel test", "Surface roughness", "Bar code checking (Grade and Rule)", "Package Drop Test /Vibration Result", "Process flow" };
                     IDictionary<string, string> addressHeader = ExportProcess.FindAddressByText(workSheet, path1.Concat(path2).ToArray(), true);
                     var row = dt.Rows[0];
                     var row2 = dt2.Rows[0];
@@ -252,12 +251,16 @@ namespace OK2SHIP_SMT.Services
                                     }
                                     else
                                     {
+                                        if (str_search.Equals("Process flow")){
+                                            addressRow = addressRow.Split('-').LastOrDefault();
+                                        }
                                         address = workSheet.Cells[workSheet.Cells[addressRow].Start.Row, workSheet.Cells[addressCol].Start.Column].Address;
                                     }
                                     workSheet.Cells[address].Value = item["Target date Submission"];
                                     workSheet.Cells[ExportProcess.AddColumn(address, 1)].Value = item["Status"];
 
                                 }
+                                else { Debugger.Break(); }
                             }
                             catch (Exception exz)
                             {

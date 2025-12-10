@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -53,23 +54,78 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 else
                 {
 
-                    DataTable z = TDMK_ConverterService.ConvertDataTableImage(zz, dataImage);
-                    dIC.Add(item, z);
+                    try
+                    {
+                        DataTable z = TDMK_ConverterService.ConvertDataTableImage(zz, dataImage);
+                        dIC.Add(item, z);
+                    }
+                    catch { }
                 }
 
             }
             return dIC;
 
         }
+        public string Export(string itemCode, string lotNo)
+        {
+            _dbContext = new DBContext();
+            try
+            {
 
-        public void Export(ExcelWorksheet worksheet, string itemCode, string lotNo)
+                using (ExportProcess process = new ExportProcess())
+                {
+                    using (ExcelPackage package = process.FindFormatProcess("Assy Yield", itemCode, lotNo))
+                    {
+                        using (ExcelWorksheet worksheet = process.FindSheet(package, "Assy Yield"))
+                        {
+                            string msg = Export(worksheet, itemCode, lotNo);
+                            process.SaveExcelWorksheet(package, "Assy Yield", $"{itemCode}_{lotNo}", "NPI", false);
+                            return msg;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+        public void ExportTableOfContent(ExcelWorksheet worksheet, string itemCode, string lotName)
+        {
+            Debugger.Break();
+            DataTable db = _dbContext.LoadDataTable("TABLE_OF_CONTENT_SETTING", new[] { "ItemCode" }, new[] { itemCode });
+            if (db.Rows.Count < 1)
+            {
+                return;
+            }
+            IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, new[] { "Build Config", "Program Name", "Lot #", "ODB++ & Revision", "MCO & Revision" });
+            worksheet.Cells[ExportProcess.AddColumn(dic["Program Name"].ToString(), 1)].Value = db.Rows[0]["ProgramName"];
+            worksheet.Cells[ExportProcess.AddColumn(dic["Lot #"].ToString(), 1)].Value = lotName;
+            worksheet.Cells[ExportProcess.AddColumn(dic["ODB++ & Revision"].ToString(), 1)].Value = db.Rows[0]["ODBRevision"];
+            worksheet.Cells[ExportProcess.AddColumn(dic["MCO & Revision"].ToString(), 1)].Value = db.Rows[0]["MCORevision"];
+            worksheet.Cells[ExportProcess.AddColumn(dic["Build Config"].ToString(), 1)].Value = db.Rows[0]["Build"];
+        }
+        public string Export(ExcelWorksheet worksheet, string itemCode, string lotNo)
         {
 
             Dictionary<string, DataTable> dIC = Load(itemCode, lotNo);
             ExportProcess exportProcess = new ExportProcess();
 
-            string[] healder = new string[] { "Station", "Input", "Passed and shipped to next process", "Rejected", "Evaluation", "IPQC", "ORT", "WIP", "Others" };
+
+            ExportTableOfContent(worksheet, itemCode, lotNo);
+            string[] healder = new string[] { "Production Yield Target:", "Station", "Input", "Passed and shipped to next process", "Rejected", "Evaluation", "IPQC", "ORT", "WIP", "Others" };
             IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, healder, true);
+            if (dic.TryGetValue("Production Yield Target:", out string valueZA))
+            {
+                DataTable dtz = _dbContext.LoadDataTable("TARGET_OF_ASSY_YIELD", new[] { "ItemCode" }, new[] { itemCode });
+                string value = dtz.Rows[0]["Value"].ToString();
+                if (double.TryParse(value, out double val))
+                {
+                    worksheet.Cells[ExportProcess.AddColumn(valueZA, 1)].Value = val / 100;
+                    worksheet.Cells[ExportProcess.AddColumn(valueZA, 1)].Style.Numberformat.Format = "#0.00%";
+
+                }
+            }
             #region Process
             DataTable dataTable = dIC["Process"];
             Dictionary<string, int> Marking = new Dictionary<string, int>();
@@ -182,15 +238,23 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             {
 
                                 ExcelRangeBase newz = worksheet.Cells[worksheet.Cells[add].Address];
-                                if (row[col] is byte[])
+                                try
                                 {
-                                    ExportProcess.InsertImageToCell(worksheet, newz, (byte[])row[col], $"{Guid.NewGuid()}");
-                                }
-                                else
-                                {
-                                    ExportProcess.InsertImageToCell(worksheet, newz, TDMK_ImageConverter.ImageToByteArray((Image)row[col], ImageFormat.Png), $"{Guid.NewGuid()}");
-                                }
 
+                                    if (row[col] is byte[])
+                                    {
+                                        ExportProcess.InsertImageToCell(worksheet, newz, (byte[])row[col], $"{Guid.NewGuid()}");
+                                    }
+                                    else
+                                    {
+                                        ExportProcess.InsertImageToCell(worksheet, newz, TDMK_ImageConverter.ImageToByteArray((Image)row[col], ImageFormat.Png), $"{Guid.NewGuid()}");
+                                    }
+                                }
+                                catch
+                                {
+
+                                }
+                                newz.Value = row["Defect Name"];
                                 add = ExportProcess.AddColumn(add, 1);
 
                             }
@@ -220,6 +284,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 }
             }
             #endregion
+            return "OK";
         }
     }
 

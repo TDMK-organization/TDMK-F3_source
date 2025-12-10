@@ -88,7 +88,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 dataTable.Columns.Add(textCol[i], typeof(string));
             }
 
-            string[] textRow = new string[] { "Declaration", "Deviation summary", "Flex Assembly", "FAI", "CPK", "Mic peeling force test", "Connector shear off test", "Peeling test for BGA component", "Shear Force test for BGA Component", "B2B CONNECTOR PEELING TEST ", "Clip Peeling test ", "E75 IO Mating/Unmating test", "Thermal Cycling", "Heat Soak and Recovery", "Thermal stress", "Hotbar loop test", "Thermal shock", "Flex bending test ", "Bending after thermal cycling", "Bending after heat soak ", "Click Ratio", "Wetting contact angle", "ACF flatness", "ACF peel test", "Surface roughness", "Bar code checking (Grade and Rule)", "Package Drop Test /Vibration Result", "Process flow" };
+            string[] textRow = new string[] { "Declaration", "Deviation summary", "Flex Assembly", "FAI", "CPK", "Mic peeling force test", "Connector shear off test", "Peeling test for BGA component", "Shear Force test for BGA Component", "B2B CONNECTOR PEELING TEST", "Clip Peeling test ", "E75 IO Mating/Unmating test", "Thermal Cycling", "Heat Soak and Recovery", "Thermal stress", "Hotbar loop test", "Thermal shock", "Flex bending test ", "Bending after thermal cycling", "Bending after heat soak ", "Click Ratio", "Wetting contact angle", "ACF flatness", "ACF peel test", "Surface roughness", "Bar code checking (Grade and Rule)", "Package Drop Test /Vibration Result", "Process flow" };
             string[] textRow1 = new string[] { "Declaration", "Deviation", "< Yeild Bridge >", "<Measument>", "<Measument>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "<OQC Test>", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "< ORT Test - Back End >", "Tact switch", "ACF", "ACF", "ACF", "ACF", "Bar code", "< Pakaging >", "Process Flow" };
             string[] textRow2 = new string[] { "N/A", "N/A", "N/A", "MCO", "MCO", "Flex CPP", "Flex CPP", "Flex CPP", "Flex CPP", "Flex CPP", "CPP", "NA", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "080-03910", "MCO", "080-03911", "080-03911", "080-03911", "080-03911", "080-03910", "080-03920", "CPP" };
             string[] textRow3 = new string[] { "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "30days max after shipping", "30days max after shipping", "30days max after shipping", "30days max after shipping", "5days max after shipping", "30days max after shipping", "Prior to ship", "30days max after shipping", "30days max after shipping", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship", "Prior to ship" };
@@ -163,7 +163,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 return null;
             }
         }
-        public void Export(string itemCode, string lotno)
+        public string Export(string itemCode, string lotno)
         {
             itemCode = itemCode.Trim();
             lotno = lotno.Trim();
@@ -183,7 +183,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, "Table of Contents"))
                 {
                     string[] path1 = new string[] { "Program Name:", "MCO & Revision:", "ODB++ & Revision", "Build Config:", "Lot #:", "Ok2Build date:", "Delivery Qty:", "Ok2send date:", "Shipping to", "Shipping form:", "X-out Rate:", "EEEE Code" };
-                    string[] path2 = new string[] { "Submission", "Declaration", "Deviation summary", "Flex Assembly", "FAI", "CPK", "Mic peeling force test", "Connector shear off test", "Peeling test for BGA component", "Shear Force test for BGA Component", "B2B CONNECTOR PEELING TEST ", "Clip Peeling test ", "E75 IO Mating/Unmating test", "Thermal Cycling", "Heat Soak and Recovery", "Thermal stress", "Hotbar loop test", "Thermal shock", "Flex bending test ", "Bending after thermal cycling", "Bending after heat soak ", "Click Ratio", "Wetting contact angle", "ACF flatness", "ACF peel test", "Surface roughness", "Bar code checking (Grade and Rule)", "Package Drop Test /Vibration Result", "Process flow" };
+                    string[] path2 = new string[] { "Submission", "Declaration", "Deviation summary", "Flex Assembly", "FAI", "CPK", "Mic peeling force test", "Connector shear off test", "Peeling test for BGA component", "Shear Force test for BGA Component", "B2B CONNECTOR PEELING TEST", "Clip Peeling test", "E75 IO Mating/Unmating test", "Thermal Cycling", "Heat Soak and Recovery", "Thermal stress", "Hotbar loop test", "Thermal shock", "Flex bending test", "Bending after thermal cycling", "Bending after heat soak", "Click Ratio", "Wetting contact angle", "ACF flatness", "ACF peel test", "Surface roughness", "Bar code checking (Grade and Rule)", "Package Drop Test /Vibration Result", "Process flow" };
                     IDictionary<string, string> addressHeader = ExportProcess.FindAddressByText(workSheet, path1.Concat(path2).ToArray(), true);
                     var row = dt.Rows[0];
                     var row2 = dt2.Rows[0];
@@ -272,15 +272,20 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             try
                             {
                                 //Debugger.Break();
-                                string str_search = item["Test"].ToString();
+                                string str_search = item["Test"].ToString().Trim();
                                 if (addressHeader.TryGetValue(str_search, out addressRow))
                                 {
+
                                     if (str_search.Equals("Declaration"))
                                     {
                                         address = workSheet.Cells[workSheet.Cells[addressRow.Split('-')[1]].Start.Row, workSheet.Cells[addressCol].Start.Column].Address;
                                     }
                                     else
                                     {
+                                        if (addressRow.Split('-').Count() > 1)
+                                        {
+                                            addressRow = addressRow.Split('-').LastOrDefault();
+                                        }
                                         address = workSheet.Cells[workSheet.Cells[addressRow].Start.Row, workSheet.Cells[addressCol].Start.Column].Address;
                                     }
                                     workSheet.Cells[address].Value = item["Target date Submission"];
@@ -291,15 +296,25 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             catch (Exception exz)
                             {
                                 Debugger.Break();
+                                return exz.Message;
                             }
 
                         }
                     }
-                    exportProcess.SaveExcelWorksheet(ex, "Table of Contents", $"{itemCode}-{lotno}");
+                    try
+                    {
+
+                        exportProcess.SaveExcelWorksheet(ex, "Table of Contents", $"{itemCode}_{lotno}", "NPI", false);
+                    }
+                    catch (Exception exZ)
+                    {
+                        return exZ.Message;
+                    }
 
                 }
 
             }
+            return "OK";
             //throw new Exception("Export Thành công!");
         }
 
@@ -452,7 +467,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 
 
             string[] path1 = new string[] { "Program Name:", "MCO & Revision:", "ODB++ & Revision", "Build Config:", "Lot #:", "Ok2Build date:", "Delivery Qty:", "Ok2send date:", "Shipping to", "Shipping form:", "X-out Rate:", "EEEE Code" };
-            string[] path2 = new string[] { "Submission", "Declaration", "Deviation summary", "Flex Assembly", "FAI", "CPK", "Mic peeling force test", "Connector shear off test", "Peeling test for BGA component", "Shear Force test for BGA Component", "B2B CONNECTOR PEELING TEST ", "Clip Peeling test ", "E75 IO Mating/Unmating test", "Thermal Cycling", "Heat Soak and Recovery", "Thermal stress", "Hotbar loop test", "Thermal shock", "Flex bending test ", "Bending after thermal cycling", "Bending after heat soak ", "Click Ratio", "Wetting contact angle", "ACF flatness", "ACF peel test", "Surface roughness", "Bar code checking (Grade and Rule)", "Package Drop Test /Vibration Result", "Process flow" };
+            string[] path2 = new string[] { "Submission", "Declaration", "Deviation summary", "Flex Assembly", "FAI", "CPK", "Mic peeling force test", "Connector shear off test", "Peeling test for BGA component", "Shear Force test for BGA Component", "B2B CONNECTOR PEELING TEST ", "Clip Peeling test ", "E75 IO Mating/Unmating test", "Thermal Cycling", "Heat Soak and Recovery", "Thermal stress", "Hotbar loop test", "Thermal shock", "Flex bending test ", "Bending after thermal cycling", "Bending after heat soak", "Click Ratio", "Wetting contact angle", "ACF flatness", "ACF peel test", "Surface roughness", "Bar code checking (Grade and Rule)", "Package Drop Test /Vibration Result", "Process flow" };
             IDictionary<string, string> addressHeader = ExportProcess.FindAddressByText(workSheet, path1.Concat(path2).ToArray(), true);
             var row = dt.Rows[0];
             var row2 = dt2.Rows[0];

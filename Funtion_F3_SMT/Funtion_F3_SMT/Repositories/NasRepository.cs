@@ -9,6 +9,7 @@ using System.IO;
 using System.Data;
 using System.Collections.Generic;
 using System.Diagnostics;
+using OK2SHIP_SMT.Services;
 
 namespace OK2SHIP_SMT.Repositories
 {
@@ -76,6 +77,10 @@ namespace OK2SHIP_SMT.Repositories
                 {
                     strings.Add(column.ColumnName);
                 }
+                if (column.DataType == typeof(byte[]))
+                {
+                    strings.Add(column.ColumnName);
+                }
             }
 
 
@@ -95,7 +100,15 @@ namespace OK2SHIP_SMT.Repositories
                         {
                             string name = $"{row["ID"]}-{Guid.NewGuid()}";
                             dataTable.Rows[row.Table.Rows.IndexOf(row)][item + "$Image"] = name;
-                            listImage.Add(new KeyValuePair<string, Image>(name, (Image)row[item]));
+                            if (dataTable.Columns[item].DataType == typeof(byte[]))
+                            {
+
+                                listImage.Add(new KeyValuePair<string, Image>(name, TDMK_ImageConverter.ByteArrayToImage((byte[])row[item])));
+                            }
+                            else
+                            {
+                                listImage.Add(new KeyValuePair<string, Image>(name, (Image)row[item]));
+                            }
                         }
                     }
                     catch

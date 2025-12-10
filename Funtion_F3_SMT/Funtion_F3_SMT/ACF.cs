@@ -1456,7 +1456,7 @@ namespace OK2SHIP_SMT
                             string report_folder = Path.Combine(data_loc, "Report", cb_Type.SelectedItem.ToString(), "ACF");
                             if (!System.IO.Directory.Exists(report_folder))
                                 System.IO.Directory.CreateDirectory(report_folder);
-                            F_export_EPPlus.export_NPI_ACF(file_format, report_folder, txtItemCode.Text, txtLotNo.Text, "ACF", sqlcon, !Legacy.Checked);
+                            F_export_EPPlus.export_NPI_ACF(file_format, report_folder, txtItemCode.Text, txtLotNo.Text, "ACF", sqlcon, !Legacy.Checked, cb_Type.Text);
                         }
                         else
                         {
@@ -1707,9 +1707,11 @@ namespace OK2SHIP_SMT
         {
             string itemCode = txtItemCode.Text.ToString();
             string lotNo = txtLotNo.Text.ToString();
-            if (tbl_name == "ACF_FLATNESS" && !Legacy.Checked)
+            string type = cb_Type.Text.ToString();
+
+            if ((tbl_name == "ACF_BONDING" || tbl_name == "ACF_FLATNESS") && !Legacy.Checked)
             {
-                tbl_name = "ACF_FLATNESS_NAS";
+                tbl_name = $"{tbl_name}_NAS";
                 itemCode = itemCode.PadRight(10);
                 lotNo = lotNo.PadRight(10);
             }
@@ -1717,9 +1719,9 @@ namespace OK2SHIP_SMT
 
             DataTable dt_analysis = tbl_name != "ACF_BONDING" ? TDMK_Code.Datatable_Filter(sqlcon, tbl_name, filter_str) : new DataTable();
 
-            if (tbl_name == "ACF_BONDING")
+            if (tbl_name.Contains("ACF_BONDING"))
             {
-                dt_analysis = new ACFService().loadPeel(txtItemCode.Text, txtLotNo.Text, Legacy.Checked);
+                dt_analysis = new ACFService().loadPeel(txtItemCode.Text, txtLotNo.Text, type, !Legacy.Checked);
 
             }
 
@@ -1730,10 +1732,10 @@ namespace OK2SHIP_SMT
                 filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotNo });
 
                 dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, tbl_name + "_NAS", filter_str);
-                if(dt_analysis.Rows.Count > 0)
+                if (dt_analysis.Rows.Count > 0)
                 {
                     string json = dt_analysis.Rows[0]["Data"].ToString();
-                   dt_analysis = ConverterService.JsonToDataTable(json);
+                    dt_analysis = ConverterService.JsonToDataTable(json);
                 }
             }
 
@@ -1748,8 +1750,8 @@ namespace OK2SHIP_SMT
                 {
                     try
                     {
-
-                        ProductIDService.FillProductID(dt_analysis, txtItemCode.Text, txtLotNo.Text, tbl_name);
+                        string tbl_namez = tbl_name.Replace("_NAS", "");
+                        ProductIDService.FillProductID(dt_analysis, txtItemCode.Text, txtLotNo.Text, tbl_namez);
                     }
                     catch { }
                 }
@@ -1761,7 +1763,7 @@ namespace OK2SHIP_SMT
                 }
 
                 dgv_data.DataSource = dt_analysis;
-                if (tbl_name == "ACF_BONDING")
+                if (tbl_name.Contains("ACF_BONDING"))
                 {
                     if (dgv_data.Rows.Count > 0)
                     {
@@ -2629,8 +2631,9 @@ namespace OK2SHIP_SMT
 
                         if (tbl_data.Columns.Contains("ProductID"))
                         {
+                            string pidcontent = tbl_name.Replace("_NAS", "");
                             string content = ProductIDService.ConverterProductID(tbl_data, "Id");
-                            ProductIDService.InsertProductID(txtItemCode.Text, txtLotNo.Text, tbl_name, content);
+                            ProductIDService.InsertProductID(txtItemCode.Text, txtLotNo.Text, pidcontent, content);
                             tbl_data.Columns.Remove("ProductID");
                         }
                         if (tbl_name == "ACF_BONDING_NAS")
@@ -2641,7 +2644,7 @@ namespace OK2SHIP_SMT
                             DataRow row = dt.NewRow();
                             row["ItemCode"] = txtItemCode.Text;
                             row["LotNo"] = txtLotNo.Text;
-                            row["Remark"] = tbl_data.Rows[0]["Remark"];
+                            row["Remark"] = cb_Type.Text;
                             row["Data"] = json;
                             row["LocationImg"] = location;
                             dt.Rows.Add(row);

@@ -1,5 +1,6 @@
 ﻿using Export_FPCA_OK2ship_Auto_System.Libary;
 using Export_FPCA_OK2ship_Auto_System.Repositories;
+using Export_FPCA_OK2ship_Auto_System.Services.TDMK_services;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing;
 using System;
@@ -401,110 +402,167 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
         }
 
-
-
-        public string Export(string itemcode, string lotno)
+        public DataTable LoadProcess(string itemCode, string lotNo, bool legacy = false)
         {
-            string addressNum = "";
-            ExportProcess exportProcess = new ExportProcess();
-            using (ExcelPackage ex = exportProcess.FindFormatProcess("OQC B2B Mating-Unmating", itemcode, lotno))
+            DataTable dataTable = new DataTable();
+            if (legacy)
             {
-                using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, "OQC B2B Mating-Unmating"))
+
+                dataTable = _context.LoadDataTable("OQC_B2B_Mating_Unmating", new string[] { "ItemCode", "lotNo" }, new string[] { itemCode, lotNo });
+                int i = 1;
+                foreach (DataRow item in dataTable.Rows)
                 {
-                    //string address = exportProcess.FindAddressByText(workSheet, "Bar Code Verification");
-                    string[] colHeader = { "Min Force (N)", "Max Force (N)", "Average Force (N)", "Sample 1", "Sample 2", "Sample 3", "Sample 4", "Sample 5", "Sample 6", "Sample 7", "Sample 8", "Sample 9", "Sample 10" };
-                    string[] rowHeader = { "Picture T0", "Picture T30", " Unmating force at T1", "Unmating picture at T1", "Graph unmating at T1", "Failure mode", "Judgement " };
-                    IDictionary<string, string> addressHeader = TDMK_DictionaryService.MergeDictionaries<string, string>(ExportProcess.FindAddressByText(workSheet, colHeader.ToArray(), true), ExportProcess.FindAddressByText(workSheet, rowHeader.ToArray()));
+                    item["ID"] = i++;
+                    item["Judgement"] = checkARow(item) ? "OK" : "NG";
+                }
 
-                    DataTable dataTable = _context.LoadDataTable("OQC_B2B_Mating_Unmating", new string[] { "ItemCode", "lotNo" }, new string[] { itemcode, lotno });
-                    int i = 1;
-                    foreach (DataRow row in dataTable.Rows)
+            }
+            else
+            {
+                dataTable = _context.LoadDataTable("OQC_B2B_Mating_Unmating_NAS", new string[] { "ItemCode", "lotNo" }, new string[] { itemCode, lotNo });
+                if (dataTable.Rows.Count <= 0)
+                {
+                    throw new Exception("No data");
+                }
+                string json = dataTable.Rows[0]["Data"].ToString();
+                string location = dataTable.Rows[0]["LoactionImg"].ToString();
+                dataTable = TDMK_ConverterService.JsonToDataTable(json);
+                NasRepository _nas = new NasRepository();
+                _nas.MergeDataTable(dataTable, "OQC_B2B_Mating_Unmating_NAS", itemCode, lotNo, location);
+            }
+            return dataTable;
+        }
+
+        public string Export(string itemcode, string lotno, bool legacy = false)
+        {
+            try
+            {
+
+                string addressNum = "";
+                ExportProcess exportProcess = new ExportProcess();
+                using (ExcelPackage ex = exportProcess.FindFormatProcess("OQC B2B Mating-Unmating", itemcode, lotno))
+                {
+                    using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, "OQC B2B Mating-Unmating"))
                     {
-                        string col = addressHeader[$"Sample {i}"];
+                        //string address = exportProcess.FindAddressByText(workSheet, "Bar Code Verification");
+                        string[] colHeader = { "Flex SN", "Min Force (N)", "Max Force (N)", "Average Force (N)", "Sample 1", "Sample 2", "Sample 3", "Sample 4", "Sample 5", "Sample 6", "Sample 7", "Sample 8", "Sample 9", "Sample 10" };
+                        string[] rowHeader = { "Picture T0", "Picture T30", "Unmating force", "Picture T1", "Graph unmating at T1", "Failure mode", "Judgement" };
+                        IDictionary<string, string> addressHeader = TDMK_DictionaryService.MergeDictionaries<string, string>(ExportProcess.FindAddressByText(workSheet, colHeader.ToArray(), true), ExportProcess.FindAddressByText(workSheet, rowHeader.ToArray()));
 
-                        //// cho vào T0
-                        byte[] Image = (byte[])row["T0"];
-                        //adress T0
-                        string address = addressHeader[$"Picture T0"];
-                        if (address.Contains("-"))
+                        DataTable dataTable = LoadProcess(itemcode, lotno, legacy);
+                        int i = 1;
+                        foreach (DataRow row in dataTable.Rows)
                         {
-                            address = address.Split('-')[0];
+                            string col = addressHeader[$"Sample {i}"];
+
+                            //// cho vào T0
+                            byte[] Image = (byte[])row["T0"];
+                            //adress T0
+                            if (addressHeader.TryGetValue("Flex SN", out string ValueZZ))
+                            {
+                                string addZ = workSheet.Cells[workSheet.Cells[ValueZZ].Start.Row, workSheet.Cells[col].Start.Column].Address;
+                                workSheet.Cells[addZ].Value = row["ProductID"];
+                            }
+                            string address = addressHeader[$"Picture T0"];
+                            if (address.Contains("-"))
+                            {
+                                address = address.Split('-')[0];
+                                address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
+                                ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0Sample{i}");
+                            }
+                            else
+                            {
+                                address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
+                                ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0Sample{i}");
+                            }
+
+                            //// Insert Image in T0U
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T0U"], ImageFormat.Jpeg);
+                            address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
+                            ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0USample{i}");
+                            //// Insert Image in 30
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T30"], ImageFormat.Jpeg);
+                            address = addressHeader[$"Picture T30"];
+                            if (address.Contains("-"))
+                            {
+                                address = address.Split('-')[0];
+                            }
                             address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                            ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0Sample{i}");
-                        }
-                        else
-                        {
+                            ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30Sample{i}");
+                            //// Insert Image in 30U
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T30U"], ImageFormat.Jpeg);
+                            address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
+                            ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30USample{i}");
+                            //// Insert Image in 30
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T1"], ImageFormat.Jpeg);
+                            address = addressHeader[$"Picture T1"];
+                            if (address.Contains("-"))
+                            {
+                                address = address.Split('-')[0];
+                            }
                             address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                            ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0Sample{i}");
-                        }
-
-                        //// Insert Image in T0U
-                        Image = (byte[])row["T0U"];
-                        address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
-                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0USample{i}");
-                        //// Insert Image in 30
-                        Image = (byte[])row["T30"];
-                        address = addressHeader[$"Picture T30"];
-                        if (address.Contains("-"))
-                        {
-                            address = address.Split('-')[0];
-                        }
-                        address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30Sample{i}");
-                        //// Insert Image in 30U
-                        Image = (byte[])row["T30U"];
-                        address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
-                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30USample{i}");
-                        //// Insert Image in 30
-                        Image = (byte[])row["T1"];
-                        address = addressHeader[$"Unmating picture at T1"];
-                        if (address.Contains("-"))
-                        {
-                            address = address.Split('-')[0];
-                        }
-                        address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1Sample{i}");
-                        //// Insert Image in 30U
-                        Image = (byte[])row["T1U"];
-                        address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
-                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1USample{i}");
-                        //// Insert Image in 30
-                        Image = (byte[])row["Graph"];
-                        address = addressHeader[$"Graph unmating at T1"];
-                        address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                        ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"GraphT1Sample{i}");
-                        //// Insert Image in 30
-                        if (addressHeader.TryGetValue("Unmating force at T1", out address))
-                        {
+                            ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1Sample{i}");
+                            //// Insert Image in 30U
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T1U"], ImageFormat.Jpeg);
+                            address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
+                            ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1USample{i}");
+                            //// Insert Image in 30
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["Graph"], ImageFormat.Jpeg);
+                            address = addressHeader[$"Graph unmating at T1"];
                             address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                            double num = (double)row["Force"];
-                            workSheet.Cells[address].Value = num;
-                            addressNum += $"{address}, ";
+                            ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"GraphT1Sample{i}");
+                            //// Insert Image in 30
+                            if (addressHeader.TryGetValue("Unmating force", out address))
+                            {
+                                address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
+                                double num = double.Parse(row["Force"].ToString());
+                                workSheet.Cells[address].Value = num;
+                                addressNum += $"{address}, ";
 
+                            }
+                            /// write judgment
+                            address = addressHeader[$"Judgement"];
+                            address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
+                            workSheet.Cells[address].Value = row["Judgement"];
+
+                            // cho failure mode
+                            string failureMode = workSheet.Cells[workSheet.Cells[addressHeader[$"Failure mode"]].Start.Row, workSheet.Cells[col].Start.Column].Address;
+                            workSheet.Cells[failureMode].Value = row["FailureMode"];
+                            i++;
                         }
-                        /// write judgment
-                        address = addressHeader[$"Judgement"];
-                        address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                        workSheet.Cells[address].Value = row["Judgement"].Equals("OK") ? "Pass" : row["Judgement"];
+                        addressNum = addressNum.Trim().TrimEnd(',');
+                        if (addressHeader.TryGetValue("Min Force (N)", out string addressz))
+                        {
+                            addressz = ExportProcess.AddColumn(addressz, 1);
+                            int colZ = workSheet.Cells[addressHeader["Unmating force"]].End.Row - workSheet.Cells[addressz].End.Row;
+                            int ro = workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column;
+                            workSheet.Cells[addressz].FormulaR1C1 = $"=MIN(R[{colZ}]C:R[{colZ}]C[{ro}])";
+                        }
+                        if (addressHeader.TryGetValue("Max Force (N)", out addressz))
+                        {
+                            addressz = ExportProcess.AddColumn(addressHeader["Max Force (N)"], 1);
+                            int colZ = workSheet.Cells[addressHeader["Unmating force"]].End.Row - workSheet.Cells[addressz].End.Row;
+                            int ro = workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column;
+                            workSheet.Cells[addressz].FormulaR1C1 = $"=MAX(R[{colZ}]C:R[{colZ}]C[{ro}])";
+                        }
+                        if (addressHeader.TryGetValue("Max Force (N)", out addressz))
+                        {
+                            addressz = ExportProcess.AddColumn(addressHeader["Average Force (N)"], 1);
+                            int colZ = workSheet.Cells[addressHeader["Unmating force"]].End.Row - workSheet.Cells[addressz].End.Row;
+                            int ro = workSheet.Cells[addressHeader["Sample 10"]].End.Column - workSheet.Cells[addressz].End.Column;
+                            workSheet.Cells[addressz].FormulaR1C1 = $"=AVERAGE(R[{colZ}]C:R[{colZ}]C[{ro}])";
+                        }
 
-                        // cho failure mode
-                        string failureMode = workSheet.Cells[workSheet.Cells[addressHeader[$"Failure mode"]].Start.Row, workSheet.Cells[col].Start.Column].Address;
-                        workSheet.Cells[failureMode].Value = row["FailureMode"];
-                        i++;
+                        exportProcess.SaveExcelWorksheet(ex, "OQC B2B Mating-Unmating", $"{itemcode.Trim()}_{lotno.Trim()}", "NPI", false);
+
                     }
-                    addressNum = addressNum.Trim().TrimEnd(',');
-                    string addressz = ExportProcess.AddColumn(addressHeader["Min Force (N)"], 1);
-                    workSheet.Cells[addressz].Formula = $"MAX({addressNum})";
-                    addressz = ExportProcess.AddColumn(addressHeader["Max Force (N)"], 1);
-                    workSheet.Cells[addressz].Formula = $"MIN({addressNum})";
-                    addressz = ExportProcess.AddColumn(addressHeader["Average Force (N)"], 1);
-                    workSheet.Cells[addressz].Formula = $"AVERAGE({addressNum})";
-
-                    exportProcess.SaveExcelWorksheet(ex, "OQC B2B Mating-Unmating", $"{itemcode.Trim()}-{lotno.Trim()}");
-
                 }
             }
-            return "done";
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            return "OK";
         }
         public static string setup_spec(ExcelWorksheet worksheet)
         {

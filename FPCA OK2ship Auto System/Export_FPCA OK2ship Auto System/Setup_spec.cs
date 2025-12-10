@@ -507,66 +507,183 @@ namespace Export_FPCA_OK2ship_Auto_System
         }
         public string lst_spec_comment3_onproduct(ExcelWorksheet ws, string type)
         {
-            //  AutoCompleteStringCollection list = new AutoCompleteStringCollection();
-            List<string> lst_spec = new List<string>();
-            IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[] { type.Equals("PSA") ? "PSA peeling" : "Liner peeling", "spec", "TAPE", "Sample" });
-            int roRoot = ws.Cells[dic[type.Equals("PSA") ? "PSA peeling": "Liner peeling"].Split('-')[0]].End.Row;
-            string[] listZ = new[] { "spec", "TAPE" };
-            foreach (string key in listZ)
+            if (cb_Type.SelectedItem.ToString().Contains("NPI"))
             {
-                List<string> list = new List<string>();
-                string[] sp = dic[key].Split('-');
-                foreach (string item in sp)
-                {
-                    int rI = ws.Cells[item].End.Row;
-                    if (rI > roRoot)
-                    {
-                        list.Add(item);
-                    }
-                }
-                dic[key] = string.Join("-", list);
-            }
-            int countint = dic["Sample"].Split('-').Count() / dic["TAPE"].Split('-').Count();
 
-            foreach (string item in dic["TAPE"].Split('-'))
-            {
-                int r = ws.Cells[item].End.Row;
-                string address = "";
-                int mMax = int.MaxValue;
-                foreach (string jtem in dic["spec"].Split('-'))
+
+
+                //  AutoCompleteStringCollection list = new AutoCompleteStringCollection();
+                List<string> lst_spec = new List<string>();
+                IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[] { type.Equals("PSA") ? "PSA peeling" : "Liner peeling", "spec", "TAPE", "Sample" });
+                int roRoot = ws.Cells[dic[type.Equals("PSA") ? "PSA peeling" : "Liner peeling"].Split('-')[0]].End.Row;
+                string[] listZ = new[] { "spec", "TAPE" };
+                foreach (string key in listZ)
                 {
-                    int rJ = ws.Cells[jtem].End.Row;
-                    if (r < rJ)
+                    List<string> list = new List<string>();
+                    string[] sp = dic[key].Split('-');
+                    foreach (string item in sp)
                     {
-                        if (rJ - r < mMax)
+                        int rI = ws.Cells[item].End.Row;
+                        if (rI > roRoot)
                         {
-                            mMax = rJ - r;
-                            address = jtem;
+                            list.Add(item);
                         }
                     }
+                    dic[key] = string.Join("-", list);
                 }
-                try
-                {
+                int countint = dic["Sample"].Split('-').Count() / dic["TAPE"].Split('-').Count();
 
-                    while (true)
+                foreach (string item in dic["TAPE"].Split('-'))
+                {
+                    int r = ws.Cells[item].End.Row;
+                    string address = "";
+                    int mMax = int.MaxValue;
+                    foreach (string jtem in dic["spec"].Split('-'))
                     {
-                        address = ExportProcess.AddColumn(address, 1);
-                        string value = ws.Cells[address].Value.ToString();
-                        string value2 = ws.Cells[ExportProcess.AddRow(address, -1)].Value.ToString();
-                        if (string.IsNullOrEmpty(value))
+                        int rJ = ws.Cells[jtem].End.Row;
+                        if (r < rJ)
                         {
-                            break;
+                            if (rJ - r < mMax)
+                            {
+                                mMax = rJ - r;
+                                address = jtem;
+                            }
                         }
-                        lst_spec.Add($"{ws.Cells[item].Value.ToString().Split('(', ')')[1]}|{value2}:{value}");
+                    }
+                    try
+                    {
+
+                        while (true)
+                        {
+                            address = ExportProcess.AddColumn(address, 1);
+                            string value = ws.Cells[address].Value.ToString();
+                            string value2 = ws.Cells[ExportProcess.AddRow(address, -1)].Value.ToString();
+                            if (string.IsNullOrEmpty(value))
+                            {
+                                break;
+                            }
+                            lst_spec.Add($"{ws.Cells[item].Value.ToString().Split('(', ')')[1]}|{value2}:{value}");
+
+                        }
+                    }
+                    catch
+                    {
 
                     }
                 }
-                catch
-                {
-
-                }
+                return $"{countint}:" + string.Join("-", lst_spec);
             }
-            return $"{countint}:" + string.Join("-", lst_spec);
+            else
+            {
+                string lst_spec = "";
+                Dictionary<string, List<string>> dic_spec = new Dictionary<string, List<string>> { };
+
+
+                int count_sample = 0;
+
+                for (int i = 1; i < 100; i++)
+                {
+                    for (int j = 1; j < 5; j++)
+                    {
+                        if (myCode.checkDBNull(ws.Cells[i, j].Value).Contains("Sample"))
+                        {
+                            while (myCode.checkDBNull(ws.Cells[i, j + count_sample].Value).Contains("Sample"))
+                            {
+                                count_sample++;
+                            }
+                            lst_spec += count_sample.ToString() + ":";
+                            if (myCode.checkDBNull(ws.Cells[i + 1, j - 1].Value).Contains("ID") || myCode.checkDBNull(ws.Cells[i + 1, j - 2].Value).Contains("ID") || cb_Type.SelectedItem.ToString() == "MASS")
+                            {
+                                lst_spec += "B" + "+";
+
+                                string component = "";
+                                for (int c_offset = 1; c_offset < j; c_offset++)
+                                {
+                                    if (myCode.checkDBNull(ws.Cells[i, j - c_offset].Value) != "")
+                                    {
+                                        component = myCode.checkDBNull(ws.Cells[i, j - c_offset].Value);
+                                        break;
+                                    }
+                                }
+                                lst_spec += component + ";";
+
+                                string[] txt_find = new string[4] { "Graph", "Picture", "Max", "Average" };
+                                for (int r_offset = 1; r_offset < 6; r_offset++)
+                                {
+                                    string text = myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value);
+                                    if (text != "")
+                                    {
+                                        if (text.Contains("Graph") || text.Contains("Picture") || text.Contains("Max") || text.Contains("Average"))
+                                            lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
+
+                                    }
+                                }
+
+                                string judge = "";
+                                for (int t = 5; t < 8; t++)
+                                {
+                                    if (myCode.checkDBNull(ws.Cells[i + t, j - 1].Value).ToUpper().Contains("JUDGEMENT") && !myCode.checkDBNull(ws.Cells[i + t, j - 1].Value).ToUpper().Replace(" ", "").Contains("FAILUREMODE"))
+                                    {
+                                        judge += myCode.checkDBNull(ws.Cells[i + t, j - 1].Value);
+                                        break;
+                                    }
+                                }
+                                lst_spec += judge + "+";
+
+
+                                string R = "";
+                                string UCL = "";
+                                string LCL = "";
+                                for (int t = 5; t < 12; t++)
+                                {
+
+                                    string val_cel = myCode.checkDBNull(ws.Cells[i + t, j + 1].Value).Replace(" ", "");
+
+                                    if (val_cel.Contains("R(gf)") || val_cel.Contains("R(N)") || val_cel.Contains("R(kgf)"))
+                                    {
+                                        R = convert_valcell_to_double(ws.Cells[i + t, j + 2].Value, 2);
+                                    }
+                                    if (val_cel.Contains("UCL"))
+                                    {
+                                        UCL = convert_valcell_to_double(ws.Cells[i + t, j + 2].Value, 2);
+                                    }
+                                    if (val_cel.Contains("LCL"))
+                                    {
+                                        LCL = convert_valcell_to_double(ws.Cells[i + t, j + 2].Value, 2);
+                                    }
+                                }
+                                lst_spec += R + ";" + UCL + ";" + LCL;
+                                lst_spec += "_";
+
+                            }
+                            else
+                            {
+                                lst_spec += "A" + "+";
+                                for (int c_offset = 1; c_offset < 6; c_offset++)
+                                {
+                                    if (myCode.checkDBNull(ws.Cells[i, j - c_offset].Value) != "")
+                                    {
+                                        lst_spec += myCode.checkDBNull(ws.Cells[i, j - c_offset].Value) + ";";
+                                        break;
+                                    }
+                                }
+                                for (int r_offset = 1; r_offset < 5; r_offset++)
+                                {
+                                    if (myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) != "")
+                                    {
+                                        lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
+
+                                    }
+                                }
+                                lst_spec += "_";
+                            }
+
+                        }
+
+                    }
+                }
+                return lst_spec;
+            }
         }
         public string lst_spec_comment3_IPQC_coupon(ExcelWorksheet ws)
         {
@@ -866,30 +983,38 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
             string findIndex = $"{str} Force";
             string valueIndex = "";
-            string[] sampleList = new[] { "Sample", findIndex };
+            string[] sampleList = new[] { findIndex };
+            string[] sampleLis1 = new[] { "Sample" };
             IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, sampleList);
+            IDictionary<string, string> dicZ = ExportProcess.FindAddressByText(ws, sampleLis1);
             int count_sample = 0;
-            if (dic.TryGetValue("Sample", out string value))
+            if (dicZ.TryGetValue("Sample", out string value))
             {
                 count_sample = value.Trim().Split('-').Count();
             }
 
             if (dic.TryGetValue(findIndex, out value))
             {
-                valueIndex = ws.Cells[value].Text;
-                try
+                foreach (string item in value.Split('-'))
                 {
-                    valueIndex = valueIndex.Split('(')[1].Replace(" ", "").TrimEnd(new[] { ')' });
-                }
-                catch
-                {
-                    valueIndex = "";
+                    string vI = ws.Cells[item].Text;
+                    if (vI.Contains("("))
+                    {
+                        try
+                        {
+                            valueIndex = vI.Split('(')[1].Replace(" ", "").TrimEnd(new[] { ')' });
+                        }
+                        catch
+                        {
+                            valueIndex = "";
+                        }
+                    }
                 }
                 //count_sample = value.Trim().Split('-').Count();
             }
 
 
-            return $"{count_sample}:{valueIndex}";
+                return $"{count_sample}:{valueIndex}";
         }
 
         public string lst_spec_unmating(ExcelWorksheet ws)
@@ -933,12 +1058,94 @@ namespace Export_FPCA_OK2ship_Auto_System
         public string lst_spec_sheartest(ExcelWorksheet ws)
         {
             //  AutoCompleteStringCollection list = new AutoCompleteStringCollection();
+            //  AutoCompleteStringCollection list = new AutoCompleteStringCollection();
+            if (cb_Type.SelectedItem.ToString().Contains("NPI"))
+            {
+                //npi
+                Dictionary<string, List<string>> dic_spec = new Dictionary<string, List<string>> { };
+                IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[] { "Sample", "Shear Force" });
+                int count_sample = dic["Sample"].Split('-').Count();
 
-            Dictionary<string, List<string>> dic_spec = new Dictionary<string, List<string>> { };
-            IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[] { "Sample", "Shear Force" });
-            int count_sample = dic["Sample"].Split('-').Count();
+                return $"{count_sample}:{ws.Cells[dic["Shear Force"].Split('-')[1]].Text}";
+            }
+            else
+            {
 
-            return $"{count_sample}:{ws.Cells[dic["Shear Force"].Split('-')[1]].Text}";
+                //mass
+                string lst_spec = "";
+                Dictionary<string, List<string>> dic_spec = new Dictionary<string, List<string>> { };
+                int count_sample = 0;
+
+                for (int i = 1; i < 100; i++)
+                {
+                    for (int j = 1; j < 5; j++)
+                    {
+                        if (myCode.checkDBNull(ws.Cells[i, j].Value).Contains("Sample"))
+                        {
+                            while (myCode.checkDBNull(ws.Cells[i, j + count_sample].Value).Contains("Sample"))
+                            {
+                                count_sample++;
+                            }
+                            lst_spec += count_sample.ToString() + ":";
+
+                            if (myCode.checkDBNull(ws.Cells[i + 1, j - 1].Value).Contains("ID"))
+                            {
+                                lst_spec += "B" + "+";
+
+                                for (int r_offset = 2; r_offset < 5; r_offset++)
+                                {
+                                    if (myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) != "")
+                                    {
+                                        lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value).Replace(" ", "") + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
+
+                                    }
+                                }
+
+
+                                for (int t = 10; t < 16; t++)
+                                {
+                                    if (myCode.checkDBNull(ws.Cells[i + t, j + 1].Value).Replace(" ", "").Contains("R(Kgf)"))
+                                    {
+                                        string R = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t, j + 2].Value)), 2).ToString();
+                                        string UCL = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t + 1, j + 2].Value)), 2).ToString();
+                                        string LCL = Math.Round(double.Parse(myCode.checkDBNull(ws.Cells[i + t + 2, j + 2].Value)), 2).ToString();
+
+
+                                        lst_spec += R + ";" + UCL + ";" + LCL;
+                                        break;
+                                    }
+                                }
+                                lst_spec += "_";
+
+                            }
+                            else
+                            {
+                                lst_spec += "A" + "+";
+
+                                for (int r_offset = 1; r_offset < 3; r_offset++)
+                                {
+                                    if (myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value) != "")
+                                    {
+                                        lst_spec += myCode.checkDBNull(ws.Cells[i + r_offset, j - 1].Value).Replace(" ", "") + ";" + (i + r_offset).ToString() + ";" + (j - 1).ToString() + "+";
+
+                                    }
+                                }
+
+                                if (myCode.checkDBNull(ws.Cells[i + 4, j - 1].Value) != "")
+                                {
+                                    lst_spec += myCode.checkDBNull(ws.Cells[i + 4, j - 1].Value).Replace(" ", "") + ";" + (i + 3).ToString() + ";" + (j - 1).ToString() + "+";
+
+                                }
+                                lst_spec += "_";
+
+                                break;
+                            }
+                        }
+                    }
+                }
+                return lst_spec;
+            }
+
         }
 
         public string lst_spec_cross_section_old(myExcel.Worksheet ws)

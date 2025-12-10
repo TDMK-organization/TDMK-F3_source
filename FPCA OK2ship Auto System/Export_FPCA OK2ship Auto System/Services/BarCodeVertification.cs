@@ -119,6 +119,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 }
             }
         }
+       
         public void Export(SqlConnection sql, ExcelWorksheet workSheet, string itemCode, string lotNo)
         {
             itemCode = itemCode.Trim();
@@ -220,6 +221,139 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     }
                 }
             }
+        }
+        public string Export(string itemCode, string lotNo)
+        {
+            itemCode = itemCode.Trim();
+            lotNo = lotNo.Trim();
+            ExportProcess exportProcess = new ExportProcess();
+            using (ExcelPackage ex = exportProcess.FindFormatProcess("Bar Code Verification", itemCode, lotNo))
+            {
+                using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, "Bar Code Verification"))
+                {
+                    //string address = exportProcess.FindAddressByText(workSheet, "Bar Code Verification");
+                    string[] colHeader = { "No", "SN", "Follow Bar code Rule?", "Grade" };
+                    string[] colHeader1 = { "Code rule" };
+                    string[] colHeader2 = { "Nhập ngày sản xuất vào đây", "Coppy tu log file vào đây", "Factory (PPP) check", "Day of manufacturing (DOM)", "Laser machine (Sssss) check", "Serian No  (sSSSS) check ", "Item name (EEEEEEE) Check" };
+                    IDictionary<string, string> addressHeader = ExportProcess.FindAddressByText(workSheet, colHeader1.Concat(colHeader2).ToArray());
+                    IDictionary<string, string> addressHeader2 = ExportProcess.FindAddressByText(workSheet, colHeader.ToArray(), true);
+                    addressHeader = TDMK_DictionaryService.MergeDictionaries(addressHeader, addressHeader2);
+                    DBContext db = new DBContext();
+                    DataTable dz = db.LoadDataTable("BAR_CODE_VERIFICATION", new string[] { "ItemCode", "LotNo" }, new string[] { itemCode, lotNo });
+                    DataTable dt = TDMK_ConverterService.JsonToDataTable(dz.Rows[0]["ListSN"].ToString());
+                    int i = 0;
+                    //Take Code rule
+                    bool primeCodeRule = addressHeader.TryGetValue("Code rule", out string add);
+                    IList<string> listCodeRule = new List<string>();
+                    if (primeCodeRule)
+                    {
+                        string addz = add.Split('-')[0];
+                        foreach (string item in add.Split('-'))
+                        {
+                            if (workSheet.Cells[item].End.Row > workSheet.Cells[addz].End.Row)
+                            {
+                                addz = item;
+                            }
+                        }
+                        add = addz;
+                        int startS = 0;
+                        string code = dt.Rows[0]["Module"].ToString();
+                        workSheet.Cells[ExportProcess.AddRow(add, -1)].Value = code;
+
+                        while (workSheet.Cells[ExportProcess.AddRow(add, 1)].Value != null)
+                        {
+                            try
+                            {
+                                add = ExportProcess.AddRow(add, 1);
+                                string codeRule = workSheet.Cells[add].Value == null ? null : workSheet.Cells[add].Value.ToString();
+                                listCodeRule.Add(codeRule);
+                                workSheet.Cells[ExportProcess.AddColumn(add, 2)].Value = code.Substring(startS, codeRule.Length);
+                                workSheet.Cells[ExportProcess.AddColumn(add, 3)].Value = TDMK_ValidateService.isDigitAndChar(code.Substring(startS, codeRule.Length)) ? "OK" : "NG";
+                                startS += codeRule.Length;
+                            }
+                            catch
+                            {
+                                Debugger.Break();
+                            }
+                        }
+                    }
+                    TableOfContentService tbd = new TableOfContentService();
+
+                    DataTable tbc_DT = tbd.getDataTableByItemCode(itemCode);
+                    if (tbc_DT.Rows.Count <= 0)
+                    {
+                        throw new Exception("Chưa có dữ liệu table of content!");
+                    }
+                    string EEEEECode = tbc_DT.Rows[0]["EEEECode"].ToString().TrimEnd('\n').TrimEnd('\r');
+                    string FactoryCode = tbc_DT.Rows[0]["FactoryCode"].ToString();
+                    if (string.IsNullOrEmpty(EEEEECode) || string.IsNullOrEmpty(FactoryCode))
+                    {
+                        throw new Exception("EEEEECode or FactoryCode is null");
+                    }
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        i++;
+                        ///Table 2
+
+                        if (addressHeader.TryGetValue("Nhập ngày sản xuất vào đây", out string addressz))
+                        {
+                            addressz = ExportProcess.AddRow(addressz, i + 1);
+                            workSheet.Cells[addressz].Value = item["DateTime"];
+                        }
+                        if (addressHeader.TryGetValue("Coppy tu log file vào đây", out addressz))
+                        {
+                            addressz = ExportProcess.AddRow(addressz, i + 1);
+                            workSheet.Cells[addressz].Value = item["Module"];
+                        }
+                        string[] bit = JudgeSN(item["Module"].ToString(), listCodeRule);
+                        //if (bit.Length == listCodeRule.Count)
+                        //{
+                        string module = item["Module"].ToString();
+                        workSheet.Cells[ExportProcess.AddColumn(addressz, 1)].Value = checkPPP(item["Module"].ToString(), FactoryCode) ? "OK" : "NG";
+                        workSheet.Cells[ExportProcess.AddColumn(addressz, 2)].Value = checkDOM(module) != DateTime.MinValue ? "OK" : "NG";
+                        workSheet.Cells[ExportProcess.AddColumn(addressz, 3)].Value = checkSssss(item["Module"].ToString()) ? "OK" : "NG";
+                        workSheet.Cells[ExportProcess.AddColumn(addressz, 4)].Value = checksSSSS(item["Module"].ToString()) ? "OK" : "NG";
+                        workSheet.Cells[ExportProcess.AddColumn(addressz, 5)].Value = checkEEEE(item["Module"].ToString(), EEEEECode) ? "OK" : "NG";
+                        //}
+
+
+                        /// Table 1
+                        foreach (var str in colHeader)
+                        {
+                            if (addressHeader.TryGetValue(str, out string address))
+                            {
+                                address = ExportProcess.AddRow(address, i);
+                                if (str.Contains("No"))
+                                {
+                                    workSheet.Cells[address].Value = i;
+                                }
+                                else if (str.Contains("Follow Bar code Rule?"))
+                                {
+                                    workSheet.Cells[address].Value = bit.Length == listCodeRule.Count ? "Yes" : "No";
+                                }
+                                else if (str.Contains("SN"))
+                                {
+                                    workSheet.Cells[address].Value = item["Module"];
+                                }
+                                else if (str.Contains("Grade"))
+                                {
+                                    workSheet.Cells[address].Value = item["Overall Grade"];
+                                }
+                                else
+                                {
+                                    workSheet.Cells[address].Value = item[str];
+                                }
+                            }
+                        }
+
+
+
+                    }
+                    exportProcess.SaveExcelWorksheet(ex, "Bar Code Verification", $"{itemCode}_{lotNo}", "NPI", false);
+
+                }
+            }
+            return "OK";
         }
         private string[] JudgeSN(string SN, IList<string> code)
         {

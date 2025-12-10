@@ -22,7 +22,14 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
         private const string _TABLE_NAME = "ENVIRONMENT_EN_DURANCE";
         public EEDService(SqlConnection sqlcon)
         {
-            _dBContext = new DBContext(sqlcon);
+            if (sqlcon == null)
+            {
+                _dBContext = new DBContext();
+            }
+            else
+            {
+                _dBContext = new DBContext(sqlcon);
+            }
         }
         public string ConvertDataTable(DataTable datatable, DataTable dataTableImage, ref int id, int area)
         {
@@ -113,7 +120,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 
             return res;
         }
-        public Dictionary<string, Dictionary<string, DataTable>> Load(string itemCode, string lotNo, ref DataTable before)
+        public Dictionary<string, Dictionary<string, DataTable>> Load(string itemCode, string lotNo, ref DataTable before, bool legacy = false)
         {
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
@@ -128,7 +135,20 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
             string[] json = table.Rows[0]["Data"].ToString().Trim().Split('#');
             string area = json[0];
-            DataTable tableImage = _dBContext.LoadDataTable(_TABLE_NAME + "_IMG", new[] { "Area" }, new[] { area }, new[] { "ID", "Image" });
+            DataTable tableImage = new DataTable();
+            if (legacy)
+            {
+                tableImage = _dBContext.LoadDataTable(_TABLE_NAME + "_IMG", new[] { "Area" }, new[] { area }, new[] { "ID", "Image" });
+            }
+            else
+            {
+                tableImage = _dBContext.LoadDataTable(_TABLE_NAME + "_IMG_NAS", new[] { "Area" }, new[] { area }, null);
+                DataTable dtZ = TDMK_ConverterService.JsonToDataTable(tableImage.Rows[0]["Data"].ToString());
+                NasRepository _nas = new NasRepository();
+                _nas.MergeDataTable(dtZ, _TABLE_NAME, itemCode, lotNo, tableImage.Rows[0]["LocationImg"].ToString());
+                tableImage = dtZ;
+                //_nas.MergeDataTable(, "" );
+            }
             before = ConvertDataTable(TDMK_ConverterService.JsonToDataTable(json[1]), tableImage);
 
             Dictionary<string, Dictionary<string, DataTable>> dic = new Dictionary<string, Dictionary<string, DataTable>>();
@@ -240,7 +260,15 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 string graph = ExportProcess.AddRow(image, 1);
                 ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[graph], (byte[])dataRow["Graph"], $"Graph{tape}-{name}-{id}");
                 string productID = ExportProcess.AddRow(image, -2);
-                worksheet.Cells[productID].Value = dataRow["ProductID"];
+                try
+                {
+
+                    worksheet.Cells[productID].Value = dataRow["ProductID"];
+                }
+                catch
+                {
+
+                }
                 sampleAddress = ExportProcess.AddColumn(sampleAddress, 1);
                 string peak = ExportProcess.AddRow(graph, 1);
                 worksheet.Cells[peak].Value = double.Parse(dataRow["Peak"].ToString());
@@ -262,175 +290,186 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 
             }
         }
-        public void Export(ExcelWorksheet workSheet, string itemCode, string lotNo)
+
+        public string Export(string itemCode, string lotNo)
         {
             DataTable dataTable = new DataTable();
             Dictionary<string, Dictionary<string, DataTable>> dic = Load(itemCode, lotNo, ref dataTable);
             if (dataTable.Rows.Count < 0)
             {
-                return;
+                return "Không có dữ liệu của itemcode lotno";
             }
             DataTable spec = _dBContext.LoadDataTable("SPEC_COMMENT_3", new[] { "ItemCode", "Sheet" }, new[] { itemCode, "ENVIRONMENT_EN-DURANCE" });
             if (spec.Rows.Count <= 0)
             {
-                return;
+                return "Spec chưa được cài đặt";
             }
             int sample = int.Parse(spec.Rows[0]["Count_Sample"].ToString());
             ExportProcess exportProcess = new ExportProcess();
-
-            string sampleSTR = $"Sample {sample}";
-            string[] colHeader = new[] { "Liner peeling after ORT test", "PSA peeling after ORT test", sampleSTR, "Flex SN", "Average Force" };
-            IDictionary<string, string> dicHeader = ExportProcess.FindAddressByText(workSheet, colHeader);
-
-
-            Dictionary<string, string> dicCol = new Dictionary<string, string>();
-
-            #region Find area PSA Lineer
-            foreach (string item in new[] { "Liner peeling after ORT test", "PSA peeling after ORT test" })
+            using (ExcelPackage ex = exportProcess.FindFormatProcess(FORMAT_NAME, itemCode, lotNo))
             {
-                dicCol.Add(item + "Flex SN", dicHeader[item]);
-                if (dicHeader.TryGetValue("Flex SN", out string value) && dicHeader.TryGetValue(item, out string valueZ))
+                using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, FORMAT_NAME))
                 {
-                    string[] flexCout = value.Split('-');
-                    int min = int.MaxValue;
-                    foreach (var item1 in flexCout)
+                    string sampleSTR = $"Sample {sample}";
+                    string[] colHeader = new[] { "Liner peeling after ORT test", "PSA peeling after ORT test", sampleSTR, "Flex SN", "Average Force" };
+                    IDictionary<string, string> dicHeader = ExportProcess.FindAddressByText(workSheet, colHeader);
+
+
+                    Dictionary<string, string> dicCol = new Dictionary<string, string>();
+
+                    #region Find area PSA Lineer
+                    foreach (string item in new[] { "Liner peeling after ORT test", "PSA peeling after ORT test" })
                     {
-                        int z = ExportProcess.DistanceRow(valueZ, item1);
-                        if (z < min && z >= 0)
+                        dicCol.Add(item + "Flex SN", dicHeader[item]);
+                        if (dicHeader.TryGetValue("Flex SN", out string value) && dicHeader.TryGetValue(item, out string valueZ))
                         {
-                            dicCol[item + "Flex SN"] = item1;
-                            min = z;
+                            string[] flexCout = value.Split('-');
+                            int min = int.MaxValue;
+                            foreach (var item1 in flexCout)
+                            {
+                                int z = ExportProcess.DistanceRow(valueZ, item1);
+                                if (z < min && z >= 0)
+                                {
+                                    dicCol[item + "Flex SN"] = item1;
+                                    min = z;
+                                }
+                            }
+                            if (min == int.MaxValue)
+                            {
+                                return "Lỗi về lấy flex sn";
+                            }
+
+                        }
+                        else
+                        {
+                            return "Không có đủ flexSN";
+                        }
+                        dicCol.Add(item + "Average Force", dicHeader[item]);
+                        if (dicHeader.TryGetValue("Average Force", out value) && dicHeader.TryGetValue(item, out valueZ))
+                        {
+                            string[] flexCout = value.Split('-');
+                            int min = int.MaxValue;
+                            foreach (var item1 in flexCout)
+                            {
+                                int z = ExportProcess.DistanceRow(valueZ, item1);
+                                if (z < min && z >= 0)
+                                {
+                                    dicCol[item + "Average Force"] = item1;
+                                    min = z;
+                                }
+                            }
+                            if (min == int.MaxValue)
+                            {
+                                return "Lỗi về lấy Average Force";
+                            }
+
+                        }
+                        else
+                        {
+                            return "Không có đủ Average Force";
+                        }
+                        dicCol.Add(item + sampleSTR, dicHeader[item]);
+                        if (dicHeader.TryGetValue(sampleSTR, out value) && dicHeader.TryGetValue(item, out valueZ))
+                        {
+                            string[] flexCout = value.Split('-');
+                            int min = int.MaxValue;
+                            foreach (var item1 in flexCout)
+                            {
+                                int z = ExportProcess.DistanceRow(valueZ, item1);
+                                if (z < min && z >= 0)
+                                {
+                                    dicCol[item + sampleSTR] = item1;
+                                    min = z;
+                                }
+                            }
+                            if (min == int.MaxValue)
+                            {
+                                return "Lỗi về lấy sampleSTR";
+                            }
+
+                        }
+                        else
+                        {
+                            return "Không có đủ sampleSTR";
+                        }
+
+                    }
+                    #endregion
+
+                    #region Copy and paste
+                    string[] countPSA = dataTable.AsEnumerable().Where(row => row.Field<string>("name") == "PSA").Select(row => row.Field<string>("TAPE")).ToArray();
+                    string[] countLiner = dataTable.AsEnumerable().Where(row => row.Field<string>("name") == "LINER").Select(row => row.Field<string>("TAPE")).ToArray();
+
+                    if (dicCol.TryGetValue("PSA peeling after ORT testFlex SN", out string addressFlexSN)
+                        && dicCol.TryGetValue($"PSA peeling after ORT test{sampleSTR}", out string addressSample)
+                        && dicCol.TryGetValue("PSA peeling after ORT testAverage Force", out string addressCPK))
+                    {
+                        string addressPointer = workSheet.Cells[workSheet.Cells[addressCPK].Start.Row + 1, workSheet.Cells[addressFlexSN].Start.Column].Address;
+
+                        for (int i = 0; i < countPSA.Count() - 1; i++)
+                        {
+                            string point = addressPointer;
+                            if (i == 0)
+                            {
+                                workSheet.Cells[ExportProcess.AddRow(addressFlexSN, 1)].Value = countPSA[countPSA.Count() - 1] + "%PSA";
+                            }
+                            string addressRange = $"{addressFlexSN}:{workSheet.Cells[workSheet.Cells[addressCPK].Start.Row, workSheet.Cells[addressSample].Start.Column].Address}";
+                            exportProcess.CopyAndInsert(workSheet, addressRange, ref addressPointer, true);
+                            workSheet.Cells[ExportProcess.AddRow(point, 2)].Value = countPSA[i] + "%PSA";
+
                         }
                     }
-                    if (min == int.MaxValue)
+                    if (dicCol.TryGetValue("Liner peeling after ORT testFlex SN", out addressFlexSN)
+                        && dicCol.TryGetValue($"Liner peeling after ORT test{sampleSTR}", out addressSample)
+                        && dicCol.TryGetValue("Liner peeling after ORT testAverage Force", out addressCPK))
                     {
-                        return ;
-                    }
+                        string addressPointer = workSheet.Cells[workSheet.Cells[addressCPK].Start.Row + 1, workSheet.Cells[addressFlexSN].Start.Column].Address;
 
-                }
-                else
-                {
-                    throw new Exception("Không có đủ flexSN");
-                }
-                dicCol.Add(item + "Average Force", dicHeader[item]);
-                if (dicHeader.TryGetValue("Average Force", out value) && dicHeader.TryGetValue(item, out valueZ))
-                {
-                    string[] flexCout = value.Split('-');
-                    int min = int.MaxValue;
-                    foreach (var item1 in flexCout)
-                    {
-                        int z = ExportProcess.DistanceRow(valueZ, item1);
-                        if (z < min && z >= 0)
+                        for (int i = 0; i < countLiner.Count() - 1; i++)
                         {
-                            dicCol[item + "Average Force"] = item1;
-                            min = z;
+                            string point = addressPointer;
+                            if (i == 0)
+                            {
+                                workSheet.Cells[ExportProcess.AddRow(addressFlexSN, 1)].Value = countLiner[countLiner.Count() - 1] + "%LINER";
+                            }
+                            string addressRange = $"{addressFlexSN}:{workSheet.Cells[workSheet.Cells[addressCPK].Start.Row, workSheet.Cells[addressSample].Start.Column].Address}";
+                            exportProcess.CopyAndInsert(workSheet, addressRange, ref addressPointer, true);
+                            workSheet.Cells[ExportProcess.AddRow(point, 2)].Value = countLiner[i] + "%LINER";
+
                         }
                     }
-                    if (min == int.MaxValue)
-                    {
-                        return;
-                    }
 
-                }
-                else
-                {
-                    return ;
-                }
-                dicCol.Add(item + sampleSTR, dicHeader[item]);
-                if (dicHeader.TryGetValue(sampleSTR, out value) && dicHeader.TryGetValue(item, out valueZ))
-                {
-                    string[] flexCout = value.Split('-');
-                    int min = int.MaxValue;
-                    foreach (var item1 in flexCout)
+                    #endregion
+
+                    #region Fill data
+                    List<string> tapeList = new List<string>();
+                    foreach (string item in countPSA)
                     {
-                        int z = ExportProcess.DistanceRow(valueZ, item1);
-                        if (z < min && z >= 0)
+                        tapeList.Add(item + "%PSA");
+                    }
+                    foreach (string item in countLiner)
+                    {
+                        tapeList.Add(item + "%LINER");
+                    }
+                    IDictionary<string, string> dicTape = ExportProcess.FindAddressByText(workSheet, tapeList.ToArray());
+
+                    foreach (string item in dicTape.Keys)
+                    {
+                        string tape = item.Split('%')[0];
+                        string name = item.Split('%')[1];
+                        if ((dic[tape]).TryGetValue(name, out DataTable dt))
                         {
-                            dicCol[item + sampleSTR] = item1;
-                            min = z;
+                            FillDataInTape(workSheet, dt, dataTable, dicTape[item], sample, name, tape);
                         }
                     }
-                    if (min == int.MaxValue)
-                    {
-                        return;
-                    }
-
-                }
-                else
-                {
-                    return ;
+                    #endregion
+                    
+                    exportProcess.SaveExcelWorksheet(ex, FORMAT_NAME, $"{itemCode}_{lotNo}", "NPI", false);
                 }
 
             }
-            #endregion
 
-            #region Copy and paste
-            string[] countPSA = dataTable.AsEnumerable().Where(row => row.Field<string>("name") == "PSA").Select(row => row.Field<string>("TAPE")).ToArray();
-            string[] countLiner = dataTable.AsEnumerable().Where(row => row.Field<string>("name") == "LINER").Select(row => row.Field<string>("TAPE")).ToArray();
-
-            if (dicCol.TryGetValue("PSA peeling after ORT testFlex SN", out string addressFlexSN)
-                && dicCol.TryGetValue($"PSA peeling after ORT test{sampleSTR}", out string addressSample)
-                && dicCol.TryGetValue("PSA peeling after ORT testAverage Force", out string addressCPK))
-            {
-                string addressPointer = workSheet.Cells[workSheet.Cells[addressCPK].Start.Row + 1, workSheet.Cells[addressFlexSN].Start.Column].Address;
-
-                for (int i = 0; i < countPSA.Count() - 1; i++)
-                {
-                    string point = addressPointer;
-                    if (i == 0)
-                    {
-                        workSheet.Cells[ExportProcess.AddRow(addressFlexSN, 1)].Value = countPSA[countPSA.Count() - 1] + "%PSA";
-                    }
-                    string addressRange = $"{addressFlexSN}:{workSheet.Cells[workSheet.Cells[addressCPK].Start.Row, workSheet.Cells[addressSample].Start.Column].Address}";
-                    exportProcess.CopyAndInsert(workSheet, addressRange, ref addressPointer, true);
-                    workSheet.Cells[ExportProcess.AddRow(point, 2)].Value = countPSA[i] + "%PSA";
-
-                }
-            }
-            if (dicCol.TryGetValue("Liner peeling after ORT testFlex SN", out addressFlexSN)
-                && dicCol.TryGetValue($"Liner peeling after ORT test{sampleSTR}", out addressSample)
-                && dicCol.TryGetValue("Liner peeling after ORT testAverage Force", out addressCPK))
-            {
-                string addressPointer = workSheet.Cells[workSheet.Cells[addressCPK].Start.Row + 1, workSheet.Cells[addressFlexSN].Start.Column].Address;
-
-                for (int i = 0; i < countLiner.Count() - 1; i++)
-                {
-                    string point = addressPointer;
-                    if (i == 0)
-                    {
-                        workSheet.Cells[ExportProcess.AddRow(addressFlexSN, 1)].Value = countLiner[countLiner.Count() - 1] + "%LINER";
-                    }
-                    string addressRange = $"{addressFlexSN}:{workSheet.Cells[workSheet.Cells[addressCPK].Start.Row, workSheet.Cells[addressSample].Start.Column].Address}";
-                    exportProcess.CopyAndInsert(workSheet, addressRange, ref addressPointer, true);
-                    workSheet.Cells[ExportProcess.AddRow(point, 2)].Value = countLiner[i] + "%LINER";
-
-                }
-            }
-
-            #endregion
-
-            #region Fill data
-            List<string> tapeList = new List<string>();
-            foreach (string item in countPSA)
-            {
-                tapeList.Add(item + "%PSA");
-            }
-            foreach (string item in countLiner)
-            {
-                tapeList.Add(item + "%LINER");
-            }
-            IDictionary<string, string> dicTape = ExportProcess.FindAddressByText(workSheet, tapeList.ToArray());
-
-            foreach (string item in dicTape.Keys)
-            {
-                string tape = item.Split('%')[0];
-                string name = item.Split('%')[1];
-                if ((dic[tape]).TryGetValue(name, out DataTable dt))
-                {
-                    FillDataInTape(workSheet, dt, dataTable, dicTape[item], sample, name, tape);
-                }
-            }
-            #endregion
+            return "OK";
         }
 
     }

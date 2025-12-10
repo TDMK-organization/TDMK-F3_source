@@ -40,6 +40,24 @@ namespace OK2SHIP_SMT.Services
             }
             return dataTable;
         }
+        public DataTable getStructor()
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("ID", typeof(int));
+            dataTable.Columns.Add("ShippingTo", typeof(string));
+            dataTable.Columns.Add("TrayCode", typeof(string));
+            dataTable.Columns.Add("ItemCode", typeof(string));
+            dataTable.Columns.Add("FlexTop", typeof(Image));
+            dataTable.Columns.Add("FlexBottom", typeof(Image));
+            dataTable.Columns.Add("Tray", typeof(Image));
+            dataTable.Columns.Add("TrayAL", typeof(Image));
+            dataTable.Columns.Add("ALBag", typeof(Image));
+            dataTable.Columns.Add("CartonBox", typeof(Image));
+            dataTable.Columns.Add("Data", typeof(string));
+            dataTable.Columns.Add("LocationIMG", typeof(string));
+
+            return dataTable;
+        }
         public int Save(string itemCode, Dictionary<string, KeyValuePair<Dictionary<string, Image>, string>> keyValuePairs, bool prime)
         {
             itemCode = itemCode.Trim();
@@ -64,10 +82,7 @@ namespace OK2SHIP_SMT.Services
                     throw new Exception($"1234 - Item code {itemCode} already exists in the database.");
                 }
             }
-            else
-            {
-                dataTable = _dbContext.GetTableStructure($"{_NAMETABLE}_LOGFILE");
-            }
+            dataTable = getStructor();
             foreach (string item in keyValuePairs.Keys)
             {
                 string shippingTo = item.Split('_')[0].Trim();
@@ -102,14 +117,19 @@ namespace OK2SHIP_SMT.Services
                             key = "CartonBox";
                             break;
                     }
-                    byte[] image = TDMK_ImageConverter.ImageToByteArray(keyValuePairs[item].Key[item1], ImageFormat.Png);
 
-                    int id = _dbContext.InsertImageAndGetId(image, $"{_NAMETABLE}_IMAGE");
-                    row[key] = id;
+                    row[key] = keyValuePairs[item].Key[item1];
                 }
                 dataTable.Rows.Add(row);
             }
             _dbContext.DeleteData($"{_NAMETABLE}_LOGFILE", "ItemCode", new[] { itemCode });
+            NasRepository nas = new NasRepository();
+            string location = nas.HandleImageDataTable(dataTable, $"{_NAMETABLE}", itemCode, "");
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                row["LocationIMG"] = location;
+            }
             return _dbContext.BuckDataTable(dataTable, $"{_NAMETABLE}_LOGFILE", new[] { "ItemCode" }, null, "ID");
         }
         public DataTable Load(string itemCode)
@@ -120,7 +140,13 @@ namespace OK2SHIP_SMT.Services
                 throw new ArgumentException("Item code cannot be null or empty.");
             }
 
-            DataTable dataTable = _dbContext.LoadDataTable("PackagingLogWithImages", new[] { "ItemCode" }, new[] { itemCode });
+            DataTable dataTable = _dbContext.LoadDataTable("PACKAGING_LOGFILE", new[] { "ItemCode" }, new[] { itemCode });
+            if(dataTable.Rows.Count <= 0)
+            {
+                return dataTable;
+            }
+            NasRepository nas = new NasRepository();
+            nas.MergeDataTable(dataTable, $"{_NAMETABLE}", itemCode, "", dataTable.Rows[0]["LocationIMG"].ToString());
             return dataTable;
         }
         public Dictionary<string, KeyValuePair<Dictionary<string, Image>, string>> LoadDictionary(string itemCode)
@@ -135,39 +161,30 @@ namespace OK2SHIP_SMT.Services
             {
                 string shippingTo = row["ShippingTo"].ToString().Trim();
                 string trayCode = row["TrayCode"].ToString().Trim();
-                string data = row["LogData"].ToString();
+                string data = row["Data"].ToString();
                 Dictionary<string, Image> images = new Dictionary<string, Image>();
                 try
                 {
-                    images.Add("1", TDMK_ImageConverter.ByteArrayToImage((byte[])row["FlexTopImage"]));
+                    images.Add("1", (Image)row["FlexTop"]);
                 }
                 catch { }
                 try
                 {
 
-                    images.Add("2", TDMK_ImageConverter.ByteArrayToImage((byte[])row["FlexBottomImage"]));
+                    images.Add("2", (Image)row["FlexBottom"]);
                 }
                 catch { }
                 try
                 {
-                    images.Add("3", TDMK_ImageConverter.ByteArrayToImage((byte[])row["TrayImage"]));
+                    images.Add("3", (Image)row["Tray"]);
                 }
                 catch
                 {
                 }
                 try
                 {
-                    images.Add("4", TDMK_ImageConverter.ByteArrayToImage((byte[])row["TrayALImage"]));
+                    images.Add("4", (Image)row["TrayAL"]);
 
-                }
-                catch
-                {
-
-                }
-                try
-                {
-
-                    images.Add("5", TDMK_ImageConverter.ByteArrayToImage((byte[])row["ALBagsImage"]));
                 }
                 catch
                 {
@@ -176,7 +193,16 @@ namespace OK2SHIP_SMT.Services
                 try
                 {
 
-                    images.Add("6", TDMK_ImageConverter.ByteArrayToImage((byte[])row["CartonBoxImage"]));
+                    images.Add("5", (Image)row["ALBag"]);
+                }
+                catch
+                {
+
+                }
+                try
+                {
+
+                    images.Add("6", (Image)row["CartonBox"]);
                 }
                 catch
                 {
@@ -203,7 +229,9 @@ namespace OK2SHIP_SMT.Services
                 {
                     string[] name = new[] { "Packing Ship", "Picture", "6. Any liner drop" };
                     IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, name);
-                    string startAddress = $"{dic["Packing Ship"]}:{worksheet.Cells[worksheet.Cells[dic["6. Any liner drop"]].End.Row, worksheet.Cells[dic["Picture"]].End.Column]}";
+
+                    dic["Picture"] = dic["Picture"].Split('-').FirstOrDefault();
+                    string startAddress = $"{dic["Packing Ship"]}:{worksheet.Cells[worksheet.Cells[dic["6. Any liner drop"]].End.Row, worksheet.Cells[dic["Picture"]].End.Column + 1]}";
                     string PasteAddress = dic["Packing Ship"];
                     for (int i = 0; i < dataTable.Rows.Count - 1; i++)
                     {
@@ -211,10 +239,11 @@ namespace OK2SHIP_SMT.Services
                         ExportProcess.CopyColumn(worksheet, worksheet.Cells[startAddress], PasteAddress);
                     }
                     name = new[] { "Packing Ship", "Picture", "1. Any Tray deformation" };
-                    dic = ExportProcess.FindAddressByText(worksheet, name);
-
+                    dic = ExportProcess.FindAddressByText(worksheet, name, true);
+                    dic.Add("Packing Ship" , ExportProcess.FindAddressByText(worksheet, new[] {"Packing Ship"}).First().Value);
                     for (int i = 0; i < dic["Picture"].Split('-').Count(); i++)
                     {
+
                         DataRow row = dataTable.Rows[i];
                         string address = dic["Packing Ship"].Split('-')[i];
                         string value = worksheet.Cells[address].Text;
@@ -230,33 +259,34 @@ namespace OK2SHIP_SMT.Services
                             {
                                 break;
                             }
+
                             address = ExportProcess.AddColumn(address, 1);
                             if (value.Contains("Flex") && value.Contains("Top") && value.Contains("side"))
                             {
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["FlexTopImage"], $"FlexTopImage{i}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["FlexTop"], ImageFormat.Jpeg), $"FlexTopImage{i}");
                             }
                             else if (value.Contains("Flex") && value.Contains("Bottom") && value.Contains("side"))
                             {
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["FlexBottomImage"], $"FlexBottomImage{i}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["FlexBottom"], ImageFormat.Jpeg), $"FlexBottomImage{i}");
                             }
                             else if (value.Contains("Tray") && !value.Contains("AL"))
                             {
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["TrayImage"], $"Tray{i}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["Tray"], ImageFormat.Jpeg), $"Tray{i}");
                             }
                             else if (value.Contains("Tray") && value.Contains("AL") && value.Contains("bag"))
                             {
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["TrayALImage"], $"TrayAL{i}");
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["ALBagsImage"], $"ALBAG{i}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["TrayAL"], ImageFormat.Jpeg), $"TrayAL{i}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["ALBag"], ImageFormat.Jpeg), $"ALBAG{i}");
                             }
                             else if (value.Contains("Carton Box"))
                             {
-                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], (byte[])row["CartonBoxImage"], $"CartonBox{i}");
+                                ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["CartonBox"], ImageFormat.Jpeg), $"CartonBox{i}");
                             }
                             else { break; }
 
 
                         }
-                        DataTable JsonZ = ConverterService.JsonToDataTable(row["LogData"].ToString());
+                        DataTable JsonZ = ConverterService.JsonToDataTable(row["Data"].ToString());
                         int iz = 0;
                         address = ExportProcess.AddColumn(dic["1. Any Tray deformation"].Split('-')[i], 1);
                         while (true)
@@ -269,6 +299,7 @@ namespace OK2SHIP_SMT.Services
                             worksheet.Cells[address].Value = JsonZ.Rows[iz]["Result"];
                             address = ExportProcess.AddRow(address, 1);
                         }
+
                     }
                     exportProcess.SaveExcelWorksheet(package, "Packaging", $"{itemCode}-packaging");
                 }

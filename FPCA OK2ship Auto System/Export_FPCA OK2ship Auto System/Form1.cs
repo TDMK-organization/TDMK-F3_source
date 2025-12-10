@@ -890,7 +890,7 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                                             break;
                                         case "Packaging":
-                                            new PackagingService().ExportToExcel(ws, txtItemCode.Text.Trim());
+                                            //new PackagingService().ExportToExcel(ws, txtItemCode.Text.Trim());
                                             break;
                                         case "Impedance":
                                             new ImpedanceService().Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
@@ -906,7 +906,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                             TableOfContentService.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
                                             break;
                                         case "Environment en-durance":
-                                            new EEDService(sqlcon).Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            //new EEDService(sqlcon).Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
                                             break;
                                         case "Assy Yield":
                                             new AssyYieldService(sqlcon).Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
@@ -1590,10 +1590,10 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         private void btn_open_Click(object sender, EventArgs e)
         {
-            using (ExportManager form = new ExportManager())
-            {
-                form.ShowDialog();
-            }
+            ExportManager form = new ExportManager();
+
+            form.Show();
+
 
         }
     }

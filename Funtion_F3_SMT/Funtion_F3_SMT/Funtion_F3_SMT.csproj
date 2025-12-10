@@ -7,7 +7,7 @@
     <ProjectGuid>{DA6F2A1E-D833-4095-BFEC-AD3744A77560}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>OK2SHIP_SMT</RootNamespace>
-    <AssemblyName>VHX-IMADA%28Ver_4.7%29</AssemblyName>
+    <AssemblyName>VHX-IMADA%28Ver_5.1%29</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
