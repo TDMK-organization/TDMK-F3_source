@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  db:
+    build: ./SQL_Scpirt
+    container_name: mssql_server
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrong(!)Password
+      - MSSQL_PID=Express
+    restart: always
