@@ -1,4 +1,5 @@
-﻿using OK2SHIP_SMT.UserControls;
+﻿using OK2SHIP_SMT.Repositories;
+using OK2SHIP_SMT.UserControls;
 using OK2SHIP_SMT.UserControls.Logins;
 using OK2SHIP_SMT.Views;
 using System;
@@ -19,9 +20,90 @@ namespace Funtion_F3_SMT
         public MainScreen()
         {
             InitializeComponent();
+
+            LoadStatusAsync();
         }
 
+        private async void LoadStatusAsync()
+        {
+            // Cập nhật trạng thái đang kiểm tra (tùy chọn)
+            lb_database.Text = "Database: Checking...";
+            lb_nas.Text = "Nas: Checking...";
 
+            // Chạy việc kiểm tra trong một luồng nền (Background Thread)
+            // Task.Run giúp UI không bị treo
+            await Task.Run(() => checkingStatus());
+        }
+
+        private void checkingStatus()
+        {
+            // Kiểm tra Database
+            try
+            {
+                bool dbOk = checkingExport();
+                // Cập nhật UI từ luồng nền cần dùng Invoke
+                this.Invoke(new Action(() => {
+                    lb_Export.Text = dbOk ? "Export: Connected" : "Export: Disconnected";
+                    lb_Export.BackColor = dbOk ? Color.Green : Color.Red;
+                }));
+            }
+            catch (Exception)
+            {
+                this.Invoke(new Action(() => {
+                    lb_Export.Text = "Export: Error";
+                    lb_Export.BackColor = Color.Red;
+                }));
+            }
+            // Kiểm tra Database
+            try
+            {
+                bool dbOk = checkingDB();
+                // Cập nhật UI từ luồng nền cần dùng Invoke
+                this.Invoke(new Action(() => {
+                    lb_database.Text = dbOk ? "Database: Connected" : "Database: Disconnected";
+                    lb_database.BackColor = dbOk ? Color.Green : Color.Red;
+                }));
+            }
+            catch (Exception)
+            {
+                this.Invoke(new Action(() => {
+                    lb_database.Text = "Database: Error";
+                    lb_database.BackColor = Color.Red;
+                }));
+            }
+
+            // Kiểm tra NAS
+            try
+            {
+                bool nasOk = checkingNAS();
+                this.Invoke(new Action(() => {
+                    lb_nas.Text = nasOk ? "Nas: Connected" : "Nas: Disconnected";
+                    lb_nas.BackColor = nasOk ? Color.Green : Color.Red;
+                }));
+            }
+            catch (Exception)
+            {
+                this.Invoke(new Action(() => {
+                    lb_nas.Text = "Nas: Error";
+                    lb_nas.BackColor = Color.Red;
+                }));
+            }
+        }
+        private bool checkingNAS()
+        {
+            NasRepository nas = new NasRepository();
+            return true;
+        }
+        private bool checkingExport()
+        {
+            ExportProcess export = new ExportProcess();
+            return true;
+        }
+        private bool checkingDB()
+        {
+            DBContext _db = new DBContext();
+            return true;
+        }
         private void lblExit_Click(object sender, EventArgs e)
         {
             this.Close();

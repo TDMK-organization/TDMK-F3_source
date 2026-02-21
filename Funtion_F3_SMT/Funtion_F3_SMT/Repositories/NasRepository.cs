@@ -49,11 +49,10 @@ namespace OK2SHIP_SMT.Repositories
         }
         public bool IsImageColumn(DataColumn column)
         {
-            // Cột hình ảnh thường được lưu trữ dưới dạng mảng byte (byte[])
             return column.DataType == typeof(Image);
         }
 
-        public List<KeyValuePair<string, Image>> GetImageColumn(DataTable dataTable)
+        public List<KeyValuePair<string, byte[]>> GetImageColumn(DataTable dataTable)
         {
             if (dataTable == null || dataTable.Rows.Count == 0)
             {
@@ -67,7 +66,7 @@ namespace OK2SHIP_SMT.Repositories
 
 
 
-            List<KeyValuePair<string, Image>> listImage = new List<KeyValuePair<string, Image>>();
+            List<KeyValuePair<string, byte[]>> listImage = new List<KeyValuePair<string, byte[]>>();
             List<string> strings = new List<string>();
 
 
@@ -103,11 +102,11 @@ namespace OK2SHIP_SMT.Repositories
                             if (dataTable.Columns[item].DataType == typeof(byte[]))
                             {
 
-                                listImage.Add(new KeyValuePair<string, Image>(name, TDMK_ImageConverter.ByteArrayToImage((byte[])row[item])));
+                                listImage.Add(new KeyValuePair<string, byte[]>(name, (byte[])row[item]));
                             }
                             else
                             {
-                                listImage.Add(new KeyValuePair<string, Image>(name, (Image)row[item]));
+                                listImage.Add(new KeyValuePair<string, byte[]>(name, TDMK_ImageConverter.ImageToByteArray((Image)row[item], ImageFormat.Jpeg)));
                             }
                         }
                     }
@@ -152,11 +151,11 @@ namespace OK2SHIP_SMT.Repositories
                 return false;
             }
         }
-        public int SaveImage(List<KeyValuePair<string, Image>> listIMG, string location)
+        public int SaveImage(List<KeyValuePair<string, byte[]>> listIMG, string location)
         {
             int res = 0;
             EnsureDirectoryExists(location);
-            foreach (KeyValuePair<string, Image> item in listIMG)
+            foreach (KeyValuePair<string, byte[]> item in listIMG)
             {
                 //Image image = ConvertToJpeg(item.Value);
 
@@ -164,7 +163,7 @@ namespace OK2SHIP_SMT.Repositories
             }
             return res;
         }
-        public int SaveImageObjectToPath(Image imageObject, string destinationPath)
+        public int SaveImageObjectToPath(byte[] imageObject, string destinationPath)
         {
             if (imageObject == null)
             {
@@ -181,15 +180,15 @@ namespace OK2SHIP_SMT.Repositories
                 }
 
                 // Lưu ảnh dưới định dạng JPEG
-                ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
-                if (jpegCodec == null)
-                    throw new InvalidOperationException("JPEG encoder not found.");
+                //ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
+                //if (jpegCodec == null)
+                //    throw new InvalidOperationException("JPEG encoder not found.");
 
-                EncoderParameters encoderParams = new EncoderParameters(1);
-                encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 85L);
+                //EncoderParameters encoderParams = new EncoderParameters(1);
+                //encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 85L);
 
-                imageObject.Save(destinationPath, jpegCodec, encoderParams);
-
+                //imageObject.Save(destinationPath, jpegCodec, encoderParams);
+                File.WriteAllBytes(destinationPath, imageObject);
                 return 1;
             }
             catch (Exception ex)
@@ -199,7 +198,7 @@ namespace OK2SHIP_SMT.Repositories
         }
         public void MergeDataTable(DataTable dataTable, string category, string itemCode, string lotNo, string address)
         {
-            Dictionary<string, Image> images = GetImages(address);
+            Dictionary<string, byte[]> images = GetImages(address);
             List<string> columnImage = new List<string>();
             foreach (DataColumn column in dataTable.Columns)
             {
@@ -211,13 +210,13 @@ namespace OK2SHIP_SMT.Repositories
             foreach (string item in columnImage)
             {
                 string name = item.Replace("$Image", "");
-                dataTable.Columns.Add(name, typeof(Image));
+                dataTable.Columns.Add(name, typeof(byte[]));
             }
             foreach (DataRow item in dataTable.Rows)
             {
                 foreach (string column in columnImage)
                 {
-                    if (images.TryGetValue(item[column].ToString(), out Image image))
+                    if (images.TryGetValue(item[column].ToString(), out byte[] image))
                     {
                         item[$"{column.Replace("$Image", "")}"] = image;
                     }
@@ -230,24 +229,24 @@ namespace OK2SHIP_SMT.Repositories
             }
         }
 
-        public Dictionary<string, Image> GetImages(string path)
+        public Dictionary<string, byte[]> GetImages(string path)
         {
             string[] folder = Directory.GetFiles(path);
-            Dictionary<string, Image> listPicture = new Dictionary<string, Image>();
+            Dictionary<string, byte[]> listPicture = new Dictionary<string, byte[]>();
             foreach (string item in folder)
             {
                 if (item.Contains(".jpg"))
                 {
                     // Debugger.Break();
                     string nameFile = FileFolderRepository.GetFileName(item).Replace(".jpg", "");
-                    listPicture.Add(nameFile, Image.FromFile(item));
+                    listPicture.Add(nameFile, File.ReadAllBytes(item));
                 }
             }
             return listPicture;
         }
         public string HandleImageDataTable(DataTable dataTable, string category, string itemCode, string lotNo)
         {
-            List<KeyValuePair<string, Image>> list = GetImageColumn(dataTable);
+            List<KeyValuePair<string, byte[]>> list = GetImageColumn(dataTable);
             string location = $"{_nasAddress}\\{category}\\{itemCode}-{lotNo}\\";
             SaveImage(list, location);
             return location;

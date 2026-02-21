@@ -191,26 +191,27 @@ namespace OK2SHIP_SMT.Repositories
 
         public DBContext(string catalog = null)
         {
-            if (catalog == null)
-            {
-                catalog = "OK2SHIP_SMT";
-            }
-            //config file
-            string app_path = System.Windows.Forms.Application.StartupPath;
-            //app_path = @"\\10.212.6.212\Saomai\QA\TDMK_DATA\Test_Areas\FPCA OK2SHIP Auto System(temp2)\VHX-IMADA";
-            string config_path = Path.Combine(app_path.Replace(@"\FPCA OK2SHIP Auto System\VHX-IMADA", ""), "Config.ini");
-            //string config_path = Path.Combine(app_path.Replace(@"\VHX-IMADA", ""), "Config.ini");
-            TDMK_init = new IniFile(config_path);
-            //data_loc = TDMK_init.Read("Format_Folder", "SMT_Config");
-            //data_loc = Path.Combine(System.Windows.Forms.Application.StartupPath.Replace(@"\VHX-IMADA", ""));
-            string server_name = TDMK_init.Read("Server", "SMT_Config");
-            string server_acc = TDMK_init.Read("Account", "SMT_Config");
-            string server_pass = TDMK_init.Read("Password", "SMT_Config");
-            _nasAddress = TDMK_init.Read("NasAddress", "SMT_Config");
-            SqlConnection = initial_data($";Connection Timeout=6000;Data Source={server_name};Initial Catalog={catalog};User ID={server_acc};Password='{server_pass}';Encrypt=True;TrustServerCertificate=True;");
-            ///////////////////////
             try
             {
+                if (catalog == null)
+                {
+                    catalog = "OK2SHIP_SMT";
+                }
+                //config file
+                string app_path = System.Windows.Forms.Application.StartupPath;
+                //app_path = @"\\10.212.6.212\Saomai\QA\TDMK_DATA\Test_Areas\FPCA OK2SHIP Auto System(temp2)\VHX-IMADA";
+                string config_path = Path.Combine(app_path.Replace(@"\FPCA OK2SHIP Auto System\VHX-IMADA", ""), "Config.ini");
+                //string config_path = Path.Combine(app_path.Replace(@"\VHX-IMADA", ""), "Config.ini");
+                TDMK_init = new IniFile(config_path);
+                //data_loc = TDMK_init.Read("Format_Folder", "SMT_Config");
+                //data_loc = Path.Combine(System.Windows.Forms.Application.StartupPath.Replace(@"\VHX-IMADA", ""));
+                string server_name = TDMK_init.Read("Server", "SMT_Config");
+                string server_acc = TDMK_init.Read("Account", "SMT_Config");
+                string server_pass = TDMK_init.Read("Password", "SMT_Config");
+                _nasAddress = TDMK_init.Read("NasAddress", "SMT_Config");
+                SqlConnection = initial_data($";Connection Timeout=6000;Data Source={server_name};Initial Catalog={catalog};User ID={server_acc};Password='{server_pass}';Encrypt=True;TrustServerCertificate=True;");
+                ///////////////////////
+
                 SqlConnection.Open();
             }
             catch (Exception ex)
@@ -544,7 +545,7 @@ namespace OK2SHIP_SMT.Repositories
                 return null; // Return empty list if input is empty or null
             }
             string itemCodeList = string.Join("','", listCheck);
-            string join = string.Join(",", new[] {colname, selectColumn} );
+            string join = string.Join(",", new[] { colname, selectColumn });
             join = join.Trim().TrimEnd(',');
             string sql = $"SELECT {join} FROM {TabltName} WHERE {colname} IN ('{itemCodeList}')";
             List<string> existingItemCodes = new List<string>();
@@ -558,7 +559,7 @@ namespace OK2SHIP_SMT.Repositories
                         while (reader.Read())
                         {
                             string z = reader.GetValue(join.Split(',').Count() - 1).ToString();
-                            
+
                             existingItemCodes.Add(z); // Assuming ItemCode is the first column and a string
                         }
                     }

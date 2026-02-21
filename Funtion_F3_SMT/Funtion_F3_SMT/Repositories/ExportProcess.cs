@@ -33,6 +33,11 @@ namespace OK2SHIP_SMT.Repositories
             TDMK_init = new IniFile(config_path);
             FORMAT_LOACTION = TDMK_init.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data\\Format\\{type}";
             EXPORT_LOACTION = TDMK_init.Read("Report_Location", "SMT_Config") + $"\\SEEV Data\\Report\\{type}";
+            if (FileFolderRepository.checkLocationIsValid(FORMAT_LOACTION) && FileFolderRepository.checkLocationIsValid(EXPORT_LOACTION))
+            {
+
+            }
+            else { throw new Exception("Đường dẫn không hợp lệ, kiểm tra lại config.ini"); }
         }
         public static ExcelPackage openPackage(string location)
         {

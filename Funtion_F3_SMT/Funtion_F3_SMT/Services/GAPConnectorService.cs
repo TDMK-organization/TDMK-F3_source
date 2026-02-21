@@ -109,7 +109,7 @@ namespace OK2SHIP_SMT.Services
 
                     addressP = ExportProcess.AddRow(addressP, 1);
                     bool imageMode = !originalTable.Columns["Image"].GetType().ToString().Contains("byte");
-                    if (imageMode)
+                    if (!imageMode)
                     {
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], TDMK_ImageConverter.ImageToByteArray((Image)originalTable.Rows[i]["Image"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
 
@@ -119,7 +119,7 @@ namespace OK2SHIP_SMT.Services
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], (byte[])originalTable.Rows[i]["Image"], $"{Guid.NewGuid()}");
                     }
                     addressP = ExportProcess.AddRow(addressP, 1);
-                    if (imageMode)
+                    if (!imageMode)
                     {
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], TDMK_ImageConverter.ImageToByteArray((Image)originalTable.Rows[i]["Image1"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
 
@@ -134,7 +134,9 @@ namespace OK2SHIP_SMT.Services
                         for (int j = 0; j < data1.Count(); j++)
                         {
                             addressP = ExportProcess.AddRow(addressP, 1);
-                            workSheet.Cells[addressP].Value = float.Parse(data1[j]);
+                            workSheet.Cells[addressP].Value = double.Parse(data1[j]);
+                            workSheet.Cells[addressP].Style.Numberformat.Format = "#,##0.00";
+
                         }
                     }
                     catch (Exception ex)
@@ -142,7 +144,7 @@ namespace OK2SHIP_SMT.Services
                         throw new Exception($"Lỗi khi ghi data {ex.Message}");
                     }
                     addressP = ExportProcess.AddRow(addressP, 1);
-                    if (imageMode)
+                    if (!imageMode)
                     {
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressP], TDMK_ImageConverter.ImageToByteArray((Image)originalTable.Rows[i]["Image2"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
 
@@ -157,7 +159,8 @@ namespace OK2SHIP_SMT.Services
                         for (int j = 0; j < data2.Count(); j++)
                         {
                             addressP = ExportProcess.AddRow(addressP, 1);
-                            workSheet.Cells[addressP].Value = float.Parse(data2[j]);
+                            workSheet.Cells[addressP].Value = double.Parse(data2[j]);
+                            workSheet.Cells[addressP].Style.Numberformat.Format = "#,##0.00";
                         }
                     }
                     catch (Exception ex)
