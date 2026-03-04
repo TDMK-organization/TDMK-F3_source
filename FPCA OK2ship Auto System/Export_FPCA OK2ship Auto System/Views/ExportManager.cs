@@ -352,7 +352,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             try
             {
 
-                _service.SetupManual(tb_itemCode.Text, tb_lotNo.Text, stn._LOCATION, stn._CATEGORY);
+                _service.SetupManual(tb_itemCode.Text, tb_lotNo.Text, stn._LOCATION, stn._CATEGORY, stn._TAKEALL);
             }
             catch (Exception ex)
             {

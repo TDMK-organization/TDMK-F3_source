@@ -15,6 +15,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
     {
         public string _LOCATION = "";
         public string _CATEGORY = "";
+        public bool _TAKEALL  = false;
         public SettingManual(string[] list)
         {
             InitializeComponent();
@@ -65,6 +66,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             {
                 _LOCATION = textBox1.Text.Trim();
                 _CATEGORY = comboBox1.Text.Trim();
+                _TAKEALL = checkBox1.Checked;
                 this.Hide();
             }
 

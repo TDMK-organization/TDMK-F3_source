@@ -545,7 +545,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
         }
 
-        public string SetupManual(string itemCode, string lotNo, string location, string category)
+        public string SetupManual(string itemCode, string lotNo, string location, string category, bool takeAll)
         {
             string msg = "";
             if (string.IsNullOrEmpty(location))
@@ -586,58 +586,58 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 
                 using (ExcelPackage package = process.OpenFileExcel(location))
                 {
-                    IList<ExcelWorksheet> worksheets = new List<ExcelWorksheet>();
                     List<string> nameSheet = new List<string>();
-                    switch (category)
+                    if (!takeAll)
                     {
-                        case "FAI":
-                            string[] str = new[] { "FAI-1", "FAI-2", "SPC-1", "SPC-2", "Dimension without parenthes", "Dimension with parenthes" };
-                            int i = 0;
-                            foreach (string item in str)
-                            {
-                                if (package.Workbook.Worksheets.Count() >= i)
+                        switch (category)
+                        {
+                            case "FAI":
+                                string[] str = new[] { "FAI-1", "FAI-2", "SPC-1", "SPC-2", "Dimension without parenthes", "Dimension with parenthes" };
+                                int i = 0;
+                                foreach (string item in str)
                                 {
-                                    break;
+                                    if (package.Workbook.Worksheets.Count() >= i)
+                                    {
+                                        break;
+                                    }
+                                    ExcelWorksheet workSheet1 = package.Workbook.Worksheets[i++];
+                                    workSheet1.Name = item;
+                                    nameSheet.Add(item);
                                 }
-                                ExcelWorksheet workSheet1 = package.Workbook.Worksheets[i++];
-                                workSheet1.Name = item;
-                                nameSheet.Add(item);
-                            }
-                            break;
-                        case "Peel test":
-                            string[] strZ = new[] { "Peel Test", "Peel Test Without SUS" };
-                            int iZ = 0;
-                            foreach (string item in strZ)
-                            {
-                                if (package.Workbook.Worksheets.Count() >= iZ)
+                                break;
+                            case "Peel test":
+                                string[] strZ = new[] { "Peel Test", "Peel Test Without SUS" };
+                                int iZ = 0;
+                                foreach (string item in strZ)
                                 {
-                                    break;
+                                    if (package.Workbook.Worksheets.Count() >= iZ)
+                                    {
+                                        break;
+                                    }
+                                    ExcelWorksheet workSheet1 = package.Workbook.Worksheets[iZ++];
+                                    workSheet1.Name = item;
+                                    nameSheet.Add(item);
                                 }
-                                ExcelWorksheet workSheet1 = package.Workbook.Worksheets[iZ++];
-                                workSheet1.Name = item;
-                                nameSheet.Add(item);
-                            }
-                            break;
-                        default:
-                            ExcelWorksheet workSheet = package.Workbook.Worksheets[0];
-                            workSheet.Name = category;
-                            nameSheet.Add(category);
+                                break;
+                            default:
+                                ExcelWorksheet workSheet = package.Workbook.Worksheets[0];
+                                workSheet.Name = category;
+                                nameSheet.Add(category);
 
-                            break;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        foreach (ExcelWorksheet item in package.Workbook.Worksheets)
+                        {
+                            string nameWS = item.Name;
+                            nameSheet.Add(nameWS);
+
+                        }
                     }
                     process.SaveExcelWorksheet(package, $"{string.Join(":", nameSheet)}", $"{itemCode}_{lotNo}", "NPI", false, ExportProcess.GetFileExtension(location));
-                    //string[] sheets = nameSheet.ToArray();
-                    //foreach (var item in package.Workbook.Worksheets)
-                    //{
-                    //    if (!sheets.Contains(item.Name.Trim()))
-                    //    {
-                    //        worksheets.Add(item);
-                    //    }
-                    //}
-                    //foreach (ExcelWorksheet item in worksheets)
-                    //{
-                    //    package.Workbook.Worksheets.Delete(item.Name);
-                    //}
+
                 }
             }
             return msg;
