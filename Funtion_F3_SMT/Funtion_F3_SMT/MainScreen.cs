@@ -42,51 +42,75 @@ namespace Funtion_F3_SMT
             {
                 bool dbOk = checkingExport();
                 // Cập nhật UI từ luồng nền cần dùng Invoke
-                this.Invoke(new Action(() => {
+                this.Invoke(new Action(() =>
+                {
                     lb_Export.Text = dbOk ? "Export: Connected" : "Export: Disconnected";
                     lb_Export.BackColor = dbOk ? Color.Green : Color.Red;
                 }));
             }
             catch (Exception)
             {
-                this.Invoke(new Action(() => {
-                    lb_Export.Text = "Export: Error";
-                    lb_Export.BackColor = Color.Red;
-                }));
+                try
+                {
+
+                    this.Invoke(new Action(() =>
+                    {
+                        lb_Export.Text = "Export: Error";
+                        lb_Export.BackColor = Color.Red;
+                    }));
+                }
+                catch
+                {
+
+                }
             }
             // Kiểm tra Database
             try
             {
                 bool dbOk = checkingDB();
                 // Cập nhật UI từ luồng nền cần dùng Invoke
-                this.Invoke(new Action(() => {
+                this.Invoke(new Action(() =>
+                {
                     lb_database.Text = dbOk ? "Database: Connected" : "Database: Disconnected";
                     lb_database.BackColor = dbOk ? Color.Green : Color.Red;
                 }));
             }
             catch (Exception)
             {
-                this.Invoke(new Action(() => {
-                    lb_database.Text = "Database: Error";
-                    lb_database.BackColor = Color.Red;
-                }));
+                try
+                {
+
+                    this.Invoke(new Action(() =>
+                    {
+                        lb_database.Text = "Database: Error";
+                        lb_database.BackColor = Color.Red;
+                    }));
+                }
+                catch { }
             }
 
             // Kiểm tra NAS
             try
             {
                 bool nasOk = checkingNAS();
-                this.Invoke(new Action(() => {
+                this.Invoke(new Action(() =>
+                {
                     lb_nas.Text = nasOk ? "Nas: Connected" : "Nas: Disconnected";
                     lb_nas.BackColor = nasOk ? Color.Green : Color.Red;
                 }));
             }
             catch (Exception)
             {
-                this.Invoke(new Action(() => {
-                    lb_nas.Text = "Nas: Error";
-                    lb_nas.BackColor = Color.Red;
-                }));
+                try
+                {
+
+                    this.Invoke(new Action(() =>
+                    {
+                        lb_nas.Text = "Nas: Error";
+                        lb_nas.BackColor = Color.Red;
+                    }));
+                }
+                catch { }
             }
         }
         private bool checkingNAS()

@@ -3592,7 +3592,6 @@ namespace Funtion_F3_SMT
 
             FileInfo[] temp_lst = tar_parent.GetFiles("*.xlsx");
 
-
             if (temp_lst.Length > 0)
             {
                 int i = 0;
@@ -3623,9 +3622,9 @@ namespace Funtion_F3_SMT
 
 
 
-                            if (!dic_lst_result.ContainsKey(k))
+                            if (!dic_lst_result.ContainsKey(int.Parse(f_na)))
                             {
-                                dic_lst_result.Add(k, data);
+                                dic_lst_result.Add(int.Parse(f_na), data);
                                 k++;
                             }
                         }
@@ -5877,7 +5876,7 @@ namespace Funtion_F3_SMT
                 }
             }
         }
-        public void  Check_spec_ShearTest_new(DataGridView dgv)
+        public void Check_spec_ShearTest_new(DataGridView dgv)
         {
 
             for (int i = 0; i < dgv.Columns.Count; i++)
@@ -6546,6 +6545,7 @@ namespace Funtion_F3_SMT
             {
                 MessageBox.Show(new Form { TopMost = true }, "Vui lòng cài đặt spec", "Thông báo");
             }
+
         }
         public void Check_spec_GAP(DataGridView dgv, string mysheet)
         {
@@ -7810,7 +7810,41 @@ namespace Funtion_F3_SMT
                     }
                     break;
             }
-
+            switch (sheet)
+            {
+                case "PEEL_TEST":
+                case "MATING_PULL_TEST":
+                case "SHEAR_TEST":
+                    try
+                    {
+                        DataTable dt = (DataTable)dgv.DataSource;
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            int tong = 0;
+                            foreach (DataColumn column in dt.Columns)
+                            {
+                                if (column.ColumnName.Contains("Mode"))
+                                {
+                                    string value = row[column].ToString().Split('%')[1].Split('(')[1].Replace(")", "").Replace(" ", "").Replace(")", "");
+                                    tong += int.Parse(value.Split('/')[0]);
+                                }
+                            }
+                            if (tong != int.Parse(txt_setchan.Text))
+                            {
+                                MessageBox.Show("Số lượng chân không phù hợp [ID] = " + row["ID"]);
+                                return false;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                    break;
+                default:
+                    Debugger.Break();
+                    break;
+            }
             return chk;
 
         }
@@ -7818,6 +7852,7 @@ namespace Funtion_F3_SMT
 
         private void btn_save_Click(object sender, EventArgs e)
         {
+
             if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST")
             {
                 if (txt_setchan.Text == "0" || !myCode.IsNumeric(txt_setchan.Text))
@@ -7831,6 +7866,43 @@ namespace Funtion_F3_SMT
                     if (dgv_Analysis.Rows[0].Cells["Mode 1: Solder joint crack"].Value.ToString() == "100%")
                         dgv_Analysis.Rows[0].Cells["Mode 1: Solder joint crack"].Value = "100%(" + txt_setchan.Text + "/" + txt_setchan.Text + ")";
 
+                }
+                switch (sheet)
+                {
+                    case "PEEL_TEST":
+                    case "MATING_PULL_TEST":
+                    case "SHEAR_TEST":
+                        try
+                        {
+                            DataTable dt = (DataTable)dgv_Analysis.DataSource;
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                int tong = 0;
+                                foreach (DataColumn column in dt.Columns)
+                                {
+                                    if (column.ColumnName.Contains("Mode"))
+                                    {
+                                        string value = row[column].ToString().Split('%')[1].Split('(')[1].Replace(")", "").Replace(" ", "").Replace(")", "");
+                                        tong += int.Parse(value.Split('/')[0]);
+                                    }
+                                }
+                                if (tong != int.Parse(txt_setchan.Text))
+                                {
+                                    if(MessageBox.Show("Số lượng chân không phù hợp [ID] = " + row["ID"] + "Bạn có muốn tiếp tục?", "", MessageBoxButtons.YesNo) == DialogResult.No)
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        {
+                         
+                        }
+                        break;
+                    default:
+                        Debugger.Break();
+                        break;
                 }
             }
 
@@ -14123,41 +14195,49 @@ namespace Funtion_F3_SMT
 
         private void txt_setchan_TextChanged(object sender, EventArgs e)
         {
-            if (txt_setchan.Text == "0" || !myCode.IsNumeric(txt_setchan.Text))
+            try
             {
-                txt_setchan.BackColor = Color.Yellow;
-            }
-            else
-            {
-                txt_setchan.BackColor = Color.White;
-                set_chan = int.Parse(txt_setchan.Text);
-                DataTable dataTable = (DataTable)dgv_logfile.DataSource;
-                foreach (DataRow row in dataTable.Rows)
-                {
-                    foreach (DataColumn col in dataTable.Columns)
-                    {
-                        if (col.ColumnName.Contains("Mode"))
-                        {
 
-                            if (row[col.ColumnName].ToString().Contains("100%"))
+                if (txt_setchan.Text == "0" || !myCode.IsNumeric(txt_setchan.Text))
+                {
+                    txt_setchan.BackColor = Color.Yellow;
+                }
+                else
+                {
+                    txt_setchan.BackColor = Color.White;
+                    set_chan = int.Parse(txt_setchan.Text);
+                    DataTable dataTable = (DataTable)dgv_logfile.DataSource;
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        foreach (DataColumn col in dataTable.Columns)
+                        {
+                            if (col.ColumnName.Contains("Mode"))
                             {
-                                row[col.ColumnName] = $"100% ({set_chan}/{set_chan})";
-                            }
-                            else if (row[col.ColumnName].ToString().Contains("0%"))
-                            {
-                                row[col.ColumnName] = $"0% ({0}/{set_chan})";
-                            }
-                            else
-                            {
-                                if (int.TryParse(row[col.ColumnName].ToString().TrimEnd('%'), out int a))
+
+                                if (row[col.ColumnName].ToString().Contains("100%"))
                                 {
-                                    a = 100 / (a * set_chan);
-                                    row[col.ColumnName] = $"{row[col.ColumnName]} ({a}/{set_chan})";
+                                    row[col.ColumnName] = $"100% ({set_chan}/{set_chan})";
+                                }
+                                else if (row[col.ColumnName].ToString().Contains("0%"))
+                                {
+                                    row[col.ColumnName] = $"0% ({0}/{set_chan})";
+                                }
+                                else
+                                {
+                                    if (int.TryParse(row[col.ColumnName].ToString().TrimEnd('%'), out int a))
+                                    {
+                                        a = 100 / (a * set_chan);
+                                        row[col.ColumnName] = $"{row[col.ColumnName]} ({a}/{set_chan})";
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            }
+            catch
+            {
+
             }
         }
 
@@ -14193,6 +14273,56 @@ namespace Funtion_F3_SMT
             fileDialog.Title = "Chọn tệp";
             fileDialog.ShowDialog();
             textBox1.Text = fileDialog.FileName;
+        }
+
+        private void dgv_Analysis_DataSourceChanged(object sender, EventArgs e)
+        {
+
+            switch (sheet)
+            {
+                case "PEEL_TEST":
+                case "MATING_PULL_TEST":
+                case "SHEAR_TEST":
+                    try
+                    {
+
+                        DataTable dt = (DataTable)((DataGridView)sender).DataSource;
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            int tong = 0;
+
+                            foreach (DataColumn column in dt.Columns)
+                            {
+                                if (column.ColumnName.Contains("Mode"))
+                                {
+                                    string value = row[column].ToString().Split('%')[1].Split('(')[1].Replace(")", "").Replace(" ", "").Replace(")", "");
+                                    tong += int.Parse(value.Split('/')[0]);
+                                    txt_setchan.Text = value.Split('/')[1];
+                                }
+                            }
+                            if (tong != int.Parse(txt_setchan.Text))
+                            {
+                                
+                                lbl_judge.Text = "NG";
+                                lbl_judge.BackColor = Color.Red;
+                                return;
+                            }
+                            else
+                            {
+                                lbl_judge.Text = "OK";
+                                lbl_judge.BackColor = Color.Green;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                    break;
+                default:
+                    Debugger.Break();
+                    break;
+            }
         }
     }
 

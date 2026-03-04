@@ -2293,7 +2293,7 @@ namespace Funtion_F3_SMT
                     try
                     {
 
-                        byte[] _img_byte = (byte[])(TDMK_ImageConverter.ImageToByteArray((Image)dr[Image_Col_name], ImageFormat.Jpeg));
+                        byte[] _img_byte = (byte[])dr[Image_Col_name];
                         byte[] img_byte = ImageCompress.CompressImage(_img_byte);
                         InsertPicture_Name(tar_wrksht, sel_rgn, img_byte, sel_rgn.Address);
                     }
@@ -4059,7 +4059,7 @@ namespace Funtion_F3_SMT
             {
                 if (count < 2 * count_sample)
                 {
-                    byte[] _img_byte = (dr[Image_Col_name].GetType() == typeof(byte[])) ? (byte[])(dr[Image_Col_name]) : TDMK_ImageConverter.ImageToByteArray((Image)dr[Image_Col_name], ImageFormat.Jpeg);
+                    byte[] _img_byte = (byte[])(dr[Image_Col_name]);
                     byte[] img_byte = ImageCompress.CompressImage(_img_byte);
                     InsertPicture_Name(tar_wrksht, sel_rgn, img_byte, sel_rgn.Address);
 
@@ -4108,7 +4108,7 @@ namespace Funtion_F3_SMT
             try
             {
 
-                new ACFService().ExportBoding(ws, ItemCode, LotNo, nas_mode,  type);
+                new ACFService().ExportBoding(ws, ItemCode, LotNo, nas_mode, type);
             }
             catch (Exception ex)
             {
@@ -4278,17 +4278,17 @@ namespace Funtion_F3_SMT
                 if (dic.TryGetValue("Flex SN", out string value))
                 {
                     int rowAVE = 0, sumAve = 0;
-                    foreach(string zi in dic["ACF Flatness"].ToString().Split('-'))
+                    foreach (string zi in dic["ACF Flatness"].ToString().Split('-'))
                     {
                         sumAve += ws.Cells[zi].End.Row;
                     }
                     rowAVE = sumAve / dic["ACF Flatness"].ToString().Split('-').Count();
                     int minz = int.MaxValue;
                     string add = "";
-                    foreach(string zi in dic["Flex SN"].ToString().Split('-'))
+                    foreach (string zi in dic["Flex SN"].ToString().Split('-'))
                     {
                         int z = Math.Abs(rowAVE - ws.Cells[zi].End.Row);
-                        if(z < minz)
+                        if (z < minz)
                         {
                             minz = z;
                             add = zi;

@@ -463,13 +463,13 @@ namespace OK2SHIP_SMT.Services
                             if (dic.TryGetValue("SEM 5000", out addressCol))
                             {
                                 addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
-                                byte[] imgData = TDMK_ImageConverter.ImageToByteArray((Image)dt.Rows[iz]["SEM5K"], ImageFormat.Jpeg);
+                                byte[] imgData = (byte[])dt.Rows[iz]["SEM5K"];
                                 ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[addressCol], imgData, $"SEM500{iz}");
                             }
 
 
                             /// Insert SEM200-250
-                            byte[] imgData250 = TDMK_ImageConverter.ImageToByteArray((Image)dt.Rows[iz]["SEM200250"], ImageFormat.Jpeg);
+                            byte[] imgData250 = (byte[])dt.Rows[iz]["SEM200250"];
 
 
                             if (dic.TryGetValue("SEM 200-250", out addressCol))
@@ -495,7 +495,7 @@ namespace OK2SHIP_SMT.Services
                             try
                             {
 
-                                byte[] imgData500 = TDMK_ImageConverter.ImageToByteArray((Image)dt.Rows[iz]["SEM500700"], ImageFormat.Jpeg);
+                                byte[] imgData500 = (byte[])dt.Rows[iz]["SEM500700"];
                                 if (dic.TryGetValue("SEM 500-700", out addressCol))
                                 {
                                     addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
@@ -515,7 +515,7 @@ namespace OK2SHIP_SMT.Services
                             try
                             {
                                 //Insert Binarization Image
-                                byte[] imgData200bin = TDMK_ImageConverter.ImageToByteArray((Image)dt.Rows[iz]["Binarization500700"], ImageFormat.Jpeg);
+                                byte[] imgData200bin = (byte[])dt.Rows[iz]["Binarization500700"];
 
                                 if (dic.TryGetValue("Binarization 2", out addressCol))
                                 {
@@ -531,7 +531,7 @@ namespace OK2SHIP_SMT.Services
                             try
                             {
 
-                                byte[] imgData500bin = TDMK_ImageConverter.ImageToByteArray((Image)dt.Rows[iz]["Binarization200250"], ImageFormat.Jpeg);
+                                byte[] imgData500bin = (byte[])dt.Rows[iz]["Binarization200250"];
                                 if (dic.TryGetValue("Binarization 3", out addressCol))
                                 {
                                     addressCol = worksheet.Cells[worksheet.Cells[addressRow].Start.Row, worksheet.Cells[addressCol].Start.Column].Address;
