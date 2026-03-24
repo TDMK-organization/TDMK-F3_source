@@ -456,7 +456,16 @@ namespace OK2SHIP_SMT.Services
                         string col = addressHeader[$"Sample {i}"];
 
                         //// cho vào T0
-                        byte[] Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T0"], ImageFormat.Jpeg);
+                        ///
+                        byte[] Image;
+                        try
+                        {
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T0"], ImageFormat.Jpeg);
+                        }
+                        catch
+                        {
+                            Image = (byte[])row["T0"];
+                        }
                         //adress T0
                         if (addressHeader.TryGetValue("Flex SN", out string ValueZZ))
                         {
@@ -477,11 +486,27 @@ namespace OK2SHIP_SMT.Services
                         }
 
                         //// Insert Image in T0U
-                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T0U"], ImageFormat.Jpeg);
+                        try
+                        {
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T0U"], ImageFormat.Jpeg);
+                        }
+                        catch
+                        {
+                            Image = (byte[])row["T0U"];
+                        }
                         address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT0USample{i}");
                         //// Insert Image in 30
-                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T30"], ImageFormat.Jpeg);
+                        try
+                        {
+
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T30"], ImageFormat.Jpeg);
+                        }
+                        catch
+                        {
+                            Image = (byte[])row["T30"];
+
+                        }
                         address = addressHeader[$"Picture T30"];
                         if (address.Contains("-"))
                         {
@@ -490,11 +515,28 @@ namespace OK2SHIP_SMT.Services
                         address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30Sample{i}");
                         //// Insert Image in 30U
-                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T30U"], ImageFormat.Jpeg);
+                        try
+                        {
+
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T30U"], ImageFormat.Jpeg);
+                        }
+                        catch
+                        {
+                            Image = (byte[])row["T30U"];
+                        }
                         address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT30USample{i}");
                         //// Insert Image in 30
-                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T1"], ImageFormat.Jpeg);
+                        try
+                        {
+
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T1"], ImageFormat.Jpeg);
+                        }
+                        catch
+                        {
+                            Image = (byte[])row["T1"];
+                        }
+
                         address = addressHeader[$"Picture T1"];
                         if (address.Contains("-"))
                         {
@@ -503,11 +545,31 @@ namespace OK2SHIP_SMT.Services
                         address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1Sample{i}");
                         //// Insert Image in 30U
-                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T1U"], ImageFormat.Jpeg);
+                        try
+                        {
+
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["T1U"], ImageFormat.Jpeg);
+                        }
+                        catch
+                        {
+                            Image = (byte[])row["T1U"];
+                        }
+
                         address = ExportProcess.AddRow(workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address, 1);
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"PictureT1USample{i}");
                         //// Insert Image in 30
-                        Image = TDMK_ImageConverter.ImageToByteArray((Image)row["Graph"], ImageFormat.Jpeg);
+                        ///
+
+                        try
+                        {
+
+                            Image = TDMK_ImageConverter.ImageToByteArray((Image)row["Graph"], ImageFormat.Jpeg);
+                        }
+                        catch
+                        {
+                            Image = (byte[])row["Graph"];
+                        }
+
                         address = addressHeader[$"Graph unmating at T1"];
                         address = workSheet.Cells[workSheet.Cells[address].Start.Row, workSheet.Cells[col].Start.Column].Address;
                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[address], Image, $"GraphT1Sample{i}");
