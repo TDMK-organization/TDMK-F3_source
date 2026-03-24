@@ -44,6 +44,19 @@ namespace OK2SHIP_SMT.Repositories
             ExcelPackage.LicenseContext = LicenseContext.Commercial;
             return new ExcelPackage(location);
         }
+        public static byte[] ConvertDataRowToByte(DataRow row, string columnName)
+        {
+            byte[] image;
+            try
+            {
+                image = TDMK_ImageConverter.ImageToByteArray((Image)row[columnName], ImageFormat.Jpeg);
+            }
+            catch
+            {
+                image = (byte[])row[columnName];
+            }
+            return image;
+        }
         public static void CopyColumn(ExcelWorksheet worksheet, ExcelRangeBase rangeStart, string address)
         {
             worksheet.Cells[rangeStart.Address].Copy(worksheet.Cells[address]);

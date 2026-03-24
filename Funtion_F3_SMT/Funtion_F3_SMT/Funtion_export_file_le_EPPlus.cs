@@ -117,18 +117,20 @@ namespace Funtion_F3_SMT
                                         ws.Cells[address].Value = row["ProductID"];
                                     }
                                     address = ExportProcess.AddRow(address, 1);
-                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row[$"Image1"], ImageFormat.Jpeg), $"NGANG1{Guid.NewGuid()}");
+                                    byte[] image = ExportProcess.ConvertDataRowToByte(row, "Image1");
+                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], image, $"NGANG1{Guid.NewGuid()}");
                                     address = ExportProcess.AddRow(address, 1);
-                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row[$"Image2"], ImageFormat.Jpeg), $"NGANG2{Guid.NewGuid()}");
+                                    image = ExportProcess.ConvertDataRowToByte(row, "Image2");
+                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], image, $"NGANG2{Guid.NewGuid()}");
                                     try
                                     {
                                         string[] data = row["Data"].ToString().Replace(" ", "").TrimEnd(';').Split(';');
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[0]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[1]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                     }
                                     catch
                                     {
@@ -154,16 +156,17 @@ namespace Funtion_F3_SMT
                                     }
 
                                     address = ExportProcess.AddRow(address, 1);
-                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["Image1"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+
+                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], ExportProcess.ConvertDataRowToByte(row, "Image1"), $"{Guid.NewGuid()}");
                                     try
                                     {
                                         string[] data = row["Data"].ToString().Replace(" ", "").TrimEnd(';').Split(';');
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[0]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[1]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                     }
                                     catch
                                     {
@@ -204,36 +207,36 @@ namespace Funtion_F3_SMT
                                         ws.Cells[address].Value = row["ProductID"].ToString();
                                     }
                                     address = ExportProcess.AddRow(address, 1);
-                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["Image1"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], ExportProcess.ConvertDataRowToByte(row, "Image1"), $"{Guid.NewGuid()}");
                                     address = ExportProcess.AddRow(address, 1);
-                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)row["Image2"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], ExportProcess.ConvertDataRowToByte(row, "Image2"), $"{Guid.NewGuid()}");
                                     try
                                     {
                                         string[] data = row["Data"].ToString().Replace(" ", "").Split('/');
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[0].TrimEnd(';').Split(';')[0]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[0].TrimEnd(';').Split(';')[1]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[1]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[4]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[2]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[5]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[0]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                         address = ExportProcess.AddRow(address, 1);
                                         ws.Cells[address].Value = double.Parse(data[1].TrimEnd(';').Split(';')[3]);
-                                        ws.Cells[address].Style.Numberformat.Format = "#.##0";
+                                        ws.Cells[address].Style.Numberformat.Format = "0.00";
                                     }
                                     catch
                                     {
@@ -1673,7 +1676,7 @@ namespace Funtion_F3_SMT
                     {
                         sel_rgn = sel_rgn.Offset(4, -count_sample);
                         //count = 0;
-                    } 
+                    }
                 }
                 else
                 {
