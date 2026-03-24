@@ -644,9 +644,9 @@ namespace OK2SHIP_SMT.Services
                         {
                             ws.Cells[ExportProcess.AddRow(address, -1)].Value = row["ProductID"];
                         }
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], TDMK_ImageConverter.ImageToByteArray((Image)row["Image_Before"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], TDMK_ImageConverter.ImageToByteArray((Image)row["Image_After"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 3)], TDMK_ImageConverter.ImageToByteArray((Image)row["Graph"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], (byte[])row["Image_Before"], $"{Guid.NewGuid()}");
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], (byte[])row["Image_After"], $"{Guid.NewGuid()}");
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 3)], (byte[])row["Graph"], $"{Guid.NewGuid()}");
                         try
                         {
                             ws.Cells[ExportProcess.AddRow(address, 4)].Value = double.Parse(row["Data"].ToString());

@@ -1,6 +1,7 @@
 ﻿using Export_FPCA_OK2ship_Auto_System.Repositories;
 using OfficeOpenXml;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -391,16 +392,38 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
         }
         public List<string> ExportOneByOne(string itemCode, string lotNo, string[] listCategoryExportFormDB)
         {
-            List<string> msgList = new List<string>();
-            // Export lẻ từng sheet đã chọn
-            foreach (string item in listCategoryExportFormDB)
+            // 1. Sử dụng ConcurrentBag thay vì List để đảm bảo an toàn khi add dữ liệu từ nhiều luồng
+            var msgList = new ConcurrentBag<string>();
+
+            // 2. Cấu hình giới hạn số luồng chạy song song
+            // Với file 500MB + có ảnh, khuyên dùng từ 2 - 3 luồng tùy vào dung lượng RAM máy tính
+            var parallelOptions = new ParallelOptions
             {
-                msgList.Add(ExportOneByOne(itemCode, lotNo, item));
-            }
+                MaxDegreeOfParallelism = 2
+            };
 
+            // 3. Chạy đa luồng
+            Parallel.ForEach(listCategoryExportFormDB, parallelOptions, (item) =>
+            {
+                try
+                {
+                    // Gọi hàm export lẻ cho từng item
+                    string result = ExportOneByOne(itemCode, lotNo, item);
+                    msgList.Add(result);
+                }
+                catch (Exception ex)
+                {
+                    msgList.Add($"{item}-ERROR-{ex.Message}");
+                }
+                finally
+                {
+                    // 4. Ép buộc dọn rác sau mỗi file lớn để giải phóng RAM ngay lập tức
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
+            });
 
-
-            return msgList;
+            return msgList.ToList();
         }
         private string _CHECK_MANUAL = "CheckManual";
         public string CheckManualOneByOne(string itemCode, string lotNo, string category, string locationCheck)
@@ -446,6 +469,55 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             return msgList;
         }
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mainPath"></param>
+        /// <param name="smallFilePaths"></param>
+        /// <param name="progress"></param>
+        /// <returns></returns>
+        public async Task MergeLargeExcelFilesAsync(ExcelPackage mainPackage, string[] smallFilePaths, IProgress<int> progress)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            int count = 0;
+            var mainWorkbook = mainPackage.Workbook;
+
+            foreach (var path in smallFilePaths)
+            {
+                FileInfo smallFileInfo = new FileInfo(path);
+
+                // Sử dụng FileStream với chế độ ReadOnly để tối ưu tốc độ và an toàn
+                using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    using (var smallPackage = new ExcelPackage(fs))
+                    {
+                        foreach (var incomingSheet in smallPackage.Workbook.Worksheets)
+                        {
+                            // Xử lý trùng tên
+                            if (mainWorkbook.Worksheets.Any(s => s.Name == incomingSheet.Name))
+                            {
+                                mainWorkbook.Worksheets.Delete(incomingSheet.Name);
+                            }
+
+                            // Copy Worksheet (Đây là bước ngốn RAM nhất với file 500MB)
+                            mainWorkbook.Worksheets.Add(incomingSheet.Name, incomingSheet);
+                        }
+                    }
+                }
+
+                // Giải phóng RAM định kỳ sau mỗi file nhỏ
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                // Cập nhật tiến độ lên UI WinForms
+                count++;
+                progress?.Report((count * 100) / smallFilePaths.Length);
+            }
+
+            // Lưu file gốc cuối cùng
+            mainPackage.SaveAsync();
+        }
+
+        /// <summary>
         /// Tổng hợp báo cáo
         /// </summary>
         /// <param name="itemCode"></param>
@@ -453,7 +525,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
         /// <param name="listExportDB"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public List<string> ExportAll(string itemCode, string lotNo, string[] listExport)
+        public async Task<List<string>> ExportAll(string itemCode, string lotNo, string[] listExport, IProgress<int> progress)
         {
             List<string> msgList = new List<string>();
 
@@ -462,15 +534,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             {
                 using (ExcelPackage package = process.FindFormatWithItemCode(itemCode))
                 {
-                    // Quet tung sheet nếu có trong danh sách thì thay thế sheet vào
-                    foreach (string category in listExport)
-                    {
-                        ExcelWorksheet oldWorksheet = package.Workbook.Worksheets[category];
-                        if (oldWorksheet != null)
-                        {
-                            package.Workbook.Worksheets.Delete(oldWorksheet);
-                        }
-                    }
+                    List<string> list = new List<string>();
                     foreach (string category in listExport)
                     {
                         string msg = "";
@@ -482,25 +546,10 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                                 string nameFile = $"{process.getExportLocation()}\\{category}\\{itemCode}_{lotNo}";
                                 if (File.Exists($"{nameFile}.xlsm") || File.Exists($"{nameFile}.xlsx"))
                                 {
+
                                     nameFile = nameFile + (File.Exists($"{nameFile}.xlsm") ? ".xlsm" : ".xlsx");
-                                    ExcelPackage.LicenseContext = LicenseContext.Commercial;
-
-                                    using (ExcelPackage packageLe = new ExcelPackage(nameFile))
-                                    {
-                                        ExcelPackage.LicenseContext = LicenseContext.Commercial;
-
-                                        List<ExcelWorksheet> workSheets = new List<ExcelWorksheet>();
-                                        foreach (ExcelWorksheet worksheet in packageLe.Workbook.Worksheets)
-                                        {
-
-                                            ExcelWorksheet sheetDestination = package.Workbook.Worksheets.Add($"{worksheet.Name}", worksheet);
-                                            sheetDestination.TabColor = Color.Green;
-                                        }
-
-
-                                        msg = "OK";
-                                    }
-
+                                    list.Add(nameFile);
+                                    msg = "OK";
                                 }
                                 else
                                 {
@@ -515,10 +564,9 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         //Kiem tra va tra ket qua
                         msgList.Add($"{category}-{_EXPORT_KEY}-{msg}");
                     }
-                    // sắp xếp các sheet về vị trí cũ
-                    SortWorkSheet(package);
-                    // Lưu lại sheet vào đường dẫn
-                    process.SaveExcelPackage(package, $"Export all {itemCode}_{lotNo}");
+
+                    await MergeLargeExcelFilesAsync(package, list.ToArray(), progress);
+                    await process.SaveExcelPackage(package, $"Export all {itemCode}_{lotNo}");
                 }
             }
 
@@ -633,10 +681,9 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         {
                             string nameWS = item.Name;
                             nameSheet.Add(nameWS);
-
                         }
                     }
-                    process.SaveExcelWorksheet(package, $"{string.Join(":", nameSheet)}", $"{itemCode}_{lotNo}", "NPI", false, ExportProcess.GetFileExtension(location));
+                    process.SaveExcelWorksheet(package, $"{string.Join(":", nameSheet)}", $"{itemCode}_{lotNo}", "NPI", false, ExportProcess.GetFileExtension(location), category);
 
                 }
             }

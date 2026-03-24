@@ -534,8 +534,103 @@ namespace Funtion_F3_SMT
             Image myImg = TDMK_EPPLUS.get_pic(wrk_sheet, "Picture 1");
             return myImg;
         }
-
         public List<Image> get_image_excel_ShearTest(myExcel.Worksheet wrk_sheet, ref List<string> lst_data)
+        {
+            // Tạo một list tạm để chứa: [Số thứ tự (cột A), Ảnh, Giá trị Data]
+            var tempData = new List<Tuple<int, Image, string>>();
+
+            foreach (myExcel.Shape cur_image in wrk_sheet.Shapes)
+            {
+                int indexNumber = int.MaxValue; // Số thứ tự, mặc định gán số lớn nhất nếu không tìm thấy
+
+                // 1. TÌM SỐ THỨ TỰ BÊN GÓC TRÁI (CỘT A)
+                try
+                {
+                    myExcel.Range topLeft = cur_image.TopLeftCell;
+                    int row = topLeft.Row;
+
+                    // Quét từ dòng của ảnh ngược lên trên tối đa 5 dòng để tìm số (phòng trường hợp ảnh bị lệch dòng)
+                    for (int i = row; i >= Math.Max(1, row - 5); i--)
+                    {
+                        var cellValue = ((myExcel.Range)wrk_sheet.Cells[i, 1]).Value2; // Cột 1 = Cột A
+
+                        if (cellValue != null)
+                        {
+                            // Trường hợp 1: Excel đã nhận diện sẵn ô này là số (double)
+                            if (cellValue is double exactNum)
+                            {
+                                indexNumber = (int)exactNum;
+                                break;
+                            }
+                            // Trường hợp 2: Ô chứa chuỗi (ví dụ "1", "2") thì ta ép kiểu an toàn bằng Convert.ToString
+                            else if (double.TryParse(Convert.ToString(cellValue), out double parsedNum))
+                            {
+                                indexNumber = (int)parsedNum;
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // Bỏ qua nếu có lỗi đọc cell
+                }
+
+                // 2. COPY VÀ XỬ LÝ ẢNH NHƯ CŨ
+                try
+                {
+                    cur_image.Copy();
+                }
+                catch { }
+
+                // Mẹo nhỏ: Khi dùng Clipboard trong vòng lặp, nên có độ trễ nhỏ để tránh lỗi không copy kịp
+                System.Threading.Thread.Sleep(100);
+
+                Image myImg = Clipboard.GetImage();
+                string val = "";
+
+                if (myImg != null)
+                {
+                    Byte[] data = new Byte[0];
+                    ImageConverter imgCon = new ImageConverter();
+                    data = (byte[])imgCon.ConvertTo(myImg, typeof(byte[]));
+                    try
+                    {
+                        Bitmap bmp;
+                        using (var ms = new MemoryStream(data))
+                        {
+                            bmp = new Bitmap(ms);
+                        }
+
+                        val = Extract_data(bmp);
+                        if (myCode.IsNumeric(val))
+                        {
+                            val = (double.Parse(val) / 1000).ToString();
+                        }
+                    }
+                    catch { }
+                }
+
+                // Đưa dữ liệu 1 Shape vào list tạm
+                tempData.Add(new Tuple<int, Image, string>(indexNumber, myImg, val));
+            }
+
+            // 3. SẮP XẾP LẠI DỮ LIỆU THEO SỐ THỨ TỰ (indexNumber)
+            var sortedData = tempData.OrderBy(x => x.Item1).ToList();
+
+            // 4. ĐỔ DỮ LIỆU ĐÃ SẮP XẾP RA ĐỂ TRẢ VỀ
+            List<Image> lst_grp = new List<Image>();
+            lst_data.Clear(); // Xóa danh sách cũ (nếu có) trước khi add dữ liệu đã sort
+
+            foreach (var item in sortedData)
+            {
+                lst_grp.Add(item.Item2);
+                lst_data.Add(item.Item3); // Dù lỗi hay ko (chuỗi rỗng) vẫn add vào cho khớp index
+            }
+
+            return lst_grp;
+        }
+        public List<Image> get_image_excel_ShearTest_OLD(myExcel.Worksheet wrk_sheet, ref List<string> lst_data)
         {
             List<Image> lst_grp = new List<Image> { };
             foreach (myExcel.Shape cur_image in wrk_sheet.Shapes)
@@ -7888,7 +7983,7 @@ namespace Funtion_F3_SMT
                                 }
                                 if (tong != int.Parse(txt_setchan.Text))
                                 {
-                                    if(MessageBox.Show("Số lượng chân không phù hợp [ID] = " + row["ID"] + "Bạn có muốn tiếp tục?", "", MessageBoxButtons.YesNo) == DialogResult.No)
+                                    if (MessageBox.Show("Số lượng chân không phù hợp [ID] = " + row["ID"] + "Bạn có muốn tiếp tục?", "", MessageBoxButtons.YesNo) == DialogResult.No)
                                     {
                                         return;
                                     }
@@ -7897,7 +7992,7 @@ namespace Funtion_F3_SMT
                         }
                         catch
                         {
-                         
+
                         }
                         break;
                     default:
@@ -14302,7 +14397,7 @@ namespace Funtion_F3_SMT
                             }
                             if (tong != int.Parse(txt_setchan.Text))
                             {
-                                
+
                                 lbl_judge.Text = "NG";
                                 lbl_judge.BackColor = Color.Red;
                                 return;

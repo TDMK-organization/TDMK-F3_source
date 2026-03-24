@@ -1673,7 +1673,7 @@ namespace Funtion_F3_SMT
                     {
                         sel_rgn = sel_rgn.Offset(4, -count_sample);
                         //count = 0;
-                    }
+                    } 
                 }
                 else
                 {

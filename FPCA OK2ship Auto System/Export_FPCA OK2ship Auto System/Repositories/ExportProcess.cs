@@ -132,6 +132,26 @@ namespace Export_FPCA_OK2ship_Auto_System
         {
             return new ExcelPackage(location);
         }
+        public string FindFormatWithItemCodeString(string itemCode)
+        {
+            itemCode = itemCode.Trim();
+            if (Directory.Exists(FORMAT_LOACTION))
+            {
+                string[] files = Directory.GetFiles(FORMAT_LOACTION);
+                foreach (var item in files)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(item);
+
+                    if (item.Contains(itemCode))
+                    {
+                        _EXTENSION = GetFileExtension(item);
+                        return item;
+
+                    }
+                }
+            }
+            throw new Exception("Không tìm thấy format File!");
+        }
         public ExcelPackage FindFormatWithItemCode(string itemCode)
         {
             itemCode = itemCode.Trim();
@@ -501,7 +521,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             destinationRowRange.Style.Border.Right.Style = sourceRowRange.Style.Border.Right.Style;
         }
 
-        public void SaveExcelWorksheet(ExcelPackage excelPackage, string sheetName, string nameFile, string type = "NPI", bool prime = true, string extension = "")
+        public void SaveExcelWorksheet(ExcelPackage excelPackage, string sheetName, string nameFile, string type = "NPI", bool prime = true, string extension = "", string category = "")
         {
             string[] sheetNames = sheetName.Split(':');
             IList<ExcelWorksheet> worksheets = new List<ExcelWorksheet>();
@@ -522,8 +542,17 @@ namespace Export_FPCA_OK2ship_Auto_System
             // Lưu package vào địa chỉ được chỉ định
             string[] str = nameFile.Split('.');
 
-            string folderName = $"{EXPORT_LOACTION}\\{sheetNames[0].Replace('-', '_')}\\";
+            string folderName = "";
+            if (string.IsNullOrEmpty(category))
+            {
+                folderName = $"{EXPORT_LOACTION}\\{sheetNames[0].Replace('-', '_')}\\";
 
+            }
+            else
+            {
+                folderName = $"{EXPORT_LOACTION}\\{category.Replace('-', '_')}\\";
+
+            }
             if (!Directory.Exists(folderName))
             {
                 try
@@ -550,7 +579,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
 
         }
-        public void SaveExcelPackage(ExcelPackage package, string nameFile, string location = "", bool isOpen = true)
+        public async Task SaveExcelPackage(ExcelPackage package, string nameFile, string location = "", bool isOpen = true)
         {
             if (string.IsNullOrEmpty(location))
             {

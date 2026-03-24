@@ -1,5 +1,6 @@
 ﻿using Export_FPCA_OK2ship_Auto_System.Repositories;
 using Export_FPCA_OK2ship_Auto_System.Services;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -7,7 +8,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Export_FPCA_OK2ship_Auto_System.Views
 {
@@ -283,10 +286,15 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             }
         }
 
-        private void btn_ExportALL_Click(object sender, EventArgs e)
+        private async void btn_ExportALL_Click(object sender, EventArgs e)
         {
             try
             {
+                // 1. Cấu hình ProgressBar ban đầu
+                PB_Main.Value = 0;
+                PB_Main.Maximum = 100;
+
+
                 string itemCode = tb_itemCode.Text.ToString();
                 string lotNo = tb_lotNo.Text.ToString();
                 if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
@@ -307,7 +315,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                 }
                 // Update trạng thái xuất lẻ
                 List<string> list = _service.ExportOneByOne(itemCode, lotNo, listCategory.ToArray());
-
+                // nâng cấp thành => xuất lẻ bất đồng bộ
                 foreach (string item in list)
                 {
                     //Debugger.Break();
@@ -326,8 +334,14 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                         listCategory.Add(row["Category"].ToString());
                     }
                 }
-
-                list = _service.ExportAll(itemCode, lotNo, listCategory.ToArray());
+               // Debugger.Break();
+                var progressIndicator = new Progress<int>(value =>
+                {
+                    // Đoạn code này sẽ tự động chạy trên UI Thread
+                    PB_Main.Value = value;
+                });
+                // tối ưu việc hợp nhất các file chưa xong
+                list = await _service.ExportAll(itemCode, lotNo, listCategory.ToArray(), progressIndicator);
                 foreach (string item in list)
                 {
                     //Debugger.Break();
@@ -344,14 +358,13 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                 MessageBox.Show($"EXPORT: {ex.Message}");
             }
         }
-
+      
         private void btn_setting_Click(object sender, EventArgs e)
         {
             SettingManual stn = new SettingManual(_service.getCategories());
             stn.ShowDialog();
             try
             {
-
                 _service.SetupManual(tb_itemCode.Text, tb_lotNo.Text, stn._LOCATION, stn._CATEGORY, stn._TAKEALL);
             }
             catch (Exception ex)
