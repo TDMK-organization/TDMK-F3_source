@@ -14420,13 +14420,5 @@ namespace Funtion_F3_SMT
             }
         }
     }
-
-    internal class ExcelRichTextCell
-    {
-        public static implicit operator ExcelRichTextCell(ExcelRichTextCollection v)
-        {
-            throw new NotImplementedException();
-        }
-    }
 }
 

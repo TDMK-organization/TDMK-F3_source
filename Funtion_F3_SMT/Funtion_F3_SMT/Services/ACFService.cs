@@ -644,9 +644,9 @@ namespace OK2SHIP_SMT.Services
                         {
                             ws.Cells[ExportProcess.AddRow(address, -1)].Value = row["ProductID"];
                         }
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], (byte[])row["Image_Before"], $"{Guid.NewGuid()}");
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], (byte[])row["Image_After"], $"{Guid.NewGuid()}");
-                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 3)], (byte[])row["Graph"], $"{Guid.NewGuid()}");
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], ExportProcess.ConvertDataRowToByte(row, "Image_Before"), $"{Guid.NewGuid()}");
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], ExportProcess.ConvertDataRowToByte(row, "Image_After"), $"{Guid.NewGuid()}");
+                        ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 3)], ExportProcess.ConvertDataRowToByte(row, "Graph"), $"{Guid.NewGuid()}");
                         try
                         {
                             ws.Cells[ExportProcess.AddRow(address, 4)].Value = double.Parse(row["Data"].ToString());

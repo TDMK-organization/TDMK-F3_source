@@ -527,7 +527,7 @@
             this.tab_wetting.Controls.Add(this.tableLayoutPanel4);
             this.tab_wetting.Location = new System.Drawing.Point(4, 29);
             this.tab_wetting.Name = "tab_wetting";
-            this.tab_wetting.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tab_wetting.Padding = new System.Windows.Forms.Padding(3);
             this.tab_wetting.Size = new System.Drawing.Size(1315, 535);
             this.tab_wetting.TabIndex = 0;
             this.tab_wetting.Text = "Wetting Contact Angle";
@@ -946,7 +946,7 @@
             this.tab_flatness.Controls.Add(this.tableLayoutPanel5);
             this.tab_flatness.Location = new System.Drawing.Point(4, 29);
             this.tab_flatness.Name = "tab_flatness";
-            this.tab_flatness.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tab_flatness.Padding = new System.Windows.Forms.Padding(3);
             this.tab_flatness.Size = new System.Drawing.Size(1315, 535);
             this.tab_flatness.TabIndex = 1;
             this.tab_flatness.Text = "Flatness";
@@ -1071,8 +1071,8 @@
             this.tab_peel.Controls.Add(this.tableLayoutPanel6);
             this.tab_peel.Location = new System.Drawing.Point(4, 29);
             this.tab_peel.Name = "tab_peel";
-            this.tab_peel.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.tab_peel.Size = new System.Drawing.Size(1316, 549);
+            this.tab_peel.Padding = new System.Windows.Forms.Padding(3);
+            this.tab_peel.Size = new System.Drawing.Size(1315, 535);
             this.tab_peel.TabIndex = 2;
             this.tab_peel.Text = "Peel";
             this.tab_peel.UseVisualStyleBackColor = true;
@@ -1091,7 +1091,7 @@
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(1310, 543);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(1309, 529);
             this.tableLayoutPanel6.TabIndex = 1;
             // 
             // dgv_peel
@@ -1102,7 +1102,7 @@
             this.dgv_peel.Location = new System.Drawing.Point(3, 84);
             this.dgv_peel.Name = "dgv_peel";
             this.dgv_peel.RowHeadersWidth = 62;
-            this.dgv_peel.Size = new System.Drawing.Size(1304, 456);
+            this.dgv_peel.Size = new System.Drawing.Size(1303, 442);
             this.dgv_peel.TabIndex = 3;
             this.dgv_peel.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_peel_CellContentDoubleClick);
             this.dgv_peel.CellToolTipTextNeeded += new System.Windows.Forms.DataGridViewCellToolTipTextNeededEventHandler(this.dgv_peel_CellToolTipTextNeeded);
@@ -1122,7 +1122,7 @@
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.Location = new System.Drawing.Point(3, 3);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1304, 75);
+            this.groupBox5.Size = new System.Drawing.Size(1303, 75);
             this.groupBox5.TabIndex = 2;
             this.groupBox5.TabStop = false;
             // 
@@ -1133,7 +1133,7 @@
             this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox2.Location = new System.Drawing.Point(152, 46);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(474, 26);
+            this.textBox2.Size = new System.Drawing.Size(473, 26);
             this.textBox2.TabIndex = 62;
             this.textBox2.DoubleClick += new System.EventHandler(this.textBox2_DoubleClick);
             // 
@@ -1156,7 +1156,7 @@
             this.grp_peel.Controls.Add(this.lbl_worker_peel);
             this.grp_peel.Controls.Add(this.txt_date_peel);
             this.grp_peel.Controls.Add(this.lbl_date_peel);
-            this.grp_peel.Location = new System.Drawing.Point(692, 0);
+            this.grp_peel.Location = new System.Drawing.Point(691, 0);
             this.grp_peel.Name = "grp_peel";
             this.grp_peel.Size = new System.Drawing.Size(328, 64);
             this.grp_peel.TabIndex = 60;
@@ -1233,7 +1233,7 @@
             this.btn_export_bonding.BackColor = System.Drawing.Color.Transparent;
             this.btn_export_bonding.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_export_bonding.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_export_bonding.Location = new System.Drawing.Point(1026, 16);
+            this.btn_export_bonding.Location = new System.Drawing.Point(1025, 16);
             this.btn_export_bonding.Name = "btn_export_bonding";
             this.btn_export_bonding.Size = new System.Drawing.Size(135, 40);
             this.btn_export_bonding.TabIndex = 42;
@@ -1247,7 +1247,7 @@
             this.btn_loadpeel.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.btn_loadpeel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_loadpeel.Image = ((System.Drawing.Image)(resources.GetObject("btn_loadpeel.Image")));
-            this.btn_loadpeel.Location = new System.Drawing.Point(632, 18);
+            this.btn_loadpeel.Location = new System.Drawing.Point(631, 18);
             this.btn_loadpeel.Name = "btn_loadpeel";
             this.btn_loadpeel.Size = new System.Drawing.Size(54, 35);
             this.btn_loadpeel.TabIndex = 40;
@@ -1260,7 +1260,7 @@
             this.btn_save_peel.BackColor = System.Drawing.Color.Transparent;
             this.btn_save_peel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_save_peel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_save_peel.Location = new System.Drawing.Point(1163, 16);
+            this.btn_save_peel.Location = new System.Drawing.Point(1162, 16);
             this.btn_save_peel.Name = "btn_save_peel";
             this.btn_save_peel.Size = new System.Drawing.Size(135, 40);
             this.btn_save_peel.TabIndex = 38;
@@ -1285,7 +1285,7 @@
             this.txtLogfile_peel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtLogfile_peel.Location = new System.Drawing.Point(152, 16);
             this.txtLogfile_peel.Name = "txtLogfile_peel";
-            this.txtLogfile_peel.Size = new System.Drawing.Size(474, 26);
+            this.txtLogfile_peel.Size = new System.Drawing.Size(473, 26);
             this.txtLogfile_peel.TabIndex = 2;
             this.txtLogfile_peel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtLogfile_peel_KeyDown);
             this.txtLogfile_peel.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.txtLogfile_peel_MouseDoubleClick);
@@ -1295,8 +1295,8 @@
             this.tab_roughness.Controls.Add(this.tableLayoutPanel7);
             this.tab_roughness.Location = new System.Drawing.Point(4, 29);
             this.tab_roughness.Name = "tab_roughness";
-            this.tab_roughness.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.tab_roughness.Size = new System.Drawing.Size(1316, 549);
+            this.tab_roughness.Padding = new System.Windows.Forms.Padding(3);
+            this.tab_roughness.Size = new System.Drawing.Size(1315, 535);
             this.tab_roughness.TabIndex = 3;
             this.tab_roughness.Text = "Roughness";
             this.tab_roughness.UseVisualStyleBackColor = true;
@@ -1311,11 +1311,11 @@
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
             this.tableLayoutPanel7.RowCount = 1;
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 548F));
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 548F));
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 548F));
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 548F));
-            this.tableLayoutPanel7.Size = new System.Drawing.Size(1310, 543);
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 543F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 543F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 543F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 543F));
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(1309, 529);
             this.tableLayoutPanel7.TabIndex = 2;
             // 
             // tableLayoutPanel2
@@ -1330,7 +1330,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 96F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1304, 537);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1303, 523);
             this.tableLayoutPanel2.TabIndex = 2;
             // 
             // groupBox6
@@ -1347,7 +1347,7 @@
             this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox6.Location = new System.Drawing.Point(3, 3);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(1298, 90);
+            this.groupBox6.Size = new System.Drawing.Size(1297, 90);
             this.groupBox6.TabIndex = 4;
             this.groupBox6.TabStop = false;
             // 
@@ -1358,7 +1358,7 @@
             this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox3.Location = new System.Drawing.Point(144, 48);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(213, 26);
+            this.textBox3.Size = new System.Drawing.Size(212, 26);
             this.textBox3.TabIndex = 62;
             this.textBox3.DoubleClick += new System.EventHandler(this.textBox3_DoubleClick);
             // 
@@ -1378,7 +1378,7 @@
             this.btn_save_roughness.BackColor = System.Drawing.Color.Transparent;
             this.btn_save_roughness.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_save_roughness.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_save_roughness.Location = new System.Drawing.Point(1159, 18);
+            this.btn_save_roughness.Location = new System.Drawing.Point(1158, 18);
             this.btn_save_roughness.Name = "btn_save_roughness";
             this.btn_save_roughness.Size = new System.Drawing.Size(135, 40);
             this.btn_save_roughness.TabIndex = 60;
@@ -1399,7 +1399,7 @@
             this.grp_rougness.Controls.Add(this.label10);
             this.grp_rougness.Controls.Add(this.label15);
             this.grp_rougness.Controls.Add(this.label18);
-            this.grp_rougness.Location = new System.Drawing.Point(428, 0);
+            this.grp_rougness.Location = new System.Drawing.Point(427, 0);
             this.grp_rougness.Name = "grp_rougness";
             this.grp_rougness.Size = new System.Drawing.Size(578, 71);
             this.grp_rougness.TabIndex = 59;
@@ -1512,7 +1512,7 @@
             this.btn_loadroughness.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.btn_loadroughness.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_loadroughness.Image = ((System.Drawing.Image)(resources.GetObject("btn_loadroughness.Image")));
-            this.btn_loadroughness.Location = new System.Drawing.Point(365, 30);
+            this.btn_loadroughness.Location = new System.Drawing.Point(364, 30);
             this.btn_loadroughness.Name = "btn_loadroughness";
             this.btn_loadroughness.Size = new System.Drawing.Size(54, 35);
             this.btn_loadroughness.TabIndex = 45;
@@ -1536,7 +1536,7 @@
             this.txt_logfile_roughness.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txt_logfile_roughness.Location = new System.Drawing.Point(144, 18);
             this.txt_logfile_roughness.Name = "txt_logfile_roughness";
-            this.txt_logfile_roughness.Size = new System.Drawing.Size(213, 26);
+            this.txt_logfile_roughness.Size = new System.Drawing.Size(212, 26);
             this.txt_logfile_roughness.TabIndex = 43;
             this.txt_logfile_roughness.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_logfile_roughness_KeyDown);
             this.txt_logfile_roughness.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.txt_logfile_roughness_MouseDoubleClick);
@@ -1547,7 +1547,7 @@
             this.btn_export_roughness.BackColor = System.Drawing.Color.Transparent;
             this.btn_export_roughness.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_export_roughness.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_export_roughness.Location = new System.Drawing.Point(1023, 18);
+            this.btn_export_roughness.Location = new System.Drawing.Point(1022, 18);
             this.btn_export_roughness.Name = "btn_export_roughness";
             this.btn_export_roughness.Size = new System.Drawing.Size(135, 40);
             this.btn_export_roughness.TabIndex = 42;
@@ -1563,7 +1563,7 @@
             this.dgv_roughness_data.Location = new System.Drawing.Point(3, 99);
             this.dgv_roughness_data.Name = "dgv_roughness_data";
             this.dgv_roughness_data.RowHeadersWidth = 62;
-            this.dgv_roughness_data.Size = new System.Drawing.Size(1298, 435);
+            this.dgv_roughness_data.Size = new System.Drawing.Size(1297, 421);
             this.dgv_roughness_data.TabIndex = 3;
             this.dgv_roughness_data.CellToolTipTextNeeded += new System.Windows.Forms.DataGridViewCellToolTipTextNeededEventHandler(this.dgv_roughness_data_CellToolTipTextNeeded);
             this.dgv_roughness_data.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_roughness_data_CellValueChanged);
