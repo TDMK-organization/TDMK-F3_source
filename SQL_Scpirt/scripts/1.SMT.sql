@@ -1,8 +1,8 @@
-USE [master]
+
+
+-- Quan trọng: Lệnh GO ở trên đảm bảo DB đã sẵn sàng
+USE [OK2SHIP_SMT];
 GO
-/****** Object:  Database [OK2SHIP_SMT]    Script Date: 3/20/2026 5:31:44 PM ******/
-CREATE DATABASE [OK2SHIP_SMT]
- use[OK2SHIP_SMT]
 CREATE TABLE [dbo].[ACCOUNT](
 	[User_ID] [int] NOT NULL,
 	[Username] [nvarchar](50) NOT NULL,
