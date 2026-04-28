@@ -196,6 +196,12 @@ namespace OK2SHIP_Measurements.Repositories
                 //config file
                 string app_path = System.Windows.Forms.Application.StartupPath;
                 //app_path = @"\\10.212.6.212\Saomai\QA\TDMK_DATA\Test_Areas\FPCA OK2SHIP Auto System(temp2)\VHX-IMADA";
+                int lastSlashIndex = app_path.LastIndexOf('\\');
+                if (lastSlashIndex != -1)
+                {
+                    app_path = app_path.Substring(0, lastSlashIndex);
+                    // Kết quả: C:\Users\vietn\OneDrive\Desktop\thuyht\7.SEEV\0.F3\TDMK-F3_source\TestAreas\TDMK Program
+                }
                 string config_path = Path.Combine(app_path.Replace(@"\FPCA OK2SHIP Auto System\VHX-IMADA", ""), "Config.ini");
                 //string config_path = Path.Combine(app_path.Replace(@"\VHX-IMADA", ""), "Config.ini");
                 TDMK_init = new IniFile(config_path);

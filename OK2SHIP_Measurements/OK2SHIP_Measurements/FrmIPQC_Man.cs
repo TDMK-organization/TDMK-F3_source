@@ -1,19 +1,21 @@
-﻿using System;
+﻿using Funtion_F3_SMT;
+using OK2SHIP_Lib;
+using OK2SHIP_Measurements.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using myExcel = Microsoft.Office.Interop.Excel;
 using TDMK_SQL;
-using System.IO;
-using System.Diagnostics;
-using System.Threading;
-using System.Data.SqlClient;
-using OK2SHIP_Lib;
+using myExcel = Microsoft.Office.Interop.Excel;
 
 namespace OK2SHIP_Measurements
 {
@@ -1544,15 +1546,14 @@ namespace OK2SHIP_Measurements
                 if (en_save)
                 {
                     //Save_data();
-                    if (TDMK_OK2SHIP.admin_mode)
+                    if (UserSession.Instance.IsLoggedIn)
                     {
                         Save_Testdata();
-                        TDMK_OK2SHIP.admin_mode = false;
                     }
                     else
                     {
                         MessageBox.Show("Please, Login to save data");
-                        FrmLogin frmLogin = new FrmLogin();
+                        Login frmLogin = new Login();
                         frmLogin.ShowDialog();
                     }
                 }
@@ -3150,7 +3151,7 @@ namespace OK2SHIP_Measurements
         }
         private void lblQty_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            FrmLogin frm_login = new FrmLogin();
+            Login frm_login = new Login();
             frm_login.ShowDialog();
         }
 

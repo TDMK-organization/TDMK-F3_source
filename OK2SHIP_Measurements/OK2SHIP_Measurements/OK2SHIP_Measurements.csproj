@@ -109,6 +109,12 @@
     </Compile>
     <Compile Include="FAI_EPPLUS_Lib.cs" />
     <Compile Include="FindControl.cs" />
+    <Compile Include="Forms\Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Login.designer.cs">
+      <DependentUpon>Login.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmIPQC_Man.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,12 +132,6 @@
     </Compile>
     <Compile Include="FrmHistogram.designer.cs">
       <DependentUpon>FrmHistogram.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FrmLogin.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmLogin.designer.cs">
-      <DependentUpon>FrmLogin.cs</DependentUpon>
     </Compile>
     <Compile Include="IPQC_LogFile.cs" />
     <Compile Include="Load_Test_Data.cs">
@@ -161,6 +161,9 @@
     <EmbeddedResource Include="FAI_Edit.resx">
       <DependentUpon>FAI_Edit.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Login.resx">
+      <DependentUpon>Login.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmIPQC_Man.resx">
       <DependentUpon>FrmIPQC_Man.cs</DependentUpon>
     </EmbeddedResource>
@@ -169,9 +172,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmHistogram.resx">
       <DependentUpon>FrmHistogram.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FrmLogin.resx">
-      <DependentUpon>FrmLogin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Load_Test_Data.resx">
       <DependentUpon>Load_Test_Data.cs</DependentUpon>
@@ -221,7 +221,6 @@
     <Content Include="TDMK.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Forms\" />
     <Folder Include="TestAreas\INPUT_OMM\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

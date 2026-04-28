@@ -1,5 +1,7 @@
-﻿using OfficeOpenXml;
+﻿using Funtion_F3_SMT;
+using OfficeOpenXml;
 using OK2SHIP_Lib;
+using OK2SHIP_Measurements.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -86,6 +88,7 @@ namespace OK2SHIP_Measurements
         {
             InitializeComponent();
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.Commercial;
+            checkLogin();
         }
         //public FrmFAI(string src_Dev, string src_DB, SqlConnection tar_sqlcon, string tar_datalocation, string tar_formatfolder, string tar_f_ext, string tar_log_folder)
         //{
@@ -1187,17 +1190,33 @@ namespace OK2SHIP_Measurements
         {
             if (btnLogin.Text == "Logout")
             {
+                UserSession.Instance.Logout();
                 btnLogin.Text = "Login";
-                TDMK_OK2SHIP.admin_mode = false;
                 numQty.Enabled = false;
                 btnLogin.BackColor = curr_color;
-                txtOperator.Text = TDMK_OK2SHIP.curr_user;
             }
             else
             {
-                TDMK_OK2SHIP.curr_user = txtOperator.Text;
-                FrmLogin frm_login = new FrmLogin();
+                Login frm_login = new Login();
                 frm_login.ShowDialog();
+
+            }
+            checkLogin();
+        }
+        private void checkLogin()
+        {
+            txtOperator.Text = UserSession.Instance.User_ID;
+            if (UserSession.Instance.IsLoggedIn)
+            {
+                btnLogin.Text = "Logout";
+                numQty.Enabled = true;
+                btnLogin.BackColor = Color.LightGreen;
+            }
+            else
+            {
+                btnLogin.Text = "Login";
+                numQty.Enabled = false;
+                btnLogin.BackColor = curr_color;
             }
         }
 
@@ -2583,7 +2602,7 @@ namespace OK2SHIP_Measurements
             string _itemcode = txtItemCode_Sel.Text;
             string _lotno = txtLotNo_Sel.Text;
             string _shift = cbShift_Sel.SelectedItem.ToString();
-            DataTable FAI_dt =  Load_FAI_ToTable(myVar.sqlcon_SMT, "FAI_Auto", "FAI_No", "FAI_Data", _itemcode, _lotno, cbType_Sel.SelectedItem.ToString()); //myCode.Load_FAI_ToTable(myVar.sqlcon_SMT, _itemcode, _lotno, cbType_Sel.SelectedItem.ToString());
+            DataTable FAI_dt = Load_FAI_ToTable(myVar.sqlcon_SMT, "FAI_Auto", "FAI_No", "FAI_Data", _itemcode, _lotno, cbType_Sel.SelectedItem.ToString()); //myCode.Load_FAI_ToTable(myVar.sqlcon_SMT, _itemcode, _lotno, cbType_Sel.SelectedItem.ToString());
             DataTable FAI_Spec = myCode.Load_FAI_Spec_ToTable(myVar.sqlcon_SMT, _itemcode, "");
             bool export_en = false;
             if (check_FAIdata_inSpec(FAI_dt, FAI_Spec))
@@ -2695,7 +2714,7 @@ namespace OK2SHIP_Measurements
                     for (int i = 0; checkDBNull(excelRangeBase.Offset(0, i).Value) != ""; i++)
                     {
                         string text = checkDBNull(excelRangeBase.Offset(-1, i).Value);
-                        string text2 = checkDBNull(excelRangeBase.Offset(0, i).Value).Replace(" ", ""); 
+                        string text2 = checkDBNull(excelRangeBase.Offset(0, i).Value).Replace(" ", "");
                         string text3 = checkDBNull(excelRangeBase.Offset(1, i).Value);
                         string item = text2.Split('/').FirstOrDefault() + "_" + text3;
                         string name = tg.Name;
@@ -2715,7 +2734,8 @@ namespace OK2SHIP_Measurements
 
                 // Tối ưu xử lý chuỗi - chỉ Split 1 lần
                 string[] array2 = item2.Value.Distinct()
-                    .Select(text4 => {
+                    .Select(text4 =>
+                    {
                         var parts = text4.Split('/', '_');
                         return parts.FirstOrDefault() + "_" + parts.LastOrDefault();
                     })
@@ -2729,7 +2749,8 @@ namespace OK2SHIP_Measurements
                 var specDataCache = Fai_Spec.AsEnumerable()
                     .Where(r => array2.Contains(r.Field<string>("FAI_No")))
                     .ToDictionary(r => r.Field<string>("FAI_No"),
-                                 r => new {
+                                 r => new
+                                 {
                                      TolMax = r.Field<string>("TolMax"),
                                      TolMin = r.Field<string>("TolMin")
                                  });
@@ -2842,7 +2863,7 @@ namespace OK2SHIP_Measurements
 
                                 if (valueIndex >= item3.Value.Count)
                                 {
-                                   TDMK_Message.MessageBoxTDMK_Warning($"Không đủ dữ liệu pcs tại Fai_No {item3.Key}. Vui lòng kiểm tra lại!");
+                                    TDMK_Message.MessageBoxTDMK_Warning($"Không đủ dữ liệu pcs tại Fai_No {item3.Key}. Vui lòng kiểm tra lại!");
                                     break;
                                 }
 
@@ -3326,7 +3347,7 @@ namespace OK2SHIP_Measurements
                     }
                     else
                     {
-                       TDMK_Message.MessageBoxTDMK_Warning("Không tìm thấy dữ liệu của ItemCode / Lotno : " + _itemcode + " / " + _lotno);
+                        TDMK_Message.MessageBoxTDMK_Warning("Không tìm thấy dữ liệu của ItemCode / Lotno : " + _itemcode + " / " + _lotno);
                     }
                 }
                 else
@@ -3487,7 +3508,7 @@ namespace OK2SHIP_Measurements
             }
             return result_dt;
         }
-         public void Manual_Data_Process(string log_path)
+        public void Manual_Data_Process(string log_path)
         {
             if (Dev == "Manual")
             {
@@ -3518,7 +3539,7 @@ namespace OK2SHIP_Measurements
                     MessageBox.Show("Ấn nút Start để bắt đầu", "Thông báo");
                 }
             }
-        } 
+        }
         private void txtDataFolder_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)

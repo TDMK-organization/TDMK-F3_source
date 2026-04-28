@@ -145,6 +145,7 @@ namespace OK2SHIP_Measurements.Services
             Role = null;
             Username = null;
             IsLoggedIn = false;
+            User_ID = "";
         }
     }
 }

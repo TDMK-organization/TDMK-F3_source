@@ -471,6 +471,7 @@
             // 
             // txtOperator
             // 
+            this.txtOperator.Enabled = false;
             this.txtOperator.Location = new System.Drawing.Point(91, 83);
             this.txtOperator.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtOperator.Name = "txtOperator";
@@ -926,10 +927,10 @@
             // tabExport
             // 
             this.tabExport.Controls.Add(this.spData);
-            this.tabExport.Location = new System.Drawing.Point(4, 22);
+            this.tabExport.Location = new System.Drawing.Point(4, 29);
             this.tabExport.Name = "tabExport";
             this.tabExport.Padding = new System.Windows.Forms.Padding(3);
-            this.tabExport.Size = new System.Drawing.Size(1256, 802);
+            this.tabExport.Size = new System.Drawing.Size(1256, 795);
             this.tabExport.TabIndex = 1;
             this.tabExport.Text = "Data";
             this.tabExport.UseVisualStyleBackColor = true;
@@ -957,7 +958,7 @@
             this.spData.Panel1.Controls.Add(this.label9);
             this.spData.Panel1.Controls.Add(this.txtItemCode_Sel);
             this.spData.Panel1.Controls.Add(this.label8);
-            this.spData.Size = new System.Drawing.Size(1250, 796);
+            this.spData.Size = new System.Drawing.Size(1250, 789);
             this.spData.SplitterDistance = 99;
             this.spData.TabIndex = 1;
             // 
