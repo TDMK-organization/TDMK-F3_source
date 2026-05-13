@@ -937,10 +937,9 @@ namespace Funtion_F3_SMT
             {
                 if (count < count_sample)
                 {
-                    byte[] _img_byte = (byte[])(TDMK_ImageConverter.ImageToByteArray((Image)dr[Image_Col_name], ImageFormat.Jpeg));
-                    byte[] img_byte = ImageCompress.CompressImage(_img_byte);
+                  
 
-                    InsertPicture_Name(tar_wrksht, sel_rgn, img_byte, sel_rgn.Address);
+                    InsertPicture_Name(tar_wrksht, sel_rgn, (byte[])dr[Image_Col_name], sel_rgn.Address);
                     int col_offset = sel_rgn.Columns;
                     int row_off = sel_rgn.Rows;
                     if (row_offset)
@@ -2295,10 +2294,7 @@ namespace Funtion_F3_SMT
                 {
                     try
                     {
-
-                        byte[] _img_byte = (byte[])dr[Image_Col_name];
-                        byte[] img_byte = ImageCompress.CompressImage(_img_byte);
-                        InsertPicture_Name(tar_wrksht, sel_rgn, img_byte, sel_rgn.Address);
+                        InsertPicture_Name(tar_wrksht, sel_rgn, (byte[])dr[Image_Col_name], sel_rgn.Address);
                     }
                     catch
                     {
@@ -4333,7 +4329,7 @@ namespace Funtion_F3_SMT
                     }
                 }
             lbl_export:
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 32; i++)
                 {
                     for (int j = 0; j < 11; j++)
                     {

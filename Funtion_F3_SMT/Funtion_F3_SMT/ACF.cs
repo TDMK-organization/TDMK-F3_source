@@ -2086,7 +2086,7 @@ namespace OK2SHIP_SMT
                         if (myCode.checkDBNull(ws.Cells[i, j].Value).Replace(" ", "").ToUpper().Contains("POINT"))
                         {
                             ExcelRange curr_rng = ws.Cells[i + 1, j];
-                            for (int k = 0; k < 5; k++)
+                            for (int k = 0; k < 32; k++)
                             {
                                 DataRow dr = Data_tbl.NewRow();
                                 dr[0] = k + 1;
@@ -2557,7 +2557,7 @@ namespace OK2SHIP_SMT
                     dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, "ACF", "MASS" }));
                 }
 
-                if (dt_spec.Rows.Count > 0)
+                if (dt_spec.Rows.Count > 0 || true)
                 {
                     DataTable dt = load_data_logfile_peel(txtLogfile_peel.Text);
                     try
@@ -3708,7 +3708,19 @@ namespace OK2SHIP_SMT
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            primeNow();
+            DateTimePicker dtp = sender as DateTimePicker;
+
+            // 2. Kiểm tra xem ép kiểu có thành công không
+            if (dtp != null)
+            {
+                // 3. Lấy giá trị bình thường
+                DateTime selectedDate = dtp.Value.Date;
+                dateTimePicker2.Value = selectedDate.AddDays(10);
+                dateTimePicker3.Value = selectedDate.AddDays(20);
+                dateTimePicker4.Value = selectedDate.AddDays(30);
+                dateTimePicker5.Value = selectedDate.AddDays(40);
+                dateTimePicker6.Value = selectedDate.AddDays(50);
+            }
         }
         private void primeNow()
         {
@@ -3716,20 +3728,47 @@ namespace OK2SHIP_SMT
         }
         private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
         {
+            DateTimePicker dtp = sender as DateTimePicker;
 
-            primeNow();
+            // 2. Kiểm tra xem ép kiểu có thành công không
+            if (dtp != null)
+            {
+                // 3. Lấy giá trị bình thường
+                DateTime selectedDate = dtp.Value.Date;
+                dateTimePicker3.Value = selectedDate.AddDays(10);
+                dateTimePicker4.Value = selectedDate.AddDays(20);
+                dateTimePicker5.Value = selectedDate.AddDays(30);
+                dateTimePicker6.Value = selectedDate.AddDays(40);
+            }
         }
 
         private void dateTimePicker3_ValueChanged(object sender, EventArgs e)
         {
+            DateTimePicker dtp = sender as DateTimePicker;
 
-            primeNow();
+            // 2. Kiểm tra xem ép kiểu có thành công không
+            if (dtp != null)
+            {
+                // 3. Lấy giá trị bình thường
+                DateTime selectedDate = dtp.Value.Date;
+                dateTimePicker4.Value = selectedDate.AddDays(10);
+                dateTimePicker5.Value = selectedDate.AddDays(20);
+                dateTimePicker6.Value = selectedDate.AddDays(30);
+            }
         }
 
         private void dateTimePicker4_ValueChanged(object sender, EventArgs e)
         {
+            DateTimePicker dtp = sender as DateTimePicker;
 
-            primeNow();
+            // 2. Kiểm tra xem ép kiểu có thành công không
+            if (dtp != null)
+            {
+                // 3. Lấy giá trị bình thường
+                DateTime selectedDate = dtp.Value.Date;
+                dateTimePicker5.Value = selectedDate.AddDays(10);
+                dateTimePicker6.Value = selectedDate.AddDays(20);
+            }
         }
 
         private void dateTimePicker6_ValueChanged(object sender, EventArgs e)
@@ -3740,7 +3779,15 @@ namespace OK2SHIP_SMT
 
         private void dateTimePicker5_ValueChanged(object sender, EventArgs e)
         {
-            primeNow();
+            DateTimePicker dtp = sender as DateTimePicker;
+
+            // 2. Kiểm tra xem ép kiểu có thành công không
+            if (dtp != null)
+            {
+                // 3. Lấy giá trị bình thường
+                DateTime selectedDate = dtp.Value.Date;
+                dateTimePicker6.Value = selectedDate.AddDays(10);
+            }
         }
 
         private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)

@@ -7,7 +7,7 @@
     <ProjectGuid>{DA6F2A1E-D833-4095-BFEC-AD3744A77560}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>OK2SHIP_SMT</RootNamespace>
-    <AssemblyName>VHX-IMADA%28Ver_5.1%29</AssemblyName>
+    <AssemblyName>VHX-IMADA%28Ver_4.2.1%29</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -24,7 +24,7 @@
     <OutputPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>3</WarningLevel>
     <DocumentationFile>
     </DocumentationFile>
   </PropertyGroup>

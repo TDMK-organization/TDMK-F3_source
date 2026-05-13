@@ -210,5 +210,21 @@ namespace Funtion_F3_SMT
             frm.Show();
             this.Hide();
         }
+
+        private void lb_Export_Click(object sender, EventArgs e)
+        {
+            string msg = "";
+            try
+            {
+
+                ExportProcess export = new ExportProcess();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                
+            }
+
+        }
     }
 }

@@ -36,9 +36,9 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.lb_Export = new System.Windows.Forms.Label();
             this.lb_nas = new System.Windows.Forms.Label();
             this.lb_database = new System.Windows.Forms.Label();
-            this.lb_Export = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -147,6 +147,19 @@
             this.tableLayoutPanel3.Size = new System.Drawing.Size(530, 34);
             this.tableLayoutPanel3.TabIndex = 1;
             // 
+            // lb_Export
+            // 
+            this.lb_Export.AutoSize = true;
+            this.lb_Export.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lb_Export.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lb_Export.Location = new System.Drawing.Point(355, 0);
+            this.lb_Export.Name = "lb_Export";
+            this.lb_Export.Size = new System.Drawing.Size(172, 34);
+            this.lb_Export.TabIndex = 2;
+            this.lb_Export.Text = "Export: None";
+            this.lb_Export.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lb_Export.Click += new System.EventHandler(this.lb_Export_Click);
+            // 
             // lb_nas
             // 
             this.lb_nas.AutoSize = true;
@@ -170,18 +183,6 @@
             this.lb_database.TabIndex = 0;
             this.lb_database.Text = "Database: None";
             this.lb_database.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lb_Export
-            // 
-            this.lb_Export.AutoSize = true;
-            this.lb_Export.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lb_Export.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lb_Export.Location = new System.Drawing.Point(355, 0);
-            this.lb_Export.Name = "lb_Export";
-            this.lb_Export.Size = new System.Drawing.Size(172, 34);
-            this.lb_Export.TabIndex = 2;
-            this.lb_Export.Text = "Export: None";
-            this.lb_Export.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // MainScreen
             // 

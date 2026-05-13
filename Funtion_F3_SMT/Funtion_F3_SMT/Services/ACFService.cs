@@ -570,7 +570,26 @@ namespace OK2SHIP_SMT.Services
 
             }
         }
+        private string GetMergeRange(List<string> lists, ExcelWorksheet worksheet)
+        {
+            int minCol = int.MaxValue;
+            int maxCol = int.MinValue;
+            int minRow = int.MaxValue;
+            int maxRow = int.MinValue;
+            foreach (string item in lists)
+            {
+                int col = worksheet.Columns[worksheet.Cells[item].Start.Column].StartColumn;
+                int row = worksheet.Rows[worksheet.Cells[item].Start.Row].StartRow;
+                minCol = Math.Min(minCol, col);
+                maxCol = Math.Max(maxCol, col);
+                minRow = Math.Min(minRow, row);
+                maxRow = Math.Max(maxRow, row);
+            }
+            string start = worksheet.Cells[minRow, minCol].Address;
+            string end = worksheet.Cells[maxRow, maxCol].Address;
 
+            return $"{start}:{end}";
+        }
         private Dictionary<string, string> GetMerge(List<string> lists)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
@@ -658,8 +677,7 @@ namespace OK2SHIP_SMT.Services
                         dataList.Add(ExportProcess.AddRow(address, 4));
                     }
                 }
-                Dictionary<string, string> diZc = GetMerge(dataList);
-                string addList = string.Join(",", diZc.Values.ToArray());
+                string addList = GetMergeRange(dataList, ws);
                 if (dic.TryGetValue("MAX", out string addressZ))
                 {
                     int min = int.MaxValue;

@@ -16,10 +16,12 @@ using OK2SHIP_SMT.Services;
 using System.Data;
 using OK2SHIP_SMT.Libary;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 namespace OK2SHIP_SMT.Repositories
 {
     class ExportProcess
     {
+        public string msZg = "";
         private string FORMAT_LOACTION = null;
         private string EXPORT_LOACTION = null;
         IniFile TDMK_init = new IniFile();
@@ -31,8 +33,10 @@ namespace OK2SHIP_SMT.Repositories
             string app_path = System.Windows.Forms.Application.StartupPath.Replace(@"\FPCA OK2SHIP Auto System\VHX-IMADA", "");
             string config_path = Path.Combine(app_path, "config.ini");
             TDMK_init = new IniFile(config_path);
+
             FORMAT_LOACTION = TDMK_init.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data\\Format\\{type}";
             EXPORT_LOACTION = TDMK_init.Read("Report_Location", "SMT_Config") + $"\\SEEV Data\\Report\\{type}";
+            msZg = $"Đường dẫn config: {config_path} \n Đường dẫn format: {FORMAT_LOACTION} \n Đường dẫn export: {EXPORT_LOACTION}";
             if (FileFolderRepository.checkLocationIsValid(FORMAT_LOACTION) && FileFolderRepository.checkLocationIsValid(EXPORT_LOACTION))
             {
 
@@ -42,6 +46,7 @@ namespace OK2SHIP_SMT.Repositories
         public static ExcelPackage openPackage(string location)
         {
             ExcelPackage.LicenseContext = LicenseContext.Commercial;
+
             return new ExcelPackage(location);
         }
         public static byte[] ConvertDataRowToByte(DataRow row, string columnName)

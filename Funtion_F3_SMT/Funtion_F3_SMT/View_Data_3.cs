@@ -3908,8 +3908,10 @@ namespace Funtion_F3_SMT
                 {
                     region = str_parent + "_" + tar_d.Name;
                 }
+                byte[] img_byte = TDMK_ImageConverter.ImageToByteArray(img, ImageFormat.Jpeg);
+                byte[] graph_byte = TDMK_ImageConverter.ImageToByteArray(graph, ImageFormat.Jpeg); 
                 // Data_tbl.Rows.Add(ID, txtItemCode.Text, txtLotNo.Text, sheet + infor, region, data.Key, img, graph, val, txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
-                Data_tbl.Rows.Add(ID, txt_itemcode_nvl.Text, txt_lotno_nvl.Text, sheet + infor, region, data.Key, img, graph, val, txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
+                Data_tbl.Rows.Add(ID, txt_itemcode_nvl.Text, txt_lotno_nvl.Text, sheet + infor, region, data.Key, img_byte, graph_byte, val, txtOperator.Text, DateTime.Now.ToString(), in_src, true, true);
                 ID++;
                 k++;
                 //}
@@ -4034,7 +4036,19 @@ namespace Funtion_F3_SMT
         public DataTable load_data_logfile_coupon(string in_src, string tb_name, string infor)
         {
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-            DataTable Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, tb_name, filter_str).Clone();
+            DataTable Data_tbl = new DataTable();
+            Data_tbl.Columns.Add("ID", typeof(int));
+            Data_tbl.Columns.Add("ItemCode", typeof(string));
+            Data_tbl.Columns.Add("LotNo", typeof(string));
+            Data_tbl.Columns.Add("Sheet", typeof(string));
+            Data_tbl.Columns.Add("Region", typeof(string));
+            Data_tbl.Columns.Add("Sample", typeof(string));
+            Data_tbl.Columns.Add("Image", typeof(byte[]));
+            Data_tbl.Columns.Add("Graph", typeof(byte[]));
+            Data_tbl.Columns.Add("Data", typeof(string));
+            Data_tbl.Columns.Add("Operator", typeof(string));
+            Data_tbl.Columns.Add("Time_Update", typeof(string));
+            Data_tbl.Columns.Add("Remark", typeof(string));
 
             Data_tbl.Columns.Add("Select_Img", typeof(bool));
             Data_tbl.Columns.Add("Select_Grp", typeof(bool));
@@ -7345,7 +7359,7 @@ namespace Funtion_F3_SMT
                                 case "IQC_UNMATING_PULL_TEST":
                                     if (txt_itemcode_nvl.Text != "" && txt_lotno_nvl.Text != "")
                                     {
-                                        dt_load = load_data_logfile_unmating_pulltest(f_folder, "IQC_UNMATING_PULL_TEST", infor);
+                                        dt_load = load_data_logfile_unmating_pulltest(f_folder, "IQC_UNMATING_PULL_TEST_NAS", infor);
                                         Data_tbl = dt_load.AsDataView().ToTable(false, new string[] { "ID", "ItemCode", "LotNo", "Sheet", "Region", "Sample", "Image", "Select_Img", "Graph", "Select_Grp", "Data", "Operator", "Time_Update", "Remark" });
                                     }
                                     else
@@ -7359,7 +7373,7 @@ namespace Funtion_F3_SMT
                                     {
                                         if (cb_Type.SelectedItem.ToString() == "NPI")
                                         {
-                                            dt_load = load_data_logfile_coupon(f_folder, "IQC_LINER_PEELING_COUPON", infor);
+                                            dt_load = load_data_logfile_coupon(f_folder, "IQC_LINER_PEELING_COUPON_NAS", infor);
                                         }
                                         else
                                         {

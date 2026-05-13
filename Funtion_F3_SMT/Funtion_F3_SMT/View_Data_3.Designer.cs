@@ -182,7 +182,7 @@
             // 
             this.splitContainer3.Panel2.Controls.Add(this.tableLayoutPanel15);
             this.splitContainer3.Size = new System.Drawing.Size(420, 193);
-            this.splitContainer3.SplitterDistance = 54;
+            this.splitContainer3.SplitterDistance = 53;
             this.splitContainer3.TabIndex = 44;
             // 
             // lbltitle
@@ -193,7 +193,7 @@
             this.lbltitle.Font = new System.Drawing.Font("Arial", 14F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbltitle.Location = new System.Drawing.Point(0, 0);
             this.lbltitle.Name = "lbltitle";
-            this.lbltitle.Size = new System.Drawing.Size(420, 54);
+            this.lbltitle.Size = new System.Drawing.Size(420, 53);
             this.lbltitle.TabIndex = 42;
             this.lbltitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -211,7 +211,7 @@
             this.tableLayoutPanel15.Name = "tableLayoutPanel15";
             this.tableLayoutPanel15.RowCount = 1;
             this.tableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel15.Size = new System.Drawing.Size(420, 135);
+            this.tableLayoutPanel15.Size = new System.Drawing.Size(420, 136);
             this.tableLayoutPanel15.TabIndex = 43;
             // 
             // splitContainer1
@@ -228,7 +228,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.btn_save);
-            this.splitContainer1.Size = new System.Drawing.Size(134, 129);
+            this.splitContainer1.Size = new System.Drawing.Size(134, 130);
             this.splitContainer1.SplitterDistance = 57;
             this.splitContainer1.TabIndex = 42;
             // 
@@ -254,7 +254,7 @@
             this.btn_save.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_save.Location = new System.Drawing.Point(0, 0);
             this.btn_save.Name = "btn_save";
-            this.btn_save.Size = new System.Drawing.Size(134, 68);
+            this.btn_save.Size = new System.Drawing.Size(134, 69);
             this.btn_save.TabIndex = 38;
             this.btn_save.Text = "SAVE";
             this.btn_save.UseVisualStyleBackColor = false;
@@ -275,8 +275,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.btnEdit);
-            this.splitContainer2.Size = new System.Drawing.Size(134, 129);
-            this.splitContainer2.SplitterDistance = 33;
+            this.splitContainer2.Size = new System.Drawing.Size(134, 130);
+            this.splitContainer2.SplitterDistance = 32;
             this.splitContainer2.TabIndex = 43;
             // 
             // LegacyMode
@@ -298,7 +298,7 @@
             this.lbl_Login.ForeColor = System.Drawing.Color.SteelBlue;
             this.lbl_Login.Location = new System.Drawing.Point(0, 0);
             this.lbl_Login.Name = "lbl_Login";
-            this.lbl_Login.Size = new System.Drawing.Size(134, 33);
+            this.lbl_Login.Size = new System.Drawing.Size(134, 32);
             this.lbl_Login.TabIndex = 5;
             this.lbl_Login.Text = "LOG IN";
             this.lbl_Login.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -311,7 +311,7 @@
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEdit.Location = new System.Drawing.Point(0, 0);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(134, 92);
+            this.btnEdit.Size = new System.Drawing.Size(134, 94);
             this.btnEdit.TabIndex = 41;
             this.btnEdit.Text = "EDIT";
             this.btnEdit.UseVisualStyleBackColor = false;
@@ -326,7 +326,7 @@
             this.btn_export.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_export.Location = new System.Drawing.Point(143, 3);
             this.btn_export.Name = "btn_export";
-            this.btn_export.Size = new System.Drawing.Size(134, 129);
+            this.btn_export.Size = new System.Drawing.Size(134, 130);
             this.btn_export.TabIndex = 41;
             this.btn_export.Text = "EXPORT";
             this.btn_export.UseVisualStyleBackColor = false;

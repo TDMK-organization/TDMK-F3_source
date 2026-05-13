@@ -123,10 +123,10 @@ namespace OK2SHIP_SMT.Services
         public void ExportTableOfContent(ExcelWorksheet worksheet, string itemCode, string lotName)
         {
             Debugger.Break();
-            DataTable db = _dbContext.LoadDataTable("TABLE_OF_CONTENT_SETTING", new[] { "ItemCode" }, new[] { itemCode });
+            DataTable db = _dbContext.LoadDataTable("TABLE_OF_CONTENT_SETTING", new[] { "ItemCode" }, new[] { itemCode.PadRight(10) });
             if (db.Rows.Count < 1)
             {
-                return;
+                throw new Exception("Hãy cài đặt table of content!");
             }
             IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, new[] { "Build Config" , "Program Name", "Lot #", "ODB++ & Revision", "MCO & Revision" });
             worksheet.Cells[ExportProcess.AddColumn(dic["Program Name"].ToString(), 1)].Value = db.Rows[0]["ProgramName"];

@@ -62,17 +62,25 @@ namespace OK2SHIP_SMT.Services
         }
         public void ReadData(string location, string pid)
         {
-            location = location.Trim();
+                location = location.Trim();
             pid = pid.Trim();
-            ProductIDService pidService = new ProductIDService(_itemCode, _lotNo, pid, new[] { "Air Bubble" }, new[] { _itemCode });
-            if(pidService._listFile.Count() <= 0)
+                List<string> pidList = new List<string>();
+            try
             {
-                throw new Exception("Không có product ID");
+
+                ProductIDService pidService = new ProductIDService(_itemCode, _lotNo, pid, new[] { "Air Bubble" }, new[] { _itemCode });
+                if (pidService._listFile.Count() <= 0)
+                {
+                    throw new Exception("Không có product ID");
+                }
+                if (pidService._listFile.TryGetValue(_itemCode, out string Value))
+                {
+                    pidList = pidService.getListProductID(pidService._listFile[_itemCode]);
+                }
             }
-            List<string> pidList = new List<string>();
-            if (pidService._listFile.TryGetValue(_itemCode, out string Value))
+            catch (Exception ex)
             {
-                pidList = pidService.getListProductID(pidService._listFile[_itemCode]);
+                throw new Exception($"ProductID: {ex}");
             }
             //"5CCEV-720211-00012-CPL5-MIYAGI-JPOND-DO KHI-78888"
             string maker = location.Split('\\')[location.Split('\\').Count() - 1].Split('-')[_lotNo.Split('-').Count() >= 2 ? 4 : 3];
@@ -179,7 +187,7 @@ namespace OK2SHIP_SMT.Services
                 }
                 catch
                 {
-                    if (itemZ.Value.Contains("TONG"))
+                    if (itemZ.Value.Split('/')[itemZ.Value.Split('/').Count() - 1].Contains("TONG"))
                     {
                         string l = item.Split('\\')[item.Split('\\').Count() - 3 + (pai.Equals("TONG") || pai.Contains("TRU") ? 0 : 1)];
                         string tape = item.Split('\\')[item.Split('\\').Count() - 2 + (pai.Equals("TONG") || pai.Contains("TRU") ? 0 : 1)];

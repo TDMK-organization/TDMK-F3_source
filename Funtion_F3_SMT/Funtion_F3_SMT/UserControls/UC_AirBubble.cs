@@ -181,26 +181,33 @@ namespace OK2SHIP_SMT.UserControls
 
         private void tdmK_Button1_Click_1(object sender, EventArgs e)
         {
-            try
+            if (_PRIME)
             {
-                if (_PRIME)
+                try
                 {
                     _service2 = new PeelTestOnProductService(txt_ItemCode.Text, txt_lotNo.Text);
                     _service2.Export(Legacy.Checked);
                 }
-                else
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Export AirBubble: {ex.Message}");
+                }
+            }
+            else
+            {
+                try
                 {
 
                     _service = new AirBubbleService(txt_ItemCode.Text, txt_lotNo.Text);
                     _service.Export();
-
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Export AirBubble: {ex.Message}");
                 }
 
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Export AirBubble: {ex.Message}");
-            }
+
             FillData();
         }
         private void btn_setupRefer_Click(object sender, EventArgs e)

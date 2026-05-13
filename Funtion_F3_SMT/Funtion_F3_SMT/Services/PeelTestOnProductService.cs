@@ -964,12 +964,12 @@ namespace OK2SHIP_SMT.Services
                                 address = ExportProcess.AddRow(address, 1);
                                 if (valueDT.Rows.Count > i)
                                 {
-                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], TDMK_ImageConverter.ImageToByteArray((Image)valueDT.Rows[i]["Picture"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])valueDT.Rows[i]["Picture"], $"{Guid.NewGuid()}");
                                 }
 
                             }
-                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], TDMK_ImageConverter.ImageToByteArray((Image)row["Picture"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
-                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], TDMK_ImageConverter.ImageToByteArray((Image)row["Graph"], ImageFormat.Jpeg), $"{Guid.NewGuid()}");
+                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], (byte[])row["Picture"], $"{Guid.NewGuid()}");
+                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], (byte[])row["Graph"], $"{Guid.NewGuid()}");
                             if (liner)
                             {
                                 address = ExportProcess.AddRow(address, 1);

@@ -31,6 +31,7 @@ namespace OK2SHIP_SMT.Services
         {
             DataTable table = new DataTable();
             table.Columns.Add("ID", typeof(int));
+            table.Columns.Add("ProductID", typeof(string));
             table.Columns.Add("ItemCode", typeof(string));
             table.Columns.Add("LotNo", typeof(string));
             table.Columns.Add("Sheet", typeof(string));
