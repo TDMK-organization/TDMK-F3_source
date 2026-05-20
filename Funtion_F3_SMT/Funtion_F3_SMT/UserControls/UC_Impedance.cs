@@ -273,7 +273,6 @@ namespace OK2SHIP_SMT.UserControls
                 }
                 catch (Exception eZx)
                 {
-
                     MessageBox.Show(eZx.Message);
                 }
                 return;

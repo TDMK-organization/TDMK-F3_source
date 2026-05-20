@@ -37,23 +37,41 @@
     <ApplicationIcon>TDMK.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AForge">
+      <HintPath>..\..\DDLS\AForge.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video">
+      <HintPath>..\..\DDLS\AForge.Video.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video.DirectShow">
+      <HintPath>..\..\DDLS\AForge.Video.DirectShow.dll</HintPath>
+    </Reference>
     <Reference Include="EPPlus, Version=7.1.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\EPPLUS_7_Version\7.0.2\EPPlus.dll</HintPath>
+      <HintPath>..\..\DDLS\EPPlus.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus.Interfaces, Version=6.1.1.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\EPPLUS_7_Version\7.0.2\EPPlus.Interfaces.dll</HintPath>
+      <HintPath>..\..\DDLS\EPPlus.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus.System.Drawing, Version=6.1.1.0, Culture=neutral, PublicKeyToken=2308d35469c9bac0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\EPPLUS_7_Version\7.0.2\EPPlus.System.Drawing.dll</HintPath>
+      <HintPath>..\..\DDLS\EPPlus.System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelDataReader">
+      <HintPath>..\..\DDLS\ExcelDataReader.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelDataReader.DataSet">
+      <HintPath>..\..\DDLS\ExcelDataReader.DataSet.dll</HintPath>
     </Reference>
     <Reference Include="IniLibs">
-      <HintPath>..\..\..\..\..\..\TDMK Source Code\TDMK_Library\IniLibs.dll</HintPath>
+      <HintPath>..\..\DDLS\IniLibs.dll</HintPath>
     </Reference>
     <Reference Include="OK2SHIP_Lib">
-      <HintPath>..\..\..\..\..\..\TDMK Source Code\TDMK_Library\OK2SHIP_Lib.dll</HintPath>
+      <HintPath>..\..\DDLS\OK2SHIP_Lib.dll</HintPath>
+    </Reference>
+    <Reference Include="Resize_Lib">
+      <HintPath>..\..\DDLS\Resize_Lib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -68,16 +86,19 @@
     <Reference Include="System.Xml" />
     <Reference Include="TDMK_EPPLUS_7, Version=7.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\TDMK_EPPLUS_7\Using EPPLUS_7 Ver 7.0.2\TDMK_EPPLUS_7.dll</HintPath>
+      <HintPath>..\..\DDLS\TDMK_EPPLUS_7.dll</HintPath>
+    </Reference>
+    <Reference Include="TDMK_Image">
+      <HintPath>..\..\DDLS\TDMK_Image.dll</HintPath>
     </Reference>
     <Reference Include="TDMK_SEEV_DLL">
-      <HintPath>..\..\..\..\TDMK Source Code\TDMK_Library\EPPLUS_7\TDMK_SEEV_DLL.dll</HintPath>
+      <HintPath>..\..\DDLS\TDMK_SEEV_DLL.dll</HintPath>
     </Reference>
     <Reference Include="TDMK_SQL">
-      <HintPath>..\..\..\..\..\..\TDMK Source Code\TDMK_Library\TDMK_SQL.dll</HintPath>
+      <HintPath>..\..\DDLS\TDMK_SQL.dll</HintPath>
     </Reference>
     <Reference Include="ZedGraph">
-      <HintPath>E:\VS2017 IDE\ZedGraph\ZedGraph.dll</HintPath>
+      <HintPath>..\..\DDLS\ZedGraph.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

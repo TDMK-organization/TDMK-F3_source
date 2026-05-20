@@ -111,6 +111,7 @@ namespace Funtion_F3_SMT
                                     {
                                         vari = 1;
                                     }
+                                    // Row = địa chỉ của Flex SN 
                                     address = ws.Cells[ws.Cells[address.Split('-')[vari]].End.Row, ws.Cells[addSample].End.Column].Address;
                                     if (Data_tbl.Columns.Contains("ProductID"))
                                     {

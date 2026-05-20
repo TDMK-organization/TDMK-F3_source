@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Security.Authentication;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,6 +23,7 @@ namespace OK2SHIP_SMT.Services
         private DBContext _dbContext = new DBContext();
         public Dictionary<string, DataTable> Load(string itemCode, string lotNo)
         {
+            string msg = "";
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
 
@@ -31,31 +33,82 @@ namespace OK2SHIP_SMT.Services
             }
             Dictionary<string, DataTable> dic = new Dictionary<string, DataTable>();
 
+            DataTable dt = _dbContext.LoadDataTable("IMPEDANCE_NAS", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
+            DataTable dt_SPEC = _dbContext.LoadDataTable("IMPEDANCE_SPEC_NAS", new[] { "ItemCode" }, new[] { itemCode });
+            if (dt.Rows.Count < 0)
+            {
+                throw new Exception("Không tồn tại dữ liệu!");
+            }
+
+            if (dt_SPEC.Rows.Count < 0)
+            {
+                msg += "Dữ liệu SPEC không tồn tại \n";
+            }
+
+            try
+            {
+                DataTable impedance_val = ConverterService.JsonToDataTable(dt.Rows[0]["IMPEDANCE_VAL"].ToString());
+                dic.Add("IMPEDANCE_VAL", impedance_val);
+            }
+            catch (Exception ex)
+            {
+                msg += "Impedance_Value error: " + ex.Message + "\n";
+            }
+
+            try
+            {
+                DataTable impedance_g = ConverterService.JsonToDataTable(dt.Rows[0]["IMPEDANCE_GRAPH"].ToString());
+                NasRepository nas = new NasRepository();
+                nas.MergeDataTable(impedance_g, "IMPEDANCE_GRAPH", itemCode, lotNo, dt.Rows[0]["impedance_IMG"].ToString());
+                //DGV_Graph.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "IMPEDANCE_GRAPH", filter_str);
+                dic.Add("IMPEDANCE_GRAPH", impedance_g);
+            }
+            catch (Exception ex)
+            {
+                msg += "Impedance graph error: " + ex.Message + "\n";
+            }
+
+            try
+            {
+                DataTable impedance_val = ConverterService.JsonToDataTable(dt_SPEC.Rows[0]["IMPEDANCE_SPEC"].ToString());
+                dic.Add("IMPEDANCE_SPEC", impedance_val);
+            }
+            catch (Exception ex)
+            {
+                msg += "impedance spec error: " + ex.Message + "\n";
+            }
+
+            try
+            {
+                DataTable impedance_val = ConverterService.JsonToDataTable(dt_SPEC.Rows[0]["TRACEWIDTH_SPEC"].ToString());
+                dic.Add("TRACEWIDTH_SPEC", impedance_val);
+            }
+            catch (Exception ex)
+            {
+                msg += "tracewidth spec error: " + ex.Message + "\n";
+            }
 
 
-            //string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-            //DGV_Impedance_Summary.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "IMPEDANCE_VAL", filter_str);
-
-            dic.Add("IMPEDANCE_VAL", _dbContext.LoadDataTable("IMPEDANCE_VAL", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }));
-
-
-            //DGV_Graph.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "IMPEDANCE_GRAPH", filter_str);
-            dic.Add("IMPEDANCE_GRAPH", _dbContext.LoadDataTable("IMPEDANCE_GRAPH", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }));
-
-            //DGV_Impedance_Spec.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "IMPEDANCE_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode" }, new string[] { txtItemCode.Text }));
-            dic.Add("IMPEDANCE_SPEC", _dbContext.LoadDataTable("IMPEDANCE_SPEC", new[] { "ItemCode" }, new[] { itemCode }));
-
-            //DGV_Tracewidth_spec.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "TRACEWIDTH_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode" }, new string[] { txtItemCode.Text }));
-            dic.Add("TRACEWIDTH_SPEC", _dbContext.LoadDataTable("TRACEWIDTH_SPEC", new[] { "ItemCode" }, new[] { itemCode }));
-
-
-
-            //DGV_VHX_Data.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "TRACEWIDTH_VAL", filter_str);
-            dic.Add("TRACEWIDTH_VAL", _dbContext.LoadDataTable("TRACEWIDTH_VAL", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }));
-
-            //DGV_Image_Tracewidth.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "TRACEWIDTH_IMAGE", filter_str);
-            dic.Add("TRACEWIDTH_IMAGE", _dbContext.LoadDataTable("TRACEWIDTH_IMAGE", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }));
-
+            try
+            {
+                DataTable impedance_val = ConverterService.JsonToDataTable(dt.Rows[0]["TRACEWIDTH_VAL"].ToString());
+                dic.Add("TRACEWIDTH_VAL", impedance_val);
+            }
+            catch (Exception ex)
+            {
+                msg += "tracewidth Value error: " + ex.Message + "\n";
+            }
+            try
+            {
+                DataTable impedance_g = ConverterService.JsonToDataTable(dt.Rows[0]["TRACEWIDTH_IMAGE"].ToString());
+                NasRepository nas = new NasRepository();
+                nas.MergeDataTable(impedance_g, "TRACEWIDTH_IMAGE", itemCode, lotNo, dt.Rows[0]["tracewidth_IMG"].ToString());
+                dic.Add("TRACEWIDTH_IMAGE", impedance_g);
+            }
+            catch (Exception ex)
+            {
+                msg += "Tracewidth image error: " + ex.Message + "\n";
+            }
 
             return dic;
         }
@@ -76,7 +129,7 @@ namespace OK2SHIP_SMT.Services
             //string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
             //DGV_Impedance_Summary.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "IMPEDANCE_VAL", filter_str);
 
-            dic.Add("IMPEDANCE_VAL", _dbContext.LoadDataTable("IMPEDANCE_VAL", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }));
+            dic.Add("IMPEDANCE_VAL", OverWriteDatatable(SortDataValueTable(_dbContext.LoadDataTable("IMPEDANCE_VAL", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo }))));
             if (dic["IMPEDANCE_VAL"].Rows.Count > 0)
             {
                 return false;
@@ -135,30 +188,79 @@ namespace OK2SHIP_SMT.Services
             //string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
             //DGV_Impedance_Summary.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "IMPEDANCE_VAL", filter_str);
             DataTable dataTable = _db.LoadDataTable("IMPEDANCE_VAL", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
-            dic.Add("IMPEDANCE_VAL", ChangeItemCodeLotNo(dataTable, icNew, lnNew));
+
+            dic.Add("IMPEDANCE_VAL", OverWriteDatatable(SortDataValueTable(ChangeItemCodeLotNo(dataTable, icNew, lnNew))));
 
             dataTable = _db.LoadDataTable("IMPEDANCE_GRAPH", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
             //DGV_Graph.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "IMPEDANCE_GRAPH", filter_str);
-            dic.Add("IMPEDANCE_GRAPH", ChangeItemCodeLotNo(dataTable, icNew, lnNew));
+            dic.Add("IMPEDANCE_GRAPH", OverWriteDatatable(ChangeItemCodeLotNo(dataTable, icNew, lnNew)));
             dataTable = _db.LoadDataTable("IMPEDANCE_SPEC", new[] { "ItemCode" }, new[] { itemCode });
             //DGV_Impedance_Spec.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "IMPEDANCE_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode" }, new string[] { txtItemCode.Text }));
-            dic.Add("IMPEDANCE_SPEC", ChangeItemCodeLotNo(dataTable, icNew));
+            dic.Add("IMPEDANCE_SPEC", OverWriteDatatable(ChangeItemCodeLotNo(dataTable, icNew)));
 
             //DGV_Tracewidth_spec.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "TRACEWIDTH_SPEC", TDMK_Code.filter_str(new string[] { "ItemCode" }, new string[] { txtItemCode.Text }));
             dataTable = _db.LoadDataTable("TRACEWIDTH_SPEC", new[] { "ItemCode" }, new[] { itemCode });
-            dic.Add("TRACEWIDTH_SPEC", ChangeItemCodeLotNo(dataTable, icNew));
+            dic.Add("TRACEWIDTH_SPEC", OverWriteDatatable(ChangeItemCodeLotNo(dataTable, icNew)));
 
 
             dataTable = _db.LoadDataTable("TRACEWIDTH_VAL", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
             //DGV_VHX_Data.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "TRACEWIDTH_VAL", filter_str);
-            dic.Add("TRACEWIDTH_VAL", ChangeItemCodeLotNo(dataTable, icNew, lnNew));
+            dic.Add("TRACEWIDTH_VAL", OverWriteDatatable(SortDataValueTable(ChangeItemCodeLotNo(dataTable, icNew, lnNew), true)));
 
             dataTable = _db.LoadDataTable("TRACEWIDTH_IMAGE", new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
             //DGV_Image_Tracewidth.DataSource = TDMK_Code.Datatable_Filter(sqlcon, "TRACEWIDTH_IMAGE", filter_str);
-            dic.Add("TRACEWIDTH_IMAGE", ChangeItemCodeLotNo(dataTable, icNew, lnNew));
+            dic.Add("TRACEWIDTH_IMAGE", OverWriteDatatable(ChangeItemCodeLotNo(dataTable, icNew, lnNew)));
 
 
             return dic;
+        }
+        private static DataTable OverWriteDatatable(DataTable dt)
+        {
+            if (dt.Columns.Contains("ID"))
+            {
+                // 2. Chạy vòng lặp qua từng dòng của DataTable
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    // Gán giá trị bằng (i + 1) để bắt đầu từ số 1
+                    dt.Rows[i]["ID"] = i + 1;
+                }
+            }
+            return dt;
+        }
+        private static DataTable SortDataValueTable(DataTable dataTable, bool tracewidth = false)
+        {
+            if (tracewidth)
+            {
+                return dataTable.AsEnumerable()
+               .OrderBy(row =>
+               {
+                   int region;
+                   int.TryParse(row["Pcs_No"]?.ToString().Replace("Sample", "").Trim(), out region);
+                   return region;
+               })
+               .ThenBy(row =>
+               {
+                   int pcsNo;
+                   int.TryParse(row["Region"]?.ToString(), out pcsNo);
+                   return pcsNo; // Nếu lỗi/rỗng sẽ trả về 0
+               })
+               .CopyToDataTable();
+            }
+
+            return dataTable.AsEnumerable()
+                .OrderBy(row =>
+                {
+                    int pcsNo;
+                    int.TryParse(row["Region"]?.ToString(), out pcsNo);
+                    return pcsNo; // Nếu lỗi/rỗng sẽ trả về 0
+                })
+                .ThenBy(row =>
+                {
+                    int region;
+                    int.TryParse(row["Pcs_No"]?.ToString(), out region);
+                    return region;
+                })
+                .CopyToDataTable();
         }
         private static DataTable ChangeItemCodeLotNo(DataTable dataTable, string itemCode, string lotNo = null)
         {
@@ -172,10 +274,37 @@ namespace OK2SHIP_SMT.Services
             }
             return dataTable;
         }
+        public DataTable initNAStable()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("ItemCode", typeof(string));
+            dt.Columns.Add("LotNo", typeof(string));
+            dt.Columns.Add("IMPEDANCE_GRAPH", typeof(string));
+            dt.Columns.Add("IMPEDANCE_VAL", typeof(string));
+            dt.Columns.Add("TRACEWIDTH_VAL", typeof(string));
+            dt.Columns.Add("TRACEWIDTH_IMAGE", typeof(string));
+            dt.Columns.Add("impedance_IMG", typeof(string));
+            dt.Columns.Add("tracewidth_IMG", typeof(string));
+
+            return dt;
+        }
+        public DataTable initNAS_SPECtable()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("ItemCode", typeof(string));
+            dt.Columns.Add("IMPEDANCE_SPEC", typeof(string));
+            dt.Columns.Add("TRACEWIDTH_SPEC", typeof(string));
+            return dt;
+        }
         public int Save(string itemCode, string lotNo, Dictionary<string, DataTable> dic, bool prime = false)
         {
+
+
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
+
             if (string.IsNullOrEmpty(UserSession.Instance.User_ID))
             {
                 throw new AuthenticationException("Bạn chưa đăng nhập, hãy đăng nhập!");
@@ -185,6 +314,8 @@ namespace OK2SHIP_SMT.Services
             {
                 throw new Exception("Không được trống itemcode lotno");
             }
+
+
             if (prime == false)
             {
                 if (CheckDataIsNotNull(itemCode, lotNo) == false)
@@ -193,6 +324,17 @@ namespace OK2SHIP_SMT.Services
                 }
 
             }
+
+            DataTable dt = initNAStable();
+            DataTable dt_SPEC = initNAS_SPECtable();
+            DataRow row = dt.NewRow();
+            DataRow row_SPEC = dt_SPEC.NewRow();
+
+            row["ItemCode"] = itemCode;
+            row["LotNo"] = lotNo;
+            row_SPEC["ItemCode"] = itemCode;
+
+
             int res = 0;
             foreach (string item in dic.Keys)
             {
@@ -221,8 +363,59 @@ namespace OK2SHIP_SMT.Services
                         default:
                             break;
                     }
-                    res += _dbContext.BuckDataTable(dataTable, item, list.ToArray(), null, "ID");
+                    //convert json
+                    switch (item)
+                    {
+                        case "IMPEDANCE_GRAPH":
+                        case "TRACEWIDTH_IMAGE":
+                            NasRepository nas = new NasRepository();
+                            string location = nas.HandleImageDataTable(dataTable, item, itemCode, lotNo);
+
+                            string key = "";
+                            if (item.Equals("IMPEDANCE_GRAPH"))
+                            {
+                                key = "impedance_IMG";
+                            }
+                            if (item.Equals("TRACEWIDTH_IMAGE"))
+                            {
+                                key = "tracewidth_IMG";
+                            }
+                            row[key] = location;
+                            row[item] = ConverterService.DataTableToJson(dataTable);
+                            break;
+                        case "IMPEDANCE_VAL":
+                        case "TRACEWIDTH_VAL":
+                            row[item] = ConverterService.DataTableToJson(dataTable);
+                            break;
+                        case "IMPEDANCE_SPEC":
+                        case "TRACEWIDTH_SPEC":
+                            row_SPEC[item] = ConverterService.DataTableToJson(dataTable);
+                            break;
+                        default:
+                            Debugger.Break();
+                            break;
+                    }
                 }
+            }
+
+            dt.Rows.Add(row);
+            dt_SPEC.Rows.Add(row_SPEC);
+
+            try
+            {
+                res += _dbContext.BuckDataTable(dt, "IMPEDANCE_NAS", new[] { "ItemCode", "LotNo" }, null, "ID");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error Save Impedance:" + ex.Message);
+            }
+            try
+            {
+                res += _dbContext.BuckDataTable(dt_SPEC, "IMPEDANCE_SPEC_NAS", new[] { "ItemCode" }, null, "ID");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error Save Impedance SPEC:" + ex.Message);
             }
             return res;
         }
@@ -246,99 +439,128 @@ namespace OK2SHIP_SMT.Services
                     IDictionary<string, string> _dic = ExportProcess.FindAddressByText(worksheet, header, true);
 
                     #region Image
+
                     string[] headerZ = new[] { "Sample 1", "Sample 2", "Sample 3", "Actual Trace width" };
                     IDictionary<string, string> _dicZ = ExportProcess.FindAddressByText(worksheet, headerZ, false);
-
-                    if (dic.TryGetValue("IMPEDANCE_GRAPH", out DataTable dataTable))
+                    try
                     {
-                        int ha = 1;
-                        foreach (DataRow item in dataTable.Rows)
+
+                        if (dic.TryGetValue("IMPEDANCE_GRAPH", out DataTable dataTable))
                         {
-                            string samplez = $"Sample {ha++}";
-                            byte[] image = (byte[])item["Image_Graph"];
-                            if (_dicZ.TryGetValue(samplez, out string address))
+                            int ha = 1;
+                            foreach (DataRow item in dataTable.Rows)
                             {
-                                if (address.Split('-').Count() >= 2)
+                                string samplez = $"Sample {ha++}";
+                                byte[] image = (byte[])item["Image_Graph"];
+                                if (_dicZ.TryGetValue(samplez, out string address))
                                 {
+                                    if (address.Split('-').Count() >= 2)
+                                    {
 
-                                    address = ExportProcess.AddRow(address.Split('-')[1], 2);
+                                        address = ExportProcess.AddRow(address.Split('-')[1], 2);
 
-                                    ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[ExportProcess.getRangeBaseAddressByCellAddress(worksheet, address)], image, $"{Guid.NewGuid()}");
+                                        ExportProcess.InsertImageToCell(worksheet, worksheet.Cells[ExportProcess.getRangeBaseAddressByCellAddress(worksheet, address)], image, $"{Guid.NewGuid()}");
+                                    }
                                 }
                             }
                         }
                     }
-                    if (dic.TryGetValue("TRACEWIDTH_IMAGE", out DataTable dataTableImage))
+                    catch (Exception exzx)
                     {
-                        int ha = 1;
-                        foreach (DataRow item in dataTableImage.Rows)
+                        throw new Exception("IMPEDANCE_GRAPH:" + exzx.Message);
+                    }
+                    try
+                    {
+
+                        if (dic.TryGetValue("TRACEWIDTH_IMAGE", out DataTable dataTableImage))
                         {
-                            string samplez = $"Sample {ha++}";
-                            byte[] image = (byte[])item["Image_Tracewidth"];
-                            if (_dicZ.TryGetValue(samplez, out string address))
+                            int ha = 1;
+                            foreach (DataRow item in dataTableImage.Rows)
                             {
-                                if (address.Split('-').Count() >= 2)
+                                string samplez = $"Sample {ha++}";
+                                byte[] image = (byte[])item["Image_Tracewidth"];
+                                if (_dicZ.TryGetValue(samplez, out string address))
                                 {
-                                    address = ExportProcess.AddRow(address.Split('-')[0], 1);
-                                    var z = worksheet.Cells[ExportProcess.getRangeBaseAddressByCellAddress(worksheet, address)];
-                                    ExportProcess.InsertImageToCell(worksheet, z, image, $"{Guid.NewGuid()}");
+                                    if (address.Split('-').Count() >= 2)
+                                    {
+                                        address = ExportProcess.AddRow(address.Split('-')[0], 1);
+                                        var z = worksheet.Cells[ExportProcess.getRangeBaseAddressByCellAddress(worksheet, address)];
+                                        ExportProcess.InsertImageToCell(worksheet, z, image, $"{Guid.NewGuid()}");
+                                    }
                                 }
                             }
                         }
+                    }
+                    catch (Exception exzx)
+                    {
+                        throw new Exception("TRACEWIDTH_IMAGE:" + exzx.Message);
                     }
                     #endregion
 
                     #region Data Impedance 1
-                    if (dic.TryGetValue("IMPEDANCE_VAL", out DataTable dataTableZ))
+                    try
+                    {
+                        if (dic.TryGetValue("IMPEDANCE_VAL", out DataTable dataTableZ))
+                        {
+                            if (_dic.TryGetValue("Actual Impedance", out string addressZ))
+                            {
+                                foreach (DataRow item in dataTableZ.Rows)
+                                {
+                                    if (int.TryParse(item["Pcs_No"].ToString().Trim(), out int pcsNo))
+                                    {
+                                        if (double.TryParse(item["Data"].ToString(), out double data))
+                                        {
+                                            if (int.TryParse(item["Region"].ToString().Trim(), out int region))
+                                            {
+                                                string address = addressZ.Split('-')[region - 1];
+                                                data = Math.Round(data, 2);
+                                                worksheet.Cells[ExportProcess.AddRow(address, pcsNo)].Value = data;
+                                            }
+                                            else
+                                            {
+                                                throw new Exception("Dữ liệu region có lỗi");
+                                            }
+                                        }
+                                        else { throw new Exception("Dữ liệu trong cột Data có lỗi, không thể chuyển sang số thực"); }
+                                    }
+
+                                }
+                            }
+                        }
+
+                    }
+                    catch (Exception exZ)
+                    {
+                        throw new Exception("Export IMPEDANCE_VAL:" + exZ.Message);
+                    }
+                    try
                     {
 
-                        if (_dic.TryGetValue("Actual Impedance", out string addressZ))
+                        if (dic.TryGetValue("TRACEWIDTH_VAL", out DataTable dataTableZ1))
                         {
-                            int i = 0, j = -1;
-                            string region = dataTableZ.Rows[0]["Region"].ToString();
-                            string address = "";
-                            foreach (DataRow item in dataTableZ.Rows)
+                            if (_dicZ.TryGetValue("Actual Trace width", out string address))
                             {
-                                if (item["Pcs_No"].ToString().Trim().Equals("1"))
+                                address = address.Split('-')[0];
+                                int i = 0;
+                                foreach (DataRow item in dataTableZ1.Rows)
                                 {
-                                    j++;
-                                    i = 0;
-                                    address = addressZ.Split('-')[j];
+                                    i++;
+                                    if (double.TryParse(item["Data"].ToString(), out double data))
+                                    {
+                                        string add = ExportProcess.AddRow(address, i);
+                                        worksheet.Cells[ExportProcess.AddRow(address, i)].Value = Math.Round(data, 2);
+                                    }
                                 }
-                                if (!item["Region"].ToString().Equals(region))
-                                {
-                                    region = item["Region"].ToString();
-                                    i = 0;
-                                    address = addressZ.Split('-')[int.Parse(region) - 1];
-                                }
-                                i++;
-                                if (double.TryParse(item["Data"].ToString(), out double data))
-                                {
-                                    string add = ExportProcess.AddRow(address, i);
-                                    data = Math.Round(data, 2);
-                                    worksheet.Cells[ExportProcess.AddRow(address, i)].Value = data;
-                                }
+                            }
+                            else
+                            {
 
                             }
                         }
                     }
-
-                    if (dic.TryGetValue("TRACEWIDTH_VAL", out DataTable dataTableZ1))
+                    catch (Exception exZ)
                     {
-                        if (_dicZ.TryGetValue("Actual Trace width", out string address))
-                        {
-                            address = address.Split('-')[0];
-                            int i = 0;
-                            foreach (DataRow item in dataTableZ1.Rows)
-                            {
-                                i++;
-                                if (double.TryParse(item["Data"].ToString(), out double data))
-                                {
-                                    string add = ExportProcess.AddRow(address, i);
-                                    worksheet.Cells[ExportProcess.AddRow(address, i)].Value = Math.Round(data, 2);
-                                }
-                            }
-                        }
+                        throw new Exception("Export TRACEWIDTH_VAL:" + exZ.Message);
                     }
                     #endregion
 
