@@ -384,6 +384,10 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     TCHSTSService TCHSTSService = new TCHSTSService();
                     msg = $"{category}-{_EXPORT_KEY}-{TCHSTSService.Export(itemCode, lotNo, category)}";
                     break;
+                case "FAI":
+                    FAIService FAIService = new FAIService();
+                    msg = $"{category}-{_EXPORT_KEY}-{FAIService.Export_FAI_Data_byEPPLUS(itemCode, lotNo)}";
+                    break;
                 default:
                     msg = $"{category}-{_EXPORT_KEY}-No Implemented";
                     break;

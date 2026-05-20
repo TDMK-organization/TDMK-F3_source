@@ -1,17 +1,18 @@
-﻿using OfficeOpenXml;
+﻿using Export_FPCA_OK2ship_Auto_System.Libary;
+using OfficeOpenXml;
+using OK2SHIP_Lib;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using TDMK_SEEV_DLL;
 using TDMK_SQL;
-using OK2SHIP_Lib;
-using System.Drawing;
-using System.Windows.Forms;
-using Export_FPCA_OK2ship_Auto_System.Libary;
 namespace FAI_Export
 {
     public class FAI_EPPLUS_Lib
@@ -611,6 +612,105 @@ namespace FAI_Export
                 }
             }
             return result;
+        }
+        public ExcelPackage open_excel(string file_name)
+        {
+            ExcelPackage myexcel = null;
+            FileInfo excel_file = new FileInfo(file_name);
+            if (File.Exists(file_name))
+            {
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                myexcel = new ExcelPackage(excel_file);
+            }
+            return myexcel;
+        }
+        public void Export_To_FAI(SqlConnection sqlcon, ExcelPackage src_pack, string _ItemCode, string _LotNo, Dictionary<string, DataTable> dic_data, string format_type)
+        {
+            ExcelWorkbook src_format_wrk = src_pack.Workbook;
+            DataTable FAI_Spec_tbl = TDMK_Code.Datatable_Filter(sqlcon, "FAI_Spec", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { _ItemCode, format_type }));
+            List<string> FAI_keys_lst = new List<string> { "FAI", "SPC", "CPK", "parentheses" };
+            foreach (var sht in dic_data)
+            {
+                try
+                {
+                    if (FAI_keys_lst.Any(x => sht.Key.Contains(x)))
+                    {
+                        string sel_sht_name = sht.Key;
+                        ExcelWorksheet format_wrksheet = src_format_wrk.Worksheets[sel_sht_name];
+                        string dim_no_addr = Excel_Lib.Find_Cell_Addr("Dim. No.", "B10", format_wrksheet, false);
+                        string instrument_addr = Excel_Lib.Find_Cell_Addr("instrument", "B10", format_wrksheet, false);
+                        string FAI_data_addr = Find_Offset(format_wrksheet.Cells[dim_no_addr].Offset(0, 1).Address, format_wrksheet, true, "");
+                        int off_set = format_wrksheet.Cells[FAI_data_addr].Start.Column - format_wrksheet.Cells[instrument_addr].Start.Column;
+                        Dictionary<string, int> fai_loc = Find_FAI_addr_qty(dim_no_addr, format_wrksheet, false);
+                        if (fai_loc.Count > 0)
+                        {
+                            string _data_addr = fai_loc.Keys.ToList()[0];
+                            ExcelRangeBase format_rgn = format_wrksheet.Cells[_data_addr].Offset(0, off_set);
+                            format_rgn.LoadFromDataTable(sht.Value);
+                            int total_col_num = sht.Value.Columns.Count - 1;
+                            int r_off = sht.Value.Rows.Count - 1;
+                            int start_rgn_row = format_rgn.Start.Row;
+                            int start_rgn_col = format_rgn.Start.Column;
+                            ExcelRangeBase final_rgn = format_wrksheet.Cells[start_rgn_row, start_rgn_col, start_rgn_row + r_off, total_col_num];
+                            final_rgn.Style.Numberformat.Format = "#0.000";
+                        }
+                        if (format_type == "MASS")
+                        {
+                            string itemcode_loc = Excel_Lib.Find_Cell_Addr("ITEM CODE:", "B1", format_wrksheet, false);
+                            string lotno_loc = Excel_Lib.Find_Cell_Addr("LOT:", "B1", format_wrksheet, false);
+                            string itemname_loc = Excel_Lib.Find_Cell_Addr("ITEM NAME:", "B1", format_wrksheet, false);
+                            string date_loc = Excel_Lib.Find_Cell_Addr("NGÀY:", "B1", format_wrksheet, false);
+
+                            string format_name = Path.GetFileNameWithoutExtension(src_pack.File.Name);
+                            string[] temp = format_name.Split('-');
+                            string item_name = "";
+                            if (temp.Length > 1)
+                            {
+                                item_name = temp[1];
+                            }
+                            format_wrksheet.Cells[itemname_loc].Offset(0, 1).Value = item_name;
+                            format_wrksheet.Cells[itemcode_loc].Offset(0, 1).Value = _ItemCode;
+                            format_wrksheet.Cells[lotno_loc].Offset(0, 1).Value = _LotNo;
+                            format_wrksheet.Cells[date_loc].Offset(0, 1).Value = DateTime.Now.ToShortDateString();
+                        }
+                    }
+                }
+                catch
+                {
+                    continue;
+                }
+
+            }
+
+            /***********/
+            List<string> FAI_keys_lst_new = new List<string> { "FAI", "SPC" };
+            if (format_type == "NPI")
+            {
+                int error_count = 0;
+                while (src_format_wrk.Worksheets.Any(x => !FAI_keys_lst_new.Any(y => x.Name.Contains(y))) && error_count < 5)
+                {
+                    try
+                    {
+                        foreach (ExcelWorksheet sht in src_format_wrk.Worksheets)
+                        {
+                            if (sht != null)
+                            {
+                                if (!FAI_keys_lst_new.Any(x => sht.Name.Contains(x)))
+                                {
+                                    src_format_wrk.Worksheets.Delete(sht);
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        error_count++;
+                    }
+
+                }
+            }
+            /***********/
+
         }
 
     }
