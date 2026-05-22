@@ -1,5 +1,6 @@
 ﻿using Export_FPCA_OK2ship_Auto_System.Libary;
 using OfficeOpenXml;
+using OfficeOpenXml.Drawing.Chart;
 using OK2SHIP_Lib;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,24 @@ namespace FAI_Export
         SEI_Lib myCode = new SEI_Lib();
         TDMK_EPPLUS Excel_Lib = new TDMK_EPPLUS();
         TDMK_OK2SHIP TDMK_OK2SHIP = new TDMK_OK2SHIP();
+        public struct FAI_Histogram
+        {
+            public string FAI_no {  get; set; }
+            public double UL {  get; set; }
+            public double LL { get; set; }
+            public string CheckSide { get; set; }
+            public double BinStart { get; set; }
+            public double BinEnd { get; set; }
+            public FAI_Histogram(string _fai_no, double _ul, double _ll, string _checkside, double _binstart, double _binend)
+            {
+                FAI_no = _fai_no;
+                UL = _ul;
+                LL= _ll;
+                CheckSide = _checkside;
+                BinStart = _binstart;
+                BinEnd = _binend;
+            }
+        }
         public Dictionary<string, DataTable> Export_FAI_Batch(SqlConnection sqlcon, string tar_ItemCode, string tar_LotNo, string format_type)
         {
             Dictionary<string, DataTable> dt_lst = new Dictionary<string, DataTable>();
@@ -55,7 +74,7 @@ namespace FAI_Export
                 }
                 foreach (var fai in dic_FAI)
                 {
-                    
+
                     if (!myCode.check_columns_existed(dt, fai.Key))
                     {
                         if (fai.Value.Count != 0)
@@ -591,6 +610,163 @@ namespace FAI_Export
             }
             return dt_lst;
         }
+        public Dictionary<string, DataTable> Export_FAI_Batch_Histogram(SqlConnection sqlcon, ExcelWorkbook src_format_wrk, string tar_ItemCode, string tar_LotNo, string format_type)
+        {
+            Dictionary<string, DataTable> dt_lst = new Dictionary<string, DataTable>();
+            char[] trim_char = new char[] { ' ', '\r', '\n' };
+            DataTable FAI_Data_tbl = TDMK_Code.Datatable_Filter(sqlcon, "FAI_Auto", TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Remark" }, new string[] { tar_ItemCode, tar_LotNo, format_type }));
+            DataTable FAI_Spec_tbl = TDMK_Code.Datatable_Filter(sqlcon, "FAI_Spec", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { tar_ItemCode, format_type }));
+            List<string> sht_keys = new List<string> { "FAI", "SPC", "parentheses" };
+            Dictionary<string, List<string>> sheet_FAI_dic = new Dictionary<string, List<string>>();
+            foreach (ExcelWorksheet tg in src_format_wrk.Worksheets)
+            {
+                if (sht_keys.Any(x => tg.Name.Contains(x)))
+                {
+                    string dim_no_addr = Find_Cell_Addr("Dim. No.", "B10", tg, false);
+                    string instrument_addr = Find_Cell_Addr("instrument", "B10", tg, false);
+                    string FAI_data_addr = Find_Offset(tg.Cells[dim_no_addr].Offset(0, 1).Address, tg, true, "");
+                    int off_set = tg.Cells[FAI_data_addr].End.Column - tg.Cells[instrument_addr].End.Column;
+                    ExcelRangeBase sel_rgn = tg.Cells[dim_no_addr].Offset(0, off_set);// tg.Range["D19"];    //tg.Range["C17"];
+                    sheet_FAI_dic.Add(tg.Name, new List<string>());
+                    int sel_inx = 0;
+                    while (myCode.checkDBNull(sel_rgn.Offset(0, sel_inx).Value) != "")
+                    {
+                        string t_checkside = myCode.checkDBNull(sel_rgn.Offset(-1, sel_inx).Value);
+                        string t_FAIName = myCode.checkDBNull(sel_rgn.Offset(0, sel_inx).Value).Replace(" ", "");
+                        string t_FAI_Setval = myCode.checkDBNull(sel_rgn.Offset(1, sel_inx).Value);
+                        string col_name = t_FAIName.Split('/').FirstOrDefault() + "_" + t_FAI_Setval;
+                        string t_FAI_sheetno = tg.Name;
+                        sheet_FAI_dic[tg.Name].Add(col_name);
+                        sel_inx++;
+                    }
+                }
+            }
+            foreach (var _sht in sheet_FAI_dic)
+            {
+                DataTable dt = new DataTable();
+                Dictionary<string, List<string>> dic_FAI = new Dictionary<string, List<string>>();
+                string[] FAI_No = _sht.Value.Distinct().ToArray();
+                string sht = _sht.Key;
+                int inx_fai = 0;
+                foreach (string t in FAI_No)
+                {
+                    FAI_No[inx_fai] = t.Split(new char[] { '/', '_' }).FirstOrDefault() + "_" + t.Split(new char[] { '/', '_' }).LastOrDefault();
+                    inx_fai++;
+                }
+                inx_fai = 0;
+                foreach (string fai_no in FAI_No)
+                {
+                    List<string> fai_val = FAI_Data_tbl.AsEnumerable().Where(r => r.Field<string>("FAI_No") == fai_no).Select(r => r.Field<string>("FAI_Data")).ToList();
+                    if (dic_FAI.Keys.ToList().IndexOf(fai_no) == -1)
+                    {
+                        dic_FAI.Add(fai_no, fai_val);
+                    }
+                    var tar_dr = FAI_Spec_tbl.AsEnumerable().Where(r => r.Field<string>("FAI_No") == fai_no).FirstOrDefault();
+                    if ((tar_dr != null) && (fai_val.Count > 0))
+                    {
+                        string ul = tar_dr["TolMax"].ToString();
+                        string ll = tar_dr["TolMin"].ToString();
+                        string Side_check = tar_dr["Distribution"].ToString(); 
+                        Double[] data_arr = new double[fai_val.Count];
+                        int inx = 0;
+                        foreach (string c in fai_val)
+                        {
+                            if (TDMK_OK2SHIP.checkDBNull(c) != "")
+                            {
+                                data_arr[inx] = Convert.ToDouble(c);
+                                inx++;
+                            }
+                        }
+                        Array.Resize(ref data_arr, inx);
+                        double UL = 0;
+                        double LL = 0;
+
+                        if (TDMK_OK2SHIP.IsNumeric_Val(ul) != "")
+                        {
+                            UL = Convert.ToDouble(ul); 
+                        }
+                        if (TDMK_OK2SHIP.IsNumeric_Val(ll) != "")
+                        {
+                            LL = Convert.ToDouble(ll); 
+                        }
+                        double stdev = TDMK_OK2SHIP.CalculateStandardDeviation(data_arr);
+                        double mean = data_arr.Average();
+                        double margin = 2 * stdev;
+                        double mean_minus_7sig = mean - (7 * stdev);
+                        double mean_plus_7sig = mean + (7 * stdev);
+                        double bin_start;
+                        double bin_end;
+                        if (Side_check == "SingleSide-USL")
+                        {
+                            bin_start = new double[] { mean_minus_7sig, UL - margin }.Min();
+                        }
+                        else
+                        {
+                            bin_start = new double[] { LL - margin, mean_minus_7sig }.Min();
+                        }
+
+                        if (Side_check == "SingleSide-LSL")
+                        {
+                            bin_end = new double[] { mean_plus_7sig, LL + margin }.Max();
+                        }
+                        else
+                        {
+                            bin_end = new double[] { UL + margin, mean_minus_7sig }.Max();
+                        }
+                        string Chart_name = $"Chart {inx_fai + 1}";
+                        var chart = src_format_wrk.Worksheets[sht].Drawings[Chart_name] as ExcelChart;
+                        chart.Axis[2].MaxValue = bin_end;
+                        chart.Axis[2].MinValue = bin_start;
+                        chart.Axis[2].MajorUnit = (chart.Axis[2].MaxValue - chart.Axis[2].MinValue) / 16;
+                    }
+                    inx_fai++;
+
+                }
+                foreach (var fai in dic_FAI)
+                {
+
+                    if (!myCode.check_columns_existed(dt, fai.Key))
+                    {
+                        if (fai.Value.Count != 0)
+                        {
+                            dt.Columns.Add(fai.Key, typeof(double));
+                        }
+                        else
+                        {
+                            dt.Columns.Add(fai.Key);
+                        }
+                    }
+                    if (dt.Rows.Count < fai.Value.Count)
+                    {
+                        int r = fai.Value.Count - dt.Rows.Count;
+                        for (int i = 0; i < r; i++)
+                        {
+                            dt.Rows.Add();
+                        }
+                    }
+                    for (int j = 0; j < dt.Rows.Count; j++)
+                    {
+                        if (fai.Value.Count != 0)
+                        {
+                            if (j < fai.Value.Count)
+                            {
+                                dt.Rows[j][fai.Key] = fai.Value[j];
+                            }
+                        }
+                        else
+                        {
+                            dt.Rows[j][fai.Key] = "N/A";
+                        }
+                    }
+
+                }
+                if (dt.Rows.Count > 0)
+                {
+                    dt_lst.Add(sht, dt);
+                }
+            }
+            return dt_lst;
+        }
         public string Find_Cell_Addr(string search_key, string start_addr, ExcelWorksheet tar_wrksht, bool left_to_right)
         {
             string result = "";
@@ -639,9 +815,12 @@ namespace FAI_Export
                         ExcelWorksheet format_wrksheet = src_format_wrk.Worksheets[sel_sht_name];
                         string dim_no_addr = Excel_Lib.Find_Cell_Addr("Dim. No.", "B10", format_wrksheet, false);
                         string instrument_addr = Excel_Lib.Find_Cell_Addr("instrument", "B10", format_wrksheet, false);
+                        string BinStart_addr = Excel_Lib.Find_Cell_Addr("Bin_Start", "B10", format_wrksheet, false);
+                        string BinEnd_addr = Excel_Lib.Find_Cell_Addr("Bin_End", "B10", format_wrksheet, false);
                         string FAI_data_addr = Find_Offset(format_wrksheet.Cells[dim_no_addr].Offset(0, 1).Address, format_wrksheet, true, "");
                         int off_set = format_wrksheet.Cells[FAI_data_addr].Start.Column - format_wrksheet.Cells[instrument_addr].Start.Column;
                         Dictionary<string, int> fai_loc = Find_FAI_addr_qty(dim_no_addr, format_wrksheet, false);
+                        //format_wrksheet.Protection.IsProtected = false;
                         if (fai_loc.Count > 0)
                         {
                             string _data_addr = fai_loc.Keys.ToList()[0];
@@ -652,7 +831,7 @@ namespace FAI_Export
                             int start_rgn_row = format_rgn.Start.Row;
                             int start_rgn_col = format_rgn.Start.Column;
                             ExcelRangeBase final_rgn = format_wrksheet.Cells[start_rgn_row, start_rgn_col, start_rgn_row + r_off, total_col_num];
-                            final_rgn.Style.Numberformat.Format = "#0.000";
+                            final_rgn.Style.Numberformat.Format = "#0.000";   
                         }
                         if (format_type == "MASS")
                         {
@@ -681,37 +860,8 @@ namespace FAI_Export
                 }
 
             }
-
-            /***********/
-            List<string> FAI_keys_lst_new = new List<string> { "FAI", "SPC" };
-            if (format_type == "NPI")
-            {
-                int error_count = 0;
-                while (src_format_wrk.Worksheets.Any(x => !FAI_keys_lst_new.Any(y => x.Name.Contains(y))) && error_count < 5)
-                {
-                    try
-                    {
-                        foreach (ExcelWorksheet sht in src_format_wrk.Worksheets)
-                        {
-                            if (sht != null)
-                            {
-                                if (!FAI_keys_lst_new.Any(x => sht.Name.Contains(x)))
-                                {
-                                    src_format_wrk.Worksheets.Delete(sht);
-                                }
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        error_count++;
-                    }
-
-                }
-            }
-            /***********/
-
         }
+
 
     }
 }

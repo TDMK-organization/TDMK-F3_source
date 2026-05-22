@@ -83,28 +83,14 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
         }
         public string Export_FAI_Data_byEPPLUS(string _itemcode, string _lotno, string _type="NPI")
         {
-            //string format_loc = Path.Combine(format_folder, "MASS","FAI");
             string msg = "";
-            //format_folder = Path.Combine(find_config_path(Application.StartupPath, "SEEV Data"), "Format");
-            //report_location = Path.Combine(find_config_path(Application.StartupPath, "SEEV Data"), "Report");
-            //ExportProcess exportProcess = new ExportProcess();
             string app_path = System.Windows.Forms.Application.StartupPath.Replace(@"\FPCA OK2SHIP Auto System", "");
             string config_path = Path.Combine(app_path, "config.ini");
             TDMK_init = new IniFile(config_path);
             FORMAT_LOACTION = TDMK_init.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data\\Format\\{_type}";
             EXPORT_LOACTION = TDMK_init.Read("NasAddress", "SMT_Config").Replace("\\ImageF3", "") + $"\\Report\\{_type}\\SOFTWARE(NOTOUCH)";
-            //EXPORT_LOACTION_LAST = TDMK_init.Read("Report_Location", "SMT_Config") + $"\\SEEV Data\\Report\\{_type}";
             string format_loc = FORMAT_LOACTION;
             string report_location = EXPORT_LOACTION;
-            //if (_type == "NPI")
-            //{
-            //    format_loc = Path.Combine(format_folder, "NPI");
-            //}
-            //else
-            //{
-            //    format_loc = Path.Combine(format_folder, "MASS", "FAI");
-            //}
-
             DataTable FAI_dt = myCode.Load_FAI_ToTable(sqlcon, _itemcode, _lotno, _type);
             DataTable FAI_Spec = myCode.Load_FAI_Spec_ToTable(sqlcon, _itemcode, _type);
             bool export_en = false;
@@ -149,7 +135,6 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         }
                         else
                         {
-                            //string report_path = Path.Combine(report_location, "NPI", "FAI");
                             string report_path = Path.Combine(report_location, "FAI");
                             if (!Directory.Exists(report_path))
                             {
@@ -159,20 +144,30 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         }
                         ExcelPackage Report_Pack = new ExcelPackage();
                         ExcelWorkbook report_saved = null;
-                        bool file_existed = false;
                         if (System.IO.File.Exists(export_file))
                         {
-                            Report_Pack = FAI_Lib.open_excel(export_file);
-                            file_existed = true;
+                            File.Delete(export_file);
+
                         }
-                        else
-                        {
-                            Report_Pack = FAI_Lib.open_excel(format_file);
-                            file_existed = false;
-                            //Report_Pack.SaveAs(new FileInfo(export_file));
-                        }
+                        Report_Pack = FAI_Lib.open_excel(format_file);
+                        List<string> FAI_sheet = new List<string>() { "FAI", "SPC" };
+                        List<string> non_FAI_lst = new List<string>();
+                       
                         report_saved = Report_Pack.Workbook;
-                        int error_count = 0;
+                        for(int i =0;i< report_saved.Worksheets.Count;i++)
+                        {
+                            string sht_name = report_saved.Worksheets[i].Name.ToUpper();
+                            if(!FAI_sheet.Any(x=>sht_name.Contains(x)))
+                            {
+                                non_FAI_lst.Add(sht_name);
+                            }
+                        }
+                        foreach(string s in non_FAI_lst)
+                        {
+                            report_saved.Worksheets.Delete(s);
+                        }
+
+                        /*int error_count = 0;
                         while (report_saved.Names.Count > 0 && error_count < 5)
                         {
                             for (int i = 0; i < report_saved.Names.Count; i++)
@@ -196,32 +191,20 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         catch
                         {
 
-                        }
-                        Dictionary<string, DataTable> dic_data = FAI_Lib.Export_FAI_Batch(sqlcon, report_saved, _itemcode, _lotno, report_type);
+                        }*/
+                        Dictionary<string, DataTable> dic_data = FAI_Lib.Export_FAI_Batch_Histogram(sqlcon, report_saved, _itemcode, _lotno, report_type);
                         FAI_Lib.Export_To_FAI(sqlcon, Report_Pack, _itemcode, _lotno, dic_data, report_type);
-                        if (file_existed)
-                        {
-                            Report_Pack.Save();
-                        }
-                        else
-                        {
-                            Report_Pack.SaveAs(new FileInfo(export_file));
-                        }
+                        Report_Pack.SaveAs(new FileInfo(export_file));
                         Report_Pack.Dispose();
                         msg += "OK";
-                        //MessageBox.Show(new Form { TopMost = true }, "Hoàn thành xuất dữ liệu", "Thông báo");
-                        //ProcessStartInfo pi = new ProcessStartInfo(export_file);
-                        //Process.Start(pi);
                     }
                     else
                     {
                         msg += "Không tìm thấy dữ liệu của ItemCode / Lotno / Shift : " + _itemcode + " / " + _lotno;
-                        //MessageBox.Show(new Form { TopMost = true }, "Không tìm thấy dữ liệu của ItemCode / Lotno / Shift : " + _itemcode + " / " + _lotno, "Thông báo");
                     }
                 }
                 else
                 {
-                    //MessageBox.Show(new Form { TopMost = true }, "Không tìm thấy Format", "Cảnh báo");
                     msg += "Không tìm thấy Format";
                 }
             }
