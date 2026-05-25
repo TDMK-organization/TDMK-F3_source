@@ -223,10 +223,13 @@ namespace FAI_Export_EPPLUS
                     {
                         foreach (ExcelWorksheet sht in src_format_wrk.Worksheets)
                         {
-                            if (!FAI_keys_lst_new.Any(x => sht.Name.Contains(x)))
+                            if (sht!=null)
                             {
-                                src_format_wrk.Worksheets.Delete(sht);
-                            }
+                                if (!FAI_keys_lst_new.Any(x => sht.Name.Contains(x)))
+                                {
+                                    src_format_wrk.Worksheets.Delete(sht);
+                                }
+                            }    
                         }
                     }
                     catch

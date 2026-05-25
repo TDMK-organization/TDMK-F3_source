@@ -15,7 +15,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
 {
     class DBContext : IDisposable
     {
-        private SqlConnection SqlConnection;
+        public SqlConnection SqlConnection;
         IniFile TDMK_init;
 
         private TDMK_SQL_Lib TDMK_SQL = new TDMK_SQL_Lib();

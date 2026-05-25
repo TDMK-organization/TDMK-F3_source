@@ -2209,23 +2209,24 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            OpenFileDialog f_open = new OpenFileDialog();
-            //f_open.Filter = "Excel(*.xlsx)|*.xlsm";
-            f_open.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
-            f_open.InitialDirectory = System.Windows.Forms.Application.StartupPath;
-            if (f_open.ShowDialog() == DialogResult.OK)
-            {
-                if (f_open.FileName != "")
-                {
-                    txtFormat.Text = f_open.FileName;
-                }
-
-            }
-            //    FolderBrowserDialog myfolder = new FolderBrowserDialog();
-            //    if (myfolder.ShowDialog() == DialogResult.OK)
+            //OpenFileDialog f_open = new OpenFileDialog();
+            ////f_open.Filter = "Excel(*.xlsx)|*.xlsm";
+            //f_open.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+            //f_open.InitialDirectory = System.Windows.Forms.Application.StartupPath;
+            //if (f_open.ShowDialog() == DialogResult.OK)
+            //{
+            //    if (f_open.FileName != "")
             //    {
-            //        txtFormat.Text = myfolder.SelectedPath;
+            //        txtFormat.Text = f_open.FileName;
             //    }
+
+            //}
+            FolderBrowserDialog myfolder = new FolderBrowserDialog();
+            myfolder.SelectedPath = System.Windows.Forms.Application.StartupPath;
+            if (myfolder.ShowDialog() == DialogResult.OK)
+            {
+                txtFormat.Text = myfolder.SelectedPath;
+            }
         }
         public string find_format(string in_data_loc, string ItemCode)
         {
