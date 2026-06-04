@@ -233,6 +233,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 $"UNION ALL " +
                 $"SELECT 'Bar Code Verification' AS ExistsCheck FROM BAR_CODE_VERIFICATION WHERE ItemCode = @ItemCode AND LotNo = @LotNo " +
                 $"UNION ALL " +
+                $"SELECT 'FAI' AS ExistsCheck FROM FAI_Auto WHERE ItemCode = @ItemCode AND LotNo = @LotNo " +
+                $"UNION ALL " +
                 $"SELECT 'Packaging' AS ExistsCheck FROM PACKAGING_LOGFILE WHERE ItemCode = @ItemCode" +
                 $"),AllTables AS (" +
                 $" SELECT 'Shear test' AS TableName " +
@@ -257,6 +259,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 $" UNION ALL SELECT 'Bar Code Verification' " +
                 $" UNION ALL SELECT 'Packaging' " +
                 $" UNION ALL SELECT 'SEM BSE & Binarization'" +
+                $" UNION ALL SELECT 'FAI'" +
                 $")" +
                 $" SELECT A.TableName AS NameTable, CASE WHEN F.ExistsCheck IS NOT NULL THEN '1' ELSE '0' END AS Status" +
                 $" FROM AllTables AS A LEFT JOIN FoundRecords AS F ON A.TableName = F.ExistsCheck";
@@ -518,7 +521,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
 
             // Lưu file gốc cuối cùng
-            mainPackage.SaveAsync();
+            //mainPackage.SaveAsync();
         }
 
         /// <summary>

@@ -1,7 +1,6 @@
 ﻿using Export_FPCA_OK2ship_Auto_System.Libary;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing.Chart;
-using OK2SHIP_Lib;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -661,64 +660,72 @@ namespace FAI_Export
                     {
                         dic_FAI.Add(fai_no, fai_val);
                     }
-                    var tar_dr = FAI_Spec_tbl.AsEnumerable().Where(r => r.Field<string>("FAI_No") == fai_no).FirstOrDefault();
-                    if ((tar_dr != null) && (fai_val.Count > 0))
+                    try
                     {
-                        string ul = tar_dr["TolMax"].ToString();
-                        string ll = tar_dr["TolMin"].ToString();
-                        string Side_check = tar_dr["Distribution"].ToString(); 
-                        Double[] data_arr = new double[fai_val.Count];
-                        int inx = 0;
-                        foreach (string c in fai_val)
+                        var tar_dr = FAI_Spec_tbl.AsEnumerable().Where(r => r.Field<string>("FAI_No") == fai_no).FirstOrDefault();
+                        if ((tar_dr != null) && (fai_val.Count > 0))
                         {
-                            if (TDMK_OK2SHIP.checkDBNull(c) != "")
+                            string ul = tar_dr["TolMax"].ToString();
+                            string ll = tar_dr["TolMin"].ToString();
+                            string Side_check = tar_dr["Distribution"].ToString();
+                            Double[] data_arr = new double[fai_val.Count];
+                            int inx = 0;
+                            foreach (string c in fai_val)
                             {
-                                data_arr[inx] = Convert.ToDouble(c);
-                                inx++;
+                                if (TDMK_OK2SHIP.checkDBNull(c) != "")
+                                {
+                                    data_arr[inx] = Convert.ToDouble(c);
+                                    inx++;
+                                }
                             }
-                        }
-                        Array.Resize(ref data_arr, inx);
-                        double UL = 0;
-                        double LL = 0;
+                            Array.Resize(ref data_arr, inx);
+                            double UL = 0;
+                            double LL = 0;
 
-                        if (TDMK_OK2SHIP.IsNumeric_Val(ul) != "")
-                        {
-                            UL = Convert.ToDouble(ul); 
-                        }
-                        if (TDMK_OK2SHIP.IsNumeric_Val(ll) != "")
-                        {
-                            LL = Convert.ToDouble(ll); 
-                        }
-                        double stdev = TDMK_OK2SHIP.CalculateStandardDeviation(data_arr);
-                        double mean = data_arr.Average();
-                        double margin = 2 * stdev;
-                        double mean_minus_7sig = mean - (7 * stdev);
-                        double mean_plus_7sig = mean + (7 * stdev);
-                        double bin_start;
-                        double bin_end;
-                        if (Side_check == "SingleSide-USL")
-                        {
-                            bin_start = new double[] { mean_minus_7sig, UL - margin }.Min();
-                        }
-                        else
-                        {
-                            bin_start = new double[] { LL - margin, mean_minus_7sig }.Min();
-                        }
+                            if (TDMK_OK2SHIP.IsNumeric_Val(ul) != "")
+                            {
+                                UL = Convert.ToDouble(ul);
+                            }
+                            if (TDMK_OK2SHIP.IsNumeric_Val(ll) != "")
+                            {
+                                LL = Convert.ToDouble(ll);
+                            }
+                            double stdev = TDMK_OK2SHIP.CalculateStandardDeviation(data_arr);
+                            double mean = data_arr.Average();
+                            double margin = 2 * stdev;
+                            double mean_minus_7sig = mean - (7 * stdev);
+                            double mean_plus_7sig = mean + (7 * stdev);
+                            double bin_start;
+                            double bin_end;
+                            if (Side_check == "SingleSide-USL")
+                            {
+                                bin_start = new double[] { mean_minus_7sig, UL - margin }.Min();
+                            }
+                            else
+                            {
+                                bin_start = new double[] { LL - margin, mean_minus_7sig }.Min();
+                            }
 
-                        if (Side_check == "SingleSide-LSL")
-                        {
-                            bin_end = new double[] { mean_plus_7sig, LL + margin }.Max();
+                            if (Side_check == "SingleSide-LSL")
+                            {
+                                bin_end = new double[] { mean_plus_7sig, LL + margin }.Max();
+                            }
+                            else
+                            {
+                                bin_end = new double[] { UL + margin, mean_minus_7sig }.Max();
+                            }
+                            string Chart_name = $"Chart {inx_fai + 1}";
+                            var chart = src_format_wrk.Worksheets[sht].Drawings[Chart_name] as ExcelChart;
+                            chart.Axis[2].MaxValue = bin_end;
+                            chart.Axis[2].MinValue = bin_start;
+                            chart.Axis[2].MajorUnit = (chart.Axis[2].MaxValue - chart.Axis[2].MinValue) / 16;
                         }
-                        else
-                        {
-                            bin_end = new double[] { UL + margin, mean_minus_7sig }.Max();
-                        }
-                        string Chart_name = $"Chart {inx_fai + 1}";
-                        var chart = src_format_wrk.Worksheets[sht].Drawings[Chart_name] as ExcelChart;
-                        chart.Axis[2].MaxValue = bin_end;
-                        chart.Axis[2].MinValue = bin_start;
-                        chart.Axis[2].MajorUnit = (chart.Axis[2].MaxValue - chart.Axis[2].MinValue) / 16;
                     }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        continue;
+                    } 
                     inx_fai++;
 
                 }
@@ -861,7 +868,7 @@ namespace FAI_Export
 
             }
         }
-
+        
 
     }
 }

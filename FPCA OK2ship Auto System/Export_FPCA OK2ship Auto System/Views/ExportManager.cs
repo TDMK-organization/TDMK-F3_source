@@ -153,9 +153,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             }
             return result;
         }
-
-
-        private void Export(object sender, EventArgs e)
+       private void Export(object sender, EventArgs e)
         {
             try
             {
@@ -177,10 +175,6 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                         listCategory1.Add(row["Category"].ToString());
                     }
                 }
-
-
-
-
                 List<string> list = _service.ExportOneByOne(itemCode, lotNo, listCategory1.ToArray());
 
                 foreach (string item in list)

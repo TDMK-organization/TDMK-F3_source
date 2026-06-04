@@ -1,8 +1,9 @@
-﻿using Export_FPCA_OK2ship_Auto_System.Repositories;
+﻿using Export_FPCA_OK2ship_Auto_System.Libary;
+using Export_FPCA_OK2ship_Auto_System.Repositories;
 using FAI_Export;
 using IniLibs;
 using OfficeOpenXml;
-using OK2SHIP_Lib;
+//using OK2SHIP_Lib;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -150,21 +151,29 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 
                         }
                         Report_Pack = FAI_Lib.open_excel(format_file);
-                        List<string> FAI_sheet = new List<string>() { "FAI", "SPC" };
+                        List<string> FAI_sheet = new List<string>() { "FAI", "SPC","parentheses" };
                         List<string> non_FAI_lst = new List<string>();
-                       
                         report_saved = Report_Pack.Workbook;
                         for(int i =0;i< report_saved.Worksheets.Count;i++)
                         {
                             string sht_name = report_saved.Worksheets[i].Name.ToUpper();
-                            if(!FAI_sheet.Any(x=>sht_name.Contains(x)))
+                            if(!FAI_sheet.Any(x=>sht_name.Contains(x.ToUpper())))
                             {
                                 non_FAI_lst.Add(sht_name);
                             }
                         }
+
+
                         foreach(string s in non_FAI_lst)
                         {
-                            report_saved.Worksheets.Delete(s);
+                            try
+                            {
+                                report_saved.Worksheets.Delete(s);
+                            }
+                            catch(Exception ex)
+                            {
+                                continue;
+                            }
                         }
 
                         /*int error_count = 0;
@@ -192,10 +201,24 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         {
 
                         }*/
-                        Dictionary<string, DataTable> dic_data = FAI_Lib.Export_FAI_Batch_Histogram(sqlcon, report_saved, _itemcode, _lotno, report_type);
-                        FAI_Lib.Export_To_FAI(sqlcon, Report_Pack, _itemcode, _lotno, dic_data, report_type);
-                        Report_Pack.SaveAs(new FileInfo(export_file));
-                        Report_Pack.Dispose();
+                        try
+                        {
+                            Dictionary<string, DataTable> dic_data = FAI_Lib.Export_FAI_Batch_Histogram(sqlcon, report_saved, _itemcode, _lotno, report_type);
+                            FAI_Lib.Export_To_FAI(sqlcon, Report_Pack, _itemcode, _lotno, dic_data, report_type);
+                        }
+                        catch(Exception ex)
+                        {
+                            MessageBox.Show($"Insert data error: {ex.ToString()}");
+                        }
+                        try
+                        {
+                            Report_Pack.SaveAs(new FileInfo(export_file));
+                            Report_Pack.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.ToString());
+                        }
                         msg += "OK";
                     }
                     else
