@@ -21,7 +21,7 @@ namespace OK2SHIP_SMT.Services
         {
             return true;
         }
-       
+
         public DataTable ReadProcess(string locationFolder, string itemCode, string lotNo)
         {
             DataTable dataTable = new DataTable();
@@ -79,65 +79,70 @@ namespace OK2SHIP_SMT.Services
                 dataTable.Columns.Add("Datetime");
                 dataTable.Columns.Add("ItemCode");
                 dataTable.Columns.Add("LotNo");
-               
+
                 try
                 {
                     using (ExcelPackage package = ExportProcess.openPackage(locationFolder))
                     {
-                        using (ExcelWorksheet worksheet = package.Workbook.Worksheets[0])
+
+                        // Lặp qua các sheet để tìm sheet có dữ liệu (có nhiều hơn 1 dòng)
+                        foreach (var sheet in package.Workbook.Worksheets)
                         {
-                            string[] nameColumn = { "No", "Qr code", "Grade", "Check time" };
-                            IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, nameColumn, true);
-                            int maxRow = worksheet.Dimension.End.Row;
-                            int counting = 100, row = 1;
-                            string address = "";
-                            if (dic.TryGetValue("Grade", out address))
+                            if (sheet.Dimension != null && sheet.Dimension.End.Row > 1)
                             {
-                                while (counting != 0 || row <= maxRow)
+                                using (ExcelWorksheet worksheet = sheet)
                                 {
-                                    string add = ExportProcess.AddRow(address, row);
-                                    string szz = worksheet.Cells[ExportProcess.AddRow(address, row)].Text;
-                                    string szzZ = worksheet.Cells[ExportProcess.AddRow(address, row)].Value.ToString();
-                                    if (worksheet.Cells[ExportProcess.AddRow(address, row)].Value == null)
+                                    string[] nameColumn = { "No", "Qr code", "Grade", "Check time" };
+                                    IDictionary<string, string> dic = ExportProcess.FindAddressByText(worksheet, nameColumn, true);
+                                    int maxRow = worksheet.Dimension.End.Row;
+                                    int counting = 100, row = 1;
+                                    string address = "";
+                                    if (dic.TryGetValue("Grade", out address))
                                     {
-                                        break;
-                                    }
-                                    if (worksheet.Cells[ExportProcess.AddRow(address, row)].Value.ToString().Trim().Equals("A"))
-                                    {
-                                        DataRow dr = dataTable.NewRow();
-                                        //ID
-                                        dr["ID"] = dataTable.Rows.Count + 1;
-                                        //Module
-                                        if (dic.TryGetValue("Qr code", out string addrModule))
+                                        while (counting != 0 && row <= maxRow)
                                         {
-                                            dr["Module"] = worksheet.Cells[ExportProcess.AddRow(addrModule, row)].Value.ToString().Trim();
-                                        }
-                                        //Overall Grade
-                                        dr["Overall Grade"] = worksheet.Cells[ExportProcess.AddRow(address, row)].Value.ToString().Trim();
-                                        //Datetime
-                                        if (dic.TryGetValue("Check time", out string addrDateTime))
-                                        {
-                                            if (DateTime.TryParse(worksheet.Cells[ExportProcess.AddRow(addrDateTime, row)].Value.ToString().Trim(), out DateTime dateTimeValue))
+                                            if (worksheet.Cells[ExportProcess.AddRow(address, row)].Value == null)
                                             {
-                                                dr["Datetime"] = checkDOM(dr["Module"].ToString()).ToString("MMM-dd");
+                                                break;
                                             }
-                                            else
+                                            if (worksheet.Cells[ExportProcess.AddRow(address, row)].Value.ToString().Trim().Equals("A"))
                                             {
-                                                // Handle conversion failure (e.g., assign DateTime.MinValue)
-                                                dr["Datetime"] = DateTime.MinValue;
+                                                DataRow dr = dataTable.NewRow();
+                                                //ID
+                                                dr["ID"] = dataTable.Rows.Count + 1;
+                                                //Module
+                                                if (dic.TryGetValue("Qr code", out string addrModule))
+                                                {
+                                                    dr["Module"] = worksheet.Cells[ExportProcess.AddRow(addrModule, row)].Value.ToString().Trim();
+                                                }
+                                                //Overall Grade
+                                                dr["Overall Grade"] = worksheet.Cells[ExportProcess.AddRow(address, row)].Value.ToString().Trim();
+                                                //Datetime
+                                                if (dic.TryGetValue("Check time", out string addrDateTime))
+                                                {
+                                                    if (DateTime.TryParse(worksheet.Cells[ExportProcess.AddRow(addrDateTime, row)].Value.ToString().Trim(), out DateTime dateTimeValue))
+                                                    {
+                                                        dr["Datetime"] = checkDOM(dr["Module"].ToString()).ToString("MMM-dd");
+                                                    }
+                                                    else
+                                                    {
+                                                        // Handle conversion failure (e.g., assign DateTime.MinValue)
+                                                        dr["Datetime"] = DateTime.MinValue;
+                                                    }
+                                                }
+                                                //ItemCode
+                                                dr["ItemCode"] = itemCode;
+                                                //LotNo
+                                                dr["LotNo"] = lotNo;
+                                                dataTable.Rows.Add(dr);
+                                                counting--;
                                             }
+                                            row++;
                                         }
-                                        //ItemCode
-                                        dr["ItemCode"] = itemCode;
-                                        //LotNo
-                                        dr["LotNo"] = lotNo;
-                                        dataTable.Rows.Add(dr);
-                                        counting--;
-                                        row++;
                                     }
+
                                 }
                             }
-
                         }
                     }
                 }
@@ -232,7 +237,7 @@ namespace OK2SHIP_SMT.Services
                         int startS = 0;
                         string code = dt.Rows[0]["Module"].ToString();
                         workSheet.Cells[ExportProcess.AddRow(add, -1)].Value = code;
-                  
+
                         while (workSheet.Cells[ExportProcess.AddRow(add, 1)].Value != null)
                         {
                             try
@@ -551,7 +556,7 @@ namespace OK2SHIP_SMT.Services
                 row["FactoryCode"] = factoryCode;
                 row["EEEECode"] = eCode;
             }
-            return _db.BuckDataTable(dt,"TABLE_OF_CONTENT_SETTING", new[] { "ItemName" });
+            return _db.BuckDataTable(dt, "TABLE_OF_CONTENT_SETTING", new[] { "ItemName" });
         }
     }
 }

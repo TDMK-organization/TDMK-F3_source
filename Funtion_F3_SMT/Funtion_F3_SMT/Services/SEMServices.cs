@@ -135,6 +135,7 @@ namespace OK2SHIP_SMT.Services
                 if (jud.Equals("Level 3") && double.TryParse(s2, out double d2))
                 {
                     row["CheckResults"] = "OK";
+
                 }
                 else
                 {
@@ -142,6 +143,7 @@ namespace OK2SHIP_SMT.Services
                     row["CheckResults"] = "NG";
                 }
             }
+
             return dataTable;
         }
         public DataTable SEMProcessRead(string location, string itemcode, string lotno, bool prime = false)

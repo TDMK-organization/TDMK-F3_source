@@ -70,6 +70,7 @@ namespace OK2SHIP_SMT.UserControls
                         DataTable dataTable = (DataTable)dgv_Combobox.DataSource;
                         semServices.JudgementCheck(dataTable);
                         dgv_Combobox.DataSource = dataTable;
+                        MakeGood();
                         break;
                     case "Bar Code Verification":
                         DataTable dataTablez = (DataTable)dataGridView.DataSource;
@@ -92,7 +93,6 @@ namespace OK2SHIP_SMT.UserControls
         {
             if (!browseStatusFile)
             {
-
                 FolderBrowserDialog dialog = new FolderBrowserDialog();
                 dialog.ShowDialog();
             }
@@ -489,9 +489,9 @@ namespace OK2SHIP_SMT.UserControls
                         semServices.JudgementCheck(dtz);
                         dgv_Combobox = new CustomDataGridView(dtz, new Dictionary<string, string[]> { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
                         dgv_Combobox.CellClick += cellContentClick;
-                        MakeGood();
                         splitContainer2.Panel2.Controls.Clear();
                         splitContainer2.Panel2.Controls.Add(dgv_Combobox);
+                        MakeGood();
                         break;
                     case "OQC B2B Mating-Unmating":
                         using (OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting())
@@ -541,7 +541,14 @@ namespace OK2SHIP_SMT.UserControls
                     }
                     catch
                     {
-
+                        byte[] imageBytes = (byte[])cell.Value;
+                        using (MemoryStream ms = new MemoryStream(imageBytes))
+                        {
+                            Image image = Image.FromStream(ms);
+                            // Hiển thị hình ảnh trong PictureBox
+                            pictureBox.Image = image;
+                            pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                        }
                     }
 
                 }
@@ -635,6 +642,7 @@ namespace OK2SHIP_SMT.UserControls
                     splitContainer2.Panel2.Controls.Clear();
                     dgv_Combobox = new CustomDataGridView(dtz, new Dictionary<string, string[]> { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
                     splitContainer2.Panel2.Controls.Add(dgv_Combobox);
+                    dgv_Combobox.CellValueChanged += dataGridView_CellValueChanged;
                     lb_headerTable.Text = "Logfile";
                     tb_datagridview.ColumnCount = 2;
                     tb_datagridview.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
@@ -684,6 +692,7 @@ namespace OK2SHIP_SMT.UserControls
                     throw new Exception("Process not found");
             }
         }
+
         private ComboBox cb_airBubble = new ComboBox() { Dock = DockStyle.Fill };
         bool IsTheSameCellValue(int column, int row)
         {
@@ -882,6 +891,31 @@ namespace OK2SHIP_SMT.UserControls
                         dgv_Combobox.CellValueChanged += dataGridView_CellValueChanged;
                         break;
                     case "SEM BSE & Binarization":
+                        for (int i = 0; i < dgv_Combobox.Rows.Count; i++)
+                        {
+                            DataGridViewRow row = dgv_Combobox.Rows[i];
+
+                            // Bỏ qua dòng trống cuối cùng (nếu AllowUserToAddRows = true)
+                            if (row.IsNewRow) continue;
+
+                            // Lấy ô tại cột CheckResults
+                            DataGridViewCell cell = row.Cells["CheckResults"];
+
+                            if (cell.Value != null)
+                            {
+                                string result = cell.Value.ToString();
+                                if (result == "OK")
+                                {
+                                    cell.Style.BackColor = Color.Green;
+                                    cell.Style.ForeColor = Color.White;
+                                }
+                                else if (result == "NG")
+                                {
+                                    cell.Style.BackColor = Color.Red;
+                                    cell.Style.ForeColor = Color.White;
+                                }
+                            }
+                        }
                         foreach (string item in new[] { "SEM200250", "SEM500700", "SEM5K", "Binarization200250", "Binarization500700" })
                         {
                             try
@@ -1097,9 +1131,10 @@ namespace OK2SHIP_SMT.UserControls
                         dgv_Combobox = new CustomDataGridView(dtM, new Dictionary<string, string[]> { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
 
                         dgv_Combobox.CellClick += cellContentClick;
-                        MakeGood();
                         splitContainer2.Panel2.Controls.Clear();
                         splitContainer2.Panel2.Controls.Add(dgv_Combobox);
+                        MakeGood();
+                        dgv_Combobox.CellValueChanged += dataGridView_CellValueChanged;
                         break;
                     case "Bar Code Verification":
                         checkData(location, itemCode, lotNo, process);
@@ -1389,6 +1424,7 @@ namespace OK2SHIP_SMT.UserControls
             }
         }
 
+
         private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
@@ -1400,6 +1436,30 @@ namespace OK2SHIP_SMT.UserControls
                 {
                     case "OQC B2B Mating-Unmating":
                         changedRow["Judgement"] = OQCB2BMatingUnmatting.checkARow(changedRow) ? "OK" : "NG";
+                        break;
+                    case "SEM BSE & Binarization":
+
+                        // 1. Kiểm tra xem ô vừa thay đổi có nằm ở cột "CheckResults" không
+                        if (dgv_Combobox.Columns[e.ColumnIndex].Name == "CheckResults")
+                        {
+                            // Lấy giá trị của ô vừa đổi
+                            string resultValue = changedRow["CheckResults"]?.ToString();
+
+                            // Lấy UI Cell tương ứng trên DataGridView để đổi màu
+                            DataGridViewCell cell = dgv_Combobox.Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+                            // 2. Kiểm tra nếu là "NG" thì tô đỏ, ngược lại trả về bình thường
+                            if (resultValue == "NG")
+                            {
+                                cell.Style.BackColor = Color.Red;
+                                cell.Style.ForeColor = Color.White; // Đổi chữ thành trắng cho dễ đọc trên nền đỏ
+                            }
+                            else
+                            {
+                                cell.Style.BackColor = Color.Empty; // Color.Empty sẽ trả ô về màu mặc định
+                                cell.Style.ForeColor = Color.Empty;
+                            }
+                        }
                         break;
                     case "":
                     default: break;
