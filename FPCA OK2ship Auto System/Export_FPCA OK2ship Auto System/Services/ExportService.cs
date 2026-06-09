@@ -323,6 +323,10 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             string msg = "";
             switch (category)
             {
+                case "Impedance":
+                    ImpedanceService impedanceService = new ImpedanceService();
+                    msg = $"{category}-{_EXPORT_KEY}-{impedanceService.Export(itemCode, lotNo)}";
+                    break;
                 case "OQC B2B Mating_Unmating":
                     OQCB2BMatingUnmatting OQCServcie = new OQCB2BMatingUnmatting();
                     msg = $"{category}-{_EXPORT_KEY}-{OQCServcie.Export(itemCode, lotNo)}";

@@ -89,6 +89,7 @@
     <Compile Include="Services\CrossSectionService.cs" />
     <Compile Include="Services\EEDService.cs" />
     <Compile Include="Services\ExportService.cs" />
+    <Compile Include="Services\FAIService.cs" />
     <Compile Include="Services\GAPConnectorService.cs" />
     <Compile Include="Services\ImpedanceService.cs" />
     <Compile Include="Repositories\NasRepository.cs" />

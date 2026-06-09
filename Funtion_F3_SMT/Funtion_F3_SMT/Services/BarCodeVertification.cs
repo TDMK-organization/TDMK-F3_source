@@ -21,7 +21,7 @@ namespace OK2SHIP_SMT.Services
         {
             return true;
         }
-       
+
         public DataTable ReadProcess(string locationFolder, string itemCode, string lotNo)
         {
             DataTable dataTable = new DataTable();
@@ -79,11 +79,20 @@ namespace OK2SHIP_SMT.Services
                 dataTable.Columns.Add("Datetime");
                 dataTable.Columns.Add("ItemCode");
                 dataTable.Columns.Add("LotNo");
-               
+
                 try
                 {
                     using (ExcelPackage package = ExportProcess.openPackage(locationFolder))
                     {
+
+                        // Lặp qua các sheet để tìm sheet có dữ liệu (có nhiều hơn 1 dòng)
+                        // đang tắt bật lại nếu có nhu cầu từ khách hàng. => File khác so với spec.
+                        //foreach (var sheet in package.Workbook.Worksheets)
+                        //{
+                        //    if (sheet.Dimension != null && sheet.Dimension.End.Row > 1)
+                        //    {
+                        //        using (ExcelWorksheet worksheet = sheet)
+                        //        {
                         using (ExcelWorksheet worksheet = package.Workbook.Worksheets[0])
                         {
                             string[] nameColumn = { "No", "Qr code", "Grade", "Check time" };
@@ -93,11 +102,8 @@ namespace OK2SHIP_SMT.Services
                             string address = "";
                             if (dic.TryGetValue("Grade", out address))
                             {
-                                while (counting != 0 || row <= maxRow)
+                                while (counting != 0 && row <= maxRow)
                                 {
-                                    string add = ExportProcess.AddRow(address, row);
-                                    string szz = worksheet.Cells[ExportProcess.AddRow(address, row)].Text;
-                                    string szzZ = worksheet.Cells[ExportProcess.AddRow(address, row)].Value.ToString();
                                     if (worksheet.Cells[ExportProcess.AddRow(address, row)].Value == null)
                                     {
                                         break;
@@ -133,11 +139,13 @@ namespace OK2SHIP_SMT.Services
                                         dr["LotNo"] = lotNo;
                                         dataTable.Rows.Add(dr);
                                         counting--;
-                                        row++;
                                     }
+                                    row++;
                                 }
                             }
 
+                            //        }
+                            //    }
                         }
                     }
                 }
@@ -232,7 +240,7 @@ namespace OK2SHIP_SMT.Services
                         int startS = 0;
                         string code = dt.Rows[0]["Module"].ToString();
                         workSheet.Cells[ExportProcess.AddRow(add, -1)].Value = code;
-                  
+
                         while (workSheet.Cells[ExportProcess.AddRow(add, 1)].Value != null)
                         {
                             try
@@ -551,7 +559,7 @@ namespace OK2SHIP_SMT.Services
                 row["FactoryCode"] = factoryCode;
                 row["EEEECode"] = eCode;
             }
-            return _db.BuckDataTable(dt,"TABLE_OF_CONTENT_SETTING", new[] { "ItemName" });
+            return _db.BuckDataTable(dt, "TABLE_OF_CONTENT_SETTING", new[] { "ItemName" });
         }
     }
 }

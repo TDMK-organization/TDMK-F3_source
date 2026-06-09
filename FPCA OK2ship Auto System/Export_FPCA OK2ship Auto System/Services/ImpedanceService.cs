@@ -1,6 +1,6 @@
 ﻿using Export_FPCA_OK2ship_Auto_System.Repositories;
-using OfficeOpenXml.Drawing;
 using OfficeOpenXml;
+using OfficeOpenXml.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Export_FPCA_OK2ship_Auto_System.Services
 {
@@ -125,7 +126,32 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
             return dataTable;
         }
+        public string Export(string itemCode, string lotNo)
+        {
+            try
+            {
+                itemCode = itemCode.Trim();
+                lotNo = lotNo.Trim();
+                if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
+                {
+                    throw new Exception("Hãy nhập itemcode và lotno!");
+                }
+                ExportProcess exportProcess = new ExportProcess();
+                using (ExcelPackage ex = exportProcess.FindFormatProcess("Impedance", itemCode, lotNo))
+                {
+                    using (ExcelWorksheet workSheet = exportProcess.FindSheet(ex, "Impedance"))
+                    {
+                        Export(workSheet, itemCode, lotNo);
+                        return "OK";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
 
+        }
 
         public void Export(ExcelWorksheet worksheet, string itemCode, string lotNo)
         {
