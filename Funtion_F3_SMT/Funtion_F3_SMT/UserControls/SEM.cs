@@ -93,7 +93,6 @@ namespace OK2SHIP_SMT.UserControls
         {
             if (!browseStatusFile)
             {
-
                 FolderBrowserDialog dialog = new FolderBrowserDialog();
                 dialog.ShowDialog();
             }
