@@ -56,6 +56,9 @@
     <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.2.0.0\lib\net462\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
     </Reference>
+    <Reference Include="NationalInstruments.Common, Version=19.0.40.49152, Culture=neutral, PublicKeyToken=dc6ad606294fc298" />
+    <Reference Include="NationalInstruments.UI, Version=19.0.45.49154, Culture=neutral, PublicKeyToken=4febd62461bf11a4" />
+    <Reference Include="NationalInstruments.UI.WindowsForms, Version=19.0.45.49154, Culture=neutral, PublicKeyToken=4febd62461bf11a4, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -157,6 +160,7 @@
     <Compile Include="Select_Image.Designer.cs">
       <DependentUpon>Select_Image.cs</DependentUpon>
     </Compile>
+    <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ACFService.cs" />
     <Compile Include="Services\AirBubbleService.cs" />
     <Compile Include="Services\ArtistFramerService.cs" />

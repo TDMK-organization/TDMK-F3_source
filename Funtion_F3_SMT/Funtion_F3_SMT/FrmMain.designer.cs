@@ -85,7 +85,7 @@
             "GAP_CONNECTOR",
             "PEEL_TEST",
             "PEEL_TEST WITHOUT SUS",
-            "MATING_PULL_TEST",
+            "PULL_TEST",
             "SHEAR_TEST",
             "IQC_UNMATING_PULL_TEST",
             "IQC_LINER_PEELING_COUPON",

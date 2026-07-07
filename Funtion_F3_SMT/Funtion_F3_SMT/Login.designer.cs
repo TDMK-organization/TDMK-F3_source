@@ -150,6 +150,7 @@ namespace Funtion_F3_SMT
             this.Text = "Login";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.Login_Load);
+            this.Leave += new System.EventHandler(this.Login_Leave);
             ((System.ComponentModel.ISupportInitialize)(this.LogoPictureBox)).EndInit();
             this.GBUserInfo.ResumeLayout(false);
             this.GBUserInfo.PerformLayout();

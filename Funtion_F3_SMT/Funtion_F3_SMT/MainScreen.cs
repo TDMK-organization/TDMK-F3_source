@@ -1,4 +1,5 @@
 ﻿using OK2SHIP_SMT.Repositories;
+using OK2SHIP_SMT.Services;
 using OK2SHIP_SMT.UserControls;
 using OK2SHIP_SMT.UserControls.Logins;
 using OK2SHIP_SMT.Views;
@@ -20,8 +21,13 @@ namespace Funtion_F3_SMT
         public MainScreen()
         {
             InitializeComponent();
+            if (!checkLogin())
+            {
+                Application.Exit();
+            }
 
             LoadStatusAsync();
+
         }
 
         private async void LoadStatusAsync()
@@ -33,6 +39,7 @@ namespace Funtion_F3_SMT
             // Chạy việc kiểm tra trong một luồng nền (Background Thread)
             // Task.Run giúp UI không bị treo
             await Task.Run(() => checkingStatus());
+
         }
 
         private void checkingStatus()
@@ -161,9 +168,18 @@ namespace Funtion_F3_SMT
         {
 
         }
-
+        private bool checkLogin()
+        {
+            if (!UserSession.Instance.IsLoggedIn)
+            {
+                Login loginForm = new Login();
+                loginForm.ShowDialog();
+            }
+            return UserSession.Instance.IsLoggedIn;
+        }
         private void lblInputdata_Click(object sender, EventArgs e)
         {
+
             FrmMain frmInput = new FrmMain();
             frmInput.Show();
             this.Hide();
@@ -222,7 +238,7 @@ namespace Funtion_F3_SMT
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                
+
             }
 
         }

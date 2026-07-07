@@ -17,16 +17,33 @@ namespace OK2SHIP_SMT.UserControls.Logins
 {
     public partial class UserDashboard : UserControl
     {
+        private AccountService _service = new AccountService();
+
 
         public UserDashboard()
         {
             InitializeComponent();
-            tabPage1.Controls.Add(new DatabaseTool());
+
+
             CheckState();
         }
         private void CheckState()
         {
+            if (UserSession.Instance.User_ID != "ADMIN")
+            {
+                tabPage1.Controls.Add(new DatabaseTool());
+                tabControl.TabPages.Remove(tp_AccountManager);
+            }
+            if (UserSession.Instance.User_ID == "ADMIN")
+            {
+                tabPage1.Controls.Add(new DatabaseTool());
+                tabControl.TabPages.Remove(tp_EditProfile);
+            }
+            if (UserSession.Instance.IsLoggedIn)
+            {
+                yourUserName.Text = UserSession.Instance.Username;
 
+            }
 
         }
 
@@ -104,6 +121,64 @@ namespace OK2SHIP_SMT.UserControls.Logins
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                string result = _service.UpdateAccount((DataTable)listAccount.DataSource);
+                MessageBox.Show(result);
+                btn_Search_Click(sender, e); // Refresh the list after deletion
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private void button6_Click(object sender, EventArgs e)
+        {
+            // Delete Account
+            if (MessageBox.Show("Bạn có chắc chắn muốn xóa tài khoản này không?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                try
+                {
+                    string[] userIds = listAccount.SelectedCells
+                    .Cast<DataGridViewCell>()
+                    .Select(cell => cell.OwningRow)
+                    .Distinct()
+                    .Select(row => row.Cells["User_ID"].Value?.ToString())
+                    .Where(id => !string.IsNullOrEmpty(id)) // Loại bỏ giá trị null hoặc rỗng
+                    .ToArray();
+
+
+                    string result = _service.DeleteAccount(userIds);
+                    MessageBox.Show(result);
+                    btn_Search_Click(sender, e); // Refresh the list after deletion
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            // Deactive Account 
+        }
+
+        private void tdmK_Button1_Click(object sender, EventArgs e)
+        {
+            string pass = null;
+            if(!yourPass.Text.Equals("") )
+            {
+                pass = yourPass.Text;  
+            }
+            AccountService accountService = new AccountService();
+            string res = accountService.UpdateAccount(yourUserName.Text, pass);
+            MessageBox.Show(res);
         }
     }
 }

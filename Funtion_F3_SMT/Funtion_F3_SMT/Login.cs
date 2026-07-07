@@ -129,7 +129,7 @@ namespace Funtion_F3_SMT
 
         private void Cancel_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            Application.Exit();
         }
 
         private void txtPassword_TextChanged(object sender, EventArgs e)
@@ -141,6 +141,14 @@ namespace Funtion_F3_SMT
         private void txtUsername_TextChanged(object sender, EventArgs e)
         {
             btnLogin.Text = "Login";
+        }
+
+        private void Login_Leave(object sender, EventArgs e)
+        {
+            if (!UserSession.Instance.IsLoggedIn)
+            {
+               Application.Exit(); 
+            }
         }
     }
 }

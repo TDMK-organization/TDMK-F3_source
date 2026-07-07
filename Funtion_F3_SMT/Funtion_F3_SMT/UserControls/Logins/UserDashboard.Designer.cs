@@ -45,6 +45,13 @@
             this.listAccount = new System.Windows.Forms.DataGridView();
             this.tp_EditProfile = new System.Windows.Forms.TabPage();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.tdmK_Button1 = new OK2SHIP_SMT.ToolBoxs.TDMK_Button();
+            this.yourUserName = new System.Windows.Forms.TextBox();
+            this.yourPass = new System.Windows.Forms.TextBox();
             this.tabControl.SuspendLayout();
             this.tp_AccountManager.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -52,6 +59,9 @@
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listAccount)).BeginInit();
+            this.tp_EditProfile.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
+            this.tableLayoutPanel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -140,6 +150,7 @@
             this.button6.TabIndex = 5;
             this.button6.Text = "Delete Account";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // button5
             // 
@@ -151,6 +162,7 @@
             this.button5.TabIndex = 4;
             this.button5.Text = "Deactive Account";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button4
             // 
@@ -196,6 +208,7 @@
             this.button2.TabIndex = 1;
             this.button2.Text = "Edit Account";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // tableLayoutPanel3
             // 
@@ -248,6 +261,7 @@
             // 
             // tp_EditProfile
             // 
+            this.tp_EditProfile.Controls.Add(this.tableLayoutPanel5);
             this.tp_EditProfile.Location = new System.Drawing.Point(4, 22);
             this.tp_EditProfile.Name = "tp_EditProfile";
             this.tp_EditProfile.Padding = new System.Windows.Forms.Padding(3);
@@ -266,6 +280,92 @@
             this.tabPage1.Text = "DataBaseTool";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 3;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 51.93705F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 48.06295F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 411F));
+            this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel6, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(this.tdmK_Button1, 0, 1);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 2;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 86.85121F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 13.14879F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(1237, 578);
+            this.tableLayoutPanel5.TabIndex = 0;
+            // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.ColumnCount = 2;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.1513F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67.8487F));
+            this.tableLayoutPanel6.Controls.Add(this.yourPass, 1, 1);
+            this.tableLayoutPanel6.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel6.Controls.Add(this.label2, 0, 1);
+            this.tableLayoutPanel6.Controls.Add(this.yourUserName, 1, 0);
+            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            this.tableLayoutPanel6.RowCount = 3;
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.29839F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 13.30645F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 74.39516F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(423, 496);
+            this.tableLayoutPanel6.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(105, 24);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Username";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(3, 61);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(100, 24);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Password";
+            // 
+            // tdmK_Button1
+            // 
+            this.tdmK_Button1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tdmK_Button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold);
+            this.tdmK_Button1.Location = new System.Drawing.Point(3, 505);
+            this.tdmK_Button1.Name = "tdmK_Button1";
+            this.tdmK_Button1.Size = new System.Drawing.Size(423, 70);
+            this.tdmK_Button1.TabIndex = 1;
+            this.tdmK_Button1.Text = "Update";
+            this.tdmK_Button1.UseVisualStyleBackColor = true;
+            this.tdmK_Button1.Click += new System.EventHandler(this.tdmK_Button1_Click);
+            // 
+            // yourUserName
+            // 
+            this.yourUserName.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.yourUserName.Location = new System.Drawing.Point(138, 3);
+            this.yourUserName.Multiline = true;
+            this.yourUserName.Name = "yourUserName";
+            this.yourUserName.Size = new System.Drawing.Size(282, 55);
+            this.yourUserName.TabIndex = 2;
+            // 
+            // yourPass
+            // 
+            this.yourPass.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.yourPass.Location = new System.Drawing.Point(138, 64);
+            this.yourPass.Multiline = true;
+            this.yourPass.Name = "yourPass";
+            this.yourPass.Size = new System.Drawing.Size(282, 60);
+            this.yourPass.TabIndex = 3;
+            // 
             // UserDashboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -281,6 +381,10 @@
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listAccount)).EndInit();
+            this.tp_EditProfile.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
+            this.tableLayoutPanel6.ResumeLayout(false);
+            this.tableLayoutPanel6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -304,5 +408,12 @@
         private System.Windows.Forms.Button btn_Search;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox yourPass;
+        private System.Windows.Forms.TextBox yourUserName;
+        private ToolBoxs.TDMK_Button tdmK_Button1;
     }
 }

@@ -406,6 +406,10 @@ namespace Funtion_F3_SMT
                 sheet = "PEEL_TEST";
                 _PRIME_PEEL_TEST = true;
             }
+            if(sheet.Equals("PULL_TEST"))
+            {
+                sheet = "MATING_PULL_TEST";
+            }
 
             //Debugger.Break();
             string program_loc = F_export_EPPlus.find_config_path(System.Windows.Forms.Application.StartupPath, "TDMK Program");
