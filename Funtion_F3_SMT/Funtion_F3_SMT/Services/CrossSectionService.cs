@@ -27,7 +27,7 @@ namespace OK2SHIP_SMT.Services
             table.Columns.Add("Remark", typeof(string));
             return table;
         }
-        public static DataTable getStructorTableByte()
+        public static DataTable getStructorTableByte(string s = "CROSS")
         {
             DataTable table = new DataTable();
             table.Columns.Add("ID", typeof(int));
@@ -37,7 +37,10 @@ namespace OK2SHIP_SMT.Services
             table.Columns.Add("Sheet", typeof(string));
             table.Columns.Add("Region", typeof(string));
             table.Columns.Add("Sample", typeof(string));
-            table.Columns.Add("Image", typeof(byte[]));
+            if (s == "GAP")
+            {
+                table.Columns.Add("Image", typeof(byte[]));
+            }
             table.Columns.Add("Image1", typeof(byte[]));
             table.Columns.Add("Image2", typeof(byte[]));
             table.Columns.Add("Data", typeof(string));

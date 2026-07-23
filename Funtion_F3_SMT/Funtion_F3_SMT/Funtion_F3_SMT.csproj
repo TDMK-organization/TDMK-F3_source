@@ -293,6 +293,12 @@
     <Compile Include="UserControls\UC_Impedance.Designer.cs">
       <DependentUpon>UC_Impedance.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\UC_IQCPeelingTest.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\UC_IQCPeelingTest.Designer.cs">
+      <DependentUpon>UC_IQCPeelingTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\UC_NewFeature.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -422,6 +428,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\UC_Impedance.resx">
       <DependentUpon>UC_Impedance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\UC_IQCPeelingTest.resx">
+      <DependentUpon>UC_IQCPeelingTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\UC_NewFeature.resx">
       <DependentUpon>UC_NewFeature.cs</DependentUpon>

@@ -20,6 +20,7 @@ namespace OK2SHIP_SMT.Services
         private DBContext _dbContext = new DBContext();
         public string _ITEMCODE { get; set; }
         public string _LOTNO { get; set; }
+        public string _TYPE { get; set; }
         private DBContext DBContext = new DBContext();
         public Dictionary<string, DataTable> _SPEC = new Dictionary<string, DataTable>();
         public Dictionary<string, DataTable> _DIC = new Dictionary<string, DataTable>();
@@ -93,82 +94,82 @@ namespace OK2SHIP_SMT.Services
         }
         public void MakerSpec(string itemCode, string lotNo)
         {
-            List<DataTable> listDt = new List<DataTable>();
-            listDt.Add(_dbContext.LoadDataTable("SPEC_COMMENT_3", new[] { "ItemCode", "Sheet", "Remark" }, new[] { itemCode, "LINER_PEEL_TEST_ON_PRODUCT", "NPI" }));
-            listDt.Add(_dbContext.LoadDataTable("SPEC_COMMENT_3", new[] { "ItemCode", "Sheet", "Remark" }, new[] { itemCode, "PSA_PEEL_TEST_ON_PRODUCT", "NPI" }));
+            //List<DataTable> listDt = new List<DataTable>();
+            //listDt.Add(_dbContext.LoadDataTable("SPEC_COMMENT_3", new[] { "ItemCode", "Sheet", "Remark" }, new[] { itemCode, "LINER_PEEL_TEST_ON_PRODUCT", "NPI" }));
+            //listDt.Add(_dbContext.LoadDataTable("SPEC_COMMENT_3", new[] { "ItemCode", "Sheet", "Remark" }, new[] { itemCode, "PSA_PEEL_TEST_ON_PRODUCT", "NPI" }));
             string _key = $"{itemCode} - {lotNo}";
             _SPEC.Add(_key, setUpSpec());
-            Dictionary<string, DataRow> dic = new Dictionary<string, DataRow>();
+            //Dictionary<string, DataRow> dic = new Dictionary<string, DataRow>();
 
-            foreach (DataTable dataTable in listDt)
-            {
-                foreach (DataRow row in dataTable.Rows)
-                {
-                    string type = row["Sheet"].ToString().Split('_')[0];
-                    string counting = row["Count_Sample"].ToString();
-                    string[] lists = row["Location"].ToString().Split('-');
-                    foreach (string item in lists)
-                    {
-                        //Debugger.Break();
-                        string[] iteZ = item.Split('|');
-                        if (iteZ.Count() >= 2)
-                        {
+            //foreach (DataTable dataTable in listDt)
+            //{
+            //    foreach (DataRow row in dataTable.Rows)
+            //    {
+            //        string type = row["Sheet"].ToString().Split('_')[0];
+            //        string counting = row["Count_Sample"].ToString();
+            //        string[] lists = row["Location"].ToString().Split('-');
+            //        foreach (string item in lists)
+            //        {
+            //            //Debugger.Break();
+            //            string[] iteZ = item.Split('|');
+            //            if (iteZ.Count() >= 2)
+            //            {
 
-                            if (dic.TryGetValue($"{type}-{iteZ[0]}", out DataRow valueRow))
-                            {
+            //                if (dic.TryGetValue($"{type}-{iteZ[0]}", out DataRow valueRow))
+            //                {
 
-                            }
-                            else
-                            {
-                                valueRow = _SPEC[_key].NewRow();
-                                valueRow["ItemCode"] = itemCode;
-                                valueRow["LotNo"] = lotNo;
-                                valueRow["Type"] = type;
-                                valueRow["Tape"] = iteZ[0];
-                            }
-                            try
-                            {
+            //                }
+            //                else
+            //                {
+            //                    valueRow = _SPEC[_key].NewRow();
+            //                    valueRow["ItemCode"] = itemCode;
+            //                    valueRow["LotNo"] = lotNo;
+            //                    valueRow["Type"] = type;
+            //                    valueRow["Tape"] = iteZ[0];
+            //                }
+            //                try
+            //                {
 
-                                if (iteZ[1].Contains("Average"))
-                                {
-                                    if (iteZ[1].Contains("(gf)"))
-                                    {
-                                        valueRow["Average(Gf)"] = iteZ[1].Split(':')[1];
-                                    }
-                                    if (iteZ[1].Contains("(N)"))
-                                    {
-                                        valueRow["Average(N)"] = iteZ[1].Split(':')[1];
+            //                    if (iteZ[1].Contains("Average"))
+            //                    {
+            //                        if (iteZ[1].Contains("(gf)"))
+            //                        {
+            //                            valueRow["Average(Gf)"] = iteZ[1].Split(':')[1];
+            //                        }
+            //                        if (iteZ[1].Contains("(N)"))
+            //                        {
+            //                            valueRow["Average(N)"] = iteZ[1].Split(':')[1];
 
-                                    }
-                                }
-                            }
-                            catch
-                            {
+            //                        }
+            //                    }
+            //                }
+            //                catch
+            //                {
 
-                            }
-                            if (iteZ[1].Contains("Peak"))
-                            {
-                                if (iteZ[1].Contains("(gf)"))
-                                {
-                                    valueRow["Peak(Gf)"] = iteZ[1].Split(':')[1];
-                                }
-                                if (iteZ[1].Contains("(N)"))
-                                {
-                                    valueRow["Peak(N)"] = iteZ[1].Split(':')[1];
+            //                }
+            //                if (iteZ[1].Contains("Peak"))
+            //                {
+            //                    if (iteZ[1].Contains("(gf)"))
+            //                    {
+            //                        valueRow["Peak(Gf)"] = iteZ[1].Split(':')[1];
+            //                    }
+            //                    if (iteZ[1].Contains("(N)"))
+            //                    {
+            //                        valueRow["Peak(N)"] = iteZ[1].Split(':')[1];
 
-                                }
-                            }
-                            dic[$"{type}-{iteZ[0]}"] = valueRow;
+            //                    }
+            //                }
+            //                dic[$"{type}-{iteZ[0]}"] = valueRow;
 
-                        }
-                    }
-                }
-            }
-            foreach (DataRow item in dic.Values)
-            {
-                item["ID"] = _SPEC[_key].Rows.Count + 1;
-                _SPEC[_key].Rows.Add(item);
-            }
+            //            }
+            //        }
+            //    }
+            //}
+            //foreach (DataRow item in dic.Values)
+            //{
+            //    item["ID"] = _SPEC[_key].Rows.Count + 1;
+            //    _SPEC[_key].Rows.Add(item);
+            //}
         }
         private DataTable setUpSpec()
         {
@@ -184,10 +185,11 @@ namespace OK2SHIP_SMT.Services
             dataTable.Columns.Add("Average(Gf)");
             return dataTable;
         }
-        public PeelTestOnProductService(string iTEMCODE, string lOTNO)
+        public PeelTestOnProductService(string iTEMCODE, string lOTNO, string type)
         {
             _ITEMCODE = iTEMCODE;
             _LOTNO = lOTNO;
+            _TYPE = type;
             SetUpDT();
         }
 
@@ -358,7 +360,107 @@ namespace OK2SHIP_SMT.Services
 
                 }
             }
+            CalculationSpec();
             throw new Exception(msg + "Lấy dữ liệu thành công!");
+        }
+        public void CalculationSpec()
+        {
+            // Hệ số quy đổi: 1 N = 101.9716 gf
+            const double N_TO_GF = 101.9716;
+
+            foreach (var kvp in _SPEC)
+            {
+                DataTable table = kvp.Value;
+                if (table == null || table.Rows.Count == 0) continue;
+
+                foreach (DataRow row in table.Rows)
+                {
+                    // Xử lý cặp cột Peak
+                    ProcessColumnPair(row, "Peak(N)", "Peak(Gf)", N_TO_GF);
+
+                    // Xử lý cặp cột Average
+                    ProcessColumnPair(row, "Average(N)", "Average(Gf)", N_TO_GF);
+                }
+            }
+            foreach(string key in _DIC.Keys)
+            {
+                CheckSpec(key);
+            }
+        }
+
+        private void ProcessColumnPair(DataRow row, string colN, string colGf, double factor)
+        {
+            if (!row.Table.Columns.Contains(colN) || !row.Table.Columns.Contains(colGf))
+                return;
+
+            string valN = row[colN]?.ToString()?.Trim();
+            string valGf = row[colGf]?.ToString()?.Trim();
+
+            bool hasN = !string.IsNullOrEmpty(valN) && valN != DBNull.Value.ToString();
+            bool hasGf = !string.IsNullOrEmpty(valGf) && valGf != DBNull.Value.ToString();
+
+            // 1. Nếu cột N có dữ liệu mà cột Gf trống -> Quy đổi từ N sang Gf
+            if (hasN && !hasGf)
+            {
+                row[colGf] = TransformRangeValue(valN, factor, true); // Tính và làm tròn Gf mới
+                row[colN] = FormatOldValue(valN);                     // Làm tròn N cũ
+            }
+            // 2. Ngược lại: Nếu cột Gf có dữ liệu mà cột N trống -> Quy đổi từ Gf sang N
+            else if (hasGf && !hasN)
+            {
+                row[colN] = TransformRangeValue(valGf, factor, false); // Tính và làm tròn N mới
+                row[colGf] = FormatOldValue(valGf);                    // Làm tròn Gf cũ
+            }
+            // 3. Nếu cả 2 đều đã có dữ liệu -> Chỉ làm tròn lại cho đồng nhất (Tùy chọn)
+            else if (hasN && hasGf)
+            {
+                row[colN] = FormatOldValue(valN);
+                row[colGf] = FormatOldValue(valGf);
+            }
+        }
+
+        // Hàm quy đổi đơn vị và làm tròn (cho giá trị mới)
+        private string TransformRangeValue(string input, double factor, bool toGf)
+        {
+            string cleanInput = input.Replace("(", "").Replace(")", "");
+            string[] parts = cleanInput.Split('~');
+
+            if (parts.Length == 2 &&
+                double.TryParse(parts[0].Trim(), out double minVal) &&
+                double.TryParse(parts[1].Trim(), out double maxVal))
+            {
+                if (toGf)
+                {
+                    minVal = minVal * factor;
+                    maxVal = maxVal * factor;
+                }
+                else
+                {
+                    minVal = minVal / factor;
+                    maxVal = maxVal / factor;
+                }
+
+                return $"{minVal:F3} ~ {maxVal:F3}"; // Làm tròn 3 số
+            }
+
+            return input;
+        }
+
+        // Hàm CHỈ LÀM TRÒN lại chuỗi giá trị (cho giá trị cũ)
+        private string FormatOldValue(string input)
+        {
+            string cleanInput = input.Replace("(", "").Replace(")", "");
+            string[] parts = cleanInput.Split('~');
+
+            if (parts.Length == 2 &&
+                double.TryParse(parts[0].Trim(), out double minVal) &&
+                double.TryParse(parts[1].Trim(), out double maxVal))
+            {
+                // Trả về đúng giá trị ban đầu nhưng ép làm tròn 3 số thập phân
+                return $"{minVal:F3} ~ {maxVal:F3}";
+            }
+
+            return input;
         }
         public DataTable MakerTable()
         {
@@ -383,10 +485,33 @@ namespace OK2SHIP_SMT.Services
             SetUpDT();
             _DIC = new Dictionary<string, DataTable>();
         }
-        public DataTable readSubTapeFolder(string location, string keyDic)
+        public string solveSigma(double[] list)
+        {
+
+            // 1. Tính giá trị trung bình (Mean / Average)
+            double mean = list.Average();
+
+            // 2. Tính độ lệch chuẩn mẫu (Sample Standard Deviation - STDEV.S)
+            // Sử dụng n - 1 (độ tự do) theo chuẩn thống kê mẫu
+            double variance = list.Sum(val => Math.Pow(val - mean, 2)) / (list.Length - 1);
+            double stdDev = Math.Sqrt(variance);
+
+            // 3. Tính giới hạn 4 Sigma
+            double lowerLimit = mean - 4 * stdDev;
+            double upperLimit = mean + 4 * stdDev;
+
+            // Nếu giới hạn dưới không được âm (tùy thuộc vào đặc tính lực bóc/peeling force)
+            lowerLimit = Math.Max(0, lowerLimit);
+
+            return $"{lowerLimit} ~ {upperLimit}";
+        }
+        public DataTable readSubTapeFolder(string location, string keyDic, out string sigma )
         {
             DataTable dataTable = MakerTable();
             string locaImg = location;
+            List<Double> listPeak = new List<double>();
+            List<Double> listAverage = new List<double>();
+
             if (FileFolderRepository.GetSubFolders(location).Contains($"{location}\\ANH"))
             {
                 locaImg += "\\ANH\\";
@@ -413,21 +538,34 @@ namespace OK2SHIP_SMT.Services
             });
             files.Sort(delegate (string item1, string item2)
             {
-                if (int.TryParse(FileFolderRepository.GetFolderName(item1).Split('.')[0].Split('.')[0], out int i1) && int.TryParse(FileFolderRepository.GetFolderName(item2).Split('.')[0], out int i2))
+                string name1 = FileFolderRepository.GetFolderName(item1);
+                string name2 = FileFolderRepository.GetFolderName(item2);
+
+                // Tách số chính và số phụ bằng cách cắt chuỗi dựa vào dấu gạch ngang '-'
+                // Ví dụ: "1-1" -> parts[0] = "1", parts[1] = "1"
+                // Ví dụ: "1"   -> parts[0] = "1", không có phần 2
+                string[] parts1 = name1.Split('.')[0].Split('-');
+                string[] parts2 = name2.Split('.')[0].Split('-');
+
+                bool parseMain1 = int.TryParse(parts1[0], out int main1);
+                bool parseMain2 = int.TryParse(parts2[0], out int main2);
+
+                if (parseMain1 && parseMain2)
                 {
-                    if (i1 < i2)
+                    // So sánh số chính trước
+                    if (main1 != main2)
                     {
-                        return -1;
+                        return main1.CompareTo(main2);
                     }
-                    else
-                    {
-                        return 1;
-                    }
+
+                    // Nếu số chính bằng nhau, so sánh số phụ (nếu có)
+                    int sub1 = (parts1.Length > 1 && int.TryParse(parts1[0], out int s1)) ? s1 : 0;
+                    int sub2 = (parts2.Length > 1 && int.TryParse(parts2[1], out int s2)) ? s2 : 0; // Sửa lỗi cú pháp index của bạn thành s2
+
+                    return sub1.CompareTo(sub2);
                 }
-                else
-                {
-                    return -1;
-                }
+
+                return string.Compare(item1, item2, StringComparison.Ordinal);
             });
             int i = 0;
             string peakRange = "";
@@ -443,7 +581,9 @@ namespace OK2SHIP_SMT.Services
                 }
             }
             int z = 0;
-            while (i < files.Count || i < list.Count)
+            int step = 0;
+
+            while (step < files.Count || i < list.Count)
             {
                 DataRow row = dataTable.NewRow();
                 row["ID"] = i + 1;
@@ -455,9 +595,28 @@ namespace OK2SHIP_SMT.Services
                     row["Picture"] = (Image)list[z].Key;
                     z++;
                 }
-                if (i < files.Count)
+                if (step < files.Count)
                 {
-                    KeyValuePair<Image, string> paire = solveFileData(files[i]);
+                    KeyValuePair<Image, string> paire = solveFileData(files[step]);
+                    try
+                    {
+
+                        int iStep = int.Parse(FileFolderRepository.GetFileNameWithoutExtension(files[step + 1]).Split('-')[0].Trim());
+                        if (i + 1 == iStep)
+                        {
+                            KeyValuePair<Image, string> paireZ = solveFileData(files[step + 1]);
+                            paire = new KeyValuePair<Image, string>(paire.Key, $"{paireZ.Value.Split(',')[0]},{paire.Value.Split(',')[1]}");
+                            step++;
+                            
+                        }
+                        
+                        
+                    }
+                    catch
+                    {
+
+                    }
+                    step++;
                     row["Graph"] = paire.Key;
                     if (keyDic.Contains("PSA"))
                     {
@@ -521,12 +680,16 @@ namespace OK2SHIP_SMT.Services
                             row["JudgementForce"] = "OK";
                         }
                     }
+                    listPeak.Add(double.Parse(row["Peak(N)"].ToString()));
+                    listAverage.Add(double.Parse(row["Average(N)"].ToString()));
                 }
 
                 i++;
                 dataTable.Rows.Add(row);
 
             }
+            sigma = $"{solveSigma(listAverage.ToArray())}-{solveSigma(listPeak.ToArray())}";
+            
             return dataTable;
         }
         private KeyValuePair<Image, string> solveFileData(string location)
@@ -543,25 +706,53 @@ namespace OK2SHIP_SMT.Services
                     string value = ""; bool prime = false;
                     if (dic.TryGetValue("Max", out string address))
                     {
-                        address = ws.Cells[ws.Cells[address].End.Row, ws.Cells[address].End.Column + 4].Address;
-                        value += ws.Cells[address].Value.ToString().Trim();
-                        if (string.IsNullOrEmpty(value))
+                        int i = 1;
+                        while (i <= 20)
                         {
-                            address = ws.Cells[ws.Cells[address].End.Row, ws.Cells[address].End.Column + 5].Address;
-                            value += ws.Cells[address].Value.ToString().Trim();
+                            string addressZ = ws.Cells[ws.Cells[address].End.Row, ws.Cells[address].End.Column + i].Address;
+                            var z = ws.Cells[addressZ].Value;
+                            if (z != null)
+                            {
+                                value = z.ToString().Trim();
+                                if (!string.IsNullOrEmpty(value))
+                                {
+                                    if (double.TryParse(value, out double ressz))
+                                    {
+                                        break;
+
+                                    }
+                                }
+                            }
+                            i++;
                         }
+                        //if (string.IsNullOrEmpty(value))
+                        //{
+                        //    address = ws.Cells[ws.Cells[address].End.Row, ws.Cells[address].End.Column + 5].Address;
+                        //    value += ws.Cells[address].Value.ToString().Trim();
+                        //}
                     }
                     if (dic.TryGetValue("Average", out address))
                     {
-                        if (prime)
+                        int i = 1;
+                        while (i <= 20)
                         {
-                            address = ws.Cells[ws.Cells[address].End.Row, ws.Cells[address].End.Column + 5].Address;
+                            string addressZ = ws.Cells[ws.Cells[address].End.Row, ws.Cells[address].End.Column + i].Address;
+                            var z = ws.Cells[addressZ].Value;
+                            if (z != null)
+                            {
+                                string valueZ = z.ToString().Trim();
+                                if (!string.IsNullOrEmpty(valueZ))
+                                {
+                                    if (double.TryParse(valueZ, out double ressz))
+                                    {
+                                        value += "," + valueZ;
+                                        break;
+
+                                    }
+                                }
+                            }
+                            i++;
                         }
-                        else
-                        {
-                            address = ws.Cells[ws.Cells[address].End.Row, ws.Cells[address].End.Column + 4].Address;
-                        }
-                        value += "," + ws.Cells[address].Value.ToString().Trim();
                     }
                     pair = new KeyValuePair<Image, string>(TDMK_ImageConverter.ByteArrayToImage(image), value);
                 }
@@ -574,6 +765,9 @@ namespace OK2SHIP_SMT.Services
             string[] subs = FileFolderRepository.GetSubFolders(locationItem);
             foreach (string s in subs)
             {
+                string key = $"{FileFolderRepository.GetFolderName(s)} - {makerName}_{name}";
+                _DIC.Add(key, readSubTapeFolder(s, key, out string sigma));
+
                 if (primeSpec)
                 {
                     DataRow row = _SPEC[$"{_ITEMCODE} - {_LOTNO}"].NewRow();
@@ -582,10 +776,11 @@ namespace OK2SHIP_SMT.Services
                     row["LotNo"] = _LOTNO;
                     row["Type"] = name;
                     row["Tape"] = $"{FileFolderRepository.GetFolderName(s)}";
+                    row["Average(N)"] = sigma.Split('-')[0];
+                    row["Peak(N)"] = sigma.Split('-')[1];
                     _SPEC[$"{_ITEMCODE} - {_LOTNO}"].Rows.Add(row);
                 }
-                string key = $"{FileFolderRepository.GetFolderName(s)} - {makerName}_{name}";
-                _DIC.Add(key, readSubTapeFolder(s, key));
+                
             }
         }
         public bool checkNG()
@@ -625,10 +820,12 @@ namespace OK2SHIP_SMT.Services
         }
         public void SaveData(bool prime = false)
         {
+            
+            string fakeItemCode = $"{_ITEMCODE}" + (_TYPE == "Displacement" ? "&D" : "");
             DataTable dt = new DataTable();
             if (!prime)
             {
-                dt = _dbContext.LoadDataTable("PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" }, new[] { _ITEMCODE, _LOTNO });
+                dt = _dbContext.LoadDataTable("PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" }, new[] { fakeItemCode, _LOTNO });
                 if (dt.Rows.Count > 0)
                 {
                     throw new Exception("1402 - Đã có dữ liệu bạn muốn tiếp tục?");
@@ -651,12 +848,12 @@ namespace OK2SHIP_SMT.Services
                 }
             }
             NasRepository nas = new NasRepository();
-            string location = nas.HandleImageDataTable(dt, "PT_ONPRODUCT", _ITEMCODE, _LOTNO);
-            string location_spec = nas.HandleImageDataTable(_SPEC[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_SEPC", _ITEMCODE, _LOTNO);
-            string location_before = nas.HandleImageDataTable(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_BEFOREIMAGE", _ITEMCODE, _LOTNO);
+            string location = nas.HandleImageDataTable(dt, "PT_ONPRODUCT", fakeItemCode, _LOTNO);
+            string location_spec = nas.HandleImageDataTable(_SPEC[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_SEPC", fakeItemCode, _LOTNO);
+            string location_before = nas.HandleImageDataTable(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_BEFOREIMAGE", fakeItemCode, _LOTNO);
             DataTable dataTable = _dbContext.GetTableStructure("PT_ONPRODUCT_NAS");
             DataRow row = dataTable.NewRow();
-            row["ItemCode"] = _ITEMCODE;
+            row["ItemCode"] = fakeItemCode;
             row["LotNo"] = _LOTNO;
             row["LocationImage"] = location;
             row["LocationSpec"] = location_spec;
@@ -672,13 +869,13 @@ namespace OK2SHIP_SMT.Services
 
 
 
-            DataTable dtZ = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemCodeRefer", "LotNoRefer" }, new[] { _ITEMCODE, _LOTNO });
-            DataTable dtZ2 = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemMain", "LotMain" }, new[] { _ITEMCODE, _LOTNO });
+            DataTable dtZ = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemCodeRefer", "LotNoRefer" }, new[] { fakeItemCode, _LOTNO });
+            DataTable dtZ2 = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemMain", "LotMain" }, new[] { fakeItemCode, _LOTNO });
             if (dtZ.Rows.Count <= 0 && dtZ2.Rows.Count <= 0)
             {
                 DataTable dtRes = _dbContext.GetTableStructure("AIR_BUBBLE_AVAILABLE");
                 DataRow rowZ = dtRes.NewRow();
-                rowZ["ItemCode"] = _ITEMCODE;
+                rowZ["ItemCode"] = fakeItemCode;
                 rowZ["LotNo"] = _LOTNO;
                 rowZ["Status"] = 1;
                 dtRes.Rows.Add(rowZ);
@@ -693,15 +890,16 @@ namespace OK2SHIP_SMT.Services
             string msg = "";
             string ITEMCODE = _ITEMCODE.Trim();
             string LOTNO = _LOTNO.Trim();
-            if (string.IsNullOrEmpty(_ITEMCODE) || string.IsNullOrEmpty(_LOTNO))
+            string fakeItemCode = $"{_ITEMCODE}" + (_TYPE == "Displacement" ? "&D" : "");
+            if (string.IsNullOrEmpty(fakeItemCode) || string.IsNullOrEmpty(_LOTNO))
             {
                 throw new Exception("ItemCode hoặc LotNo không được để trống!");
             }
             List<string> list = new List<string>();
-            list.Add($"{ITEMCODE} - {LOTNO}");
+            list.Add($"{fakeItemCode} - {LOTNO}");
             if (refer)
             {
-                DataTable dtZ = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemMain", "LotMain" }, new[] { _ITEMCODE, _LOTNO });
+                DataTable dtZ = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemMain", "LotMain" }, new[] { fakeItemCode, _LOTNO });
                 if (dtZ.Rows.Count <= 0)
                 {
                     msg += "Không có refer!";
@@ -725,7 +923,7 @@ namespace OK2SHIP_SMT.Services
                 }
                 ITEMCODE = item.Split('-')[0].Trim();
                 LOTNO = item.Split('-')[1].Trim();
-                string keyZ = $"{ITEMCODE} - {LOTNO}";
+                string keyZ = $"{ITEMCODE.Replace("&D", "")} - {LOTNO}";
                 DataTable dataTable = new DataTable();
                 if (legacy)
                 {
@@ -763,7 +961,7 @@ namespace OK2SHIP_SMT.Services
                 //_DIC
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    string key = row["KeyDic"].ToString() + (refer && !ITEMCODE.Equals(_ITEMCODE) || !LOTNO.Equals(_LOTNO) ? " REFER " + $"({ITEMCODE}-{LOTNO})" : "");
+                    string key = row["KeyDic"].ToString() + (refer && !ITEMCODE.Equals(fakeItemCode) || !LOTNO.Equals(_LOTNO) ? " REFER " + $"({fakeItemCode}-{LOTNO})" : "");
                     if (_DIC.TryGetValue(key, out DataTable dt))
                     {
                         DataRow newRow = dt.NewRow();
@@ -797,7 +995,6 @@ namespace OK2SHIP_SMT.Services
             {
                 try
                 {
-
                     LoadData(legacy);
                 }
                 catch
@@ -847,9 +1044,17 @@ namespace OK2SHIP_SMT.Services
                 if (rCom < r)
                 {
                     string valueZ = ws.Cells[item].Value.ToString();
-                    string tape = valueZ.Split('(')[1].Replace(")", "").Trim();
+                    string tape;
+                    if(_TYPE == "Displacement")
+                    {
+                        tape = valueZ.Split('_')[2].Trim();
+                    }
+                    else
+                    {
+                        tape = valueZ.Split('(')[1].Replace(")", "").Trim();
+                    }
                     string keyMAIN = "";
-                    if (string.IsNullOrEmpty(valueZ.Split('_', '(')[1].ToUpper().Replace("SUPPLIER", "").Trim()))
+                    if (string.IsNullOrEmpty(valueZ.Split('_', '(')[1].ToUpper().Replace("SUPPLIER", "").Replace("NAME", "").Trim()))
                     {
                         //peek key no refer
                         foreach (string key in _DIC.Keys)
@@ -868,7 +1073,7 @@ namespace OK2SHIP_SMT.Services
                         foreach (string key in _DIC.Keys)
                         {
                             string z = key.Split('-', '_')[1].Trim();
-                            string za = valueZ.Split('_', '(')[1].ToUpper().Replace("SUPPLIER", "").Trim().ToUpper();
+                            string za = valueZ.Split('_', '(')[1].ToUpper().Replace("SUPPLIER", "").Replace("NAME", "").Trim().ToUpper();
                             if (z.Equals(za) && key.Contains("REFER") && key.Split('-')[0].Trim().Equals(tape) && key.Split('_')[1].Trim().ToUpper().Contains(stage.ToUpper()))
                             {
                                 // peek key co refer
@@ -1005,7 +1210,7 @@ namespace OK2SHIP_SMT.Services
                         string addressZ = ExportProcess.AddRow(ExportProcess.AddColumn(item, 2), 10);
                         ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), -1)].Value = $"{peakMin} ~ {peakMax}";
                         ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), -1)].Value = $"{averageMin} ~ {averageMax}";
-                        
+
                         ws.Cells[addressZ].FormulaR1C1 = $"=MIN(R[-7]C:R[-7]C[31])";
                         ws.Cells[ExportProcess.AddColumn(addressZ, 1)].FormulaR1C1 = $"=MIN(R[-6]C[-1]:R[-6]C[30])";
                         ws.Cells[ExportProcess.AddRow(addressZ, 1)].FormulaR1C1 = $"=MAX(R[-8]C:R[-8]C[31])";
@@ -1107,7 +1312,15 @@ namespace OK2SHIP_SMT.Services
             for (int i = keys.Length - 1; i >= 0; i--)
             {
                 //Debugger.Break();
-                string tape = ws.Cells[keys[i]].Value.ToString().Split('(', ')')[1].Trim();
+                string tape;
+                if(_TYPE == "Displacement")
+                {
+                    tape = ws.Cells[keys[i]].Value.ToString().Split('_')[2].Trim();
+                }
+                else
+                {
+                    tape = ws.Cells[keys[i]].Value.ToString().Split('(', ')')[1].Trim();
+                }
                 int z = listZ[tape.ToUpper()].Split(',').Count() - 1;
                 for (int iZ = 0; iZ < z; iZ++)
                 {

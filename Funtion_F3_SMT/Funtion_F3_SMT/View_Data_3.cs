@@ -4700,7 +4700,7 @@ namespace Funtion_F3_SMT
                 {
                     if (sheet == "CROSS_SECTION" || sheet == "GAP_CONNECTOR")
                     {
-                        DataTable dt_select = CrossSectionService.getStructorTableByte();
+                        DataTable dt_select = CrossSectionService.getStructorTableByte("GAP");
 
                         int ID = 1;
                         //for (int i = 0; i < dgv_logfile.Rows.Count; i++)

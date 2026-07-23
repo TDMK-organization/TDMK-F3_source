@@ -37,13 +37,17 @@ namespace OK2SHIP_SMT.UserControls
                 tableLayoutPanel10.Controls.Clear();
                 tableLayoutPanel10.Controls.Add(dgv, 0, 1);
                 dgv.CellValueChanged += dataGridView1_CellValueChanged;
+
                 tableLayoutPanel11.Controls.Clear();
                 tableLayoutPanel11.Controls.Add(dgv_custom, 0, 0);
+
 
             }
             else
             {
                 _service = new AirBubbleService();
+                cb_type.Visible = false;
+                tdmK_Label9.Visible = false;
                 tableLayoutPanel11.Controls.Clear();
                 tableLayoutPanel11.Controls.Add(dgv_custom, 0, 0);
             }
@@ -165,18 +169,29 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void tdmK_Button3_Click(object sender, EventArgs e)
         {
-            if (_PRIME)
+            try
             {
-                _service2 = new PeelTestOnProductService(txt_ItemCode.Text, txt_lotNo.Text);
-                _service2.LoadData(Legacy.Checked, true);
-            }
-            else
-            {
-                _service = new AirBubbleService(txt_ItemCode.Text, txt_lotNo.Text);
-                _service.LoadDataRefer();
 
+                if (_PRIME)
+                {
+                    _service2 = new PeelTestOnProductService(txt_ItemCode.Text, txt_lotNo.Text, cb_type.Text);
+                    _service2.LoadData(Legacy.Checked, true);
+                }
+                else
+                {
+                    _service = new AirBubbleService(txt_ItemCode.Text, txt_lotNo.Text);
+                    _service.LoadDataRefer();
+
+                }
+                FillData();
             }
-            FillData();
+
+
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void tdmK_Button1_Click_1(object sender, EventArgs e)
@@ -185,12 +200,12 @@ namespace OK2SHIP_SMT.UserControls
             {
                 try
                 {
-                    _service2 = new PeelTestOnProductService(txt_ItemCode.Text, txt_lotNo.Text);
+                    _service2 = new PeelTestOnProductService(txt_ItemCode.Text, txt_lotNo.Text, cb_type.Text);
                     _service2.Export(Legacy.Checked);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Export AirBubble: {ex.Message}");
+                    MessageBox.Show($"Export Peel Test OnProduct: {ex.Message}");
                 }
             }
             else
@@ -232,6 +247,7 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void btn_load_Click(object sender, EventArgs e)
         {
+            _service2._TYPE = cb_type.Text;
             loadData(txt_ItemCode.Text, txt_lotNo.Text, Legacy.Checked);
             checkingDataGridView(new DataGridView());
 
@@ -248,6 +264,7 @@ namespace OK2SHIP_SMT.UserControls
             {
                 if (_PRIME)
                 {
+                    _service2._TYPE = cb_type.Text;
                     if (!_service2.checkNG())
                     {
                         if (MessageBox.Show("Dữ liệu NG bạn có muốn lưu không?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.No)
@@ -274,6 +291,7 @@ namespace OK2SHIP_SMT.UserControls
 
                             if (_PRIME)
                             {
+                                _service2._TYPE = cb_type.Text;
                                 _service2.SaveData(true);
                             }
                             else
@@ -307,7 +325,7 @@ namespace OK2SHIP_SMT.UserControls
         }
         private void tdmK_Button1_Click(object sender, EventArgs e)
         {
-            GetData(txt_ItemCode.Text, txt_lotNo.Text, tb_location.Text, tb_PIDLocation.Text);
+            GetData(txt_ItemCode.Text, txt_lotNo.Text, tb_location.Text, tb_PIDLocation.Text, cb_type.Text);
             checkingDataGridView(new DataGridView());
 
 
@@ -563,7 +581,7 @@ namespace OK2SHIP_SMT.UserControls
                 row.Height = 100;
             }
         }
-        private void GetData(string itemCode, string lotNo, string location, string pid)
+        private void GetData(string itemCode, string lotNo, string location, string pid, string type)
         {
             try
             {
@@ -575,7 +593,7 @@ namespace OK2SHIP_SMT.UserControls
                 }
                 else
                 {
-                    _service2 = new PeelTestOnProductService(itemCode, lotNo);
+                    _service2 = new PeelTestOnProductService(itemCode, lotNo, type);
                     _service2.ReadData(location, pid);
                 }
             }
@@ -601,25 +619,35 @@ namespace OK2SHIP_SMT.UserControls
 
         private void loadData(string itemCode, string lotNo, bool legacy)
         {
-            itemCode = itemCode.Trim();
-            lotNo = lotNo.Trim();
-            if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
-            {
-                MessageBox.Show("Item Code and Lot No cannot be empty.", _NAME);
-                return;
-            }
-            if (_PRIME)
-            {
-                _service2 = new PeelTestOnProductService(itemCode, lotNo);
-                _service2.LoadData(legacy);
-            }
-            else
+            try
             {
 
-                _service = new AirBubbleService(itemCode, lotNo);
-                _service.LoadData();
+                itemCode = itemCode.Trim();
+                lotNo = lotNo.Trim();
+
+                if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
+                {
+                    MessageBox.Show("Item Code and Lot No cannot be empty.", _NAME);
+                    return;
+                }
+                if (_PRIME)
+                {
+
+                    _service2 = new PeelTestOnProductService(itemCode, lotNo, cb_type.Text);
+                    _service2.LoadData(legacy);
+                }
+                else
+                {
+
+                    _service = new AirBubbleService(itemCode, lotNo);
+                    _service.LoadData();
+                }
+                FillData();
             }
-            FillData();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, _NAME);
+            }
         }
 
 
