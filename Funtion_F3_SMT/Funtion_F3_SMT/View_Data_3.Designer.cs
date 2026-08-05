@@ -185,7 +185,7 @@
             // 
             this.splitContainer3.Panel2.Controls.Add(this.tableLayoutPanel15);
             this.splitContainer3.Size = new System.Drawing.Size(632, 295);
-            this.splitContainer3.SplitterDistance = 79;
+            this.splitContainer3.SplitterDistance = 77;
             this.splitContainer3.SplitterWidth = 6;
             this.splitContainer3.TabIndex = 44;
             // 
@@ -198,7 +198,7 @@
             this.lbltitle.Location = new System.Drawing.Point(0, 0);
             this.lbltitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbltitle.Name = "lbltitle";
-            this.lbltitle.Size = new System.Drawing.Size(632, 79);
+            this.lbltitle.Size = new System.Drawing.Size(632, 77);
             this.lbltitle.TabIndex = 42;
             this.lbltitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -217,7 +217,7 @@
             this.tableLayoutPanel15.Name = "tableLayoutPanel15";
             this.tableLayoutPanel15.RowCount = 1;
             this.tableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel15.Size = new System.Drawing.Size(632, 210);
+            this.tableLayoutPanel15.Size = new System.Drawing.Size(632, 212);
             this.tableLayoutPanel15.TabIndex = 43;
             // 
             // splitContainer1
@@ -235,7 +235,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.btn_save);
-            this.splitContainer1.Size = new System.Drawing.Size(202, 200);
+            this.splitContainer1.Size = new System.Drawing.Size(202, 202);
             this.splitContainer1.SplitterDistance = 85;
             this.splitContainer1.SplitterWidth = 6;
             this.splitContainer1.TabIndex = 42;
@@ -264,7 +264,7 @@
             this.btn_save.Location = new System.Drawing.Point(0, 0);
             this.btn_save.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btn_save.Name = "btn_save";
-            this.btn_save.Size = new System.Drawing.Size(202, 109);
+            this.btn_save.Size = new System.Drawing.Size(202, 111);
             this.btn_save.TabIndex = 38;
             this.btn_save.Text = "SAVE";
             this.btn_save.UseVisualStyleBackColor = false;
@@ -286,7 +286,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.btnEdit);
-            this.splitContainer2.Size = new System.Drawing.Size(204, 200);
+            this.splitContainer2.Size = new System.Drawing.Size(204, 202);
             this.splitContainer2.SplitterDistance = 47;
             this.splitContainer2.SplitterWidth = 6;
             this.splitContainer2.TabIndex = 43;
@@ -297,7 +297,7 @@
             this.LegacyMode.Location = new System.Drawing.Point(0, 8);
             this.LegacyMode.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LegacyMode.Name = "LegacyMode";
-            this.LegacyMode.Size = new System.Drawing.Size(123, 24);
+            this.LegacyMode.Size = new System.Drawing.Size(130, 24);
             this.LegacyMode.TabIndex = 43;
             this.LegacyMode.Text = "Legacy Mode";
             this.LegacyMode.UseVisualStyleBackColor = true;
@@ -326,7 +326,7 @@
             this.btnEdit.Location = new System.Drawing.Point(0, 0);
             this.btnEdit.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(204, 147);
+            this.btnEdit.Size = new System.Drawing.Size(204, 149);
             this.btnEdit.TabIndex = 41;
             this.btnEdit.Text = "EDIT";
             this.btnEdit.UseVisualStyleBackColor = false;
@@ -342,7 +342,7 @@
             this.btn_export.Location = new System.Drawing.Point(214, 5);
             this.btn_export.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btn_export.Name = "btn_export";
-            this.btn_export.Size = new System.Drawing.Size(202, 200);
+            this.btn_export.Size = new System.Drawing.Size(202, 202);
             this.btn_export.TabIndex = 41;
             this.btn_export.Text = "EXPORT";
             this.btn_export.UseVisualStyleBackColor = false;
@@ -759,7 +759,7 @@
             this.cb_Type.Location = new System.Drawing.Point(653, 5);
             this.cb_Type.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cb_Type.Name = "cb_Type";
-            this.cb_Type.Size = new System.Drawing.Size(112, 24);
+            this.cb_Type.Size = new System.Drawing.Size(112, 33);
             this.cb_Type.TabIndex = 42;
             this.cb_Type.SelectedIndexChanged += new System.EventHandler(this.cb_Type_SelectedIndexChanged);
             this.cb_Type.Click += new System.EventHandler(this.cb_Type_Click);
@@ -1221,13 +1221,13 @@
             this.cmsPaste.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.pasteToolStripMenuItem});
             this.cmsPaste.Name = "cmsPaste";
-            this.cmsPaste.Size = new System.Drawing.Size(103, 26);
+            this.cmsPaste.Size = new System.Drawing.Size(126, 36);
             this.cmsPaste.Opening += new System.ComponentModel.CancelEventHandler(this.cmsPaste_Opening);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(125, 32);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 

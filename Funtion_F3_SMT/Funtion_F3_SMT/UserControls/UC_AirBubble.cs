@@ -593,7 +593,9 @@ namespace OK2SHIP_SMT.UserControls
                 }
                 else
                 {
-                    _service2 = new PeelTestOnProductService(itemCode, lotNo, type);
+                    _service2._ITEMCODE = itemCode;
+                    _service2._LOTNO = lotNo;
+                    _service2._TYPE = type;
                     _service2.ReadData(location, pid);
                 }
             }

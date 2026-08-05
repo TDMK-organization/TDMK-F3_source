@@ -43,9 +43,10 @@
             // pMain
             // 
             this.pMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pMain.Location = new System.Drawing.Point(3, 3);
+            this.pMain.Location = new System.Drawing.Point(4, 5);
+            this.pMain.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pMain.Name = "pMain";
-            this.pMain.Size = new System.Drawing.Size(1318, 675);
+            this.pMain.Size = new System.Drawing.Size(1978, 1040);
             this.pMain.TabIndex = 5;
             // 
             // tblMain
@@ -54,17 +55,20 @@
             this.tblMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tblMain.Controls.Add(this.pMain, 0, 0);
             this.tblMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tblMain.Location = new System.Drawing.Point(0, 32);
+            this.tblMain.Location = new System.Drawing.Point(0, 47);
+            this.tblMain.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tblMain.Name = "tblMain";
             this.tblMain.RowCount = 1;
             this.tblMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tblMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 681F));
-            this.tblMain.Size = new System.Drawing.Size(1324, 681);
+            this.tblMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 1048F));
+            this.tblMain.Size = new System.Drawing.Size(1986, 1050);
             this.tblMain.TabIndex = 6;
             // 
             // menuStrip1
             // 
             this.menuStrip1.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuProcess,
             this.mnuLoad,
@@ -72,14 +76,14 @@
             this.mnuExit});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1324, 32);
+            this.menuStrip1.Size = new System.Drawing.Size(1986, 47);
             this.menuStrip1.TabIndex = 8;
             this.menuStrip1.Text = "menuStrip1";
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // mnuProcess
             // 
-            this.mnuProcess.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mnuProcess.Font = new System.Drawing.Font("Arial Narrow", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.mnuProcess.Items.AddRange(new object[] {
             "CROSS_SECTION",
             "GAP_CONNECTOR",
@@ -102,40 +106,42 @@
             "X-Ray picture",
             "Assy Yield",
             "Air Bubble",
-            "Peel Test (On Product)"});
+            "Peel Test (On Product)",
+            "IQC Peeling Test"});
             this.mnuProcess.Name = "mnuProcess";
-            this.mnuProcess.Size = new System.Drawing.Size(150, 28);
+            this.mnuProcess.Size = new System.Drawing.Size(300, 41);
             this.mnuProcess.Click += new System.EventHandler(this.mnuProcess_Click);
             // 
             // mnuLoad
             // 
             this.mnuLoad.Name = "mnuLoad";
-            this.mnuLoad.Size = new System.Drawing.Size(65, 28);
+            this.mnuLoad.Size = new System.Drawing.Size(95, 41);
             this.mnuLoad.Text = "Load";
             this.mnuLoad.Click += new System.EventHandler(this.mnuLoad_Click);
             // 
             // mnuReset
             // 
             this.mnuReset.Name = "mnuReset";
-            this.mnuReset.Size = new System.Drawing.Size(73, 28);
+            this.mnuReset.Size = new System.Drawing.Size(107, 41);
             this.mnuReset.Text = "Reset";
             this.mnuReset.Click += new System.EventHandler(this.mnuReset_Click);
             // 
             // mnuExit
             // 
             this.mnuExit.Name = "mnuExit";
-            this.mnuExit.Size = new System.Drawing.Size(53, 28);
+            this.mnuExit.Size = new System.Drawing.Size(78, 41);
             this.mnuExit.Text = "Exit";
             this.mnuExit.Click += new System.EventHandler(this.mnuExit_Click);
             // 
             // FrmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1324, 713);
+            this.ClientSize = new System.Drawing.Size(1986, 1097);
             this.Controls.Add(this.tblMain);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "FrmMain";
             this.Text = "INPUT DATA";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmMainVHX_FormClosed);

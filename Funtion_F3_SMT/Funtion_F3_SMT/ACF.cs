@@ -33,7 +33,6 @@ namespace OK2SHIP_SMT
         //public EPPlus_Lib TDMK_EPPLUS = new EPPlus_Lib();
 
         public SEI_Lib myCode = new SEI_Lib();
-        string admin_mode = "LOGIN";
         public SqlConnection sqlcon = null;
         public string strcon = "";
         string DB_name = "OK2SHIP_SMT";
@@ -47,7 +46,6 @@ namespace OK2SHIP_SMT
         IniFile TDMK_init;
         Funtion_export_file_le_EPPlus F_export_EPPlus = new Funtion_export_file_le_EPPlus();
 
-        bool hide_mode_wetting = true;
         public ACF()
         {
             InitializeComponent();

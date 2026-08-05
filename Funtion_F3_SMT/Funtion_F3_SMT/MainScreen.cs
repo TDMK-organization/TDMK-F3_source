@@ -242,5 +242,12 @@ namespace Funtion_F3_SMT
             }
 
         }
+
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            new BendingForm().Show();
+
+        }
     }
 }

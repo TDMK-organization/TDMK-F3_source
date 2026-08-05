@@ -820,7 +820,6 @@ namespace OK2SHIP_SMT.Services
         }
         public void SaveData(bool prime = false)
         {
-            
             string fakeItemCode = $"{_ITEMCODE}" + (_TYPE == "Displacement" ? "&D" : "");
             DataTable dt = new DataTable();
             if (!prime)
@@ -1062,7 +1061,7 @@ namespace OK2SHIP_SMT.Services
                             if (!key.Contains("REFER") && key.ToUpper().Split('-')[0].Trim().Equals(tape.ToUpper()) && key.Split('_')[1].Trim().ToUpper().Equals(stage.ToUpper()))
                             {
                                 // maker name
-                                ws.Cells[item].Value = $"{valueZ.Split('_')[0]}_ {key.Split('-', '_')[1]} {valueZ.Split('_')[1]}";
+                                ws.Cells[item].Value = $"{valueZ.Split('_')[0]}_ {key.Split('-', '_')[1]} {valueZ.Split('_')[2]}";
                                 keyMAIN = key;
                                 break;
                             }
@@ -1278,7 +1277,7 @@ namespace OK2SHIP_SMT.Services
             foreach (var item in dic["Tape"].Split('-'))
             {
                 int r = ws.Cells[item].End.Row;
-                if (r > addBase)
+                if (r > addBase) 
                 {
                     ne.Add(item);
                 }

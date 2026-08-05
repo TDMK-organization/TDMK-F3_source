@@ -673,7 +673,6 @@ namespace OK2SHIP_SMT.Services
 
             _dBContext.BuckDataTable(dataTable, "AIR_BUBBLE_REFER", new[] { "ItemMain", "LotMain" }, null, "ID");
         }
-        private DataTable dt_refer;
 
         private void ExportLinerSheet(ExcelWorksheet ws, string refer)
         {

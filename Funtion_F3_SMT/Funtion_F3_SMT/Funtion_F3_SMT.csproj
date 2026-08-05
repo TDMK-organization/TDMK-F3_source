@@ -41,6 +41,12 @@
     <ApplicationIcon>TDMK.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AntdUI">
+      <HintPath>..\..\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\VHX-IMADA\AntdUI.dll</HintPath>
+    </Reference>
+    <Reference Include="AntdUI, Version=2.4.3.0, Culture=neutral, PublicKeyToken=0e24e5118ea3d6af, processorArchitecture=MSIL">
+      <HintPath>..\packages\AntdUI.2.4.3\lib\net48\AntdUI.dll</HintPath>
+    </Reference>
     <Reference Include="EPPlus, Version=7.0.5.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.7.0.5\lib\net462\EPPlus.dll</HintPath>
     </Reference>
@@ -78,6 +84,7 @@
       <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.configuration" />
+    <Reference Include="System.Design" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -167,13 +174,16 @@
     <Compile Include="Services\ASSY_YIELDService.cs" />
     <Compile Include="Services\BarCodeVertification.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\BendingService.cs" />
     <Compile Include="Services\ConverterService.cs" />
     <Compile Include="Services\CrossSectionService.cs" />
     <Compile Include="Services\DataBaseService.cs" />
     <Compile Include="Services\DictionaryService.cs" />
     <Compile Include="Services\EEDService.cs" />
+    <Compile Include="Services\ERS_NetSpecService.cs" />
     <Compile Include="Services\GAPConnectorService.cs" />
     <Compile Include="Services\ImpedanceService.cs" />
+    <Compile Include="Services\IQCPeelingTest.cs" />
     <Compile Include="Services\IQCUmatingPullTestService.cs" />
     <Compile Include="Services\PackagingService.cs" />
     <Compile Include="Services\PeelTestOnProductService.cs" />
@@ -202,6 +212,24 @@
     </Compile>
     <Compile Include="ToolBoxs\TDMK_Label.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserControls\Bending\UC_BendingData.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\Bending\UC_BendingData.Designer.cs">
+      <DependentUpon>UC_BendingData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Bending\UC_ERS_NETSpec.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\Bending\UC_ERS_NETSpec.Designer.cs">
+      <DependentUpon>UC_ERS_NETSpec.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Bending\UC_XrayPicture.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\Bending\UC_XrayPicture.Designer.cs">
+      <DependentUpon>UC_XrayPicture.cs</DependentUpon>
     </Compile>
     <Compile Include="UserControls\CustomDataGridView.cs">
       <SubType>Component</SubType>
@@ -311,6 +339,12 @@
     <Compile Include="UserControls\UC_XrayPicture.Designer.cs">
       <DependentUpon>UC_XrayPicture.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\BendingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\BendingForm.Designer.cs">
+      <DependentUpon>BendingForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\CommentItemCodeAirBubble.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -329,6 +363,8 @@
     <Compile Include="Views\EditorForm.Designer.cs">
       <DependentUpon>EditorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\BendingWindow.cs" />
+    <Compile Include="Views\BendingWindow.Designer.cs" />
     <Compile Include="Views\NormalForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -387,6 +423,15 @@
     <EmbeddedResource Include="ToolBoxs\TDMK_Button.resx">
       <DependentUpon>TDMK_Button.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\Bending\UC_BendingData.resx">
+      <DependentUpon>UC_BendingData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\Bending\UC_ERS_NETSpec.resx">
+      <DependentUpon>UC_ERS_NETSpec.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\Bending\UC_XrayPicture.resx">
+      <DependentUpon>UC_XrayPicture.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControls\DatabaseTool.resx">
       <DependentUpon>DatabaseTool.cs</DependentUpon>
     </EmbeddedResource>
@@ -438,6 +483,9 @@
     <EmbeddedResource Include="UserControls\UC_XrayPicture.resx">
       <DependentUpon>UC_XrayPicture.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\BendingForm.resx">
+      <DependentUpon>BendingForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\CommentItemCodeAirBubble.resx">
       <DependentUpon>CommentItemCodeAirBubble.cs</DependentUpon>
     </EmbeddedResource>
@@ -447,6 +495,7 @@
     <EmbeddedResource Include="Views\EditorForm.resx">
       <DependentUpon>EditorForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\BendingWindow.resx" />
     <EmbeddedResource Include="Views\NormalForm.resx">
       <DependentUpon>NormalForm.cs</DependentUpon>
     </EmbeddedResource>

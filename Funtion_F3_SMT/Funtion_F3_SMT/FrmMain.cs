@@ -176,6 +176,10 @@ namespace Funtion_F3_SMT
                     pMain.Controls.Clear();
                     pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
                     break;
+                case "IQC Peeling Test":
+                    pMain.Controls.Clear();
+                    pMain.Controls.Add(new UC_IQCPeelingTest() { Dock = DockStyle.Fill });
+                    break;
                 default:
                     if (sheet != "")
                     {
