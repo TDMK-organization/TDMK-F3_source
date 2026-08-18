@@ -2,8 +2,10 @@ using AntdUI;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using OK2SHIP_SMT.UserControls;
 using OK2SHIP_SMT.UserControls.Bending;
 
 namespace OK2SHIP_SMT.Views
@@ -17,6 +19,7 @@ namespace OK2SHIP_SMT.Views
         public BendingWindow()
         {
             InitializeComponent();
+            Config.IsLight = true;
             titlebar.Text = "Bending " + titlebar.ProductVersion;
             LoadMenu();
             InitData();
@@ -92,7 +95,6 @@ namespace OK2SHIP_SMT.Views
             button_collapse.Click += Button_collapse_Click;
             tabs.Click += Tabs_Click;
             tabs.SelectedIndexChanged += Tabs_SelectedIndexChanged;
-            SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
         }
 
         private void Tabs_Click(object sender, EventArgs e)
@@ -141,16 +143,8 @@ namespace OK2SHIP_SMT.Views
         }
 
 
-        private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
-        {
-            if (e.Category == UserPreferenceCategory.General) Config.IsLight = !Config.IsLight;
-        }
 
-        private void Button_color_Click(object sender, EventArgs e)
-        {
-            Config.IsLight = !Config.IsLight;
-        }
-
+   
 
         private void SelectMenu()
         {
@@ -208,7 +202,7 @@ namespace OK2SHIP_SMT.Views
                     control = new UC_BendingData(this);
                     break;
                 case "xray_pic":
-                    control = new UC_XrayPicture();
+                    control = new SEM("X-Ray picture") { Dock = DockStyle.Fill };
                     break;
                 case "ers_spec":
                     control = new UC_ERS_NETSpec(this);
@@ -231,6 +225,18 @@ namespace OK2SHIP_SMT.Views
                 isUpdatingTabs = false;
                 currControl = control;
             }
+        }
+
+      
+
+        private void button_color_Click(object sender, EventArgs e)
+        {
+            Config.IsLight = !Config.IsLight;
+        }
+
+        private void titlebar_StyleChanged(object sender, EventArgs e)
+        {
+            Debugger.Break();
         }
     }
 }

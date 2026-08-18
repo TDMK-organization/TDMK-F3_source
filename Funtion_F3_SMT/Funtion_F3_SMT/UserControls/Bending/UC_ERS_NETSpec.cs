@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using AntdUI;
 using Funtion_F3_SMT;
 using OK2SHIP_SMT.Services;
+using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
 
 namespace OK2SHIP_SMT.UserControls.Bending
 {
@@ -83,7 +84,79 @@ namespace OK2SHIP_SMT.UserControls.Bending
 
         private void DisplayData()
         {
-            dgv.DataSource = _service._DATA;
+            // Lấy DataTable từ service của bạn
+            DataTable dt = _service._DATA;
+
+            if (dt == null) return;
+
+            // 1. CHUẨN HÓA CỘT SELECT: Đảm bảo cột "Select" trong DataTable có kiểu dữ liệu là bool (Boolean)
+            if (dt.Columns.Contains("Select"))
+            {
+                // Nếu cột đang là kiểu chuỗi hoặc object, ta chuyển đổi sang bool an toàn
+                if (dt.Columns["Select"].DataType != typeof(bool))
+                {
+                    // Tạo một cột tạm kiểu bool
+                    DataTable tempDt = dt.Clone();
+                    tempDt.Columns["Select"].DataType = typeof(bool);
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        DataRow newRow = tempDt.NewRow();
+                        // Copy dữ liệu các cột khác
+                        foreach (DataColumn col in dt.Columns)
+                        {
+                            if (col.ColumnName != "Select")
+                            {
+                                newRow[col.ColumnName] = row[col.ColumnName];
+                            }
+                        }
+
+                        // Chuyển đổi giá trị sang kiểu bool
+                        bool val = false;
+                        if (row["Select"] != DBNull.Value)
+                        {
+                            bool.TryParse(row["Select"].ToString(), out val);
+                        }
+
+                        newRow["Select"] = val;
+                        tempDt.Rows.Add(newRow);
+                    }
+
+                    dt = tempDt;
+                    _service._DATA = dt; // Cập nhật lại service nếu cần
+                }
+            }
+            else
+            {
+                // Nếu chưa có cột "Select" thì tự động thêm mới vào DataTable với kiểu bool
+                DataColumn colSelect = new DataColumn("Select", typeof(bool));
+                colSelect.DefaultValue = true; // Giá trị mặc định ban đầu (true/false tùy bạn)
+                dt.Columns.Add(colSelect);
+            }
+
+            // 2. KHỞI TẠO BỘ CỘT CHO ANTDUI TABLE
+            var columns = new AntdUI.ColumnCollection();
+
+            // Thêm cột Checkbox đầu tiên (Tiêu đề hiển thị: "Select", Tên ánh xạ dữ liệu: "Select")
+            columns.Add(new AntdUI.ColumnCheck("Select", "Select")
+            {
+                Width = "60"
+            });
+
+            // 3. TỰ ĐỘNG SINH CÁC CỘT CÒN LẠI DỰA TRÊN DATATABLE
+            foreach (DataColumn dc in dt.Columns)
+            {
+                // Bỏ qua cột Select để tránh bị trùng lặp
+                if (dc.ColumnName == "Select" || dc.ColumnName == "Selected")
+                    continue;
+
+                // Thêm các cột nội dung khác vào bảng
+                columns.Add(new AntdUI.Column(dc.ColumnName, dc.ColumnName));
+            }
+
+            // 4. GÁN CỘT VÀ NGUỒN DỮ LIỆU CHO ANTDUI TABLE
+            dgv.Columns = columns;
+            dgv.DataSource = dt;
         }
 
         private void tb_logfile_TextChanged(object sender, EventArgs e)
@@ -142,11 +215,32 @@ namespace OK2SHIP_SMT.UserControls.Bending
                 _service.LoadData(itemCode, maker);
                 DisplayData();
                 AntdUI.Notification.success(window, $"Notice", "Lấy dữ liệu thành công!", autoClose: 10, align: align);
-                
             }
             catch (Exception ex)
             {
                 AntdUI.Notification.error(window, $"Error", ex.Message, autoClose: 10, align: align);
+            }
+        }
+
+        private void tb_logfile_DoubleClick(object sender, EventArgs e)
+        {
+            // Khởi tạo hộp thoại mở file
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                // Cấu hình lọc: Chỉ hiển thị các file Excel
+                openFileDialog.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+                openFileDialog.Title = "Chọn file dữ liệu Excel";
+
+                // Cho phép chọn nhiều file (nếu muốn)
+                openFileDialog.Multiselect = false;
+
+                // Hiển thị hộp thoại và kiểm tra kết quả
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Lấy địa chỉ đầy đủ của file đã chọn
+                    string filePath = openFileDialog.FileName;
+                    tb_logfile.Text = filePath;
+                }
             }
         }
     }

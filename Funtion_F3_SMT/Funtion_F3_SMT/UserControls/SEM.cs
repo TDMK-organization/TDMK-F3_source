@@ -14,6 +14,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using ZedGraph;
+using Label = System.Windows.Forms.Label;
+
 namespace OK2SHIP_SMT.UserControls
 {
     public partial class SEM : UserControl
@@ -26,12 +28,15 @@ namespace OK2SHIP_SMT.UserControls
         private int MODE = 1, MAX_MODE = 2;
         private SEMServices semServices = new SEMServices();
         UC_EnvironmentTable UC_env = new UC_EnvironmentTable() { Dock = DockStyle.Fill };
+
         public SEM(string pROCESS)
         {
             InitializeComponent();
             SetUpProcessScreen(pROCESS);
         }
+
         #region Event
+
         private void CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             // Kiểm tra xem có phải là cột "Check Result" không
@@ -41,11 +46,12 @@ namespace OK2SHIP_SMT.UserControls
                 if (e.Value != null && e.Value.ToString() == "NG")
                 {
                     e.CellStyle.BackColor = Color.Red; // Tô màu chữ đỏ
-                                                       // Hoặc bạn có thể tô màu nền đỏ
-                                                       // e.CellStyle.BackColor = Color.Red;
+                    // Hoặc bạn có thể tô màu nền đỏ
+                    // e.CellStyle.BackColor = Color.Red;
                 }
             }
         }
+
         private void DataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             // Kiểm tra xem có phải là cột "Check Result" không
@@ -55,11 +61,12 @@ namespace OK2SHIP_SMT.UserControls
                 if (e.Value != null && e.Value.ToString() == "NG")
                 {
                     e.CellStyle.BackColor = Color.Red; // Tô màu chữ đỏ
-                                                       // Hoặc bạn có thể tô màu nền đỏ
-                                                       // e.CellStyle.BackColor = Color.Red;
+                    // Hoặc bạn có thể tô màu nền đỏ
+                    // e.CellStyle.BackColor = Color.Red;
                 }
             }
         }
+
         private void btn_checkBin_Click(object sender, EventArgs e)
         {
             try
@@ -84,6 +91,7 @@ namespace OK2SHIP_SMT.UserControls
                 MessageBox.Show($"{ex.Message}");
             }
         }
+
         /// <summary>
         /// Open browser dialog
         /// </summary>
@@ -112,13 +120,15 @@ namespace OK2SHIP_SMT.UserControls
         {
             tb_Lotno.Text = ValidateService.lotNoHandle(tb_Lotno.Text);
         }
+
         private void btn_GetData_Click(object sender, EventArgs e)
         {
-            getDataFormFile(tb_locationFolder.Text.Trim(), tb_ItemCode.Text.Trim(), tb_Lotno.Text.Trim(), PROCESS, tb_productID.Text);
+            getDataFormFile(tb_locationFolder.Text.Trim(), tb_ItemCode.Text.Trim(), tb_Lotno.Text.Trim(), PROCESS,
+                tb_productID.Text);
         }
+
         private void btn_checkSum_Click(object sender, EventArgs e)
         {
-
             try
             {
                 string ItemCode = tb_ItemCode.Text.Trim();
@@ -129,6 +139,7 @@ namespace OK2SHIP_SMT.UserControls
                 {
                     throw new Exception("Hãy đặt file phù hợp");
                 }
+
                 string[] str = st.Split('-');
                 string ItemName = str[0];
                 string FactoryCode = str[1];
@@ -144,6 +155,7 @@ namespace OK2SHIP_SMT.UserControls
                 MessageBox.Show($"{ex.Message}");
             }
         }
+
         private void btn_saveData_Click(object sender, EventArgs e)
         {
             if (!UserSession.Instance.IsLoggedIn)
@@ -153,6 +165,7 @@ namespace OK2SHIP_SMT.UserControls
                 login.Show();
                 return;
             }
+
             //try
             //{
             switch (this.PROCESS)
@@ -164,20 +177,23 @@ namespace OK2SHIP_SMT.UserControls
                         XRayPictureService x = new XRayPictureService();
                         try
                         {
-                            x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text);
+                            x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text, tbMaker.Text, comboBox.Text);
                         }
                         catch (Exception ex)
                         {
                             string[] spt = ex.Message.Split('-');
-                            if (spt[0].Contains("1234") && MessageBox.Show($"{spt[1].Trim()}", "Cảnh báo!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            if (spt[0].Contains("1234") &&
+                                MessageBox.Show($"{spt[1].Trim()}", "Cảnh báo!", MessageBoxButtons.YesNo) ==
+                                DialogResult.Yes)
                             {
-                                x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text, 2);
+                                x.Save(dtz, tb_ItemCode.Text, tb_Lotno.Text, tbMaker.Text, comboBox.Text, 2);
                             }
                             else
                             {
                                 throw ex;
                             }
                         }
+
                         MessageBox.Show("Lưu thành công!");
                         UC_XrayPicture.ClearData();
                     }
@@ -185,6 +201,7 @@ namespace OK2SHIP_SMT.UserControls
                     {
                         MessageBox.Show(ex.Message);
                     }
+
                     break;
                 case "Thermal cycling, Heat soak, Thermal shock":
                     int res = 0;
@@ -194,6 +211,7 @@ namespace OK2SHIP_SMT.UserControls
                         MessageBox.Show("Có thay đổi chưa được update!");
                         return;
                     }
+
                     try
                     {
                         res = service.Save((DataTable)dataGridView.DataSource, false);
@@ -204,7 +222,8 @@ namespace OK2SHIP_SMT.UserControls
                         bool strz = exStr[0].Trim().Equals("2267");
                         if (exStr.Length >= 2 && exStr[0].Trim().Equals("2267"))
                         {
-                            if (MessageBox.Show("Đã tồn tại SN trong cơ sở dữ liệu bạn có muốn ghi đè", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                            if (MessageBox.Show("Đã tồn tại SN trong cơ sở dữ liệu bạn có muốn ghi đè", "Xác nhận xóa",
+                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                             {
                                 res = service.Save((DataTable)dataGridView.DataSource, true);
                             }
@@ -214,6 +233,7 @@ namespace OK2SHIP_SMT.UserControls
                             throw ex;
                         }
                     }
+
                     MessageBox.Show($"Đã lưu {res} row thành công");
                     dataGridView.DataSource = new DataTable();
                     break;
@@ -224,7 +244,6 @@ namespace OK2SHIP_SMT.UserControls
                     try
                     {
                         sem.SaveProcess(dataTablez, prime);
-
                     }
                     catch (Exception ex)
                     {
@@ -232,7 +251,8 @@ namespace OK2SHIP_SMT.UserControls
                         bool strz = exStr[0].Trim().Equals("2267");
                         if (exStr.Length >= 2 && exStr[0].Trim().Equals("2267"))
                         {
-                            prime = MessageBox.Show("Đã tồn tại SN trong cơ sở dữ liệu bạn có muốn ghi đè", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
+                            prime = MessageBox.Show("Đã tồn tại SN trong cơ sở dữ liệu bạn có muốn ghi đè",
+                                "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
                             if (prime)
                             {
                                 sem.SaveProcess(dataTablez, prime);
@@ -243,16 +263,19 @@ namespace OK2SHIP_SMT.UserControls
                             MessageBox.Show($"SEM: {ex.Message}");
                         }
                     }
+
                     int i = 1;
                     foreach (DataRow item in dataTablez.Rows)
                     {
                         item["ID"] = i++;
                         item["Judgement"] = "NG";
                     }
+
                     break;
                 case "Bar Code Verification":
                     DataTable dataTable = (DataTable)dataGridView.DataSource;
-                    string itemCode = dataTable.Rows[0]["ItemCode"].ToString(), lotNo = dataTable.Rows[0]["LotNo"].ToString();
+                    string itemCode = dataTable.Rows[0]["ItemCode"].ToString(),
+                        lotNo = dataTable.Rows[0]["LotNo"].ToString();
                     BarCodeVertification barCodeVertification = new BarCodeVertification();
                     try
                     {
@@ -263,11 +286,11 @@ namespace OK2SHIP_SMT.UserControls
                     {
                         if (ex.Number == 2601) // Lỗi vi phạm ràng buộc khóa chính (SQL Server)
                         {
-                            DialogResult dr = MessageBox.Show($"Đã tồn tại ItemCode LotNo trong cơ sở dữ liệu", "Thông báo", MessageBoxButtons.YesNoCancel);
+                            DialogResult dr = MessageBox.Show($"Đã tồn tại ItemCode LotNo trong cơ sở dữ liệu",
+                                "Thông báo", MessageBoxButtons.YesNoCancel);
                             if (dr == DialogResult.Yes)
                             {
                                 barCodeVertification.SaveProcess(dataTable, true, itemCode, lotNo);
-
                             }
                         }
                         else
@@ -275,6 +298,7 @@ namespace OK2SHIP_SMT.UserControls
                             throw ex;
                         }
                     }
+
                     break;
                 case "Environment en-durance":
                     string itemCodez = tb_ItemCode.Text.Trim();
@@ -294,12 +318,12 @@ namespace OK2SHIP_SMT.UserControls
                         string[] ap = ex.Message.Split('-');
                         if (ap.Count() > 1 && ap[0].Contains("1234"))
                         {
-                            if (MessageBox.Show("Đã tồn tại bạn muốn ghi đè?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            if (MessageBox.Show("Đã tồn tại bạn muốn ghi đè?", "Thông báo", MessageBoxButtons.YesNo) ==
+                                DialogResult.Yes)
                             {
                                 resz = eD.save(itemCodez, lotNoz, dt, dic, int.Parse(ap[1]));
                                 UC_env.ClearData();
                                 MessageBox.Show($"Lưu thành công {resz} row!");
-
                             }
                         }
                         else
@@ -307,6 +331,7 @@ namespace OK2SHIP_SMT.UserControls
                             MessageBox.Show(ex.Message);
                         }
                     }
+
                     break;
                 case "OQC B2B Mating-Unmating":
                     DataTable dataTables = new DataTable();
@@ -314,11 +339,13 @@ namespace OK2SHIP_SMT.UserControls
                     {
                         dataTables = (DataTable)dgv_Combobox.DataSource;
                     }
+
                     if (dataTables.Rows.Count == 0)
                     {
                         MessageBox.Show("Không có gì để lưu!");
                         return;
                     }
+
                     OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting();
                     try
                     {
@@ -330,15 +357,19 @@ namespace OK2SHIP_SMT.UserControls
                         string[] s = ex.Message.ToString().Split('-');
                         if (s.Length > 1)
                         {
-                            DialogResult dialogResult = MessageBox.Show("Dữ liệu thừa bạn có muốn tiếp tục lưu", "Thông báo", MessageBoxButtons.OK);
+                            DialogResult dialogResult = MessageBox.Show("Dữ liệu thừa bạn có muốn tiếp tục lưu",
+                                "Thông báo", MessageBoxButtons.OK);
                             if (dialogResult == DialogResult.OK)
                             {
                                 oqc.SaveProcess(dataTables, tb_ItemCode.Text.Trim(), tb_Lotno.Text.Trim(), true);
                             }
+
                             break;
                         }
+
                         MessageBox.Show($"Có lỗi xảy ra{ex.Message}");
                     }
+
                     break;
                 default:
                     break;
@@ -359,10 +390,19 @@ namespace OK2SHIP_SMT.UserControls
                 switch (this.PROCESS)
                 {
                     case "X-Ray picture":
-                        status = new XRayPictureService().Export(tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text, legacyMode.Checked);
+                        status = new XRayPictureService().Export(tb_ItemCode.Text, tb_Lotno.Text, tbMaker.Text,
+                            comboBox.Text,
+                            legacyMode.Checked);
                         break;
                     case "Environment en-durance":
-                        status = new EEDService().Export(tb_ItemCode.Text, tb_Lotno.Text);
+                        // status = new EEDService().Export(tb_ItemCode.Text, tb_Lotno.Text);
+                        EEDService.InputModelExport model =
+                            new EEDService.InputModelExport(tb_ItemCode.Text, tb_Lotno.Text, "Maker TDMK");
+                        EEDService.InputModelExport model1 =
+                            new EEDService.InputModelExport(tb_ItemCode.Text, tb_Lotno.Text, "Maker SEEV");
+
+                        status = new EEDService().Export(new List<EEDService.InputModelExport>() { model, model1 });
+
                         break;
                     case "Thermal cycling, Heat soak, Thermal shock":
                         status = new TCHSTSService().Export(tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text);
@@ -376,17 +416,21 @@ namespace OK2SHIP_SMT.UserControls
                     case "SEM BSE & Binarization":
                         try
                         {
-                            status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, false, legacyMode.Checked);
+                            status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, false,
+                                legacyMode.Checked);
                         }
                         catch (Exception ex)
                         {
                             string[] exStr = ex.Message.Split('-');
                             if (exStr.Count() >= 2 && exStr[0].Trim().Equals("ATPX4869"))
                             {
-                                DialogResult dialogResult = MessageBox.Show("Dữ liệu thiếu bạn có muốn tiếp tục xuất dữ liệu", "Thông báo", MessageBoxButtons.YesNoCancel);
+                                DialogResult dialogResult = MessageBox.Show(
+                                    "Dữ liệu thiếu bạn có muốn tiếp tục xuất dữ liệu", "Thông báo",
+                                    MessageBoxButtons.YesNoCancel);
                                 if (dialogResult == DialogResult.Yes)
                                 {
-                                    status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, true, legacyMode.Checked);
+                                    status = new SEMServices().Export(tb_ItemCode.Text, tb_Lotno.Text, true,
+                                        legacyMode.Checked);
                                 }
                             }
                             else
@@ -394,18 +438,22 @@ namespace OK2SHIP_SMT.UserControls
                                 throw ex;
                             }
                         }
+
                         break;
                     default:
                         throw new Exception("Process not found");
                 }
+
                 MessageBox.Show(status);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+
             return;
         }
+
         private void btn_switchMode_Click(object sender, EventArgs e)
         {
             slCtn_Mode.Panel2.Controls.Clear();
@@ -429,12 +477,13 @@ namespace OK2SHIP_SMT.UserControls
                     MessageBox.Show("Mode not found");
                     break;
             }
-
         }
+
         private void splitContainer2_Panel1_Resize(object sender, EventArgs e)
         {
             resizeHeader();
         }
+
         private void btn_LoadData_Click(object sender, EventArgs e)
         {
             try
@@ -443,13 +492,15 @@ namespace OK2SHIP_SMT.UserControls
                 {
                     case "X-Ray picture":
                         XRayPictureService xray = new XRayPictureService();
-                        DataTable xrayData = xray.Load(tb_ItemCode.Text, tb_Lotno.Text, comboBox.Text, legacyMode.Checked);
+                        DataTable xrayData = xray.Load(tb_ItemCode.Text, tb_Lotno.Text, tbMaker.Text, comboBox.Text,
+                            legacyMode.Checked);
                         UC_XrayPicture.setData(xrayData);
                         break;
                     case "Environment en-durance":
                         EEDService EED = new EEDService();
                         DataTable dataTable = new DataTable();
-                        Dictionary<string, Dictionary<string, DataTable>> dic = EED.Load(tb_ItemCode.Text, tb_Lotno.Text, ref dataTable);
+                        Dictionary<string, Dictionary<string, DataTable>> dic = EED.Load(tb_ItemCode.Text,
+                            tb_Lotno.Text, ref dataTable);
                         UC_env.FillData(dataTable, dic);
                         MessageBox.Show("Lấy dữ liệu thành công");
                         //UC_env;
@@ -463,6 +514,7 @@ namespace OK2SHIP_SMT.UserControls
                             MessageBox.Show($"{tb_ItemCode} {tb_Lotno.Text} không có dữ liệu!");
                             return;
                         }
+
                         dataGridView.DataSource = dtT;
                         dgv_left.DataSource = new DataTable();
                         break;
@@ -472,9 +524,9 @@ namespace OK2SHIP_SMT.UserControls
                         dataGridView.DataSource = dtBar;
                         if (dataGridView.Columns.Contains("ID"))
                         {
-
                             dataGridView.Columns["ID"].DisplayIndex = 0;
                         }
+
                         checkFactoryCode(tb_ItemCode.Text.Trim());
                         break;
 
@@ -486,8 +538,13 @@ namespace OK2SHIP_SMT.UserControls
                             MessageBox.Show($"{tb_ItemCode} {tb_Lotno.Text} không có dữ liệu!");
                             return;
                         }
+
                         semServices.JudgementCheck(dtz);
-                        dgv_Combobox = new CustomDataGridView(dtz, new Dictionary<string, string[]> { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
+                        dgv_Combobox =
+                            new CustomDataGridView(dtz,
+                                    new Dictionary<string, string[]>
+                                        { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } })
+                                { Name = "", Dock = DockStyle.Fill };
                         dgv_Combobox.CellClick += cellContentClick;
                         splitContainer2.Panel2.Controls.Clear();
                         splitContainer2.Panel2.Controls.Add(dgv_Combobox);
@@ -496,17 +553,22 @@ namespace OK2SHIP_SMT.UserControls
                     case "OQC B2B Mating-Unmating":
                         using (OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting())
                         {
-
                             DataTable dt = oqc.LoadProcess(tb_ItemCode.Text, tb_Lotno.Text, legacyMode.Checked);
                             if (dt.Rows.Count <= 0)
                             {
                                 MessageBox.Show($"{tb_ItemCode} {tb_Lotno.Text} không có dữ liệu!");
                                 return;
                             }
+
                             dgv_Combobox.DataSource = new DataTable();
                             GC.Collect();
-                            dgv_Combobox = new CustomDataGridView(dt, new Dictionary<string, string[]> { { "FailureMode", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
+                            dgv_Combobox =
+                                new CustomDataGridView(dt,
+                                        new Dictionary<string, string[]>
+                                            { { "FailureMode", new string[] { "", "Level 1", "Level 2", "Level 3" } } })
+                                    { Name = "", Dock = DockStyle.Fill };
                         }
+
                         dgv_Combobox.CellClick += cellContentClick;
                         splitContainer2.Panel2.Controls.Clear();
                         splitContainer2.Panel2.Controls.Add(dgv_Combobox);
@@ -522,6 +584,7 @@ namespace OK2SHIP_SMT.UserControls
                 MessageBox.Show(ex.Message);
             }
         }
+
         private void cellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
@@ -532,7 +595,6 @@ namespace OK2SHIP_SMT.UserControls
                 {
                     try
                     {
-
                         Image image = (Image)cell.Value;
 
                         // Hiển thị hình ảnh trong PictureBox
@@ -550,13 +612,15 @@ namespace OK2SHIP_SMT.UserControls
                             pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
                         }
                     }
-
                 }
             }
         }
+
         #endregion
 
         #region Action
+
+        TextBox tbMaker = new TextBox();
 
         private void resizeHeader()
         {
@@ -565,11 +629,13 @@ namespace OK2SHIP_SMT.UserControls
             lb_headerTable.Width = w;
             lb_headerTable.Height = h;
         }
+
         TableLayoutPanel sc = new TableLayoutPanel() { BackColor = Color.Aqua, Dock = DockStyle.Fill };
         DataGridView dataGridViewz = new DataGridView() { Dock = DockStyle.Fill };
         Button button = new Button();
         ComboBox comboBox = new ComboBox() { Dock = DockStyle.Fill };
         UC_XrayPicture UC_XrayPicture = new UC_XrayPicture() { BackColor = Color.Aqua, Dock = DockStyle.Fill };
+
         private void SetUpProcessScreen(string pROCESS)
         {
             btn_checkBin.Hide();
@@ -580,17 +646,31 @@ namespace OK2SHIP_SMT.UserControls
             btn_checkBin.Visible = false;
             switch (this.PROCESS)
             {
-
                 case "X-Ray picture":
                     tb_datagridview.Controls.Clear();
-
                     tb_datagridview.Controls.Add(UC_XrayPicture);
                     tableLayoutPanel3.Controls.Clear();
                     tableLayoutPanel3.Controls.Add(new TDMK_Label() { Text = "Type" }, 0, 0);
                     comboBox.Items.AddRange(new[] { "Flex bending", "Thermal Cycling And Bend", "Heat Soak And Bend" });
                     tableLayoutPanel3.Controls.Add(comboBox, 0, 1);
 
+                    tableLayoutItemCode.RowCount = 3;
 
+// Thêm chiều cao cho dòng mới (ví dụ: tự động giãn hoặc kích thước cố định)
+                    tableLayoutItemCode.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+
+// Tạo Label "Maker"
+                    Label lblMaker = new Label();
+                    lblMaker.Text = "Maker";
+                    lblMaker.Anchor = AnchorStyles.Left;
+
+// Tạo TextBox "tb_maker"
+                    tbMaker.Name = "tb_maker";
+                    tbMaker.Dock = DockStyle.Fill; // Hoặc tùy chỉnh kích thước
+
+// Thêm vào TableLayoutPanel tại cột 0, dòng 2 (dòng thứ 3 vì tính từ 0)
+                    tableLayoutItemCode.Controls.Add(lblMaker, 0, 2);
+                    tableLayoutItemCode.Controls.Add(tbMaker, 1, 2);
                     break;
                 case "Impedance":
                     button.BackColor = Color.Green;
@@ -610,9 +690,21 @@ namespace OK2SHIP_SMT.UserControls
                     lb_headerTable.Text = "List LogFile";
                     tb_datagridview.ColumnCount = 2;
                     tb_datagridview.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-                    TDMK_Label label = new TDMK_Label() { AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "Detail", Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold) };
-                    TDMK_Label label2 = new TDMK_Label() { AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "MiniTable", Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold) };
-                    TDMK_Label label3 = new TDMK_Label() { AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "Type", Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold) };
+                    TDMK_Label label = new TDMK_Label()
+                    {
+                        AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "Detail",
+                        Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold)
+                    };
+                    TDMK_Label label2 = new TDMK_Label()
+                    {
+                        AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "MiniTable",
+                        Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold)
+                    };
+                    TDMK_Label label3 = new TDMK_Label()
+                    {
+                        AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "Type",
+                        Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold)
+                    };
                     dgv_left.CellValueChanged += DGV_LEFT_CHANGE_VALUE_CELL;
                     dgv_left.CellPainting += dataGridView1_CellPaintingZ;
                     dgv_left.CellFormatting += dataGridView_CellFormatting;
@@ -640,7 +732,11 @@ namespace OK2SHIP_SMT.UserControls
                     btn_checkBin.Visible = true;
                     DataTable dtz = new DataTable();
                     splitContainer2.Panel2.Controls.Clear();
-                    dgv_Combobox = new CustomDataGridView(dtz, new Dictionary<string, string[]> { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
+                    dgv_Combobox =
+                        new CustomDataGridView(dtz,
+                                new Dictionary<string, string[]>
+                                    { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } })
+                            { Name = "", Dock = DockStyle.Fill };
                     splitContainer2.Panel2.Controls.Add(dgv_Combobox);
                     dgv_Combobox.CellValueChanged += dataGridView_CellValueChanged;
                     lb_headerTable.Text = "Logfile";
@@ -657,7 +753,11 @@ namespace OK2SHIP_SMT.UserControls
                 case "OQC B2B Mating-Unmating":
                     DataTable dt = new DataTable();
                     splitContainer2.Panel2.Controls.Clear();
-                    dgv_Combobox = new CustomDataGridView(dt, new Dictionary<string, string[]> { { "FailureMode", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
+                    dgv_Combobox =
+                        new CustomDataGridView(dt,
+                                new Dictionary<string, string[]>
+                                    { { "FailureMode", new string[] { "", "Level 1", "Level 2", "Level 3" } } })
+                            { Name = "", Dock = DockStyle.Fill };
                     splitContainer2.Panel2.Controls.Add(dgv_Combobox);
                     lb_headerTable.Text = "Logfile";
                     tb_datagridview.ColumnCount = 2;
@@ -694,9 +794,9 @@ namespace OK2SHIP_SMT.UserControls
         }
 
         private ComboBox cb_airBubble = new ComboBox() { Dock = DockStyle.Fill };
+
         bool IsTheSameCellValue(int column, int row)
         {
-
             DataGridViewCell cell1 = dgv_left[column, row];
             DataGridViewCell cell2 = dgv_left[column, row - 1];
             if (cell1.Value == null || cell2.Value == null)
@@ -706,6 +806,7 @@ namespace OK2SHIP_SMT.UserControls
 
             return cell1.Value.ToString() == cell2.Value.ToString();
         }
+
         private void dataGridView1_CellPaintingZ(object sender, DataGridViewCellPaintingEventArgs e)
         {
             e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
@@ -720,30 +821,31 @@ namespace OK2SHIP_SMT.UserControls
                 else
                 {
                     e.AdvancedBorderStyle.Top = dataGridView.AdvancedCellBorderStyle.Top;
-
                 }
             }
             else
             {
                 e.AdvancedBorderStyle.Top = dataGridView.AdvancedCellBorderStyle.Top;
-
             }
-
         }
+
         private void dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.RowIndex == 0)
                 return;
-            if ((dgv_left.Columns[e.ColumnIndex].Name.Equals("ID") || dgv_left.Columns[e.ColumnIndex].Name.Equals("UUT")) && IsTheSameCellValue(e.ColumnIndex, e.RowIndex))
+            if ((dgv_left.Columns[e.ColumnIndex].Name.Equals("ID") ||
+                 dgv_left.Columns[e.ColumnIndex].Name.Equals("UUT")) && IsTheSameCellValue(e.ColumnIndex, e.RowIndex))
             {
                 e.CellStyle.ForeColor = Color.White;
                 e.FormattingApplied = true;
             }
         }
+
         private void ButtonLoadImpedanceFormDB_Click(object sender, EventArgs e)
         {
             Debugger.Break();
         }
+
         private void Button_Click(object sender, EventArgs e)
         {
             DataGridViewCell selectedCell = dataGridView.SelectedCells[0];
@@ -757,8 +859,11 @@ namespace OK2SHIP_SMT.UserControls
             CHANGE = !CHANGE;
         }
 
-        private CustomDataGridView dgv_left = new CustomDataGridView(new DataTable(), new Dictionary<string, string[]>());
+        private CustomDataGridView dgv_left =
+            new CustomDataGridView(new DataTable(), new Dictionary<string, string[]>());
+
         private Button btn_SetupSum = new Button() { Text = "Setup CheckSum", Dock = DockStyle.Fill };
+
         private void SetUpBarCodeScreen()
         {
             btn_checkBin.Visible = true;
@@ -773,7 +878,11 @@ namespace OK2SHIP_SMT.UserControls
             tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 50));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            TDMK_Label label = new TDMK_Label() { AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "Check Sum", Dock = DockStyle.Fill, Font = new Font("Arial", 12, FontStyle.Bold) };
+            TDMK_Label label = new TDMK_Label()
+            {
+                AutoSize = false, TextAlign = ContentAlignment.MiddleCenter, Text = "Check Sum", Dock = DockStyle.Fill,
+                Font = new Font("Arial", 12, FontStyle.Bold)
+            };
             tableLayoutPanel2.Controls.Add(label, 0, 0);
             tableLayoutPanel2.Controls.Add(dgv_left, 0, 1);
             tb_datagridview.Controls.Add(tableLayoutPanel2, 1, 0);
@@ -810,10 +919,12 @@ namespace OK2SHIP_SMT.UserControls
             {
                 throw new Exception("Folder not found");
             }
+
             if (browseStatusFile && !File.Exists(location))
             {
                 throw new Exception("Chưa có product ID");
             }
+
             /////////////////
             // check itemcode lot no of filename is match
             string[] fileName = Path.GetFileNameWithoutExtension(location.Replace("\r\n", "").Trim()).Split('-');
@@ -838,6 +949,7 @@ namespace OK2SHIP_SMT.UserControls
                     {
                         LotNo = LotNo.Split('_')[0];
                     }
+
                     LotNo = ValidateService.lotNoHandle(LotNo);
 
                     break;
@@ -849,6 +961,7 @@ namespace OK2SHIP_SMT.UserControls
                     {
                         throw new Exception("Not match format location!");
                     }
+
                     ItemCode = fileName[1];
                     LotNo = fileName[2];
                     if (!LotNo.Contains("_"))
@@ -864,18 +977,21 @@ namespace OK2SHIP_SMT.UserControls
                     {
                         LotNo = LotNo.Split('_')[0];
                     }
+
                     LotNo = ValidateService.lotNoHandle(LotNo);
                     //Debugger.Break();
                     break;
                 default:
                     throw new Exception("Process not found");
             }
+
             itemCode = itemCode.Replace(" ", "").Replace("\n", "").Replace("\r", "");
             lotNo = lotNo.Replace(" ", "").Replace("\n", "").Replace("\r", "");
             if (!(itemCode.Equals(ItemCode) && lotNo.Equals(LotNo)))
             {
                 throw new Exception("ItemCode or LotNo is not match");
             }
+
             //////////////////////////
             return true;
         }
@@ -916,27 +1032,27 @@ namespace OK2SHIP_SMT.UserControls
                                 }
                             }
                         }
-                        foreach (string item in new[] { "SEM200250", "SEM500700", "SEM5K", "Binarization200250", "Binarization500700" })
+
+                        foreach (string item in new[]
+                                     { "SEM200250", "SEM500700", "SEM5K", "Binarization200250", "Binarization500700" })
                         {
                             try
                             {
-
-                                ((DataGridViewImageColumn)dgv_Combobox.Columns[item]).ImageLayout = DataGridViewImageCellLayout.Zoom;
+                                ((DataGridViewImageColumn)dgv_Combobox.Columns[item]).ImageLayout =
+                                    DataGridViewImageCellLayout.Zoom;
                             }
                             catch
                             {
-
                             }
                         }
+
                         try
                         {
-
                             dgv_Combobox.Columns["Black200250"].DefaultCellStyle.Format = "0.00";
                             dgv_Combobox.Columns["Black500700"].DefaultCellStyle.Format = "0.00";
                         }
                         catch
                         {
-
                         }
 
                         break;
@@ -949,6 +1065,7 @@ namespace OK2SHIP_SMT.UserControls
                 MessageBox.Show(ex.Message);
             }
         }
+
         private void checkFactoryCode(string itemCode)
         {
             ///Get EEECode
@@ -964,7 +1081,9 @@ namespace OK2SHIP_SMT.UserControls
                 MessageBox.Show("ItemCode chưa được cài TABLE OF CONTENT");
             }
         }
-        private void getDataFormFile(string location, string itemCode, string lotNo, string process, string productIDLocation)
+
+        private void getDataFormFile(string location, string itemCode, string lotNo, string process,
+            string productIDLocation)
         {
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
@@ -979,20 +1098,22 @@ namespace OK2SHIP_SMT.UserControls
                         XRayPictureService xRayPictureService = new XRayPictureService();
                         try
                         {
-                            UC_XrayPicture.setData(xRayPictureService.Read(location, itemCode, lotNo, comboBox.Text), null);
+                            UC_XrayPicture.setData(xRayPictureService.Read(location, itemCode, lotNo, comboBox.Text),
+                                null);
                         }
                         catch (Exception ex)
                         {
                             try
                             {
-
                                 string exMsg = ex.Message;
                                 if (exMsg.Split('-')[0].Contains("1234"))
                                 {
-                                    if (MessageBox.Show(exMsg.Split('-')[1], comboBox.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                    if (MessageBox.Show(exMsg.Split('-')[1], comboBox.Text, MessageBoxButtons.YesNo) ==
+                                        DialogResult.Yes)
                                     {
-
-                                        UC_XrayPicture.setData(xRayPictureService.Read(location, itemCode, lotNo, comboBox.Text, true), null);
+                                        UC_XrayPicture.setData(
+                                            xRayPictureService.Read(location, itemCode, lotNo, comboBox.Text, true),
+                                            null);
                                     }
                                 }
                                 else
@@ -1005,6 +1126,7 @@ namespace OK2SHIP_SMT.UserControls
                                 MessageBox.Show(e2x.Message);
                             }
                         }
+
                         break;
                     case "Environment en-durance":
                         EEDService eEDService = new EEDService();
@@ -1015,12 +1137,14 @@ namespace OK2SHIP_SMT.UserControls
                         bool prime = false;
                         if (spec_log.Rows.Count <= 0)
                         {
-                            prime = MessageBox.Show("Chưa có spec bạn có muốn tiếp tục!", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes;
+                            prime = MessageBox.Show("Chưa có spec bạn có muốn tiếp tục!", "Thông báo",
+                                MessageBoxButtons.YesNo) == DialogResult.Yes;
                         }
                         else
                         {
                             prime = true;
                         }
+
                         if (prime == false)
                         {
                             return;
@@ -1031,8 +1155,8 @@ namespace OK2SHIP_SMT.UserControls
                             {
                                 pcs = -1;
                             }
-
                         }
+
                         string[] array = eEDService.ReadFile(location, itemCode, lotNo);
                         foreach (var item in array)
                         {
@@ -1047,6 +1171,7 @@ namespace OK2SHIP_SMT.UserControls
                                     throw new Exception($"Folder {item} không phù hợp!");
                             }
                         }
+
                         try
                         {
                             eEDService.FillProductID(dic, itemCode, lotNo, tb_productID.Text);
@@ -1055,11 +1180,19 @@ namespace OK2SHIP_SMT.UserControls
                         {
                             MessageBox.Show(ex.Message);
                         }
+
                         if (spec_log.Rows.Count > 0)
                         {
-                            eEDService.FillSpec(spec_log, spec);
-                            eEDService.CheckSpec(spec, dic);
+                            try
+                            {
+                                eEDService.FillSpec(spec_log, spec);
+                                eEDService.CheckSpec(spec, dic);
+                            }
+                            catch
+                            {
+                            }
                         }
+
                         UC_env.FillData(spec, dic);
 
 
@@ -1081,11 +1214,11 @@ namespace OK2SHIP_SMT.UserControls
                         {
                             if (ex.Message.Split('-')[0].Equals("12344"))
                             {
-                                DialogResult dr = MessageBox.Show("Dữ liệu đã tồn tại bạn có muốn tiếp tục", "Thông báo", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                                DialogResult dr = MessageBox.Show("Dữ liệu đã tồn tại bạn có muốn tiếp tục",
+                                    "Thông báo", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                                 if (dr == DialogResult.Yes)
                                 {
                                     dtM = semServices.SEMProcessRead(location, itemCode, lotNo, true);
-
                                 }
                             }
                             else
@@ -1093,8 +1226,13 @@ namespace OK2SHIP_SMT.UserControls
                                 MessageBox.Show($"Error: {ex.Message}");
                             }
                         }
+
                         dtM = semServices.JudgementCheck(dtM);
-                        if (dgv_Combobox.Rows.Count > 0 && (dgv_Combobox.Rows[0].Cells["LotNo"].Value.ToString().Contains(lotNo)) && (dgv_Combobox.Rows[0].Cells["ItemCode"].Value.ToString() == itemCode) && MessageBox.Show("Do you want write continue data?", "Warning!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        if (dgv_Combobox.Rows.Count > 0 &&
+                            (dgv_Combobox.Rows[0].Cells["LotNo"].Value.ToString().Contains(lotNo)) &&
+                            (dgv_Combobox.Rows[0].Cells["ItemCode"].Value.ToString() == itemCode) &&
+                            MessageBox.Show("Do you want write continue data?", "Warning!", MessageBoxButtons.YesNo) ==
+                            DialogResult.Yes)
                         {
                             DataTable dct = (DataTable)dgv_Combobox.DataSource;
                             foreach (DataRow row in dtM.Rows)
@@ -1104,6 +1242,7 @@ namespace OK2SHIP_SMT.UserControls
                                 {
                                     rowNew[columnZ.ColumnName] = row[columnZ.ColumnName];
                                 }
+
                                 rowNew["ID"] = dct.Rows.Count + 1;
                                 dct.Rows.Add(rowNew);
                             }
@@ -1128,7 +1267,11 @@ namespace OK2SHIP_SMT.UserControls
                             dtM = dct;
                         }
 
-                        dgv_Combobox = new CustomDataGridView(dtM, new Dictionary<string, string[]> { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
+                        dgv_Combobox =
+                            new CustomDataGridView(dtM,
+                                    new Dictionary<string, string[]>
+                                        { { "Judgement", new string[] { "", "Level 1", "Level 2", "Level 3" } } })
+                                { Name = "", Dock = DockStyle.Fill };
 
                         dgv_Combobox.CellClick += cellContentClick;
                         splitContainer2.Panel2.Controls.Clear();
@@ -1144,6 +1287,7 @@ namespace OK2SHIP_SMT.UserControls
                         {
                             throw new Exception($"Chỉ có {dt.Rows.Count} phần tử hãy import đúng dữ liệu");
                         }
+
                         dataGridView.DataSource = dt;
                         dataGridView.Columns["ID"].DisplayIndex = 0;
                         checkFactoryCode(itemCode);
@@ -1153,7 +1297,11 @@ namespace OK2SHIP_SMT.UserControls
                         OQCB2BMatingUnmatting oqc = new OQCB2BMatingUnmatting();
                         dt = oqc.ProcessRead(location + "\\UMT", itemCode, lotNo, tb_productID.Text);
 
-                        dgv_Combobox = new CustomDataGridView(dt, new Dictionary<string, string[]> { { "FailureMode", new string[] { "", "Level 1", "Level 2", "Level 3" } } }) { Name = "", Dock = DockStyle.Fill };
+                        dgv_Combobox =
+                            new CustomDataGridView(dt,
+                                    new Dictionary<string, string[]>
+                                        { { "FailureMode", new string[] { "", "Level 1", "Level 2", "Level 3" } } })
+                                { Name = "", Dock = DockStyle.Fill };
                         dgv_Combobox.CellClick += cellContentClick;
                         splitContainer2.Panel2.Controls.Clear();
                         splitContainer2.Panel2.Controls.Add(dgv_Combobox);
@@ -1163,28 +1311,32 @@ namespace OK2SHIP_SMT.UserControls
                         throw new Exception("Process not found");
                 }
 
+                MessageBox.Show("Lấy dữ liệu thành công");
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 return;
             }
-            MessageBox.Show("Lấy dữ liệu thành công");
-
         }
-        private CustomDataGridView dgv_Combobox = new CustomDataGridView(new DataTable(), new Dictionary<string, string[]>());
+
+        private CustomDataGridView dgv_Combobox =
+            new CustomDataGridView(new DataTable(), new Dictionary<string, string[]>());
 
         private ToolTip toolTip = new ToolTip();
 
         #endregion
+
         private string GetAttribute(DataGridViewCell cell)
         {
             if (cell != null && cell.Value != null)
             {
                 return cell.Value.ToString(); // Lấy giá trị ô làm thuộc tính
             }
+
             return null;
         }
+
         private void dataGridView1_CellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
@@ -1193,11 +1345,13 @@ namespace OK2SHIP_SMT.UserControls
                 toolTip.Show("attribute", dgv_Combobox, dgv_Combobox.PointToClient(Cursor.Position));
             }
         }
+
         //when mouse is leaving cell
         private void dataGridView1_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
         {
             toolTip.Hide(dgv_Combobox);
         }
+
         private void dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             switch (PROCESS)
@@ -1209,11 +1363,14 @@ namespace OK2SHIP_SMT.UserControls
                     break;
             }
         }
+
         private bool CHANGE = false;
+
         private void DGV_LEFT_CHANGE_VALUE_CELL(object sender, DataGridViewCellEventArgs e)
         {
             btn_Enable();
         }
+
         void btn_Disable()
         {
             button.Enabled = false;
@@ -1223,6 +1380,7 @@ namespace OK2SHIP_SMT.UserControls
             button.Font = new Font(button.Font.FontFamily, 12);
             button.Text = "Every change is updated";
         }
+
         void btn_Enable()
         {
             CHANGE = true;
@@ -1233,6 +1391,7 @@ namespace OK2SHIP_SMT.UserControls
             button.Font = new Font(button.Font.FontFamily, 12);
             button.Text = "<< -- UPDATE CHANGE";
         }
+
         private void CellClick_TCHSTS(int row, int column)
         {
             DataTable dataTable = (DataTable)dataGridView.DataSource;
@@ -1245,6 +1404,7 @@ namespace OK2SHIP_SMT.UserControls
             {
                 return;
             }
+
             string[] z = value.Split('@');
             DataTable data = ConverterService.JsonToDataTable(value.Split('@')[0]);
             DataTable data1 = new DataTable();
@@ -1266,18 +1426,21 @@ namespace OK2SHIP_SMT.UserControls
                     int currentDisplayIndex = columnToMove.DisplayIndex;
                     columnToMove.DisplayIndex = 3;
                 }
+
                 columnToMove = dgv_left.Columns["Function test"];
                 if (columnToMove.DisplayIndex != 4)
                 {
                     int currentDisplayIndex = columnToMove.DisplayIndex;
                     columnToMove.DisplayIndex = 4;
                 }
+
                 columnToMove = dgv_left.Columns["ID"];
                 if (columnToMove.DisplayIndex != 0)
                 {
                     int currentDisplayIndex = columnToMove.DisplayIndex;
                     columnToMove.DisplayIndex = 00;
                 }
+
                 columnToMove = dgv_left.Columns["Content"];
                 if (columnToMove.DisplayIndex != 1)
                 {
@@ -1287,6 +1450,7 @@ namespace OK2SHIP_SMT.UserControls
                 //Debugger.Break();
             }
         }
+
         private void btn_Export_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -1296,36 +1460,38 @@ namespace OK2SHIP_SMT.UserControls
                 switch (PROCESS)
                 {
                     case "Thermal cycling, Heat soak, Thermal shock":
-                        if (MessageBox.Show("Bạn muốn export logfile?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        if (MessageBox.Show("Bạn muốn export logfile?", "Thông báo", MessageBoxButtons.YesNo) ==
+                            DialogResult.Yes)
                         {
                             string type = comboBox.Text.ToString().Trim();
                             TCHSTSService service = new TCHSTSService();
                             service.ExportLogFile(itemCode, lotNo, type);
                             MessageBox.Show("Thành Công");
                         }
+
                         break;
                     default:
                         break;
                 }
+
                 #region HIDE
+
                 COUNTING++;
                 COUNTING = COUNTING % 7;
                 if (COUNTING > 5)
                 {
                     MessageBox.Show("Đừng thao tác quá nhiều vào nút này :<");
                 }
+
                 #endregion
             }
-
-
         }
-        private int COUNTING = 0;
 
+        private int COUNTING = 0;
 
 
         private void tb_productID_TextChanged(object sender, EventArgs e)
         {
-
         }
 
         private void tb_productID_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -1351,11 +1517,12 @@ namespace OK2SHIP_SMT.UserControls
         {
             if (UserSession.Instance.Role.Equals("admin"))
             {
-
                 DBContext _db = new DBContext();
-                if (MessageBox.Show($"Bạn có muốn xóa{tb_ItemCode.Text.Trim()} - {tb_Lotno.Text.Trim()}", "Thông báo", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+                if (MessageBox.Show($"Bạn có muốn xóa{tb_ItemCode.Text.Trim()} - {tb_Lotno.Text.Trim()}", "Thông báo",
+                        MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
                 {
-                    int i = _db.DeleteData("OQC_B2B_Mating_Unmating", new[] { "ItemCode", "lotNo" }, new[] { tb_ItemCode.Text.Trim(), tb_Lotno.Text.Trim() });
+                    int i = _db.DeleteData("OQC_B2B_Mating_Unmating", new[] { "ItemCode", "lotNo" },
+                        new[] { tb_ItemCode.Text.Trim(), tb_Lotno.Text.Trim() });
                     if (i != 0)
                     {
                         MessageBox.Show("Xóa Thành Công!");
@@ -1376,9 +1543,14 @@ namespace OK2SHIP_SMT.UserControls
         {
             try
             {
-
                 switch (PROCESS)
                 {
+                    case "X-Ray picture":
+                        string sZ = tb_locationFolder.Text;
+                        XRayPictureService.GetInfor(sZ, out string itemCodeX, out string lotNoX);
+                        tb_ItemCode.Text = itemCodeX;
+                        tb_Lotno.Text = lotNoX;
+                        break;
                     case "SEM BSE & Binarization":
 
                         string itemCode, lotNo;
@@ -1387,6 +1559,7 @@ namespace OK2SHIP_SMT.UserControls
                         {
                             return;
                         }
+
                         string[] fileName = Path.GetFileNameWithoutExtension(s.Replace("\r\n", "").Trim()).Split('-');
                         itemCode = fileName[1];
                         lotNo = fileName[2];
@@ -1399,6 +1572,7 @@ namespace OK2SHIP_SMT.UserControls
                         {
                             lotNo = lotNo.Split('_')[0];
                         }
+
                         lotNo = ValidateService.lotNoHandle(lotNo);
                         tb_ItemCode.Text = itemCode;
                         tb_Lotno.Text = lotNo;
@@ -1414,7 +1588,6 @@ namespace OK2SHIP_SMT.UserControls
 
         private void tb_ItemCode_TextChanged(object sender, EventArgs e)
         {
-
             switch (PROCESS)
             {
                 case "SEM BSE & Binarization":
@@ -1460,10 +1633,12 @@ namespace OK2SHIP_SMT.UserControls
                                 cell.Style.ForeColor = Color.Empty;
                             }
                         }
+
                         break;
                     case "":
                     default: break;
                 }
+
                 dgv_Combobox.Refresh();
             }
         }

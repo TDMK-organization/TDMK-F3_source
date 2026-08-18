@@ -16,6 +16,7 @@ using Microsoft.Office.Interop.Excel;
 using Application = System.Windows.Forms.Application;
 using OK2SHIP_SMT;
 using OK2SHIP_SMT.UserControls;
+using OK2SHIP_SMT.UserControls.Build2Ship;
 
 namespace Funtion_F3_SMT
 {

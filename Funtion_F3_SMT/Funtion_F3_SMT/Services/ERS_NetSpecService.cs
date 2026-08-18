@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using OfficeOpenXml;
 using OK2SHIP_SMT.Repositories;
 
@@ -15,7 +16,6 @@ namespace OK2SHIP_SMT.Services
         {
             _DATA = getDataTableStructor();
             _DATA.Rows.Add(" ");
-            
         }
 
         public DataTable getDataTableStructor()
@@ -28,6 +28,9 @@ namespace OK2SHIP_SMT.Services
             dt.Columns.Add("High Limit");
             dt.Columns.Add("Min DCR");
             dt.Columns.Add("Max DCR");
+            DataColumn colSelect = new DataColumn("Select", typeof(bool));
+            colSelect.DefaultValue = false; // Giá trị mặc định là true (hoặc false tùy ý bạn)
+            dt.Columns.Add(colSelect);
             return dt;
         }
 
@@ -86,6 +89,7 @@ namespace OK2SHIP_SMT.Services
                         rowValue["High Limit"] = worksheet.Cells[row + i, colHighLimit].Value.ToString();
                         rowValue["Min DCR"] = worksheet.Cells[row + i, colMinDCR].Value.ToString();
                         rowValue["Max DCR"] = worksheet.Cells[row + i, colMaxDCR].Value.ToString();
+                        rowValue["Select"] = true;
                         _DATA.Rows.Add(rowValue);
                         i++;
                     }
@@ -115,26 +119,25 @@ namespace OK2SHIP_SMT.Services
                 {
                     throw new DataException("Đã có dữ liệu bạn có muốn tiếp tục?");
                 }
-                
             }
             else
             {
                 dt = _DBCONTEXT.GetTableStructure(_NAMETABLE);
             }
-            
+
             DataRow dr = dt.NewRow();
             dr["ItemCode"] = itemCode;
             dr["Maker"] = maker;
             dr["Data"] = ConverterService.DataTableToJson(_DATA);
             dt.Rows.Add(dr);
-            
+
             _DBCONTEXT.BuckDataTable(dt, _NAMETABLE, new[] { "ItemCode", "Maker" }, null, "ID");
         }
 
         public void LoadData(string itemCode, string maker)
         {
-            
-            DataTable dt = _DBCONTEXT.LoadDataTable(_NAMETABLE,  new[] { "ItemCode", "Maker" }, new[] { itemCode, maker });
+            DataTable dt = _DBCONTEXT.LoadDataTable(_NAMETABLE, new[] { "ItemCode", "Maker" },
+                new[] { itemCode.PadRight(20, ' '), maker.PadRight(20, ' ') });
             if (dt.Rows.Count <= 0)
             {
                 _DATA = getDataTableStructor();
@@ -146,7 +149,6 @@ namespace OK2SHIP_SMT.Services
 
             string data = row["Data"].ToString();
             _DATA = ConverterService.JsonToDataTable(data);
-             
         }
     }
 }

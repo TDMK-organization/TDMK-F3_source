@@ -31,6 +31,7 @@ namespace OK2SHIP_SMT.Views
             AntdUI.Tabs.StyleCard styleCard1 = new AntdUI.Tabs.StyleCard();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BendingWindow));
             this.titlebar = new AntdUI.PageHeader();
+            this.button_color = new AntdUI.Button();
             this.button_collapse = new AntdUI.Button();
             this.tabs = new AntdUI.Tabs();
             this.tabPage = new AntdUI.TabPage();
@@ -38,6 +39,7 @@ namespace OK2SHIP_SMT.Views
             this.menu = new AntdUI.Menu();
             this.panel_left = new AntdUI.Panel();
             this.panel1 = new AntdUI.Panel();
+            this.titlebar.SuspendLayout();
             this.tabs.SuspendLayout();
             this.tabPage.SuspendLayout();
             this.panel_left.SuspendLayout();
@@ -45,6 +47,7 @@ namespace OK2SHIP_SMT.Views
             // 
             // titlebar
             // 
+            this.titlebar.Controls.Add(this.button_color);
             this.titlebar.DividerShow = true;
             this.titlebar.Dock = System.Windows.Forms.DockStyle.Top;
             this.titlebar.Location = new System.Drawing.Point(0, 0);
@@ -55,6 +58,21 @@ namespace OK2SHIP_SMT.Views
             this.titlebar.SubText = "Demo";
             this.titlebar.TabIndex = 0;
             this.titlebar.Text = "AntdUI";
+            this.titlebar.StyleChanged += new System.EventHandler(this.titlebar_StyleChanged);
+            // 
+            // button_color
+            // 
+            this.button_color.Dock = System.Windows.Forms.DockStyle.Right;
+            this.button_color.Ghost = true;
+            this.button_color.IconSvg = "SunOutlined";
+            this.button_color.Location = new System.Drawing.Point(1031, 0);
+            this.button_color.Name = "button_color";
+            this.button_color.Radius = 0;
+            this.button_color.Size = new System.Drawing.Size(50, 36);
+            this.button_color.TabIndex = 3;
+            this.button_color.ToggleIconSvg = "MoonOutlined";
+            this.button_color.WaveSize = 0;
+            this.button_color.Click += new System.EventHandler(this.button_color_Click);
             // 
             // button_collapse
             // 
@@ -74,7 +92,7 @@ namespace OK2SHIP_SMT.Views
             // 
             this.tabs.CloseDisposePage = true;
             this.tabs.Controls.Add(this.tabPage);
-            this.tabs.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tabs.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabs.Gap = 16;
             this.tabs.Location = new System.Drawing.Point(58, 36);
@@ -155,11 +173,14 @@ namespace OK2SHIP_SMT.Views
             this.Name = "BendingWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AntdUI Demo";
+            this.titlebar.ResumeLayout(false);
             this.tabs.ResumeLayout(false);
             this.tabPage.ResumeLayout(false);
             this.panel_left.ResumeLayout(false);
             this.ResumeLayout(false);
         }
+
+        private AntdUI.Button button_color;
 
         private AntdUI.TabPage tabPage;
         private AntdUI.Panel panel1;

@@ -19,7 +19,6 @@ namespace OK2SHIP_SMT.Views
         private bool? notbackToMenu = false;
         public CommonForm(string process = null, UserControl uc = null, bool? notbackToMenu = false)
         {
-            this.notbackToMenu = notbackToMenu;
             if (process != null)
             {
                 this.PROCESSNAME = process;
@@ -30,8 +29,13 @@ namespace OK2SHIP_SMT.Views
             }
             UserControl = uc;
             InitializeComponent();
+            this.notbackToMenu = notbackToMenu;
             this.label.Text = this.PROCESSNAME;
-            SetUpForm(uc);
+     
+        }
+        private void CommonForm_Load(object sender, EventArgs e)
+        {  
+            SetUpForm(UserControl);
         }
         #region Event
         private void CommonForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -92,5 +96,7 @@ namespace OK2SHIP_SMT.Views
         {
             ExitProgram();
         }
+
+       
     }
 }

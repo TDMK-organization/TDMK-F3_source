@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -9,8 +10,10 @@ using AntdUI;
 using Funtion_F3_SMT;
 using Microsoft.Office.Interop.Excel;
 using OK2SHIP_SMT.Services;
+using Action = System.Action;
 using ContextMenuStrip = AntdUI.ContextMenuStrip;
 using DataTable = System.Data.DataTable;
+using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
 
 namespace OK2SHIP_SMT.UserControls.Bending
 {
@@ -27,10 +30,6 @@ namespace OK2SHIP_SMT.UserControls.Bending
         public UC_BendingData(AntdUI.Window _window)
         {
             InitializeComponent();
-            DataTable dt = new DataTable();
-            dt.Columns.Add(" ");
-            dt.Rows.Add(" ");
-            dgv.DataSource = dt;
             updateDisplay();
             window = _window;
         }
@@ -86,6 +85,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
 
         private void button_loading_Click(object sender, EventArgs e)
         {
+            status_TABLE = "";
             string location = tb_logfile.Text.Trim();
             string itemCode = tb_itemCode.Text.Trim();
             string lotNo = tb_lotNo.Text.Trim();
@@ -107,14 +107,10 @@ namespace OK2SHIP_SMT.UserControls.Bending
 
         private void DisplayData()
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add(" ");
-            dt.Rows.Add(" ");
-            dgv.DataSource = dt;
             //Menu option
             menu_option.Items.Clear();
 
-            foreach (string item in __Service._RESULT.Keys.ToList())
+            foreach (string item in __Service.ListKey())
             {
                 menu_option.Items.Add(new AntdUI.MenuItem(item));
             }
@@ -123,7 +119,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
         private void menu_option_SelectChanged(object sender, MenuSelectEventArgs e)
         {
             string selectedId = e.Value.ToString();
-
+            status_TABLE = "";
             FillData(selectedId);
         }
 
@@ -168,57 +164,75 @@ namespace OK2SHIP_SMT.UserControls.Bending
 
         private void InitTableColumns(DataTable dt)
         {
-            // Khởi tạo một tập hợp cột mới
-            var columns = new AntdUI.ColumnCollection();
+            // Xóa sạch các cột cũ nếu có
+            dgv.Columns.Clear();
 
+            // Thiết lập tự động sinh cột hoặc tắt đi để tự tạo thủ công
+            dgv.AutoGenerateColumns = false;
 
-            // --- CỘT 2: Checkbox (Dùng ColumnCheck để hiển thị ô vuông, không phải chữ False) ---
-            columns.Add(new AntdUI.ColumnCheck("Selected")
-            {
-                Width = "60"
-            });
+            // --- CỘT 1: Checkbox cho DataGridView ---
+            DataGridViewCheckBoxColumn chkCol = new DataGridViewCheckBoxColumn();
+            chkCol.Name = "Selected";
+            chkCol.HeaderText = "Select";
+            chkCol.Width = 60;
+            chkCol.DataPropertyName =
+                "Selected"; // Nếu DataTable của bạn có cột này, hoặc để trống nếu dùng checkbox tự do
+            dgv.Columns.Add(chkCol);
 
             // --- TỰ ĐỘNG SINH CÁC CỘT CÒN LẠI DỰA TRÊN DATATABLE ---
             if (dt != null)
             {
                 foreach (DataColumn dc in dt.Columns)
                 {
-                    // Bỏ qua nếu DataTable vô tình có cột Selected từ trước
-                    if (dc.ColumnName == "Selected")
+                    // Bỏ qua nếu DataTable đã có sẵn cột Selected
+                    if (dc.ColumnName == "Selected" || dc.ColumnName == "Select")
                         continue;
 
-                    // Thêm các cột nội dung bình thường
-                    columns.Add(new AntdUI.Column(dc.ColumnName, dc.ColumnName));
+                    // Thêm cột kiểu Text tiêu chuẩn vào DataGridView
+                    DataGridViewTextBoxColumn textCol = new DataGridViewTextBoxColumn();
+                    textCol.Name = dc.ColumnName;
+                    textCol.HeaderText = dc.ColumnName;
+                    textCol.DataPropertyName = dc.ColumnName; // Liên kết trực tiếp với tên cột trong DataTable
+
+                    dgv.Columns.Add(textCol);
                 }
             }
-
-            dgv.Columns = columns;
         }
 
         private void FillData(string key)
         {
-            DataTable dt = __Service._RESULT[key].Copy();
-            if (!dt.Columns.Contains("Selected"))
+            try
             {
-                DataColumn checkCol = new DataColumn("Selected", typeof(bool))
-                {
-                    DefaultValue = true
-                };
-                dt.Columns.Add(checkCol);
-                checkCol.SetOrdinal(0); // Đưa cột này lên vị trí đầu tiên
+                DataTable dt = __Service.getValue(key);
+                InitTableColumns(dt);
+                DataTable res = __Service.totalErr(key, out int total, out int lsl, out int usl, out int rng,
+                    out int ok,
+                    out int tng);
+
+                string nums = lb_total.Text;
+                lb_total.Text = $"{nums.Split(':')[0]}:{total.ToString()}";
+                nums = lb_lsl.Text;
+                lb_lsl.Text = $"{nums.Split(':')[0]}:{lsl.ToString()}";
+                nums = lb_usl.Text;
+                lb_usl.Text = $"{nums.Split(':')[0]}:{usl.ToString()}";
+                nums = lb_rng.Text;
+                lb_rng.Text = $"{nums.Split(':')[0]}:{rng.ToString()}";
+                nums = lb_ok.Text;
+                lb_ok.Text = $"{nums.Split(':')[0]}:{ok.ToString()}";
+                nums = lb_T_NG.Text;
+                lb_T_NG.Text = $"{nums.Split(':')[0]}:{tng.ToString()}";
+
+                dgv_error.DataSource = res;
+                dgv.DataSource = dt;
             }
-
-            InitTableColumns(dt);
-            dgv.DataSource = dt;
-            Makeup(dgv);
-        }
-
-        private void Makeup(AntdUI.Table dgv)
-        {
+            catch
+            {
+            }
         }
 
         private void ResetTable()
         {
+            status_TABLE = "";
             // 1. Xóa dữ liệu hiện tại
             dgv.DataSource = null;
 
@@ -231,13 +245,36 @@ namespace OK2SHIP_SMT.UserControls.Bending
 
         private void ShowDetail(string category, string flexSN)
         {
-            ResetTable();
-            dgv.DataSource = __Service.GetDetail(category, flexSN);
+            try
+            {
+                ResetTable();
+                status_TABLE = "NG Mode";
+                DataTable dt = __Service.GetDetail(category, flexSN);
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    // Đảm bảo không bị lỗi luồng và ép hiển thị đúng cột
+                    dgv.Invoke(new Action(() =>
+                    {
+                        dgv.AutoGenerateColumns = true; // Cho phép tự sinh cột theo dữ liệu chi tiết mới
+                        dgv.DataSource = dt;
+                    }));
+                }
+                else
+                {
+                    MessageBox.Show("Không có dữ liệu chi tiết cho mục này!", "Thông báo", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi hiển thị chi tiết: " + ex.Message);
+            }
         }
 
-        private void dgv_CellClick(object sender, TableClickEventArgs e)
+        private void dgv_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (e.RowIndex > 0)
+            if (e.RowIndex >= 0)
             {
                 DataTable dt = dgv.DataSource as DataTable;
                 var menuList = new AntdUI.IContextMenuStripItem[]
@@ -260,8 +297,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
                             {
                                 // Lấy các giá trị bạn cần
                                 string category = menu_option.GetSelectItem().Text.ToString();
-                                string flexSN = e.Column.Title.ToString();
-
+                                string flexSN = dgv.Columns[e.ColumnIndex].Name;
                                 // Gọi hàm ShowDetail
                                 ShowDetail(category, flexSN);
                             }
@@ -277,7 +313,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
                             {
                                 // Lấy các giá trị bạn cần
                                 string category = menu_option.GetSelectItem().Text.ToString();
-                                string cycle = dt.Rows[e.RowIndex - 1][1]?.ToString() ?? "";
+                                string cycle = dt.Rows[e.RowIndex][1]?.ToString() ?? "";
                                 // Gọi hàm ShowDetail
                                 ShowDetailbyCycle(category, cycle);
                             }
@@ -308,7 +344,12 @@ namespace OK2SHIP_SMT.UserControls.Bending
         private void ShowDetailbyCycle(string category, string cycle)
         {
             ResetTable();
-            dgv.DataSource = __Service.GetDetailByCycle(category, cycle);
+            DataTable dt = __Service.GetDetailByCycle(category, cycle);
+            dgv.Invoke(new Action(() =>
+            {
+                dgv.AutoGenerateColumns = true; // Cho phép tự sinh cột theo dữ liệu chi tiết mới
+                dgv.DataSource = dt;
+            }));
         }
 
         TAlignFrom align = TAlignFrom.Top;
@@ -321,7 +362,8 @@ namespace OK2SHIP_SMT.UserControls.Bending
             try
             {
                 __Service.Save(itemCode, lotNo, maker, 0);
-                AntdUI.Notification.success(window, $"Notification", "Lưu dữ liệu thành công!", autoClose: 10, align: align);
+                AntdUI.Notification.success(window, $"Notification", "Lưu dữ liệu thành công!", autoClose: 10,
+                    align: align);
             }
             catch (DataException ex)
             {
@@ -339,7 +381,9 @@ namespace OK2SHIP_SMT.UserControls.Bending
                     {
                         __Service.Save(itemCode, lotNo, maker, 2);
                     }
-                AntdUI.Notification.success(window, $"Notification", "Lưu dữ liệu thành công!", autoClose: 10, align: align);
+
+                    AntdUI.Notification.success(window, $"Notification", "Lưu dữ liệu thành công!", autoClose: 10,
+                        align: align);
                 }
                 catch (Exception exx)
                 {
@@ -352,7 +396,6 @@ namespace OK2SHIP_SMT.UserControls.Bending
             }
             finally
             {
-                
             }
         }
 
@@ -361,8 +404,10 @@ namespace OK2SHIP_SMT.UserControls.Bending
         {
             try
             {
+                status_TABLE = "";
                 string itemCode = tb_itemCode.Text.Trim();
-                string lotNo = tb_lotNo.Text.Trim();
+                string lotNo = tb_lotNo.Text.Trim().PadLeft(5, '0');
+                ;
                 string maker = tb_maker.Text.Trim();
                 __Service = new BendingService();
                 __Service.Load(itemCode, lotNo, maker);
@@ -381,12 +426,104 @@ namespace OK2SHIP_SMT.UserControls.Bending
                 string itemCode = tb_itemCode.Text.Trim();
                 string lotNo = tb_lotNo.Text.Trim();
                 string maker = tb_maker.Text.Trim();
-                __Service.Export(itemCode, lotNo, maker);
+                string category;
+                if (menu_option.SelectItem == null)
+                {
+                    category = "Flex Bending";
+                }
+                else
+                {
+                    category = menu_option.SelectItem.ToString();
+                }
+
+                __Service = new BendingService();
+                __Service.Export(itemCode, lotNo, maker, category);
                 DisplayData();
             }
             catch (Exception ex)
             {
                 AntdUI.Notification.error(window, $"Error", ex.Message, autoClose: 10, align: align);
+            }
+        }
+
+        private string status_TABLE = "";
+
+        private void dgv_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            string value = e.Value != null ? e.Value.ToString() : "";
+            if (status_TABLE == "NG Mode")
+            {
+                int col = e.ColumnIndex;
+                int row = e.RowIndex;
+                if (col > 0 && row >= 0)
+                {
+                    string colName = dgv.Columns[col].Name;
+                    object flexSNValue = dgv.Rows[row].Cells["Flex SN"].Value;
+                    object no = dgv.Rows[row].Cells["Net No"].Value;
+                    string flexSN = flexSNValue != null ? flexSNValue.ToString() : string.Empty;
+                    string netNO = no != null ? no.ToString() : string.Empty;
+                    string category = menu_option.GetSelectItem().Text.ToString();
+                    string z = __Service.GetError(colName, flexSN, netNO, category).ToLower();
+                    switch (z)
+                    {
+                        case "over lsl":
+                            e.CellStyle.BackColor = Color.Cyan;
+                            break;
+                        case "over usl":
+                            e.CellStyle.BackColor = Color.Goldenrod;
+                            break;
+                        case "vanability r ng":
+                            e.CellStyle.BackColor = Color.Red;
+                            break;
+                        case "vanability t ng":
+                            e.CellStyle.BackColor = Color.DarkOrange;
+                            break;
+                        case "ok":
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    if (value.Equals("NG"))
+                    {
+                        e.CellStyle.BackColor = Color.Red;
+                        //Debugger.Break();
+                    }
+                }
+            }
+        }
+
+
+        private void tb_lotNo_Leave(object sender, EventArgs e)
+        {
+            tb_lotNo.Text = tb_lotNo.Text.PadLeft(5, '0');
+        }
+
+        private void tb_itemCode_StyleChanged(object sender, EventArgs e)
+        {
+            Debugger.Break();
+        }
+
+        private void tb_logfile_DoubleClick(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+            {
+                // (Tùy chọn) Đặt tiêu đề hướng dẫn hiển thị trên hộp thoại
+                folderDialog.Description = "Chọn thư mục lưu trữ file log";
+
+                // Mở hộp thoại và kiểm tra xem người dùng đã bấm nút OK chưa
+                if (folderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Lấy địa chỉ (đường dẫn) thư mục được chọn trả về
+                    string selectedFolderPath = folderDialog.SelectedPath;
+
+                    tb_logfile.Text = selectedFolderPath;
+                }
             }
         }
     }
