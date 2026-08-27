@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Forms;
+using Funtion_F3_SMT;
 using OfficeOpenXml;
 using OK2SHIP_SMT.Repositories;
 
@@ -74,7 +76,7 @@ namespace OK2SHIP_SMT.Services
                             case "Peel Test":
                             case "Pull Test":
                             case "Shear test":
-                                HandleSheet(ws, category);
+                                HandleSheet(ws, itemcode, lotno, category);
                                 break;
                             default:
                                 break;
@@ -108,7 +110,7 @@ namespace OK2SHIP_SMT.Services
             }
         }
 
-        private void HandleSheet(ExcelWorksheet ws, string category)
+        private void HandleSheet(ExcelWorksheet ws, string category, string itemCode, string lotNo)
         {
             int sampleTo = 10, sampleFrom = 1;
             IDictionary<string, string> _dic = ExportProcess.FindAddressByText(ws, new[] { "Sample" });
@@ -121,6 +123,16 @@ namespace OK2SHIP_SMT.Services
                     int sample = int.Parse(sampleName.Replace("Sample", "").Trim());
                     if (sample <= sampleTo && sample >= sampleFrom)
                     {
+                        
+                        ws.Cells[ExportProcess.AddRow(s, - 1)].Value = "";
+                        ws.Cells[ExportProcess.AddRow(s, 3)].Value = "";
+                        ws.Cells[ExportProcess.AddRow(s, 4)].Value = "";
+                        ws.Cells[ExportProcess.AddRow(s, 5)].Value = "";
+                        ws.Cells[ExportProcess.AddRow(s, 6)].Value = "";
+                        ws.Cells[ExportProcess.AddRow(s, 7)].Value = "";
+                        ws.Cells[ExportProcess.AddRow(s, 8)].Value = "";
+                        ws.Cells[ExportProcess.AddRow(s, 9)].Value = "";
+                        ws.Cells[ExportProcess.AddRow(s, 10)].Value = "";
                         int row = ws.Cells[s].Start.Row;
                         int col = ws.Cells[s].Start.Column;
 
@@ -129,9 +141,6 @@ namespace OK2SHIP_SMT.Services
                         int targetRow1 = row + 1;
                         int targetRow2 = row + 2;
 
-                        // // Lấy tọa độ dạng góc của 2 ô này để so sánh với vị trí của hình ảnh
-                        // var cell1 = ws.Cells[targetRow1, col];
-                        // var cell2 = ws.Cells[targetRow2, col];
 
                         // 3. Duyệt qua tất cả các hình ảnh (Drawing) có trong Worksheet để xóa nếu nằm trong vùng tọa độ này
                         // EPPlus quản lý hình ảnh trong ws.Drawings
@@ -152,6 +161,14 @@ namespace OK2SHIP_SMT.Services
                 {
                 }
             }
+            
+            // Export 
+            DataTable dt = new DataTable();
+            
+            DataTable dt_spec = new DataTable();
+            
+            new Funtion_export_file_le_EPPlus().export_excel_peel_pull_shear(ws, itemCode, lotNo, category, dt, dt_spec,
+                new DataGridView(), "NPI", "", 10);
         }
 
         public void Upload(string logfileAdd, string category, string itemCode, string lotNo)
@@ -160,7 +177,9 @@ namespace OK2SHIP_SMT.Services
             {
                 throw new Exception("Nhập itemcode lotno");
             }
+
             category = category.Split('_')[1];
+
             SaveSheet(logfileAdd, itemCode, lotNo, category);
         }
 

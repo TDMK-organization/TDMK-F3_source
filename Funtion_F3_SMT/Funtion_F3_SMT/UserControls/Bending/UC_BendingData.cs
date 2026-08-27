@@ -14,6 +14,7 @@ using Action = System.Action;
 using ContextMenuStrip = AntdUI.ContextMenuStrip;
 using DataTable = System.Data.DataTable;
 using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
+using Message = System.Windows.Forms.Message;
 
 namespace OK2SHIP_SMT.UserControls.Bending
 {
@@ -124,6 +125,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
         }
 
         private string after_SELECTED = "";
+
 
         private bool menu_option_SelectChanging(object sender, MenuSelectEventArgs e)
         {
@@ -407,7 +409,6 @@ namespace OK2SHIP_SMT.UserControls.Bending
                 status_TABLE = "";
                 string itemCode = tb_itemCode.Text.Trim();
                 string lotNo = tb_lotNo.Text.Trim().PadLeft(5, '0');
-                ;
                 string maker = tb_maker.Text.Trim();
                 __Service = new BendingService();
                 __Service.Load(itemCode, lotNo, maker);
@@ -462,7 +463,15 @@ namespace OK2SHIP_SMT.UserControls.Bending
                     object no = dgv.Rows[row].Cells["Net No"].Value;
                     string flexSN = flexSNValue != null ? flexSNValue.ToString() : string.Empty;
                     string netNO = no != null ? no.ToString() : string.Empty;
-                    string category = menu_option.GetSelectItem().Text.ToString();
+                    string category = "";
+                    try
+                    {
+                        menu_option.GetSelectItem().Text.ToString();
+                    }
+                    catch
+                    {
+                    }
+
                     string z = __Service.GetError(colName, flexSN, netNO, category).ToLower();
                     switch (z)
                     {

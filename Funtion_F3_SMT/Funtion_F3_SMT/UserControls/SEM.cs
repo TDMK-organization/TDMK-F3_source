@@ -303,13 +303,14 @@ namespace OK2SHIP_SMT.UserControls
                 case "Environment en-durance":
                     string itemCodez = tb_ItemCode.Text.Trim();
                     string lotNoz = tb_Lotno.Text.Trim();
+                    string makerz = tbMaker.Text.Trim();
                     DataTable dt = (DataTable)UC_env.dataGridView.DataSource;
                     Dictionary<string, Dictionary<string, DataTable>> dic = UC_env.dictionary_Data;
                     EEDService eD = new EEDService();
                     int resz = 0;
                     try
                     {
-                        resz = eD.save(itemCodez, lotNoz, dt, dic);
+                        resz = eD.save(itemCodez, lotNoz, makerz, dt, dic);
                         UC_env.ClearData();
                         MessageBox.Show($"Lưu thành công {resz} row!");
                     }
@@ -321,7 +322,7 @@ namespace OK2SHIP_SMT.UserControls
                             if (MessageBox.Show("Đã tồn tại bạn muốn ghi đè?", "Thông báo", MessageBoxButtons.YesNo) ==
                                 DialogResult.Yes)
                             {
-                                resz = eD.save(itemCodez, lotNoz, dt, dic, int.Parse(ap[1]));
+                                resz = eD.save(itemCodez, lotNoz,makerz , dt, dic, int.Parse(ap[1]));
                                 UC_env.ClearData();
                                 MessageBox.Show($"Lưu thành công {resz} row!");
                             }
@@ -396,12 +397,20 @@ namespace OK2SHIP_SMT.UserControls
                         break;
                     case "Environment en-durance":
                         // status = new EEDService().Export(tb_ItemCode.Text, tb_Lotno.Text);
-                        EEDService.InputModelExport model =
-                            new EEDService.InputModelExport(tb_ItemCode.Text, tb_Lotno.Text, "Maker TDMK");
-                        EEDService.InputModelExport model1 =
-                            new EEDService.InputModelExport(tb_ItemCode.Text, tb_Lotno.Text, "Maker SEEV");
+                    
+                        if (string.IsNullOrEmpty(tbMaker.Text.Trim()))
+                        {
+                            List<EEDService.InputModelExport> list =
+                                new EEDService().GetListMaker(tb_ItemCode.Text, tb_Lotno.Text);
+                            status = new EEDService().Export(list);
+                        }
+                        else
+                        {
+                            EEDService.InputModelExport model = new EEDService.InputModelExport(tb_ItemCode.Text.Trim(),
+                                tb_Lotno.Text.Trim(), tbMaker.Text.Trim());
 
-                        status = new EEDService().Export(new List<EEDService.InputModelExport>() { model, model1 });
+                            status = new EEDService().Export(new List<EEDService.InputModelExport>() { model });
+                        }
 
                         break;
                     case "Thermal cycling, Heat soak, Thermal shock":
@@ -500,7 +509,7 @@ namespace OK2SHIP_SMT.UserControls
                         EEDService EED = new EEDService();
                         DataTable dataTable = new DataTable();
                         Dictionary<string, Dictionary<string, DataTable>> dic = EED.Load(tb_ItemCode.Text,
-                            tb_Lotno.Text, ref dataTable);
+                            tb_Lotno.Text, tbMaker.Text,ref dataTable);
                         UC_env.FillData(dataTable, dic);
                         MessageBox.Show("Lấy dữ liệu thành công");
                         //UC_env;
@@ -657,7 +666,14 @@ namespace OK2SHIP_SMT.UserControls
                     tableLayoutItemCode.RowCount = 3;
 
 // Thêm chiều cao cho dòng mới (ví dụ: tự động giãn hoặc kích thước cố định)
-                    tableLayoutItemCode.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                    tableLayoutItemCode.RowStyles.Clear();
+
+                    float percentage = 100f / 3;
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        tableLayoutItemCode.RowStyles.Add(new RowStyle(SizeType.Percent, percentage));
+                    }
 
 // Tạo Label "Maker"
                     Label lblMaker = new Label();
@@ -775,7 +791,25 @@ namespace OK2SHIP_SMT.UserControls
                     tb_datagridview.Controls.Clear();
                     tb_datagridview.Controls.Add(UC_env, 0, 0);
                     browseStatusFileZ = false;
+                    tableLayoutPanel3.Controls.Add(comboBox, 0, 1);
 
+                    tableLayoutItemCode.RowCount = 3;
+
+// Thêm chiều cao cho dòng mới (ví dụ: tự động giãn hoặc kích thước cố định)
+                    tableLayoutItemCode.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+
+// Tạo Label "Maker"
+                    Label lblMakerz = new Label();
+                    lblMakerz.Text = "Maker";
+                    lblMakerz.Anchor = AnchorStyles.Left;
+
+// Tạo TextBox "tb_maker"
+                    tbMaker.Name = "tb_maker";
+                    tbMaker.Dock = DockStyle.Fill; // Hoặc tùy chỉnh kích thước
+
+// Thêm vào TableLayoutPanel tại cột 0, dòng 2 (dòng thứ 3 vì tính từ 0)
+                    tableLayoutItemCode.Controls.Add(lblMakerz, 0, 2);
+                    tableLayoutItemCode.Controls.Add(tbMaker, 1, 2);
                     break;
                 case "Air Bubble":
                     this.Controls.Clear();

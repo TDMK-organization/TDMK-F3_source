@@ -38,7 +38,6 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
-            this.btn_Save = new AntdUI.Button();
             this.panel1 = new AntdUI.Panel();
             this.btn_login = new AntdUI.Button();
             this.tb_login = new AntdUI.Input();
@@ -48,7 +47,6 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
             this.tabPage2 = new AntdUI.TabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.btn_loadData = new AntdUI.ButtonShadow();
-            this.btn_export = new AntdUI.ButtonShadow();
             this.tabPage1 = new AntdUI.TabPage();
             this.button_loading = new AntdUI.Button();
             this.tb_logfile = new AntdUI.Input();
@@ -142,7 +140,6 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
             // 
             this.tableLayoutPanel7.ColumnCount = 1;
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel7.Controls.Add(this.btn_Save, 0, 1);
             this.tableLayoutPanel7.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(591, 2);
@@ -153,20 +150,6 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel7.Size = new System.Drawing.Size(221, 128);
             this.tableLayoutPanel7.TabIndex = 1;
-            // 
-            // btn_Save
-            // 
-            this.btn_Save.BorderWidth = 2F;
-            this.btn_Save.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_Save.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Save.Ghost = true;
-            this.btn_Save.Location = new System.Drawing.Point(2, 42);
-            this.btn_Save.Margin = new System.Windows.Forms.Padding(2);
-            this.btn_Save.Name = "btn_Save";
-            this.btn_Save.Size = new System.Drawing.Size(217, 84);
-            this.btn_Save.TabIndex = 0;
-            this.btn_Save.Text = "Save Data";
-            this.btn_Save.Type = AntdUI.TTypeMini.Primary;
             // 
             // panel1
             // 
@@ -270,7 +253,6 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel5.Controls.Add(this.btn_loadData, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.btn_export, 1, 0);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2);
@@ -293,28 +275,14 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
             this.btn_loadData.Type = AntdUI.TTypeMini.Primary;
             this.btn_loadData.Click += new System.EventHandler(this.btn_loadData_Click);
             // 
-            // btn_export
-            // 
-            this.btn_export.BorderWidth = 2F;
-            this.btn_export.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_export.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_export.Ghost = true;
-            this.btn_export.Location = new System.Drawing.Point(291, 2);
-            this.btn_export.Margin = new System.Windows.Forms.Padding(2);
-            this.btn_export.Name = "btn_export";
-            this.btn_export.Size = new System.Drawing.Size(286, 37);
-            this.btn_export.TabIndex = 3;
-            this.btn_export.Text = "Export Data";
-            this.btn_export.Type = AntdUI.TTypeMini.Primary;
-            // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.button_loading);
             this.tabPage1.Controls.Add(this.tb_logfile);
-            this.tabPage1.Location = new System.Drawing.Point(-1120, -82);
+            this.tabPage1.Location = new System.Drawing.Point(-1158, -82);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(560, 41);
+            this.tabPage1.Size = new System.Drawing.Size(579, 41);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Logfile";
             // 
@@ -327,7 +295,7 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
             this.button_loading.IconHoverSvg = "";
             this.button_loading.IconSvg = resources.GetString("button_loading.IconSvg");
             this.button_loading.JoinLeft = true;
-            this.button_loading.Location = new System.Drawing.Point(435, 0);
+            this.button_loading.Location = new System.Drawing.Point(454, 0);
             this.button_loading.Margin = new System.Windows.Forms.Padding(2);
             this.button_loading.Name = "button_loading";
             this.button_loading.Size = new System.Drawing.Size(125, 41);
@@ -344,7 +312,7 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
             this.tb_logfile.Margin = new System.Windows.Forms.Padding(2);
             this.tb_logfile.Name = "tb_logfile";
             this.tb_logfile.PlaceholderText = "Double Click for select folder or copy on here";
-            this.tb_logfile.Size = new System.Drawing.Size(560, 41);
+            this.tb_logfile.Size = new System.Drawing.Size(579, 41);
             this.tb_logfile.TabIndex = 4;
             this.tb_logfile.WaveSize = 0;
             this.tb_logfile.TextChanged += new System.EventHandler(this.tb_logfile_TextChanged);
@@ -450,7 +418,6 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
-        private AntdUI.Button btn_Save;
         private AntdUI.Panel panel1;
         private AntdUI.Button btn_login;
         private AntdUI.Input tb_login;
@@ -463,7 +430,6 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
         private AntdUI.TabPage tabPage2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
         private AntdUI.ButtonShadow btn_loadData;
-        private AntdUI.ButtonShadow btn_export;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
         private AntdUI.Input tb_lotNo;
         private System.Windows.Forms.Label label4;

@@ -14,10 +14,32 @@ namespace OK2SHIP_SMT.Services
     public class BendingService
     {
         private DBContext _dbContext = new DBContext();
+
+        /// <summary>
+        /// Danh sách kết quả
+        /// {Key: category, value: DataTable (cycle - flexSN)}
+        /// </summary>
         private Dictionary<string, DataTable> _RESULT = new Dictionary<string, DataTable>();
-        private DataTable __SPEC = new DataTable();
+
+        /// <summary>
+        /// Spec theo từng 
+        /// {Key: category, Value: Spec}
+        /// </summary>
+        private Dictionary<string, DataTable> __SPEC = new Dictionary<string, DataTable>();
+
+        /// <summary>
+        /// Dữ liệu của từng vị trí theo từng hang mục
+        /// Key: {flexSN-cycle-category, value: }
+        /// </summary>
         private Dictionary<string, string> _DATA = new Dictionary<string, string>();
 
+        /// <summary>
+        /// lấy itemcode, lotno, maker từ địa chỉ folder đưa vào
+        /// </summary>
+        /// <param name="location">địa chỉ folder logfile</param>
+        /// <param name="itemCode"></param>
+        /// <param name="lotNo"></param>
+        /// <param name="maker"></param>
         public static void LocationHandle(string location, out string itemCode, out string lotNo, out string maker)
         {
             location = location.Trim();
@@ -44,10 +66,16 @@ namespace OK2SHIP_SMT.Services
             }
         }
 
-
-        public DataTable getValue(string key)
+        /// <summary>
+        /// lấy danh sách kết quả theo tên hạng mục và thêm cột select để người dùng có thể xóa chu kỳ
+        /// </summary>
+        /// <param name="key">The key of the data table to retrieve.</param>
+        /// <returns>A copy of the <see cref="T:System.Data.DataTable"/> associated with the specified key,
+        /// potentially modified to include a "Selected" column.</returns>
+        /// <exception cref="T:System.Data.DataException">Thrown when the specified key does not exist in the internal data store.</exception>
+        public DataTable getValue(string category)
         {
-            if (_RESULT.TryGetValue(key, out DataTable dt))
+            if (_RESULT.TryGetValue(category, out DataTable dt))
             {
                 DataTable result = dt.Copy();
                 if (!result.Columns.Contains("Selected"))
@@ -435,7 +463,7 @@ namespace OK2SHIP_SMT.Services
                 }
             }
 
-            if (__SPEC.Rows.Count > 0)
+            if (__SPEC[category].Rows.Count > 0)
             {
                 if (!dt.Columns.Contains("Net Name"))
                 {
@@ -446,11 +474,11 @@ namespace OK2SHIP_SMT.Services
                     newColumn.SetOrdinal(3);
 
                     // 3. Copy dữ liệu từ __SPEC sang result theo từng dòng
-                    for (int i = 0; i < Math.Min(__SPEC.Rows.Count, dt.Rows.Count); i++)
+                    for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
                     {
-                        if (__SPEC.Columns.Contains("Net Name"))
+                        if (__SPEC[category].Columns.Contains("Net Name"))
                         {
-                            dt.Rows[i]["Net Name"] = __SPEC.Rows[i]["Net Name"];
+                            dt.Rows[i]["Net Name"] = __SPEC[category].Rows[i]["Net Name"];
                         }
                     }
                 }
@@ -464,11 +492,11 @@ namespace OK2SHIP_SMT.Services
                     newColumn.SetOrdinal(4);
 
                     // 3. Copy dữ liệu từ __SPEC sang result theo từng dòng
-                    for (int i = 0; i < Math.Min(__SPEC.Rows.Count, dt.Rows.Count); i++)
+                    for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
                     {
-                        if (__SPEC.Columns.Contains("Pin1"))
+                        if (__SPEC[category].Columns.Contains("Pin1"))
                         {
-                            dt.Rows[i]["Pin1"] = __SPEC.Rows[i]["Pin1"];
+                            dt.Rows[i]["Pin1"] = __SPEC[category].Rows[i]["Pin1"];
                         }
                     }
                 }
@@ -482,11 +510,11 @@ namespace OK2SHIP_SMT.Services
                     newColumn.SetOrdinal(5);
 
                     // 3. Copy dữ liệu từ __SPEC sang result theo từng dòng
-                    for (int i = 0; i < Math.Min(__SPEC.Rows.Count, dt.Rows.Count); i++)
+                    for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
                     {
-                        if (__SPEC.Columns.Contains("Pin2"))
+                        if (__SPEC[category].Columns.Contains("Pin2"))
                         {
-                            dt.Rows[i]["Pin2"] = __SPEC.Rows[i]["Pin2"];
+                            dt.Rows[i]["Pin2"] = __SPEC[category].Rows[i]["Pin2"];
                         }
                     }
                 }
@@ -500,11 +528,13 @@ namespace OK2SHIP_SMT.Services
                     newColumn.SetOrdinal(5);
 
                     // 3. Copy dữ liệu từ __SPEC sang result theo từng dòng
-                    for (int i = 0; i < Math.Min(__SPEC.Rows.Count, dt.Rows.Count); i++)
+                    for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
                     {
-                        if (__SPEC.Columns.Contains("Select"))
+                        if (__SPEC[category].Columns.Contains("Select"))
                         {
-                            dt.Rows[i]["Select"] = __SPEC.Rows[i]["Select"];
+                            dt.Rows[i]["Select"] = __SPEC[category].Rows[i]["Select"].ToString().ToUpper() == "TRUE"
+                                ? "YES"
+                                : "NO";
                         }
                     }
                 }
@@ -537,7 +567,6 @@ namespace OK2SHIP_SMT.Services
                 if (skip == 1)
                 {
                     //Kết hợp data từ database ra
-                    List<string> result = dt.Rows[0]["Result"].ToString().Split('\u2060').ToList();
                     List<string> dataZ = dt.Rows[0]["Data"].ToString().Split('\u2060').ToList();
                     foreach (string s in dataZ)
                     {
@@ -547,20 +576,7 @@ namespace OK2SHIP_SMT.Services
                             _DATA.Add(split[0], split[1]);
                         }
                     }
-                    // tính lại kết quả 
-
-                    foreach (string s in result)
-                    {
-                        string[] split = s.Split('\u200F');
-                        if (_RESULT.TryGetValue(split[0], out DataTable dtz))
-                        {
-                            _RESULT[split[0]] = SolveResult(split[0]);
-                        }
-                        else
-                        {
-                            _RESULT.Add(split[0], ConverterService.JsonToDataTable(split[1]));
-                        }
-                    }
+                  
                 }
             }
             else
@@ -576,20 +592,10 @@ namespace OK2SHIP_SMT.Services
 
             string dataJson = string.Join("\u2060", data);
 
-            List<string> _result = new List<string>();
-            foreach (string key in _RESULT.Keys)
-            {
-                _result.Add($"{key}\u200F{ConverterService.DataTableToJson(_RESULT[key])}");
-            }
+           
+          
 
-            string resultJson = string.Join("\u2060", _result);
-            List<string> errorList = new List<string>();
-            foreach (string key in _ERROR_LIST.Keys)
-            {
-                errorList.Add($"{key}\u200D{_ERROR_LIST[key]}");
-            }
-
-            string jsonErr = string.Join("\u200B", errorList);
+         
 
             DataRow row;
             if (skip == 1)
@@ -605,8 +611,6 @@ namespace OK2SHIP_SMT.Services
             row["LotNo"] = lotNo;
             row["Maker"] = maker;
             row["Data"] = dataJson;
-            row["Result"] = resultJson;
-            row["ErrorList"] = jsonErr;
             if (skip != 1)
             {
                 dt.Rows.Add(row);
@@ -615,20 +619,12 @@ namespace OK2SHIP_SMT.Services
             _dbContext.BuckDataTable(dt, _NAMETABLE, new[] { "ItemCode", "LotNo", "Maker" }, null, "ID");
         }
 
-        /// <summary>
-        /// This function is solve again result of category
-        /// </summary>
-        /// <param name="category"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        private DataTable SolveResult(string category)
+        private DataTable SolveResult(string category, bool isSpec = false)
         {
-            category = switchCategory(category);
+
             DataTable dt = new DataTable();
             dt.Columns.Add("Cycle", typeof(string));
 
-            // tính dữ liệu BF trước và các cột
-            // key {flexSN}-{cycleName}-{category}
-            // Cycle - List<key>
             Dictionary<string, List<string>> _dic = new Dictionary<string, List<string>>();
             foreach (string key in _DATA.Keys)
             {
@@ -638,14 +634,15 @@ namespace OK2SHIP_SMT.Services
                     if (_dic.TryGetValue(keySplit[1], out List<string> list))
                     {
                         list.Add(key);
-                        //_dic[keySplit[1]] = list;
                     }
                     else
                     {
-                        _dic.Add(keySplit[1], new[] { key }.ToList());
+                        _dic.Add(keySplit[1], new List<string> { key });
                     }
                 }
             }
+
+            if (_dic.Count == 0) return dt; // Tránh lỗi nếu dic rỗng
 
             foreach (string s in _dic[_dic.Keys.First()])
             {
@@ -653,36 +650,44 @@ namespace OK2SHIP_SMT.Services
             }
 
             List<string> keys = _dic.Keys
-                .ToList() // 1. Đưa "BF" lên đầu tiên (nếu là "BF" trả về 0, còn lại trả về 1 để "BF" đứng trước)
+                .ToList()
                 .OrderBy(k => k == "BF" ? 0 : 1)
-
-                // 2. Sắp xếp các phần tử còn lại theo số đứng sau chữ "L"
                 .ThenBy(k =>
                 {
-                    // Kiểm tra xem chuỗi có bắt đầu bằng "L" không và thử ép kiểu phần còn lại thành số nguyên
                     if (k.StartsWith("L") && int.TryParse(k.Substring(1), out int num))
-                    {
                         return num;
-                    }
-
-                    // Nếu có key lạ không đúng định dạng, đẩy nó xuống cuối cùng
                     return int.MaxValue;
                 })
                 .ToList();
-            // Debugger.Break();
+
+
+            string[] specSelectArray = null;
+
+            if (isSpec && __SPEC.TryGetValue(switchCategory(category), out DataTable specTable))
+            {
+                int rowCount = specTable.Rows.Count;
+                specSelectArray = new string[rowCount];
+
+                for (int r = 0; r < rowCount; r++)
+                {
+                    specSelectArray[r] = specTable.Rows[r]["Select"]?.ToString()?.ToUpper();
+                }
+            }
+            // =====================================================================
+
             foreach (string cycle in keys)
             {
                 DataRow row = dt.NewRow();
                 row["Cycle"] = cycle;
-                //{flexSN}-{cycleName}-{category}
+
                 foreach (DataColumn col in dt.Columns)
                 {
                     string flexSN = col.ColumnName;
                     if (_DATA.TryGetValue($"{flexSN}-{cycle}-{category}", out string data))
                     {
                         string[] listData = data.Split('\u200D');
-                        // So sánh với before không quá 10%
                         string[] listBF = null;
+
                         if (dt.Rows.Count > 0 && category.Contains("F") && cycle != "BF")
                         {
                             if (_DATA.TryGetValue($"{flexSN}-BF-{category}", out string bf))
@@ -692,68 +697,80 @@ namespace OK2SHIP_SMT.Services
                         }
 
                         string res = "N/A";
-                        string result_err = "Not Valid";
                         for (int i = 0; i < listData.Length; i++)
                         {
                             string s = listData[i];
-                            if (res == "N/A")
-                            {
-                                res = "OK";
-                            }
+                            if (res == "N/A") res = "OK";
 
-                            result_err = "OK";
-                            string[] splitS = s.Split('\u200B');
-                            if (double.TryParse(splitS[2], out double low) &&
-                                double.TryParse(splitS[3], out double high) &&
-                                double.TryParse(splitS[0], out double measure))
+                            string result_err = "OK";
+                            string resZ = "";
+
+
+                            if (isSpec && specSelectArray != null && i < specSelectArray.Length)
                             {
-                                if (measure < low || measure > high)
+                                resZ = specSelectArray[i];
+                                if (string.IsNullOrEmpty(resZ))
                                 {
-                                    res = "NG";
-                                    if (low > measure)
-                                    {
-                                        result_err = "Over USL";
-                                    }
-                                    else
-                                    {
-                                        result_err = "Over LSL";
-                                    }
+                                    Debugger.Break();
                                 }
 
-                                if (listBF != null && i < listBF.Length)
+                                resZ = resZ == "TRUE" ? "YES" : resZ;
+                            }
+
+
+                            if (resZ == "YES")
+                            {
+                                string[] splitS = s.Split('\u200B');
+                                if (double.TryParse(splitS[2], out double low) &&
+                                    double.TryParse(splitS[3], out double high) &&
+                                    double.TryParse(splitS[0], out double measure))
                                 {
-                                    string[] splitBF = listBF[i].Split('\u200B');
-                                    if (double.TryParse(splitBF[0], out double valueBF))
+                                    if (measure < low || measure > high)
                                     {
-                                        double z = (valueBF - measure) / valueBF;
-                                        // Debugger.Break();
-                                        if (z > 0.1 || z < -0.1)
+                                        res = "NG";
+                                        result_err = low > measure ? "Over USL" : "Over LSL";
+                                    }
+
+                                    if (listBF != null && i < listBF.Length)
+                                    {
+                                        string[] splitBF = listBF[i].Split('\u200B');
+                                        if (double.TryParse(splitBF[0], out double valueBF))
                                         {
-                                            res = "NG";
-                                            result_err = "Vanability R NG";
-                                        }
-                                        else if ((z > 0.095) || (z < -0.095))
-                                        {
-                                            result_err = "Vanability T NG";
+                                            double z = (valueBF - measure) / valueBF;
+                                            bool check = true;
+
+
+                                            string testResult = splitS[1];
+                                            if (testResult != null && testResult.Contains("SUS"))
+                                            {
+                                                check = false;
+                                            }
+
+
+                                            if (check)
+                                            {
+                                                if (z > 0.1 || z < -0.1)
+                                                {
+                                                    res = "NG";
+                                                    result_err = "Vanability R NG";
+                                                }
+                                                else if (z > 0.095 || z < -0.095)
+                                                {
+                                                    result_err = "Vanability T NG";
+                                                }
+                                            }
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    res = "N/A";
+                                    result_err = "N/A";
+                                }
                             }
-                            else
-                            {
-                                res = "N/A";
 
-                                result_err = "N/A";
-                            }
 
-                            if (_ERROR_LIST.TryGetValue($"{flexSN}-{cycle}-{category}-{i}", out string _))
-                            {
-                                _ERROR_LIST[$"{flexSN}-{cycle}-{category}-{i}"] = result_err;
-                            }
-                            else
-                            {
-                                _ERROR_LIST.Add($"{flexSN}-{cycle}-{category}-{i}", result_err);
-                            }
+                            _ERROR_LIST[$"{flexSN}-{cycle}-{category}-{i}"] = result_err;
                         }
 
                         row[flexSN] = res;
@@ -773,9 +790,10 @@ namespace OK2SHIP_SMT.Services
             __SPEC = _service._DATA;
         }
 
-        public void Load(string itemCode, string lotNo, string maker)
+        public void  Load(string itemCode, string lotNo, string maker)
         {
             _DATA.Clear();
+            __SPEC.Clear();
             _RESULT.Clear();
             _ERROR_LIST.Clear();
             DataTable dt = _dbContext.LoadDataTable(_NAMETABLE, new[] { "ItemCode", "LotNo", "Maker" },
@@ -795,25 +813,27 @@ namespace OK2SHIP_SMT.Services
 
             List<string> result = dt.Rows[0]["Result"].ToString().Split('\u2060').ToList();
             List<string> data = dt.Rows[0]["Data"].ToString().Split('\u2060').ToList();
-            List<string> jsonErr = dt.Rows[0]["ErrorList"].ToString().Split('\u200B').ToList();
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            
             foreach (string s in data)
             {
                 string[] split = s.Split('\u200F');
                 _DATA.Add(split[0], split[1]);
+                string category = split[0].Split('-')[2];
+                if (!dic.TryGetValue(category, out string value))
+                {
+                    dic.Add(category, "1");
+                }
             }
+            
 
-            foreach (string s in result)
+            foreach (string s in dic.Keys)
             {
-                string[] split = s.Split('\u200F');
-                _RESULT.Add(split[0], ConverterService.JsonToDataTable(split[1]));
-            }
-
-            foreach (string s in jsonErr)
-            {
-                string[] split = s.Split('\u200D');
-                _ERROR_LIST.Add(split[0], split[1]);
+                _RESULT.Add(switchCategory(s), SolveResult(s, true));
+                // kiểm tra lại result
             }
         }
+
 
         public void Export(string itemCode, string lotNo, string maker, string category = "Flex Bending")
         {
@@ -1122,7 +1142,7 @@ namespace OK2SHIP_SMT.Services
             string[] splitSample = _dic["Sample"].Split('-');
             List<string> cache = new List<string>();
             string[] splitCondition = _dic["Condition"].Split('-');
-            ws.Cells[ExportProcess.AddColumn(splitCondition[slot], 1)].Value =  maker;
+            ws.Cells[ExportProcess.AddColumn(splitCondition[slot], 1)].Value = maker;
             int rowS = ws.Cells[splitCondition[slot]].Start.Row;
             int rowE;
             try
@@ -1210,7 +1230,7 @@ namespace OK2SHIP_SMT.Services
                                         ws.Cells[row, column].Value = value;
                                         if (category == "Heat soak and Flex bend" && valueCycle == "BF")
                                         {
-                                            Debugger.Break();
+                                            //Debugger.Break();
                                         }
                                         else
                                         {
@@ -1305,19 +1325,22 @@ namespace OK2SHIP_SMT.Services
             foreach (string flexSN in listFlexSN)
             {
                 SampleNO++;
+                int netNo = 1;
                 DataTable dt_Detail = GetDetail(category, flexSN);
 
                 if (dt_Detail.Rows.Count > 0)
                 {
                     foreach (DataRow row in dt_Detail.Rows)
                     {
-                        if (row["Select"]?.ToString().ToUpper() == "TRUE")
+                        if (row["Select"]?.ToString().ToUpper() == "YES" ||
+                            row["Select"]?.ToString().ToUpper() == "TRUE")
                         {
                             skip++;
 
-                            // Chú ý: Tôi giữ nguyên logic skip và skip + 1 của bạn
+                            // giữ nguyên logic skip và skip + 1
                             ws.Cells[row_Sample + skip + 1, col_Sample].Value = SampleNO;
-                            ws.Cells[row_Net + skip + 1, col_Net].Value = row["Net No"];
+                            // ws.Cells[row_Net + skip + 1, col_Net].Value = row["Net No"];
+                            ws.Cells[row_Net + skip + 1, col_Net].Value = netNo++;
                             ws.Cells[row_Flex + skip + 1, col_Flex].Value = row["Flex SN"];
                             ws.Cells[row_Sumi + skip + 1, col_Sumi].Value = row["Test Result"];
                             ws.Cells[row_Cus + skip + 1, col_Cus].Value = row["Net Name"];
@@ -1325,6 +1348,7 @@ namespace OK2SHIP_SMT.Services
                             // Pin1, Pin2, LSL, USL đang cộng "skip" ở code cũ
                             ws.Cells[row_Pin1 + skip, col_Pin1].Value = row["Pin1"];
                             ws.Cells[row_Pin2 + skip, col_Pin2].Value = row["Pin2"];
+                            ws.Cells[row_Pin2 + skip, col_Pin2 + 1].Value = "yes";
 
                             if (double.TryParse(row["LSL"]?.ToString(), out double lsl))
                                 ws.Cells[row_LSL + skip, col_LSL].Value = lsl;

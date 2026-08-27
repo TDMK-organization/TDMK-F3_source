@@ -5,6 +5,7 @@ using AntdUI;
 using Funtion_F3_SMT;
 using OK2SHIP_SMT.Services;
 using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
+using Message = System.Windows.Forms.Message;
 
 namespace OK2SHIP_SMT.UserControls.Bending
 {
@@ -15,7 +16,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
         public UC_ERS_NETSpec(AntdUI.Window _window)
         {
             InitializeComponent();
-            DisplayData();
+            displayMenu();
             window = _window;
             updateDisplay();
         }
@@ -73,8 +74,9 @@ namespace OK2SHIP_SMT.UserControls.Bending
                 string location = tb_logfile.Text;
                 string itemCode = tb_itemCode.Text;
                 string maker = tb_maker.Text;
+                _service = new ERS_NetSpecService();
                 _service.getData(location.Trim(), itemCode.Trim(), maker.Trim());
-                DisplayData();
+                displayMenu();
             }
             catch (Exception ex)
             {
@@ -82,10 +84,27 @@ namespace OK2SHIP_SMT.UserControls.Bending
             }
         }
 
-        private void DisplayData()
+        private void displayMenu()
+        {
+            after_SELECTED = ""; // THÊM DÒNG NÀY ĐỂ FIX LỖI
+            menu.Items.Clear();
+            dgv.DataSource = new DataTable();
+            foreach (string item in _service._DATA.Keys)
+            {
+                menu.Items.Add(new AntdUI.MenuItem(item));
+            }
+        }
+
+        private void DisplayData(string category)
         {
             // Lấy DataTable từ service của bạn
-            DataTable dt = _service._DATA;
+            if (_service._DATA.TryGetValue(category, out DataTable dt))
+            {
+            }
+            else
+            {
+                return;
+            }
 
             if (dt == null) return;
 
@@ -123,7 +142,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
                     }
 
                     dt = tempDt;
-                    _service._DATA = dt; // Cập nhật lại service nếu cần
+                    _service._DATA[category] = dt;
                 }
             }
             else
@@ -174,10 +193,62 @@ namespace OK2SHIP_SMT.UserControls.Bending
             }
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            try
+            {
+                // Ví dụ: Bắt tổ hợp phím Ctrl + S
+                if (keyData == (Keys.Control | Keys.V))
+                {
+                    int z = dgv.SelectedIndex;
+                    string category = menu.SelectItem.Text;
+
+                    string clipboardText = Clipboard.GetText();
+                    _service.ChangeValue(z, clipboardText, category);
+                    displayMenu();
+                    foreach (AntdUI.MenuItem item in menu.Items)
+                    {
+                        if (item.Text == category)
+                        {
+                            // Gán lại item này làm item đang được chọn
+                            item.Select = true;
+                            break; // Tìm thấy rồi thì thoát vòng lặp cho nhẹ máy
+                        }
+                    }
+
+                    MessageBox.Show("Paste dữ liệu thành công");
+                    // Gọi hàm lưu dữ liệu ở đây
+
+                    return true; // Báo cho hệ thống biết phím này đã được xử lý xong
+                }
+
+                // Nếu không trúng phím tắt nào thì để hệ thống xử lý bình thường
+                return base.ProcessCmdKey(ref msg, keyData);
+            }
+            catch
+            {
+                return base.ProcessCmdKey(ref msg, keyData);
+            }
+        }
+
         private void btn_Save_Click(object sender, EventArgs e)
         {
             string itemCode = tb_itemCode.Text.Trim();
             string maker = tb_maker.Text.Trim();
+            string s = "";
+            try
+            {
+                s = menu.SelectItem.Text;
+            }
+            catch
+            {
+            }
+
+            if (!string.IsNullOrEmpty(s))
+            {
+                _service._DATA[s] = (DataTable)dgv.DataSource;
+            }
+
             try
             {
                 _service.Save(itemCode, maker);
@@ -213,7 +284,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
             try
             {
                 _service.LoadData(itemCode, maker);
-                DisplayData();
+                displayMenu();
                 AntdUI.Notification.success(window, $"Notice", "Lấy dữ liệu thành công!", autoClose: 10, align: align);
             }
             catch (Exception ex)
@@ -242,6 +313,25 @@ namespace OK2SHIP_SMT.UserControls.Bending
                     tb_logfile.Text = filePath;
                 }
             }
+        }
+
+        private void menu_TextChanged(object sender, EventArgs e)
+        {
+        }
+
+        private string after_SELECTED = "";
+
+        private void menu_SelectChanged(object sender, MenuSelectEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(after_SELECTED) && dgv.DataSource is DataTable currentDt)
+            {
+                // Ép kiểu an toàn (is DataTable) để tránh lỗi nếu DataSource bị rỗng
+                _service._DATA[after_SELECTED] = currentDt;
+            }
+
+            string selectedId = e.Value.ToString();
+            DisplayData(selectedId);
+            after_SELECTED = selectedId;
         }
     }
 }

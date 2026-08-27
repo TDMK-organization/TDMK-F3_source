@@ -35,6 +35,20 @@ namespace OK2SHIP_SMT.Services
             }
         }
 
+        public List<InputModelExport> GetListMaker(string itemCode, string lotNo)
+        {
+            List<InputModelExport> list = new List<InputModelExport>();
+            DataTable dt = _dBContext.LoadDataTable(_TABLE_NAME, new[] { "ItemCode", "LotNo" },
+                new[] { itemCode, lotNo }, new[] { "ItemCode", "LotNo", "Maker" });
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new InputModelExport(row["ItemCode"].ToString(), row["LotNo"].ToString(),
+                    row["Maker"].ToString()));
+            }
+
+            return list;
+        }
+
         public string Export(List<InputModelExport> listModel)
         {
             ExportProcess exportProcess = new ExportProcess();
@@ -50,7 +64,7 @@ namespace OK2SHIP_SMT.Services
                         // lấy dữ liệu của itemcode, lotno, maker tương ứng
                         DataTable dt = new DataTable();
                         Dictionary<string, Dictionary<string, DataTable>> dic = Load(inputModelExport.itemcode,
-                            inputModelExport.lotno,
+                            inputModelExport.lotno, inputModelExport.maker,
                             ref dt);
 
                         // Lấy danh sách tape của bộ dữ liệu
@@ -70,8 +84,8 @@ namespace OK2SHIP_SMT.Services
                                 "Sample",
                                 "Summary Liner peeling force",
                                 "Summary PSA peeling force",
-                                "Liner_Maker_TAPE",
-                                "PSA_Maker_TAPE"
+                                "Liner_name supplier_TAPE",
+                                "PSA_name supplier_TAPE"
                             });
 
                             int tablesToClone = listTape.Length - 1;
@@ -89,14 +103,14 @@ namespace OK2SHIP_SMT.Services
                             int linerTitleLargeRow = workSheet.Cells[address["Liner peeling after ORT test"]].Start.Row;
                             int linerStartRow = linerTitleLargeRow + 1;
                             int linerEndRow = workSheet.Cells[address["Summary Liner peeling force"]].Start.Row + 4;
-                            int linerTitleRow = workSheet.Cells[address["Liner_Maker_TAPE"]].Start.Row;
+                            int linerTitleRow = workSheet.Cells[address["Liner_name supplier_TAPE"]].Start.Row;
                             int linerHeight = linerEndRow - linerStartRow + 1;
 
                             // ================== TỌA ĐỘ PSA ==================
                             int psaTitleLargeRow = workSheet.Cells[address["PSA peeling after ORT test"]].Start.Row;
                             int psaStartRow = psaTitleLargeRow + 1;
                             int psaEndRow = workSheet.Cells[address["Summary PSA peeling force"]].Start.Row + 4;
-                            int psaTitleRow = workSheet.Cells[address["PSA_Maker_TAPE"]].Start.Row;
+                            int psaTitleRow = workSheet.Cells[address["PSA_name supplier_TAPE"]].Start.Row;
                             int psaHeight = psaEndRow - psaStartRow + 1;
 
                             int maxEndCol = endCol;
@@ -234,22 +248,89 @@ namespace OK2SHIP_SMT.Services
                                 string addressDIC = $"{keyZ}_{inputModelExport.maker}_{key}".ToUpper();
                                 if (dicAddressTables.TryGetValue(addressDIC, out string add))
                                 {
-                                    WriteData(workSheet, dic[key][keyZ], add);
+                                    DataRow dr = dt.AsEnumerable()
+                                        .FirstOrDefault(row =>
+                                            row.Field<string>("TAPE") == key &&
+                                            row.Field<string>("Name") == keyZ
+                                        );
+                                    WriteData(workSheet, dic[key][keyZ], add, dr, keyZ == "PSA");
                                 }
                             }
                         }
                     }
 
-                    exportProcess.SaveExcelWorksheet(ex, FORMAT_NAME, Guid.NewGuid().ToString());
+                    exportProcess.SaveExcelWorksheet(ex, FORMAT_NAME,
+                        $"{listModel[0].itemcode}-{listModel[0].lotno}-{listModel[0].maker}");
                 }
             }
 
             return "Export Successfully!";
         }
 
-        public void WriteData(ExcelWorksheet worksheet, DataTable dataTable, string startAddress)
+        public void WriteData(ExcelWorksheet worksheet, DataTable dataTable, string startAddress, DataRow spec,
+            bool isPSA = false)
         {
             int i = 0;
+
+            if (!isPSA)
+            {
+                try
+                {
+                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 3), 11)].Value =
+                        double.Parse(spec["Peak Peeling Force (N)"].ToString()) / 0.0098;
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 4), 11)].Value =
+                        double.Parse(spec["Peak Peeling Force (N)"].ToString());
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 5), 11)].Value =
+                        double.Parse(spec["Average Peeling Force (N)"].ToString()) / 0.0098;
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 6), 11)].Value =
+                        double.Parse(spec["Average Peeling Force (N)"].ToString());
+                }
+                catch
+                {
+                }
+            }
+            else
+            {
+                try
+                {
+                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2), 9)].Value =
+                        double.Parse(spec["Peak Peeling Force (N)"].ToString());
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 3), 9)].Value =
+                        double.Parse(spec["Average Peeling Force (N)"].ToString());
+                }
+                catch
+                {
+                }
+            }
+
             foreach (DataRow row in dataTable.Rows)
             {
                 ExportProcess.InsertImageToCell(worksheet,
@@ -260,33 +341,67 @@ namespace OK2SHIP_SMT.Services
                     worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 2)],
                     (byte[])row["Graph"],
                     Guid.NewGuid().ToString());
-                try
+                if (!isPSA)
                 {
-                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 3)].Value =
-                        double.Parse(row["Peak(Gf)"].ToString());
-                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 4)].Value =
-                        double.Parse(row["Average(Gf)"].ToString());
-                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 5)].Value =
-                        double.Parse(row["Peak"].ToString());
+                    try
+                    {
+                        worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 3)]
+                                .Value =
+                            double.Parse(row["Peak(Gf)"].ToString());
+                        worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 4)]
+                                .Value =
+                            double.Parse(row["Average(Gf)"].ToString());
+                        worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 5)]
+                                .Value =
+                            double.Parse(row["Peak"].ToString());     
+                        worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 6)]
+                                .Value =
+                            double.Parse(row["Average"].ToString());
+
+                        worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), -1)]
+                            .Value = row["ProductID"];
+                    }
+                    catch
+                    {
+                    }
+
+              
+                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 7)].Value =
+                        row["Judgement Peeling force"].ToString();
+                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 8)].Value =
+                        row["Judgement failure mode"].ToString();
                 }
-                catch
+                else
                 {
+                    try
+                    {
+                        worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 3)]
+                                .Value =
+                            double.Parse(row["Peak"].ToString());
+                        worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 4)]
+                                .Value =
+                            double.Parse(row["Average"].ToString());
+                        worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), -1)]
+                            .Value = row["ProductID"];
+                    }
+                    catch
+                    {
+                    }
+
+                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 5)].Value =
+                        row["Judgement Peeling force"].ToString();
+                    worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 6)].Value =
+                        row["Judgement failure mode"].ToString();
                 }
 
-                worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 6)].Value =
-                    double.Parse(row["Average"].ToString());
-                worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 7)].Value =
-                    row["Judgement Peeling force"].ToString();
-                worksheet.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(startAddress, 2 + i), 8)].Value =
-                    row["Judgement failure mode"].ToString();
                 i++;
             }
         }
 
-        public string Export(string itemCode, string lotNo)
+        public string Export(string itemCode, string lotNo, string maker)
         {
             DataTable dataTable = new DataTable();
-            Dictionary<string, Dictionary<string, DataTable>> dic = Load(itemCode, lotNo, ref dataTable);
+            Dictionary<string, Dictionary<string, DataTable>> dic = Load(itemCode, lotNo, maker, ref dataTable);
             if (dataTable.Rows.Count < 0)
             {
                 return "Không có dữ liệu của itemcode lotno";
@@ -311,14 +426,16 @@ namespace OK2SHIP_SMT.Services
                         "Liner peeling after ORT test", "PSA peeling after ORT test", sampleSTR, "Flex SN",
                         "Average Force"
                     };
-                    IDictionary<string, string> dicHeader = ExportProcess.FindAddressByText(workSheet, colHeader);
+                    IDictionary<string, string> dicHeader =
+                        ExportProcess.FindAddressByText(workSheet, colHeader);
 
 
                     Dictionary<string, string> dicCol = new Dictionary<string, string>();
 
                     #region Find area PSA Lineer
 
-                    foreach (string item in new[] { "Liner peeling after ORT test", "PSA peeling after ORT test" })
+                    foreach (string item in new[]
+                                 { "Liner peeling after ORT test", "PSA peeling after ORT test" })
                     {
                         dicCol.Add(item + "Flex SN", dicHeader[item]);
                         if (dicHeader.TryGetValue("Flex SN", out string value) &&
@@ -373,7 +490,8 @@ namespace OK2SHIP_SMT.Services
                         }
 
                         dicCol.Add(item + sampleSTR, dicHeader[item]);
-                        if (dicHeader.TryGetValue(sampleSTR, out value) && dicHeader.TryGetValue(item, out valueZ))
+                        if (dicHeader.TryGetValue(sampleSTR, out value) &&
+                            dicHeader.TryGetValue(item, out valueZ))
                         {
                             string[] flexCout = value.Split('-');
                             int min = int.MaxValue;
@@ -402,14 +520,16 @@ namespace OK2SHIP_SMT.Services
 
                     #region Copy and paste
 
-                    string[] countPSA = dataTable.AsEnumerable().Where(row => row.Field<string>("name") == "PSA")
+                    string[] countPSA = dataTable.AsEnumerable()
+                        .Where(row => row.Field<string>("name") == "PSA")
                         .Select(row => row.Field<string>("TAPE")).ToArray();
                     string[] countLiner = dataTable.AsEnumerable()
                         .Where(row => row.Field<string>("name") == "LINER")
                         .Select(row => row.Field<string>("TAPE")).ToArray();
 
                     if (dicCol.TryGetValue("PSA peeling after ORT testFlex SN", out string addressFlexSN)
-                        && dicCol.TryGetValue($"PSA peeling after ORT test{sampleSTR}", out string addressSample)
+                        && dicCol.TryGetValue($"PSA peeling after ORT test{sampleSTR}",
+                            out string addressSample)
                         && dicCol.TryGetValue("PSA peeling after ORT testAverage Force", out string addressCPK))
                     {
                         string addressPointer = workSheet.Cells[workSheet.Cells[addressCPK].Start.Row + 1,
@@ -491,7 +611,8 @@ namespace OK2SHIP_SMT.Services
             return "Export thành công";
         }
 
-        private void FillDataInTape(ExcelWorksheet worksheet, DataTable dataTable, DataTable spec, string address,
+        private void FillDataInTape(ExcelWorksheet worksheet, DataTable dataTable, DataTable spec,
+            string address,
             int sample, string name, string tape)
         {
             string addressImageSample =
@@ -655,19 +776,20 @@ namespace OK2SHIP_SMT.Services
                         }
 
                         // Chèn đường dẫn mới vào hàm
-                        row["Graph"] = SolveFileLinerPSQ(targetExcelPath, out string resFile);
-
+                        SolveFileLinerPSQ(targetExcelPath, out string resFile);
+                        row["Graph"] = SolveFileLinerPSQ($"{item}\\{excelIndex}.xlsx", out string data1);
+       
                         if (process.Contains("LINER"))
                         {
                             row["Peak(Gf)"] = resFile.Split(':')[0];
-                            row["Average(Gf)"] = resFile.Split(':')[1];
+                            row["Average(Gf)"] = data1.Split(':')[1];
                             row["Peak"] = double.Parse(resFile.Split(':')[0]) * 0.0098;
-                            row["Average"] = double.Parse(resFile.Split(':')[1]) * 0.0098;
+                            row["Average"] = double.Parse(data1.Split(':')[1]) * 0.0098;
                         }
                         else
                         {
                             row["Peak"] = resFile.Split(':')[0];
-                            row["Average"] = resFile.Split(':')[1];
+                            row["Average"] = data1.Split(':')[1];
                         }
 
                         dataTable.Rows.Add(row);
@@ -872,22 +994,23 @@ namespace OK2SHIP_SMT.Services
             return dt;
         }
 
-        public int save(string itemCode, string lotNo, DataTable before,
+        public int save(string itemCode, string lotNo, string maker, DataTable before,
             Dictionary<string, Dictionary<string, DataTable>> dic, int prime = -1)
         {
             int res = 0;
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
+            maker = maker.Trim();
             int id = prime;
-            if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
+            if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo) || string.IsNullOrEmpty(maker))
             {
                 throw new Exception("ItemCode or LotNo is null");
             }
 
             if (prime == -1)
             {
-                DataTable checker = _dBContext.LoadDataTable(_TABLE_NAME, new[] { "ItemCode", "LotNo" },
-                    new[] { itemCode, lotNo }, new[] { "ID", "Data" });
+                DataTable checker = _dBContext.LoadDataTable(_TABLE_NAME, new[] { "ItemCode", "LotNo", "Maker" },
+                    new[] { itemCode, lotNo, maker }, new[] { "ID", "Data" });
                 if (checker.Rows.Count > 0)
                 {
                     DataRow row = checker.Rows[0];
@@ -926,6 +1049,7 @@ namespace OK2SHIP_SMT.Services
             DataRow rowz = DATA.NewRow();
             rowz["ItemCode"] = itemCode;
             rowz["LotNo"] = lotNo;
+            rowz["Maker"] = maker;
             rowz["Data"] = list;
             DATA.Rows.Add(rowz);
             NasRepository _nas = new NasRepository();
@@ -939,7 +1063,7 @@ namespace OK2SHIP_SMT.Services
             imgDT.Rows.Add(roDT);
             res += _dBContext.BuckDataTable(imgDT, $"{_TABLE_NAME}_IMG_NAS", new[] { "Area" }, null, "ID");
             //res += _dBContext.BuckDataTable(imageDT, _TABLE_NAME + "_IMG", new[] { "Area" });
-            res += _dBContext.BuckDataTable(DATA, _TABLE_NAME, new[] { "ItemCode", "LotNo" }, null, "ID");
+            res += _dBContext.BuckDataTable(DATA, _TABLE_NAME, new[] { "ItemCode", "LotNo", "Maker" }, null, "ID");
 
             #endregion
 
@@ -1039,18 +1163,20 @@ namespace OK2SHIP_SMT.Services
             return res;
         }
 
-        public Dictionary<string, Dictionary<string, DataTable>> Load(string itemCode, string lotNo,
+        public Dictionary<string, Dictionary<string, DataTable>> Load(string itemCode, string lotNo, string maker,
             ref DataTable before, bool legacy = false)
         {
             itemCode = itemCode.Trim();
             lotNo = lotNo.Trim();
-            if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo))
+            maker = maker.Trim();
+            if (string.IsNullOrEmpty(itemCode) || string.IsNullOrEmpty(lotNo) || string.IsNullOrEmpty(maker))
             {
                 throw new Exception("ItemCode or LotNo is null");
             }
 
             DataTable table =
-                _dBContext.LoadDataTable(_TABLE_NAME, new[] { "ItemCode", "LotNo" }, new[] { itemCode, lotNo });
+                _dBContext.LoadDataTable(_TABLE_NAME, new[] { "ItemCode", "LotNo", "Maker" },
+                    new[] { itemCode, lotNo, maker });
             if (table.Rows.Count <= 0)
             {
                 throw new Exception("Không có dữ liệu của itemcode lotno");

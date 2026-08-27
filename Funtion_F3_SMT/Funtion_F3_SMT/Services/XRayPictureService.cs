@@ -73,7 +73,8 @@ namespace OK2SHIP_SMT.Services
             int area = 0;
             if (prime == -1)
             {
-                DataTable log = _dbContext.LoadDataTable(_NAME_SQL + "_NAS", new[] { "ItemCode", "LotNo", "Maker", "Type" },
+                DataTable log = _dbContext.LoadDataTable(_NAME_SQL + "_NAS",
+                    new[] { "ItemCode", "LotNo", "Maker", "Type" },
                     new[] { itemCode, lotNo, maker, type }, new[] { "ID", "Area" });
                 if (log.Rows.Count > 0)
                 {
@@ -738,8 +739,8 @@ namespace OK2SHIP_SMT.Services
                                     // 2. Xử lý ảnh: Lấy byte gốc -> Resize nhỏ gọn lại -> Đưa vào Excel
                                     if (row["Image"] is byte[] rawImgBytes && rawImgBytes.Length > 0)
                                     {
-                                        // Thu nhỏ dung lượng và kích thước ảnh xuống mức vừa khít ô Excel (ví dụ: 120x80 px)
-                                        byte[] optimizedImgBytes = ResizeImageBytes(rawImgBytes, 120, 80);
+                                        // Truyền 0.7f để giữ lại 70% kích thước ảnh gốc (thu nhỏ 30%)
+                                        byte[] optimizedImgBytes = ResizeImageBytes(rawImgBytes, 0.7f);
 
                                         ExportProcess.InsertImageToCell(workSheet, workSheet.Cells[addressCell],
                                             optimizedImgBytes, $"{key}-{col}");
@@ -763,7 +764,7 @@ namespace OK2SHIP_SMT.Services
             return "Export thành công!";
         }
 
-        private byte[] ResizeImageBytes(byte[] originalBytes, int targetWidth = 150, int targetHeight = 100)
+        private byte[] ResizeImageBytes(byte[] originalBytes, float scaleFactor = 0.7f)
         {
             if (originalBytes == null || originalBytes.Length == 0) return originalBytes;
 
@@ -773,14 +774,20 @@ namespace OK2SHIP_SMT.Services
                 {
                     using (var img = Image.FromStream(ms))
                     {
-                        // Nếu ảnh đã nhỏ hơn kích thước mục tiêu thì giữ nguyên
-                        if (img.Width <= targetWidth && img.Height <= targetHeight) return originalBytes;
+                        // Tính toán kích thước mới dựa trên % tỷ lệ truyền vào
+                        // Nếu thu nhỏ 30% -> giữ lại 70% -> scaleFactor = 0.7f
+                        int targetWidth = (int)(img.Width * scaleFactor);
+                        int targetHeight = (int)(img.Height * scaleFactor);
+
+                        // Đảm bảo kích thước không bị tụt xuống 0
+                        if (targetWidth <= 0) targetWidth = 1;
+                        if (targetHeight <= 0) targetHeight = 1;
 
                         using (var bmp = new Bitmap(targetWidth, targetHeight))
                         {
                             using (var g = Graphics.FromImage(bmp))
                             {
-                                // Cấu hình để vẽ lại cực nhanh (bỏ qua các thuật toán làm mượt tốn CPU)
+                                // Cấu hình để vẽ lại cực nhanh
                                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
                                 g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
                                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
@@ -790,7 +797,7 @@ namespace OK2SHIP_SMT.Services
 
                             using (var outMs = new MemoryStream())
                             {
-                                // Lưu dưới định dạng JPEG với chất lượng vừa phải để giảm dung lượng tối đa
+                                // Giữ chất lượng nét ở mức 75%
                                 var encoderParams = new EncoderParameters(1);
                                 encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 75L);
                                 var jpegCodec = ImageCodecInfo.GetImageEncoders()
@@ -813,7 +820,7 @@ namespace OK2SHIP_SMT.Services
             }
             catch
             {
-                // Nếu lỗi resize, trả về ảnh gốc để không làm crash chương trình
+                // Nếu lỗi resize, trả về ảnh gốc
                 return originalBytes;
             }
         }

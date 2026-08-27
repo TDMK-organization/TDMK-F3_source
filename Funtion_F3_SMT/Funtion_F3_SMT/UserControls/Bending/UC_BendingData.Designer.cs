@@ -49,13 +49,13 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.tableLayoutPanel12 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
             this.tabs1 = new AntdUI.Tabs();
-            this.tabPage1 = new AntdUI.TabPage();
-            this.button_loading = new AntdUI.Button();
-            this.tb_logfile = new AntdUI.Input();
             this.tabPage2 = new AntdUI.TabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.btn_loadData = new AntdUI.ButtonShadow();
             this.btn_export = new AntdUI.ButtonShadow();
+            this.tabPage1 = new AntdUI.TabPage();
+            this.button_loading = new AntdUI.Button();
+            this.tb_logfile = new AntdUI.Input();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.tb_maker = new AntdUI.Input();
             this.label5 = new System.Windows.Forms.Label();
@@ -86,9 +86,9 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.panel1.SuspendLayout();
             this.tableLayoutPanel12.SuspendLayout();
             this.tabs1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
             this.tableLayoutPanel10.SuspendLayout();
@@ -268,8 +268,8 @@ namespace OK2SHIP_SMT.UserControls.Bending
             // 
             // tabs1
             // 
-            this.tabs1.Controls.Add(this.tabPage1);
             this.tabs1.Controls.Add(this.tabPage2);
+            this.tabs1.Controls.Add(this.tabPage1);
             this.tabs1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabs1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabs1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -278,58 +278,16 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.tabs1.Name = "tabs1";
             this.tabs1.Pages.Add(this.tabPage1);
             this.tabs1.Pages.Add(this.tabPage2);
+            this.tabs1.SelectedIndex = 1;
             this.tabs1.Size = new System.Drawing.Size(599, 54);
             this.tabs1.Style = styleLine1;
             this.tabs1.TabIndex = 0;
             this.tabs1.Text = "tabs1";
             // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.button_loading);
-            this.tabPage1.Controls.Add(this.tb_logfile);
-            this.tabPage1.Location = new System.Drawing.Point(0, 31);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(599, 23);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Logfile";
-            // 
-            // button_loading
-            // 
-            this.button_loading.BorderWidth = 1F;
-            this.button_loading.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button_loading.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_loading.IconGap = 0F;
-            this.button_loading.IconHoverSvg = "";
-            this.button_loading.IconSvg = resources.GetString("button_loading.IconSvg");
-            this.button_loading.JoinLeft = true;
-            this.button_loading.Location = new System.Drawing.Point(474, 0);
-            this.button_loading.Margin = new System.Windows.Forms.Padding(2);
-            this.button_loading.Name = "button_loading";
-            this.button_loading.Size = new System.Drawing.Size(125, 23);
-            this.button_loading.TabIndex = 5;
-            this.button_loading.Type = AntdUI.TTypeMini.Primary;
-            this.button_loading.WaveSize = 0;
-            this.button_loading.Click += new System.EventHandler(this.button_loading_Click);
-            // 
-            // tb_logfile
-            // 
-            this.tb_logfile.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tb_logfile.JoinRight = true;
-            this.tb_logfile.Location = new System.Drawing.Point(0, 0);
-            this.tb_logfile.Margin = new System.Windows.Forms.Padding(2);
-            this.tb_logfile.Name = "tb_logfile";
-            this.tb_logfile.PlaceholderText = "Double Click for select folder or copy on here";
-            this.tb_logfile.Size = new System.Drawing.Size(599, 23);
-            this.tb_logfile.TabIndex = 4;
-            this.tb_logfile.WaveSize = 0;
-            this.tb_logfile.TextChanged += new System.EventHandler(this.tb_logfile_TextChanged);
-            this.tb_logfile.DoubleClick += new System.EventHandler(this.tb_logfile_DoubleClick);
-            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.tableLayoutPanel5);
-            this.tabPage2.Location = new System.Drawing.Point(-1198, -46);
+            this.tabPage2.Location = new System.Drawing.Point(0, 31);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Size = new System.Drawing.Size(599, 23);
@@ -379,6 +337,49 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.btn_export.Text = "Export Data";
             this.btn_export.Type = AntdUI.TTypeMini.Primary;
             this.btn_export.Click += new System.EventHandler(this.btn_export_Click);
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.button_loading);
+            this.tabPage1.Controls.Add(this.tb_logfile);
+            this.tabPage1.Location = new System.Drawing.Point(-1198, -46);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Size = new System.Drawing.Size(599, 23);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Logfile";
+            // 
+            // button_loading
+            // 
+            this.button_loading.BorderWidth = 1F;
+            this.button_loading.Dock = System.Windows.Forms.DockStyle.Right;
+            this.button_loading.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button_loading.IconGap = 0F;
+            this.button_loading.IconHoverSvg = "";
+            this.button_loading.IconSvg = resources.GetString("button_loading.IconSvg");
+            this.button_loading.JoinLeft = true;
+            this.button_loading.Location = new System.Drawing.Point(474, 0);
+            this.button_loading.Margin = new System.Windows.Forms.Padding(2);
+            this.button_loading.Name = "button_loading";
+            this.button_loading.Size = new System.Drawing.Size(125, 23);
+            this.button_loading.TabIndex = 5;
+            this.button_loading.Type = AntdUI.TTypeMini.Primary;
+            this.button_loading.WaveSize = 0;
+            this.button_loading.Click += new System.EventHandler(this.button_loading_Click);
+            // 
+            // tb_logfile
+            // 
+            this.tb_logfile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tb_logfile.JoinRight = true;
+            this.tb_logfile.Location = new System.Drawing.Point(0, 0);
+            this.tb_logfile.Margin = new System.Windows.Forms.Padding(2);
+            this.tb_logfile.Name = "tb_logfile";
+            this.tb_logfile.PlaceholderText = "Double Click for select folder or copy on here";
+            this.tb_logfile.Size = new System.Drawing.Size(599, 23);
+            this.tb_logfile.TabIndex = 4;
+            this.tb_logfile.WaveSize = 0;
+            this.tb_logfile.TextChanged += new System.EventHandler(this.tb_logfile_TextChanged);
+            this.tb_logfile.DoubleClick += new System.EventHandler(this.tb_logfile_DoubleClick);
             // 
             // tableLayoutPanel6
             // 
@@ -496,7 +497,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(240, 32);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Menu Option";
+            this.label1.Text = "Category";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label7
@@ -712,9 +713,9 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.panel1.ResumeLayout(false);
             this.tableLayoutPanel12.ResumeLayout(false);
             this.tabs1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);
             this.tableLayoutPanel8.ResumeLayout(false);
             this.tableLayoutPanel10.ResumeLayout(false);

@@ -80,7 +80,6 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
                 {
                     try
                     {
-
                         _service.Upload(tb_logfile.Text, btn.Id, tb_itemCode.Text.Trim(), tb_lotNo.Text.Trim());
                         MessageBox.Show("Cài đặt thành công");
                     }
@@ -93,7 +92,7 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
         }
 
 
-        private void display_data()
+        private void display_data(bool prime = false)
         {
             List<Dictionary<string, object>> dataList = new List<Dictionary<string, object>>();
             int stt = 1;
@@ -106,12 +105,17 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
                         { "SheetName", key },
                         { "Status", _service._DATA[key] },
                         {
-                            "Action", new CellLink[]
-                            {
-                                // Đặt ID rõ ràng cho từng nút để nhận diện khi click
-                                new CellButton("upload_" + key, "Upload", TTypeMini.Primary),
-                                new CellButton("delete_" + key, "Delete", TTypeMini.Primary),
-                            }
+                            "Action", prime
+                                ? new CellLink[]
+                                {
+                                    // Đặt ID rõ ràng cho từng nút để nhận diện khi click
+                                    new CellButton("delete_" + key, "Delete", TTypeMini.Primary),
+                                }
+                                : new CellLink[]
+                                {
+                                    // Đặt ID rõ ràng cho từng nút để nhận diện khi click
+                                    new CellButton("upload_" + key, "Upload", TTypeMini.Primary),
+                                }
                         }
                     }
                 );
@@ -125,6 +129,7 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
             try
             {
                 string location = tb_logfile.Text.Trim();
+                _service = new Build2ShipService();
                 _service.GetStatus(location);
                 display_data();
             }
@@ -148,7 +153,7 @@ namespace OK2SHIP_SMT.UserControls.Build2Ship
                 string itemCode = tb_itemCode.Text;
                 string lotNo = tb_lotNo.Text;
                 _service.Load(itemCode, lotNo);
-                display_data();
+                display_data(true);
             }
             catch (Exception ex)
             {

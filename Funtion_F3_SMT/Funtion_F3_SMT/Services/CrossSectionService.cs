@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,13 @@ namespace OK2SHIP_SMT.Services
 {
     public class CrossSectionService
     {
+        public DataTable ReadLogfile(string in_src, string infor)
+        {
+            DataTable dt = getStructorTableByte();
+            Debugger.Break();
+            return dt;
+        }
+        
         public DataTable getStructorTable()
         {
             DataTable table = new DataTable();
@@ -27,6 +35,9 @@ namespace OK2SHIP_SMT.Services
             table.Columns.Add("Remark", typeof(string));
             return table;
         }
+        
+        
+        
         public static DataTable getStructorTableByte(string s = "CROSS")
         {
             DataTable table = new DataTable();

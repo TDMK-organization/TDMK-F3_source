@@ -43,12 +43,12 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.btn_login = new AntdUI.Button();
             this.tb_login = new AntdUI.Input();
             this.tabs1 = new AntdUI.Tabs();
-            this.tabPage1 = new AntdUI.TabPage();
-            this.button_loading = new AntdUI.Button();
-            this.tb_logfile = new AntdUI.Input();
             this.tabPage2 = new AntdUI.TabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.btn_loadData = new AntdUI.ButtonShadow();
+            this.tabPage1 = new AntdUI.TabPage();
+            this.button_loading = new AntdUI.Button();
+            this.tb_logfile = new AntdUI.Input();
             this.label2 = new System.Windows.Forms.Label();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.tb_itemCode = new AntdUI.Input();
@@ -56,8 +56,10 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.label5 = new System.Windows.Forms.Label();
             this.tb_maker = new AntdUI.Input();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
-            this.dgv = new AntdUI.Table();
             this.label1 = new AntdUI.Label();
+            this.dgv = new AntdUI.Table();
+            this.label4 = new AntdUI.Label();
+            this.menu = new AntdUI.Menu();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -65,9 +67,9 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.tableLayoutPanel7.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tabs1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
             this.SuspendLayout();
@@ -213,8 +215,8 @@ namespace OK2SHIP_SMT.UserControls.Bending
             // 
             // tabs1
             // 
-            this.tabs1.Controls.Add(this.tabPage1);
             this.tabs1.Controls.Add(this.tabPage2);
+            this.tabs1.Controls.Add(this.tabPage1);
             this.tabs1.Cursor = System.Windows.Forms.Cursors.Default;
             this.tabs1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabs1.Location = new System.Drawing.Point(2, 2);
@@ -222,16 +224,55 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.tabs1.Name = "tabs1";
             this.tabs1.Pages.Add(this.tabPage1);
             this.tabs1.Pages.Add(this.tabPage2);
+            this.tabs1.SelectedIndex = 1;
             this.tabs1.Size = new System.Drawing.Size(531, 84);
             this.tabs1.Style = styleLine1;
             this.tabs1.TabIndex = 0;
             this.tabs1.Text = "tabs1";
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.tableLayoutPanel5);
+            this.tabPage2.Location = new System.Drawing.Point(0, 25);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(531, 59);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Database";
+            // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 2;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.Controls.Add(this.btn_loadData, 0, 0);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 1;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(531, 59);
+            this.tableLayoutPanel5.TabIndex = 0;
+            // 
+            // btn_loadData
+            // 
+            this.btn_loadData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_loadData.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_loadData.Location = new System.Drawing.Point(2, 2);
+            this.btn_loadData.Margin = new System.Windows.Forms.Padding(2);
+            this.btn_loadData.Name = "btn_loadData";
+            this.btn_loadData.Size = new System.Drawing.Size(261, 55);
+            this.btn_loadData.TabIndex = 2;
+            this.btn_loadData.Text = "Load Data";
+            this.btn_loadData.Type = AntdUI.TTypeMini.Primary;
+            this.btn_loadData.Click += new System.EventHandler(this.btn_loadData_Click);
+            // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.button_loading);
             this.tabPage1.Controls.Add(this.tb_logfile);
-            this.tabPage1.Location = new System.Drawing.Point(0, 25);
+            this.tabPage1.Location = new System.Drawing.Point(-1062, -118);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Size = new System.Drawing.Size(531, 59);
@@ -269,44 +310,6 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.tb_logfile.WaveSize = 0;
             this.tb_logfile.TextChanged += new System.EventHandler(this.tb_logfile_TextChanged);
             this.tb_logfile.DoubleClick += new System.EventHandler(this.tb_logfile_DoubleClick);
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.tableLayoutPanel5);
-            this.tabPage2.Location = new System.Drawing.Point(-1062, -118);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(531, 59);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Database";
-            // 
-            // tableLayoutPanel5
-            // 
-            this.tableLayoutPanel5.ColumnCount = 2;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Controls.Add(this.btn_loadData, 0, 0);
-            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2);
-            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 1;
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(531, 59);
-            this.tableLayoutPanel5.TabIndex = 0;
-            // 
-            // btn_loadData
-            // 
-            this.btn_loadData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_loadData.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_loadData.Location = new System.Drawing.Point(2, 2);
-            this.btn_loadData.Margin = new System.Windows.Forms.Padding(2);
-            this.btn_loadData.Name = "btn_loadData";
-            this.btn_loadData.Size = new System.Drawing.Size(261, 55);
-            this.btn_loadData.TabIndex = 2;
-            this.btn_loadData.Text = "Load Data";
-            this.btn_loadData.Type = AntdUI.TTypeMini.Primary;
-            this.btn_loadData.Click += new System.EventHandler(this.btn_loadData_Click);
             // 
             // label2
             // 
@@ -386,41 +389,66 @@ namespace OK2SHIP_SMT.UserControls.Bending
             // 
             // tableLayoutPanel8
             // 
-            this.tableLayoutPanel8.ColumnCount = 1;
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 24.54545F));
-            this.tableLayoutPanel8.Controls.Add(this.dgv, 0, 1);
-            this.tableLayoutPanel8.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel8.ColumnCount = 2;
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 221F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel8.Controls.Add(this.label1, 1, 0);
+            this.tableLayoutPanel8.Controls.Add(this.dgv, 1, 1);
+            this.tableLayoutPanel8.Controls.Add(this.label4, 0, 0);
+            this.tableLayoutPanel8.Controls.Add(this.menu, 0, 1);
             this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel8.Location = new System.Drawing.Point(4, 167);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
             this.tableLayoutPanel8.RowCount = 2;
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel8.Size = new System.Drawing.Size(990, 496);
             this.tableLayoutPanel8.TabIndex = 1;
-            // 
-            // dgv
-            // 
-            this.dgv.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgv.Gap = 12;
-            this.dgv.Location = new System.Drawing.Point(3, 41);
-            this.dgv.Name = "dgv";
-            this.dgv.Size = new System.Drawing.Size(984, 452);
-            this.dgv.TabIndex = 2;
-            this.dgv.Text = "table1";
             // 
             // label1
             // 
             this.label1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(3, 3);
+            this.label1.Location = new System.Drawing.Point(224, 3);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(984, 32);
+            this.label1.Size = new System.Drawing.Size(763, 32);
             this.label1.TabIndex = 3;
             this.label1.Text = "Data Spec";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // dgv
+            // 
+            this.dgv.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgv.Gap = 12;
+            this.dgv.Location = new System.Drawing.Point(224, 41);
+            this.dgv.Name = "dgv";
+            this.dgv.Size = new System.Drawing.Size(763, 452);
+            this.dgv.TabIndex = 2;
+            this.dgv.Text = "table1";
+            // 
+            // label4
+            // 
+            this.label4.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(3, 3);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(215, 32);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "Data Spec";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // menu
+            // 
+            this.menu.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.menu.Location = new System.Drawing.Point(3, 41);
+            this.menu.Name = "menu";
+            this.menu.Size = new System.Drawing.Size(215, 452);
+            this.menu.TabIndex = 4;
+            this.menu.Text = "menu1";
+            this.menu.SelectChanged += new AntdUI.SelectEventHandler(this.menu_SelectChanged);
+            this.menu.TextChanged += new System.EventHandler(this.menu_TextChanged);
             // 
             // UC_ERS_NETSpec
             // 
@@ -436,13 +464,17 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.tableLayoutPanel7.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.tabs1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);
             this.tableLayoutPanel8.ResumeLayout(false);
             this.ResumeLayout(false);
         }
+
+        private AntdUI.Menu menu;
+
+        private AntdUI.Label label4;
 
         private AntdUI.Label label1;
 
