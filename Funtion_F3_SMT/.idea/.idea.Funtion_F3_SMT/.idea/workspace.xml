@@ -269,13 +269,13 @@
         </breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs</url>
-          <line>1343</line>
+          <line>1339</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\PeelTestOnProductService.cs" containingFunctionPresentation="Method 'SetUpExport'">
             <startOffsets>
-              <option value="61401" />
+              <option value="61173" />
             </startOffsets>
             <endOffsets>
-              <option value="61541" />
+              <option value="61313" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="4" />
@@ -308,172 +308,29 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs</url>
-          <line>1014</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\PeelTestOnProductService.cs" containingFunctionPresentation="Method 'Export'">
-            <startOffsets>
-              <option value="42853" />
-            </startOffsets>
-            <endOffsets>
-              <option value="42875" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs</url>
-          <line>1313</line>
+          <line>1309</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\PeelTestOnProductService.cs" containingFunctionPresentation="Method 'SetUpExport'">
             <startOffsets>
-              <option value="59905" />
+              <option value="59677" />
             </startOffsets>
             <endOffsets>
-              <option value="59935" />
+              <option value="59707" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/IQCPeelingTest.cs</url>
-          <line>227</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\IQCPeelingTest.cs" containingFunctionPresentation="Method 'Save'">
-            <startOffsets>
-              <option value="8441" />
-            </startOffsets>
-            <endOffsets>
-              <option value="8480" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/IQCPeelingTest.cs</url>
-          <line>239</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\IQCPeelingTest.cs" containingFunctionPresentation="Method 'Save'">
-            <startOffsets>
-              <option value="9061" />
-            </startOffsets>
-            <endOffsets>
-              <option value="9103" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/UC_IQCPeelingTest.cs</url>
-          <line>220</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\UC_IQCPeelingTest.cs" containingFunctionPresentation="Method 'btn_export_Click'">
-            <startOffsets>
-              <option value="6656" />
-            </startOffsets>
-            <endOffsets>
-              <option value="6698" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="26" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/IQCPeelingTest.cs</url>
-          <line>348</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\IQCPeelingTest.cs" containingFunctionPresentation="Method 'ExportLiner'">
-            <startOffsets>
-              <option value="13280" />
-            </startOffsets>
-            <endOffsets>
-              <option value="13327" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="32" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/IQCPeelingTest.cs</url>
-          <line>355</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\IQCPeelingTest.cs" containingFunctionPresentation="Method 'WriteData'">
-            <startOffsets>
-              <option value="13527" />
-            </startOffsets>
-            <endOffsets>
-              <option value="13551" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="33" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/UC_IQCPeelingTest.cs</url>
-          <line>65</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\UC_IQCPeelingTest.cs" containingFunctionPresentation="Method 'tb_locationlogfile_TextChanged'">
-            <startOffsets>
-              <option value="1643" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1685" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/UC_IQCPeelingTest.cs</url>
-          <line>68</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\UC_IQCPeelingTest.cs" containingFunctionPresentation="Method 'tb_locationlogfile_TextChanged'">
-            <startOffsets>
-              <option value="1777" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1961" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="36" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/UC_IQCPeelingTest.cs</url>
-          <line>184</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\UC_IQCPeelingTest.cs" containingFunctionPresentation="Method 'tb_save_Click'">
-            <startOffsets>
-              <option value="5565" />
-            </startOffsets>
-            <endOffsets>
-              <option value="5579" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="37" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs</url>
-          <line>1327</line>
+          <line>1323</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\PeelTestOnProductService.cs" containingFunctionPresentation="Method 'SetUpExport'">
             <startOffsets>
-              <option value="60397" />
+              <option value="60169" />
             </startOffsets>
             <endOffsets>
-              <option value="60450" />
+              <option value="60222" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="44" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/XRayPictureService.cs</url>
-          <line>62</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\XRayPictureService.cs" containingFunctionPresentation="Method 'Save'">
-            <startOffsets>
-              <option value="2025" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2026" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="83" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/EEDService.cs</url>
-          <line>401</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\EEDService.cs" containingFunctionPresentation="Method 'Export'">
-            <startOffsets>
-              <option value="20360" />
-            </startOffsets>
-            <endOffsets>
-              <option value="20361" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="85" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs</url>
@@ -489,19 +346,6 @@
           <option name="timeStamp" value="86" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs</url>
-          <line>586</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\BendingService.cs" containingFunctionPresentation="Method 'Save'">
-            <startOffsets>
-              <option value="22112" />
-            </startOffsets>
-            <endOffsets>
-              <option value="22151" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="88" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs</url>
           <line>405</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\Bending\UC_BendingData.cs" containingFunctionPresentation="Method 'buttonShadow2_Click'">
@@ -513,45 +357,6 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="90" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/CrossSectionService.cs</url>
-          <line>86</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\CrossSectionService.cs" containingFunctionPresentation="Method 'check_SPEC'">
-            <startOffsets>
-              <option value="3034" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3035" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="102" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/CrossSectionService.cs</url>
-          <line>84</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\CrossSectionService.cs" containingFunctionPresentation="Method 'check_SPEC'">
-            <startOffsets>
-              <option value="2957" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2958" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="103" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/CrossSectionService.cs</url>
-          <line>83</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\CrossSectionService.cs" containingFunctionPresentation="Method 'check_SPEC'">
-            <startOffsets>
-              <option value="2879" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2940" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="104" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
