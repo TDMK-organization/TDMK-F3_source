@@ -568,7 +568,7 @@ namespace OK2SHIP_SMT.Repositories
             bool eq = false,
             string formAddress = "",
             string endAddress = "",
-            int maxRows = 100, // Thêm tham số giới hạn số hàng (mặc định 100)
+            int maxRows = 250, // Thêm tham số giới hạn số hàng (mặc định 100)
             int maxColumns = 60) // Thêm tham số giới hạn số cột (mặc định 60)
         {
             // 1. Xác định tọa độ bắt đầu và kết thúc mà KHÔNG dùng Dimension

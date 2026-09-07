@@ -146,12 +146,18 @@ namespace Funtion_F3_SMT
             {
                 if (sheet == "CROSS_SECTION")
                 {
-                    ((DataGridViewImageColumn)dgv.Columns["Image1"]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                    ((DataGridViewImageColumn)dgv.Columns["Image1"]).Width = 100;
+                    // Duyệt qua tất cả các cột của DataGridView
+                    foreach (DataGridViewColumn col in dgv.Columns)
+                    {
+                        // Kiểm tra nếu cột là cột ảnh (DataGridViewImageColumn)
+                        if (col is DataGridViewImageColumn imgCol)
+                        {
+                            imgCol.ImageLayout = DataGridViewImageCellLayout.Zoom;
+                            imgCol.Width = 100;
+                        }
+                    }
 
-                    ((DataGridViewImageColumn)dgv.Columns["Image2"]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                    ((DataGridViewImageColumn)dgv.Columns["Image2"]).Width = 100;
-
+                    // Đặt chiều cao cho các dòng
                     foreach (DataGridViewRow dr in dgv.Rows)
                     {
                         dr.Height = 70;
@@ -159,21 +165,18 @@ namespace Funtion_F3_SMT
                 }
                 else if (sheet == "GAP_CONNECTOR")
                 {
-                    try
+                    // Duyệt qua tất cả các cột của DataGridView
+                    foreach (DataGridViewColumn col in dgv.Columns)
                     {
-                        ((DataGridViewImageColumn)dgv.Columns["Image"]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                        ((DataGridViewImageColumn)dgv.Columns["Image"]).Width = 100;
+                        // Kiểm tra nếu cột là cột ảnh (DataGridViewImageColumn)
+                        if (col is DataGridViewImageColumn imgCol)
+                        {
+                            imgCol.ImageLayout = DataGridViewImageCellLayout.Zoom;
+                            imgCol.Width = 100;
+                        }
                     }
-                    catch
-                    {
-                    }
 
-                    ((DataGridViewImageColumn)dgv.Columns["Image1"]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                    ((DataGridViewImageColumn)dgv.Columns["Image1"]).Width = 100;
-
-                    ((DataGridViewImageColumn)dgv.Columns["Image2"]).ImageLayout = DataGridViewImageCellLayout.Zoom;
-                    ((DataGridViewImageColumn)dgv.Columns["Image2"]).Width = 100;
-
+                    // Đặt chiều cao cho các dòng
                     foreach (DataGridViewRow dr in dgv.Rows)
                     {
                         dr.Height = 70;
@@ -486,7 +489,7 @@ namespace Funtion_F3_SMT
                 lbl_lotno_nvl.Enabled = false;
             }
 
-            if (sheet == "CROSS_SECTION")
+            if (sheet == "CROSS_SECTION" || sheet == "GAP_CONNECTOR")
             {
                 // 1. Khởi tạo TableLayoutPanel với 1 hàng và 2 cột
                 TableLayoutPanel tlpStatus = new TableLayoutPanel();
@@ -510,8 +513,19 @@ namespace Funtion_F3_SMT
 
                 // 3. Khởi tạo ComboBox
                 cbStatus.DropDownStyle = ComboBoxStyle.DropDownList; // Chỉ cho phép chọn, không cho phép gõ text tự do
-                cbStatus.Items.Add("Normal");
-                cbStatus.Items.Add("Displacement");
+                if (sheet == "CROSS_SECTION")
+                {
+                    cbStatus.Items.Add("Normal");
+                    cbStatus.Items.Add("Shield b2b");
+                    cbStatus.Items.Add("Clip");
+                }
+
+                if (sheet == "GAP_CONNECTOR")
+                {
+                    cbStatus.Items.Add("Normal");
+                    cbStatus.Items.Add("Shield b2b");
+                }
+
                 cbStatus.SelectedIndex = 0; // Đặt giá trị mặc định là "Normal" (vị trí index 0)
                 cbStatus.Dock = DockStyle.Fill; // Để ComboBox trải dài hết cột thứ 2
 
@@ -1710,9 +1724,14 @@ namespace Funtion_F3_SMT
         public void get_data_GAP()
         {
         }
-        public DataTable load_data_logfile_gap_connector(string in_src, string infor)
+
+        public DataTable load_data_logfile_gap_connector(string in_src, string infor, string prime)
         {
-        
+            if (prime == "Shield b2b")
+            {
+                return GAPConnectorService.ReadLogfile(in_src, infor);
+            }
+
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" },
                 new string[] { txtItemCode.Text, txtLotNo.Text });
             //THUY: THAY DOI CACH LAY CAU TRUC 
@@ -2066,12 +2085,14 @@ namespace Funtion_F3_SMT
         /// <param name="in_src"></param>
         /// <param name="infor"></param>
         /// <returns></returns>
-        public DataTable load_data_logfile_cross_section(string in_src, string infor)
+        public DataTable load_data_logfile_cross_section(string in_src, string infor, string prime = "None")
         {
-            // if (prime)
-            // { 
-            //     return CrossSectionService.ReadLogfile(in_src, infor);
-            // }
+            if (prime == "Shield b2b" || prime == "Clip")
+            {
+                return CrossSectionService.ReadLogfile(in_src, infor, prime == "Shield b2b");
+            }
+
+
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" },
                 new string[] { txtItemCode.Text, txtLotNo.Text });
             DataTable Data_tbl = new CrossSectionService().getStructorTable();
@@ -5042,117 +5063,106 @@ namespace Funtion_F3_SMT
                 {
                     if (sheet == "CROSS_SECTION" || sheet == "GAP_CONNECTOR")
                     {
-                        DataTable dt_select = CrossSectionService.getStructorTableByte("GAP");
-
-                        int ID = 1;
-                        //for (int i = 0; i < dgv_logfile.Rows.Count; i++)
-                        //{
-                        DataTable dt_logfile = (DataTable)dgv_logfile.DataSource;
-                        List<string> lst_region = dt_logfile.AsEnumerable().Select(x => x.Field<string>("Region"))
-                            .Distinct().ToList();
-                        foreach (string s in lst_region)
+                        DataTable dt_select;
+                        if (cbStatus.Text == "Shield b2b" || cbStatus.Text == "Clip")
                         {
-                            DataView dv = dt_logfile.AsDataView();
-                            dv.RowFilter = TDMK_Code.filter_str(new string[] { "Region" }, new string[] { s });
-                            for (int inx = 0; inx < dv.Count; inx++)
+                            DataTable dt_logfile = (DataTable)dgv_logfile.DataSource;
+                            dt_select = CrossSectionService.SelectData(dt_logfile);
+                        }
+                        else
+                        {
+                            dt_select = CrossSectionService.getStructorTableByte("GAP");
+                            int ID = 1;
+                            //for (int i = 0; i < dgv_logfile.Rows.Count; i++)
+                            //{
+                            DataTable dt_logfile = (DataTable)dgv_logfile.DataSource;
+                            List<string> lst_region = dt_logfile.AsEnumerable().Select(x => x.Field<string>("Region"))
+                                .Distinct().ToList();
+                            foreach (string s in lst_region)
                             {
-                                DataRow row = dv[inx].Row;
-                                int i = dt_logfile.Rows.IndexOf(row);
-                                bool checkedCell = (bool)dgv_logfile.Rows[i].Cells["Select"].Value;
-                                DataTable dataTable = (DataTable)dgv_logfile.DataSource;
-                                if (checkedCell == true)
+                                DataView dv = dt_logfile.AsDataView();
+                                dv.RowFilter = TDMK_Code.filter_str(new string[] { "Region" }, new string[] { s });
+                                for (int inx = 0; inx < dv.Count; inx++)
                                 {
-                                    if (dgv_logfile.Rows[i].Cells["Data"].Style.BackColor != Color.Red)
+                                    DataRow row = dv[inx].Row;
+                                    int i = dt_logfile.Rows.IndexOf(row);
+                                    bool checkedCell = (bool)dgv_logfile.Rows[i].Cells["Select"].Value;
+                                    DataTable dataTable = (DataTable)dgv_logfile.DataSource;
+                                    if (checkedCell == true)
                                     {
-                                        DataRow dr = dt_select.NewRow();
-                                        dr["ID"] = ID;
-                                        dr["Region"] = dataTable.Rows[i]["Region"];
-                                        dr["ItemCode"] = dataTable.Rows[i]["ItemCode"];
-                                        dr["LotNo"] = dataTable.Rows[i]["LotNo"];
-                                        dr["Sheet"] = dataTable.Rows[i]["Sheet"];
-                                        dr["Sample"] = dataTable.Rows[i]["Sample"];
-                                        try
-                                        {
-                                            if (dataTable.Rows[i]["Image"] is byte[])
-                                            {
-                                                dr["Image"] = dataTable.Rows[i]["Image"];
-                                            }
-
-                                            if (dataTable.Rows[i]["Image"] is Image)
-                                            {
-                                                dr["Image"] =
-                                                    TDMK_ImageConverter.ImageToByteArray(
-                                                        (Image)dataTable.Rows[i]["Image"], ImageFormat.Jpeg);
-                                            }
-                                        }
-                                        catch
-                                        {
-                                        }
-
-                                        try
-                                        {
-                                            if (dataTable.Rows[i]["Image1"] is byte[])
-                                            {
-                                                dr["Image1"] = dataTable.Rows[i]["Image1"];
-                                            }
-
-                                            if (dataTable.Rows[i]["Image1"] is Image)
-                                            {
-                                                dr["Image1"] =
-                                                    TDMK_ImageConverter.ImageToByteArray(
-                                                        (Image)dataTable.Rows[i]["Image1"], ImageFormat.Jpeg);
-                                            }
-                                        }
-                                        catch
-                                        {
-                                        }
-
-                                        try
-                                        {
-                                            if (dataTable.Rows[i]["Image2"] is byte[])
-                                            {
-                                                dr["Image2"] = dataTable.Rows[i]["Image2"];
-                                            }
-
-                                            if (dataTable.Rows[i]["Image2"] is Image)
-                                            {
-                                                dr["Image2"] =
-                                                    TDMK_ImageConverter.ImageToByteArray(
-                                                        (Image)dataTable.Rows[i]["Image2"], ImageFormat.Jpeg);
-                                            }
-                                        }
-                                        catch
-                                        {
-                                        }
-
-                                        dr["Data"] = dataTable.Rows[i]["Data"];
-                                        dr["Operator"] = dataTable.Rows[i]["Operator"];
-                                        dr["Time_Update"] = dataTable.Rows[i]["Time_Update"];
-                                        dr["Remark"] = dataTable.Rows[i]["Remark"];
-                                        try
-                                        {
-                                            dr["ProductID"] = dataTable.Rows[i]["ProductID"];
-                                        }
-                                        catch
-                                        {
-                                        }
-
-                                        dt_select.Rows.Add(dr);
-                                        ID++;
-                                    }
-                                    else
-                                    {
-                                        if (admin_mode == "Admin mode")
+                                        if (dgv_logfile.Rows[i].Cells["Data"].Style.BackColor != Color.Red)
                                         {
                                             DataRow dr = dt_select.NewRow();
                                             dr["ID"] = ID;
-                                            dr[5] = inx + 1;
-                                            for (int k = 1; k < dgv_logfile.Columns.Count - 1; k++)
+                                            dr["Region"] = dataTable.Rows[i]["Region"];
+                                            dr["ItemCode"] = dataTable.Rows[i]["ItemCode"];
+                                            dr["LotNo"] = dataTable.Rows[i]["LotNo"];
+                                            dr["Sheet"] = dataTable.Rows[i]["Sheet"];
+                                            dr["Sample"] = dataTable.Rows[i]["Sample"];
+                                            try
                                             {
-                                                if (k != 5)
+                                                if (dataTable.Rows[i]["Image"] is byte[])
                                                 {
-                                                    dr[k] = dgv_logfile.Rows[i].Cells[k].Value;
+                                                    dr["Image"] = dataTable.Rows[i]["Image"];
                                                 }
+
+                                                if (dataTable.Rows[i]["Image"] is Image)
+                                                {
+                                                    dr["Image"] =
+                                                        TDMK_ImageConverter.ImageToByteArray(
+                                                            (Image)dataTable.Rows[i]["Image"], ImageFormat.Jpeg);
+                                                }
+                                            }
+                                            catch
+                                            {
+                                            }
+
+                                            try
+                                            {
+                                                if (dataTable.Rows[i]["Image1"] is byte[])
+                                                {
+                                                    dr["Image1"] = dataTable.Rows[i]["Image1"];
+                                                }
+
+                                                if (dataTable.Rows[i]["Image1"] is Image)
+                                                {
+                                                    dr["Image1"] =
+                                                        TDMK_ImageConverter.ImageToByteArray(
+                                                            (Image)dataTable.Rows[i]["Image1"], ImageFormat.Jpeg);
+                                                }
+                                            }
+                                            catch
+                                            {
+                                            }
+
+                                            try
+                                            {
+                                                if (dataTable.Rows[i]["Image2"] is byte[])
+                                                {
+                                                    dr["Image2"] = dataTable.Rows[i]["Image2"];
+                                                }
+
+                                                if (dataTable.Rows[i]["Image2"] is Image)
+                                                {
+                                                    dr["Image2"] =
+                                                        TDMK_ImageConverter.ImageToByteArray(
+                                                            (Image)dataTable.Rows[i]["Image2"], ImageFormat.Jpeg);
+                                                }
+                                            }
+                                            catch
+                                            {
+                                            }
+
+                                            dr["Data"] = dataTable.Rows[i]["Data"];
+                                            dr["Operator"] = dataTable.Rows[i]["Operator"];
+                                            dr["Time_Update"] = dataTable.Rows[i]["Time_Update"];
+                                            dr["Remark"] = dataTable.Rows[i]["Remark"];
+                                            try
+                                            {
+                                                dr["ProductID"] = dataTable.Rows[i]["ProductID"];
+                                            }
+                                            catch
+                                            {
                                             }
 
                                             dt_select.Rows.Add(dr);
@@ -5160,18 +5170,38 @@ namespace Funtion_F3_SMT
                                         }
                                         else
                                         {
-                                            // MessageBox.Show("Please login to select NG data");
-                                            MessageBox.Show(new Form { TopMost = true },
-                                                "Vui lòng để đăng nhập để chọn dữ liệu NG", "Thông báo");
-                                            select_OK = false;
-                                            return;
+                                            if (admin_mode == "Admin mode")
+                                            {
+                                                DataRow dr = dt_select.NewRow();
+                                                dr["ID"] = ID;
+                                                dr[5] = inx + 1;
+                                                for (int k = 1; k < dgv_logfile.Columns.Count - 1; k++)
+                                                {
+                                                    if (k != 5)
+                                                    {
+                                                        dr[k] = dgv_logfile.Rows[i].Cells[k].Value;
+                                                    }
+                                                }
+
+                                                dt_select.Rows.Add(dr);
+                                                ID++;
+                                            }
+                                            else
+                                            {
+                                                // MessageBox.Show("Please login to select NG data");
+                                                MessageBox.Show(new Form { TopMost = true },
+                                                    "Vui lòng để đăng nhập để chọn dữ liệu NG", "Thông báo");
+                                                select_OK = false;
+                                                return;
+                                            }
                                         }
                                     }
                                 }
                             }
+
+                            //} 
                         }
 
-                        //} 
                         dgv_Analysis.DataSource = dt_select;
                     }
 
@@ -5312,6 +5342,17 @@ namespace Funtion_F3_SMT
                         MessageBox.Show(new Form { TopMost = true }, "Chưa nhập đủ ItemCode/lotNo", "Thông báo");
                         return;
                     }
+                }
+
+                if (sheet == "CROSS_SECTION" && (cbStatus.Text == "Shield b2b" || cbStatus.Text == "Clip"))
+                {
+                    filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo", "Sheet" },
+                        new string[]
+                        {
+                            LegacyMode.Checked ? txtItemCode.Text : txtItemCode.Text.PadRight(10),
+                            LegacyMode.Checked ? txtLotNo.Text : txtLotNo.Text.PadRight(10),
+                            cbStatus.Text
+                        });
                 }
 
 
@@ -6549,6 +6590,21 @@ namespace Funtion_F3_SMT
 
         public void Check_spec_crossection(DataGridView dgv, string mysheet)
         {
+            try
+            {
+                if (cbStatus.Text == "Shield b2b" || cbStatus.Text == "Clip")
+                {
+                    DataTable dtz = (DataTable)dgv.DataSource;
+                    List<string> check = CrossSectionService.check_SPEC(dtz, txtItemCode.Text);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+
             string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet" },
                 new string[] { txtItemCode.Text, mysheet });
             DataTable Data_tbl = (DataTable)dgv.DataSource;
@@ -7115,6 +7171,20 @@ namespace Funtion_F3_SMT
 
         public void Check_spec_GAP(DataGridView dgv, string mysheet)
         {
+            try
+            {
+                if (cbStatus.Text == "Shield b2b")
+                {
+                    DataTable dtz = (DataTable)dgv.DataSource;
+                    List<string> check = GAPConnectorService.check_SPEC(dtz, txtItemCode.Text);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
             DataTable dt_spec = new DataTable();
             //DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, sheet, cb_Type.SelectedItem.ToString() }));
             if (cb_Type.SelectedItem.ToString().Contains("MASS"))
@@ -7434,6 +7504,17 @@ namespace Funtion_F3_SMT
                     if (sheet == "IQC_UNMATING_PULL_TEST" || sheet.Contains("COUPON"))
                     {
                         chk = true;
+                    }
+                    else if ((sheet == "CROSS_SECTION" || sheet == "GAP_CONNECTOR") && (cbStatus.Text == "Shield b2b" || cbStatus.Text == "Clip"))
+                    {
+                        string[] f_name =
+                            Path.GetFileNameWithoutExtension(txtLogfile.Text).TrimEnd(new char[] { ',', '.', ' ' })
+                                .Split('-');
+                        if (txtItemCode.Text.ToString() == f_name[0].Trim() &&
+                            txtLotNo.Text.ToString() == f_name[1].Trim())
+                        {
+                            chk = true;
+                        }
                     }
                     else
                     {
@@ -8001,11 +8082,22 @@ namespace Funtion_F3_SMT
                                     break;
 
                                 case "CROSS_SECTION":
-                                    Data_tbl = load_data_logfile_cross_section(f_folder, infor);
+                                    try
+                                    {
+                                        Data_tbl = load_data_logfile_cross_section(f_folder, infor,
+                                            cbStatus.Text);
+                                    }
+                                    catch (Exception exception)
+                                    {
+                                        MessageBox.Show($"Error Read cross section: {exception}!");
+                                    }
+
                                     break;
 
                                 case "GAP_CONNECTOR":
-                                    Data_tbl = load_data_logfile_gap_connector(f_folder, infor);
+
+                                    Data_tbl = load_data_logfile_gap_connector(f_folder, infor,
+                                        cbStatus.Text);
                                     break;
                             }
 
@@ -8581,6 +8673,39 @@ namespace Funtion_F3_SMT
 
         private void btn_save_Click(object sender, EventArgs e)
         {
+            if (sheet == "CROSS_SECTION" && (cbStatus.Text == "Shield b2b" || cbStatus.Text == "Clip"))
+            {
+                try
+                {
+                    string itemCode = txtItemCode.Text;
+                    string lotNo = txtLotNo.Text;
+                    string cbStatusZ = cbStatus.Text;
+                    DataTable dt = (DataTable)dgv_Analysis.DataSource;
+                    DataTable crossSctionDT = CrossSectionService.load(itemCode, lotNo, cbStatusZ);
+                    if (crossSctionDT.Rows.Count > 0)
+                    {
+                        if (MessageBox.Show("Data is valid, do you want overwrite", "Warning",
+                                MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            crossSctionDT.Rows.Clear();
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+
+                    CrossSectionService.Save(dt, itemCode, lotNo, cbStatusZ, crossSctionDT);
+                    dgv_Analysis.DataSource = new DataTable();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Save cross section: {ex.Message}");
+                }
+
+                return;
+            }
+
             if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST")
             {
                 if (txt_setchan.Text == "0" || !myCode.IsNumeric(txt_setchan.Text))
@@ -12821,6 +12946,34 @@ namespace Funtion_F3_SMT
         {
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && txtOperator.Text != "")
             {
+                if (cbStatus.Text == "Shield b2b")
+                {
+                    if (sheet == "CROSS_SECTION")
+                    {
+                        CrossSectionService.Export(txtItemCode.Text, txtLotNo.Text);
+                    }
+
+                    return;
+                }
+                if (cbStatus.Text == "Shield b2b")
+                {
+                    if (sheet == "GAP_CONNECTOR")
+                    {
+                        GAPConnectorService.Export(txtItemCode.Text, txtLotNo.Text);
+                    }
+
+                    return;
+                }
+                if (cbStatus.Text == "Clip")
+                {
+                    if (sheet == "CROSS_SECTION")
+                    {
+                        CrossSectionService.ExportClip(txtItemCode.Text, txtLotNo.Text);
+                    }
+
+                    return;
+                }
+
                 if (dgv_Analysis.DataSource == null)
                 {
                     btnLoadb.PerformClick();
@@ -12989,7 +13142,14 @@ namespace Funtion_F3_SMT
         private void btn_export_Click(object sender, EventArgs e)
         {
             //export_old();
-            export_new();
+            try
+            {
+                export_new();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void txtLogfile_MouseDoubleClick(object sender, MouseEventArgs e)
