@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace OK2SHIP_SMT.Services
@@ -17,15 +18,213 @@ namespace OK2SHIP_SMT.Services
     public class GAPConnectorService
     {
         private DBContext _dbContext = new DBContext();
-        public static void Load(string itemcode, string lotno)
+
+        public static DataTable Load(string itemcode, string lotno)
         {
             DBContext _context = new DBContext();
-           // DataTable dt =  _context.LoadDataTable("GAP_CONNECTOR_NAS",  new[]{"ItemCode", "LotNo"})
+            DataTable dt = _context.LoadDataTable("GAP_CONNECTOR_NAS", new[] { "ItemCode", "LotNo" },
+                new[] { itemcode, lotno });
+            if (dt.Rows.Count < 0)
+            {
+                throw new Exception("Data not found");
+            }
+
+            DataTable res = ConverterService.JsonToDataTable(dt.Rows[0]["Data"].ToString());
+            NasRepository nas = new NasRepository();
+            nas.MergeDataTable(res, "GAP_CONNECTOR", itemcode, lotno, dt.Rows[0]["LocationImg"].ToString());
+            return res;
         }
+
         public static void Export(string itemcode, string lotNo)
         {
-            
+            DataTable dt = Load(itemcode, lotNo);
+            ExportProcess _process = new ExportProcess();
+            using (ExcelPackage package = _process.FindFormatWithItemCode(itemcode))
+            using (ExcelWorksheet ws = _process.FindSheet(package, "GAP Connector"))
+            {
+                int maxRow = ws.Dimension.End.Row;
+
+                List<string> danhSachRegion = dt.AsEnumerable()
+                    .Select(row => row.Field<string>("Region"))
+                    .Distinct()
+                    .ToList();
+                IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, danhSachRegion.ToArray());
+                foreach (string region in danhSachRegion)
+                {
+                    if (dic.TryGetValue(region, out string address))
+                    {
+                        List<DataRow> filteredRows = dt.AsEnumerable()
+                            .Where(row => !row.IsNull("Region") && row.Field<string>("Region") == region)
+                            .ToList();
+                        ExportForARegion(ws, region, filteredRows, address, maxRow);
+                    }
+                }
+
+                _process.SaveExcelWorksheet(package, $"GAP Connector", $"GAPConnector{itemcode}-{lotNo}");
+            }
         }
+
+        public static bool TryGetNumberInParentheses(string input, out int extractedNumber)
+        {
+            // Gán giá trị mặc định cho tham số out trước khi xử lý
+            extractedNumber = -1;
+
+            if (string.IsNullOrEmpty(input))
+                return false;
+
+            // Biểu thức chính quy: thêm cặp ngoặc đơn () quanh \d+ để tạo Group bắt giữ
+            string pattern = @"\((\d+)\)";
+            Match match = Regex.Match(input, pattern);
+
+            if (match.Success)
+            {
+                // match.Groups[1].Value chứa giá trị của Group đầu tiên (\d+)
+                // Sử dụng int.TryParse để đảm bảo an toàn nếu số quá lớn vượt quá giới hạn của int
+                if (int.TryParse(match.Groups[1].Value, out extractedNumber))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static void ExportForARegion(ExcelWorksheet ws, string region, List<DataRow> filteredRows,
+            string startAddress, int maxRow)
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            string value = ws.Cells[startAddress].Text;
+            string address = startAddress;
+            int row = ws.Cells[startAddress].End.Row;
+            int imgNum = 2;
+            while (value != "Judgement" && row < maxRow)
+            {
+                if (value == region)
+                {
+                    dic.Add("img1", address);
+                }
+
+                else if (value.ToUpper().Contains("SPEC"))
+                {
+                    dic.Add($"spec{imgNum}", address);
+                }
+                else if (TryGetNumberInParentheses(value, out int z))
+                {
+                    dic.Add($"{imgNum}-{z}", address);
+                }
+
+                else if (value.ToUpper().Contains("JUDGEMENT"))
+                {
+                }
+                else
+                {
+                    dic.Add($"img{imgNum}", address);
+                    imgNum++;
+                }
+
+                row++;
+                address = ExportProcess.AddRow(address, 1);
+                value = ws.Cells[address].Text;
+            }
+
+            foreach (DataRow rowI in filteredRows)
+            {
+                string nameImg = rowI["NameImage"].ToString().Split('.')[0];
+                string sample = rowI["Sample"].ToString();
+                string[] split = nameImg.Split('-');
+                if (int.TryParse(sample, out int sampleNum))
+                {
+                    if (split.Length < 2)
+                    {
+                        ExportProcess.InsertImageToCell(
+                            ws,
+                            ws.Cells[ExportProcess.AddColumn(ExportProcess.AddRow(startAddress, -1)
+                                , sampleNum)],
+                            (byte[])rowI["Image"], $"{sampleNum}-{nameImg}{Guid.NewGuid()}");
+                    }
+                    else
+                    {
+                        if (int.TryParse(split[1], out int z))
+                        {
+                            if (dic.TryGetValue($"img{z}", out string addressZ))
+                            {
+                                ExportProcess.InsertImageToCell(
+                                    ws,
+                                    ws.Cells[ExportProcess.AddColumn(addressZ, sampleNum)],
+                                    (byte[])rowI["Image"], $"{sampleNum}-{nameImg}{Guid.NewGuid()}");
+                            }
+
+                            string[] data = rowI["Data"].ToString().Split(';');
+                            for (int i = 0; i < data.Length; i++)
+                            {
+                                if (dic.TryGetValue($"{z + 1}-{i + 1}", out string addressz))
+                                {
+                                    double floatValue;
+                                    string cellAddress = ExportProcess.AddColumn(addressz, sampleNum);
+
+                                    if (double.TryParse(data[i]?.ToString(), out floatValue))
+                                    {
+                                        // Nếu thành công, gán giá trị int (Excel sẽ hiểu đây là số)
+                                        ws.Cells[cellAddress].Value = floatValue;
+                                    }
+                                    else
+                                    {
+                                        // Nếu thất bại (không phải số), gán lại chuỗi ban đầu hoặc để trống
+                                        ws.Cells[cellAddress].Value = "N/A";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (string key in dic.Keys)
+            {
+                if (key.ToUpper().Contains("SPEC"))
+                {
+                    // Biểu thức chính quy tìm mẫu: ((X)-(Y))
+                    // Dấu \ dùng để thoát các ký tự ngoặc đơn đặc biệt trong Regex
+                    string pattern = @"\(\((\d+)\)-\((\d+)\)\)";
+                    string valueZ = ws.Cells[dic[key]].Value.ToString();
+                    Match match = Regex.Match(valueZ, pattern);
+
+                    if (match.Success)
+                    {
+                        // Lấy 2 số X và Y từ chuỗi
+                        if (int.TryParse(match.Groups[1].Value, out int indexX) &&
+                            int.TryParse(match.Groups[2].Value, out int indexY))
+                        {
+                            string keyIndex = key.ToUpper().Replace("SPEC", "");
+                            foreach (DataRow rowI in filteredRows)
+                            {
+                                string[] name = rowI["NameImage"].ToString().Split('.')[0].Split('-');
+                                if (name.Length > 1 && $"{int.Parse(name[1]) + 1}" == keyIndex)
+                                {
+                                    string[] data = rowI["Data"].ToString().Split(';');
+                                    int sampleNum = int.Parse(rowI["Sample"].ToString());
+                                    double floatValueX, floatValueY;
+                                    string cellAddress = ExportProcess.AddColumn(dic[key], sampleNum);
+
+                                    if (double.TryParse(data[indexX - 1]?.ToString(), out floatValueX) &&
+                                        double.TryParse(data[indexY - 1]?.ToString(), out floatValueY))
+                                    {
+                                        // Nếu thành công, gán giá trị int (Excel sẽ hiểu đây là số)
+                                        ws.Cells[cellAddress].Value = $"{floatValueX} - {floatValueY}";
+                                    }
+                                    else
+                                    {
+                                        // Nếu thất bại (không phải số), gán lại chuỗi ban đầu hoặc để trống
+                                        ws.Cells[cellAddress].Value = "N/A";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public void Export(ExcelWorksheet workSheet, DataTable dataTable, DataTable spec)
         {
             int SpecNum = int.Parse(spec.Rows[0]["Count_Sample"].ToString());
@@ -262,11 +461,11 @@ namespace OK2SHIP_SMT.Services
 
             return dt;
         }
-        
+
         public static List<string> check_SPEC(DataTable dt, string itemCode)
         {
             List<string> list = new List<string>();
-        
+
             return list;
         }
 

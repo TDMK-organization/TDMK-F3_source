@@ -370,7 +370,9 @@
     <Compile Include="Views\EditorForm.Designer.cs">
       <DependentUpon>EditorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\BendingWindow.cs" />
+    <Compile Include="Views\BendingWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Views\BendingWindow.Designer.cs" />
     <Compile Include="Views\NormalForm.cs">
       <SubType>Form</SubType>

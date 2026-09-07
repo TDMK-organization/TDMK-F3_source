@@ -5436,7 +5436,15 @@ namespace Funtion_F3_SMT
                                 break;
 
                             case "GAP_CONNECTOR":
-                                Check_spec_GAP(dgv_Analysis, sheet);
+                                try
+                                {
+
+                                    Check_spec_GAP(dgv_Analysis, sheet);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show("Error Check spec");
+                                }
                                 break;
                         }
                     }
@@ -12951,18 +12959,18 @@ namespace Funtion_F3_SMT
                     if (sheet == "CROSS_SECTION")
                     {
                         CrossSectionService.Export(txtItemCode.Text, txtLotNo.Text);
+                    return;
                     }
 
-                    return;
                 }
                 if (cbStatus.Text == "Shield b2b")
                 {
                     if (sheet == "GAP_CONNECTOR")
                     {
                         GAPConnectorService.Export(txtItemCode.Text, txtLotNo.Text);
+                    return;
                     }
 
-                    return;
                 }
                 if (cbStatus.Text == "Clip")
                 {

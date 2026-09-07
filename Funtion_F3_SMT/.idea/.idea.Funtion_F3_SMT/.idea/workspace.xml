@@ -14,13 +14,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79693909-c6be-4431-90a9-36eba68f2a7a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Form1.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Form1.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/packages.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SMT_FAISPC/Bending_Items/Bending_Main.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../SMT_FAISPC/Bending_Items/Bending_Main.Designer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SMT_FAISPC/Bending_Items/Bending_Main.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../SMT_FAISPC/Bending_Items/Bending_Main.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_F3_SMT.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_F3_SMT.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/GAPConnectorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/GAPConnectorService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA/CraftSynth.ImageEditor.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA/CraftSynth.ImageEditor.dll" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -107,61 +104,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.8352227996691517" />
-      <entry key="MS500" value="4.73334481430772" />
-      <entry key="S2" value="10.570315288572086" />
-      <entry key="S5" value="18.479630322027113" />
-      <entry key="S10" value="27.850797954707897" />
-      <entry key="S30" value="43.47372996197011" />
-      <entry key="S60" value="53.190309041339574" />
-      <entry key="M2" value="68.10008885221309" />
-      <entry key="M5" value="93.64464800493833" />
-      <entry key="M10" value="111.33109524064041" />
-      <entry key="M15" value="122.06934546701575" />
-      <entry key="M30" value="145.09233221190277" />
-      <entry key="H1" value="184.63344828380716" />
-      <entry key="H2" value="243.58893752906567" />
-      <entry key="H4" value="303.36251017787185" />
-      <entry key="D1" value="788.4556717511936" />
-      <entry key="W1" value="5330.715592678368" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0" />
+      <entry key="S5" value="1.0" />
+      <entry key="S10" value="1.0000000061500987" />
+      <entry key="S30" value="1.0031248002862934" />
+      <entry key="S60" value="1.0920781875637346" />
+      <entry key="M2" value="1.564823365193408" />
+      <entry key="M5" value="4.121177873150561" />
+      <entry key="M10" value="16.066950759491213" />
+      <entry key="M15" value="32.86681870197016" />
+      <entry key="M30" value="77.33154849567437" />
+      <entry key="H1" value="139.79141878206477" />
+      <entry key="H2" value="259.453474125799" />
+      <entry key="H4" value="447.416920461116" />
+      <entry key="D1" value="1178.1429102351742" />
+      <entry key="W1" value="5759.3600785365825" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="2.980016070315325E-122" />
-      <entry key="S2" value="6.2231331319952365E-31" />
-      <entry key="S5" value="1.2471700240789651E-12" />
-      <entry key="S10" value="1.6994052574232608E-6" />
-      <entry key="S30" value="0.02646124060485999" />
-      <entry key="S60" value="0.3232564765042814" />
-      <entry key="M2" value="1.1923292578577491" />
-      <entry key="M5" value="2.810233503783673" />
-      <entry key="M10" value="4.364261584267258" />
-      <entry key="M15" value="5.913286285037522" />
-      <entry key="M30" value="10.63273491378219" />
-      <entry key="H1" value="20.762181675688925" />
-      <entry key="H2" value="36.82169466088277" />
-      <entry key="H4" value="53.219355321850564" />
-      <entry key="D1" value="188.76109072361092" />
-      <entry key="W1" value="1511.5936762270926" />
+      <entry key="MS500" value="2.3024481701771554E-177" />
+      <entry key="S2" value="1.1378364205209887E-44" />
+      <entry key="S5" value="4.001173719794405E-18" />
+      <entry key="S10" value="2.8279025456062152E-9" />
+      <entry key="S30" value="0.0022446195021613956" />
+      <entry key="S60" value="0.06700117430987522" />
+      <entry key="M2" value="0.3663833897163213" />
+      <entry key="M5" value="1.2746961953097553" />
+      <entry key="M10" value="4.702780610553817" />
+      <entry key="M15" value="9.9805320243815" />
+      <entry key="M30" value="25.270343927610757" />
+      <entry key="H1" value="48.27575640944651" />
+      <entry key="H2" value="91.28369904731123" />
+      <entry key="H4" value="155.14636082087827" />
+      <entry key="D1" value="376.8386586584185" />
+      <entry key="W1" value="1713.4901171508654" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.7711589505821987" />
-      <entry key="MS500" value="4.650567665321396" />
-      <entry key="S2" value="10.507192416952801" />
-      <entry key="S5" value="18.419650500638863" />
-      <entry key="S10" value="27.793985375067756" />
-      <entry key="S30" value="43.462730467268166" />
-      <entry key="S60" value="53.47875801179382" />
-      <entry key="M2" value="69.25383250214068" />
-      <entry key="M5" value="96.4220321296715" />
-      <entry key="M10" value="115.67171251427773" />
-      <entry key="M15" value="127.96333675196708" />
-      <entry key="M30" value="155.71073638136406" />
-      <entry key="H1" value="205.38317071287602" />
-      <entry key="H2" value="280.3999964997958" />
-      <entry key="H4" value="356.5742563167097" />
-      <entry key="D1" value="977.2117121666528" />
-      <entry key="W1" value="6842.30248761674" />
+      <entry key="MS100" value="0.16042823719536303" />
+      <entry key="MS500" value="0.6935154845656926" />
+      <entry key="S2" value="0.9125654885434519" />
+      <entry key="S5" value="0.9640634460492294" />
+      <entry key="S10" value="0.9818673349551582" />
+      <entry key="S30" value="0.9992588214514448" />
+      <entry key="S60" value="1.1555929378598035" />
+      <entry key="M2" value="1.9284575695312554" />
+      <entry key="M5" value="5.392352093755123" />
+      <entry key="M10" value="20.75954338588226" />
+      <entry key="M15" value="42.83185388624222" />
+      <entry key="M30" value="102.58199243262634" />
+      <entry key="H1" value="188.0481506971259" />
+      <entry key="H2" value="350.71868602189153" />
+      <entry key="H4" value="602.5470101209339" />
+      <entry key="D1" value="1554.9736801567794" />
+      <entry key="W1" value="7472.843007792334" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -191,7 +188,7 @@
     "XThreadsFramesViewSplitterKey": "0.317757",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "temp-branch",
+    "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -269,7 +266,7 @@
         </breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs</url>
-          <line>1339</line>
+          <line>1338</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\PeelTestOnProductService.cs" containingFunctionPresentation="Method 'SetUpExport'">
             <startOffsets>
               <option value="61173" />
