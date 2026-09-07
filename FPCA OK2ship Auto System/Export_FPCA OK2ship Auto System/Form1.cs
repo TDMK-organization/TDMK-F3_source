@@ -29,6 +29,7 @@ using Export_FPCA_OK2ship_Auto_System.Libary;
 using TDMK_SQL;
 using Export_FPCA_OK2ship_Auto_System.Repositories;
 using Export_FPCA_OK2ship_Auto_System.Views;
+using OK2SHIP_SMT.Views;
 
 
 
@@ -1346,8 +1347,17 @@ namespace Export_FPCA_OK2ship_Auto_System
         }
         private void lblBending_Click(object sender, EventArgs e)
         {
-            Get_Latest_Version(Path.Combine(app_path, "Bending_Items"), "Bending_Items");
+            BendingForm form = new BendingForm();
+            form.ShowDialog();
 
+            if (form.PRIME == true)
+            {
+                Get_Latest_Version(Path.Combine(app_path, "VHX-IMADA"), "VHX-IMADA", "BENDING");
+            }
+            if (form.PRIME == false)
+            {
+                Get_Latest_Version(Path.Combine(app_path, "Bending_Items"), "Bending_Items");
+            }
         }
 
         private void lblType3_Click(object sender, EventArgs e)
@@ -1358,7 +1368,7 @@ namespace Export_FPCA_OK2ship_Auto_System
         }
 
 
-        public void Get_Latest_Version(string folder_, string name)
+        public void Get_Latest_Version(string folder_, string name, string msg = "")
         {
             DirectoryInfo tar_parent = new DirectoryInfo(folder_);
             FileInfo[] temp_lst = tar_parent.GetFiles("*.exe");
@@ -1392,7 +1402,14 @@ namespace Export_FPCA_OK2ship_Auto_System
                 string process_name = Path.Combine(folder_, file_name);
                 if (File.Exists(process_name))
                 {
-                    Process.Start(process_name);
+                    if (!string.IsNullOrEmpty(msg))
+                    {
+                        Process.Start(process_name, msg);
+                    }
+                    else
+                    {
+                        Process.Start(process_name);
+                    }
                 }
             }
             else

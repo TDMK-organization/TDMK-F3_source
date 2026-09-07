@@ -1,35 +1,37 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿using Bending_Export;
+using Export_FPCA_OK2ship_Auto_System.Libary;
+using Export_FPCA_OK2ship_Auto_System.Repositories;
+using Export_FPCA_OK2ship_Auto_System.Services;
+using IniLibs;
+using Microsoft.Office.Interop.Excel;
+using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
+using OK2SHIP_SMT;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using TDMK_SEEV_DLL;
 using TDMK_SQL;
-using myExcel = Microsoft.Office.Interop.Excel;
-using DataTable = System.Data.DataTable;
+using ZedGraph;
 using static System.Net.Mime.MediaTypeNames;
-using System.Diagnostics;
-using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Security.Cryptography;
-using System.Runtime.InteropServices;
-using System.Diagnostics.Eventing.Reader;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
-using OK2SHIP_SMT;
-using OfficeOpenXml;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
-using Bending_Export;
-using Export_FPCA_OK2ship_Auto_System.Services;
-using Export_FPCA_OK2ship_Auto_System.Repositories;
-using IniLibs;
-using Export_FPCA_OK2ship_Auto_System.Libary;
+using DataTable = System.Data.DataTable;
+using myExcel = Microsoft.Office.Interop.Excel;
 
 
 namespace Export_FPCA_OK2ship_Auto_System
@@ -1014,7 +1016,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
 
 
-                return $"{count_sample}:{valueIndex}";
+            return $"{count_sample}:{valueIndex}";
         }
 
         public string lst_spec_unmating(ExcelWorksheet ws)
@@ -1499,29 +1501,58 @@ namespace Export_FPCA_OK2ship_Auto_System
         public string lst_spec_gap_connector(ExcelWorksheet ws)
         {
             string lst_spec = "";
-            Dictionary<string, List<string>> dic_spec = new Dictionary<string, List<string>> { };
-            List<string> export_possitions = new List<string> { "IOPIN", "LEFT", "RIGHT" };
-            string poss = FindPositionsInColumnB(ws, export_possitions);
-
-            int count_sample = 0;
-
-            for (int i = 1; i < 100; i++)
+            List<string> listZa = new List<string>();
+            IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[] { "Sample", "Flex SN" });
+            foreach (string key in dic["Flex SN"].Split('-'))
             {
-                for (int j = 1; j < 5; j++)
+                List<string> list = new List<string>();
+                string address = ExportProcess.AddRow(key, 2);
+                string value = ws.Cells[address].Text;
+                while (value != "Flex SN" && value != "")
                 {
-                    if (myCode.checkDBNull(ws.Cells[i, j].Value).Contains("Sample"))
+                    if (value.ToLower().Contains("spec"))
                     {
-                        while (myCode.checkDBNull(ws.Cells[i, j + count_sample].Value).Contains("Sample"))
-                        {
-                            count_sample++;
-                        }
-                        lst_spec += count_sample + ":" + j.ToString() + "+" + poss;
+                        list.Add(value);
 
-                        return lst_spec;
+                    }
+                    else if (Regex.IsMatch(value, @"\(\d+\)"))
+                    {
+                        Match matchz = Regex.Match(value, @"\(\d+\)");
+                        list.Add(matchz.Value);
+                    }
+                    else
+                    {
+                        list.Add(value);
+                    }
+                    value = ws.Cells[address].Text;
+                    address = ExportProcess.AddRow(address, 1);
+                }
+
+                listZa.Add(string.Join(";", list));
+            }
+
+            string sample = "";
+            try
+            {
+
+                if (dic.TryGetValue("Sample", out string adds))
+                {
+                    string lastsample = adds.Split('-').Last();
+                    if (int.TryParse(ws.Cells[lastsample].Text.Replace("Sample", ""), out int sampleValue))
+                    {
+                        sample = sampleValue.ToString();
                     }
                 }
             }
-            return lst_spec;
+            catch
+            {
+
+            }
+
+
+            return sample + ":" + string.Join("|", listZa);
+
+
         }
         public string lst_spec_ACF_old(myExcel.Worksheet ws)
         {
@@ -1916,7 +1947,94 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 string mySheet = "";
 
-                if (sheet == "FAI")
+                if (sheet == "Cross section")
+                {
+
+                    int sample = 0;
+                    List<string> listZ = new List<string>();
+                    foreach (ExcelWorksheet tg_sht in wb.Worksheets)
+                    {
+                        int maxR = tg_sht.Dimension.End.Row;
+                        string cur_sht_name = tg_sht.Name.ToUpper().Replace("-", "").Replace(" ", "").Replace("(", "").Replace(")", "");
+                        if (cur_sht_name.Contains(sheet.ToUpper().Replace("-", "").Replace(" ", "").Replace("(", "").Replace(")", "")))
+                        {
+                            IDictionary<string, string> dic = ExportProcess.FindAddressByText(tg_sht, new[] { "Sample", "Pin DOC Y2", "Pin DOC Y1", "Shield DOC", "Shield Ngang X1", "Shield Ngang X2", "Shield Y2", "Shield Y1", "Ngang X1", "NGANG X2", "Shield X2", "Shield X1" });
+                            if (dic.TryGetValue("Sample", out string adds))
+                            {
+                                sample = Math.Max(sample, adds.Split('-').Length);
+
+                            }
+                            foreach (string key in dic.Keys)
+                            {
+                                if (key != "Sample")
+                                {
+                                    List<string> arr = new List<string>();
+                                    string value = tg_sht.Cells[dic[key]].Text;
+                                    
+                                    string address = dic[key];
+                                    int r = tg_sht.Cells[address].Start.Row;
+                                    int img = 1;
+                                    while (true && r <= maxR)
+                                    {
+                                        r++;
+                                        if (value.ToLower().Contains("flex sn"))
+                                        {
+                                            break;
+                                        }
+                                        if (value.ToUpper().Contains(key.ToUpper()))
+                                        {
+                                            arr.Add(key);
+                                        }
+                                        else if (value.Contains("%"))
+                                        {
+                                            arr.Add("%");
+
+                                        }
+                                        else if (value.ToUpper().Contains("MAX") || value.ToUpper().Contains("AVERAGE") || value.ToUpper().Contains("MIN"))
+                                        {
+                                            arr.Add("minmaxaverage");
+                                        }
+                                        else if (value.ToUpper().Contains("SPEC"))
+                                        {
+                                            arr.Add(value);
+                                        }
+                                        else
+                                        {
+                                            arr.Add($"Image {img}");
+                                        }
+                                        address = ExportProcess.AddRow(address, 1);
+                                     
+                                        try
+                                        {
+
+                                            value = tg_sht.Cells[address].Text;
+                                        }
+                                        catch
+                                        {
+                                            break;
+                                        }
+
+                                    }
+                                    listZ.Add(string.Join(";", arr));
+                                }
+
+                            }
+
+                        }
+                    }
+                    DataRow dr = dt_spec.NewRow();
+
+                    dr[0] = ID;
+                    dr[1] = ItemCode;
+                    dr[2] = sheet.Replace(" ", "_").Replace("(", "").Replace(")", "").ToUpper();
+                    dr[3] = sample;
+                    dr[4] = string.Join("|", listZ);
+                    dr[5] = cb_Type.SelectedItem.ToString();
+
+                    dt_spec.Rows.Add(dr);
+                    ID++;
+                }
+                else if (sheet == "FAI")
                 {
                     DataTable cur_dt = Load_Spec_fromFile(sqlcon, wb, ItemCode, new List<string> { "*.xlsx", "*.xlsm" }, cb_Type.SelectedItem.ToString());
                     Save_FAI_Spec(cur_dt, ItemCode, sqlcon, cb_Type.SelectedItem.ToString());

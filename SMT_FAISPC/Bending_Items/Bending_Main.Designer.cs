@@ -680,7 +680,10 @@ namespace Bending_Items
             this.cbProcess.Items.AddRange(new object[] {
             "FLEX_BENDING",
             "THERMAL_CYCLING_AND_BEND",
-            "HEAT_SOAK_AND_BEND"});
+            "HEAT_SOAK_AND_BEND",
+            "THERMAL_SHOCK",
+            "HEAT_SOAK",
+            "THERMAL_CYCLING"});
             this.cbProcess.Location = new System.Drawing.Point(84, 46);
             this.cbProcess.Name = "cbProcess";
             this.cbProcess.Size = new System.Drawing.Size(243, 21);
@@ -996,7 +999,10 @@ namespace Bending_Items
             this.cbProcess_Sel.Items.AddRange(new object[] {
             "FLEX_BENDING",
             "THERMAL_CYCLING_AND_BEND",
-            "HEAT_SOAK_AND_BEND"});
+            "HEAT_SOAK_AND_BEND",
+            "THERMAL_SHOCK",
+            "HEAT_SOAK",
+            "THERMAL_CYCLING"});
             this.cbProcess_Sel.Location = new System.Drawing.Point(70, 51);
             this.cbProcess_Sel.Name = "cbProcess_Sel";
             this.cbProcess_Sel.Size = new System.Drawing.Size(199, 21);

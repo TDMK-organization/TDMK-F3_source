@@ -18,6 +18,7 @@ using System.Data.SqlClient;
 using IniLibs;
 using Bending_Export;
 using OfficeOpenXml;
+using System.Diagnostics;
 
 namespace Bending_Items
 {
@@ -143,6 +144,9 @@ namespace Bending_Items
                 if (Logfile_mode)
                 {
                     string log_locate = txtLocation.Text.Replace(Environment.NewLine, "");
+                    string category = switchCategory(cbProcess.Text);
+                    string cycle = switchCycle(cbCycles.Text);
+                    log_locate = $"{log_locate}\\{category}\\{cycle}";
                     string f_name = Path.Combine(log_locate, lstLogFile.SelectedItem.ToString());
                     string itemname = "";
                     string userid = "";
@@ -444,7 +448,11 @@ namespace Bending_Items
                         DataTable dt = new DataTable();
                         if (Logfile_mode)
                         {
-                            string f_name = Path.Combine(txtLocation.Text, logfile);
+                            string location = txtLocation.Text;
+                            string category = switchCategory(cbProcess.Text);
+                            string cycle = switchCycle(cbCycles.Text);
+                            location = $"{location}\\{category}\\{cycle}";
+                            string f_name = Path.Combine(location, logfile);
                             DataTable netSpec_tbl = new DataTable();
                             dt = bending_proc.DAT_To_DataTable_details(f_name, ref Net_lst, ref netSpec_tbl);
                         }
@@ -1471,6 +1479,7 @@ namespace Bending_Items
                 {
                     foreach (string logfile in lstLogFile.Items)
                     {
+
                         string f_name = Path.Combine(txtLocation.Text, logfile);
                         DataTable netSpec_tbl = new DataTable();
                         DataTable result_data = new DataTable();
@@ -2201,7 +2210,39 @@ namespace Bending_Items
         {
 
         }
-
+        private string switchCategory(string category)
+        {
+            switch (category)
+            {
+                case "THERMAL_CYCLING":
+                    return "TC";
+                case "FLEX_BENDING":
+                    return "F";
+                case "HEAT_SOAK_AND_BEND":
+                    return "HF";
+                case "THERMAL_CYCLING_AND_BEND":
+                    return "TF";
+                case "THERMAL_SHOCK":
+                    return "TS";
+                case "HEAT_SOAK":
+                    return "HS";
+                default:
+                    return "EXCEPTION";
+            }
+        }
+        private string switchCycle(string cycle)
+        {
+            if(cycle == "Before")
+            {
+                return "BF";
+            }
+            if (cycle.Contains("After_"))
+            {
+                return cycle.Replace("After_", "L");
+            }
+            Debugger.Break();
+            return "ERROR";
+        }
         private void _txtLocation_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -2210,6 +2251,10 @@ namespace Bending_Items
                 if (txtLocation.Text != "")
                 {
                     string tar_loc = txtLocation.Text.Replace(Environment.NewLine, "");
+                    string category = switchCategory(cbProcess.Text);
+                    string cycle = switchCycle(cbCycles.Text);
+                    tar_loc = $"{tar_loc}\\{category}\\{cycle}";
+             
                     DirectoryInfo di = new DirectoryInfo(tar_loc);
                     if (di.Exists)
                     {
