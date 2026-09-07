@@ -17,14 +17,21 @@ namespace OK2SHIP_SMT.UserControls
     public partial class UC_EnvironmentTable : UserControl
     {
         public string memory = "";
-        public Dictionary<string, Dictionary<string, DataTable>> dictionary_Data = new Dictionary<string, Dictionary<string, DataTable>>();
+
+        public Dictionary<string, Dictionary<string, DataTable>> dictionary_Data =
+            new Dictionary<string, Dictionary<string, DataTable>>();
+
         public CustomDataGridView psaList = new CustomDataGridView(new DataTable(), new Dictionary<string, string[]>());
-        public CustomDataGridView linearList = new CustomDataGridView(new DataTable(), new Dictionary<string, string[]>());
+
+        public CustomDataGridView linearList =
+            new CustomDataGridView(new DataTable(), new Dictionary<string, string[]>());
+
         public UC_EnvironmentTable()
         {
             InitializeComponent();
             setupInit();
         }
+
         public void ClearData()
         {
             DataTable dt = new DataTable();
@@ -34,10 +41,10 @@ namespace OK2SHIP_SMT.UserControls
             dataGridView.DataSource = dt;
             pictureBox.Image = null;
             listBox.Items.Clear();
-
-
         }
-        public void FillData(DataTable dataTable = null, Dictionary<string, Dictionary<string, DataTable>> dictionary = null)
+
+        public void FillData(DataTable dataTable = null,
+            Dictionary<string, Dictionary<string, DataTable>> dictionary = null)
         {
             ClearData();
             dataGridView.RowTemplate.Height = 150;
@@ -46,20 +53,24 @@ namespace OK2SHIP_SMT.UserControls
             {
                 dataGridView.DataSource = dataTable;
             }
+
             if (dictionary != null)
             {
                 dictionary_Data = dictionary;
                 listBox.Items.AddRange(dictionary.Keys.ToArray());
             }
+
             foreach (DataGridViewColumn column in dataGridView.Columns)
             {
                 if (dataGridView.Columns[column.Name] is DataGridViewImageColumn)
                 {
-                    ((DataGridViewImageColumn)dataGridView.Columns[column.Name]).ImageLayout = DataGridViewImageCellLayout.Zoom;
+                    ((DataGridViewImageColumn)dataGridView.Columns[column.Name]).ImageLayout =
+                        DataGridViewImageCellLayout.Zoom;
                     ((DataGridViewImageColumn)dataGridView.Columns[column.Name]).Width = 250; // Đặt chiều rộng cột
                 }
             }
         }
+
         private void dataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             DataGridView dataGridView = (DataGridView)sender;
@@ -82,6 +93,7 @@ namespace OK2SHIP_SMT.UserControls
                 Image imageData = TDMK_ImageConverter.ByteArrayToImage((byte[])sender.Rows[row][col]);
                 pictureBox.Image = imageData;
             }
+
             if (sender.Columns.Contains("Image Sample"))
             {
                 DataRow rowz = sender.Rows[row];
@@ -93,10 +105,10 @@ namespace OK2SHIP_SMT.UserControls
                 btn_editImage.Enabled = false;
                 memory = "";
             }
+
             btn_editImage.Text = $"Edit Image {memory}";
-
-
         }
+
         private void setupInit()
         {
             psaList.CellPainting += dataGridView_CellPainting;
@@ -110,7 +122,6 @@ namespace OK2SHIP_SMT.UserControls
 
         private void listBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
             Dictionary<string, string[]> keyValuePairs = new Dictionary<string, string[]>();
             keyValuePairs.Add("Judgement failure mode", new[] { "No adhesive stick on liner" });
             ListBox listBox = (ListBox)sender;
@@ -129,17 +140,21 @@ namespace OK2SHIP_SMT.UserControls
                     {
                         psaList.columnDropdowns = keyValuePairs;
                         psaList.DataSource = dt;
+                        psaList.CellContentDoubleClick += dataGridView_CellContentDoubleClick;
                     }
+
                     if (dic.TryGetValue(Linear, out DataTable dtz))
                     {
                         linearList.columnDropdowns = keyValuePairs;
                         linearList.DataSource = dtz;
+                        linearList.CellContentDoubleClick += dataGridView_CellContentDoubleClick;
                     }
                 }
-
             }
         }
+
         Form dialog = new Form();
+
         private void btn_close_Click(object sender, EventArgs e)
         {
             dialog.Hide();
@@ -158,6 +173,7 @@ namespace OK2SHIP_SMT.UserControls
                     prime = true;
                     image = TDMK_ImageConverter.ByteArrayToImage((byte[])image);
                 }
+
                 EditImageView edit = new EditImageView((Image)image, btn_close_Click);
                 dialog = new CommonForm("", edit, null);
                 dialog.ShowDialog();
@@ -165,6 +181,7 @@ namespace OK2SHIP_SMT.UserControls
                 {
                     return;
                 }
+
                 if (prime)
                 {
                     image = TDMK_ImageConverter.ImageToByteArray(edit.image, ImageFormat.Jpeg);
@@ -173,6 +190,7 @@ namespace OK2SHIP_SMT.UserControls
                 {
                     image = edit.image;
                 }
+
                 ((DataTable)dataGridView.DataSource).Rows[int.Parse(row)]["Image Sample"] = image;
                 pictureBox.Image = edit.image;
             }
@@ -180,12 +198,10 @@ namespace OK2SHIP_SMT.UserControls
 
         private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-
         }
 
         private void splitPSA_Panel2_Paint(object sender, PaintEventArgs e)
         {
-
         }
 
         private void dataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)

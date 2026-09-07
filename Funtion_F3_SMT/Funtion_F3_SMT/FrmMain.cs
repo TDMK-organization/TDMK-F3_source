@@ -16,6 +16,7 @@ using Microsoft.Office.Interop.Excel;
 using Application = System.Windows.Forms.Application;
 using OK2SHIP_SMT;
 using OK2SHIP_SMT.UserControls;
+using OK2SHIP_SMT.UserControls.Build2Ship;
 
 namespace Funtion_F3_SMT
 {
@@ -175,6 +176,10 @@ namespace Funtion_F3_SMT
                 case "Peel Test (On Product)":
                     pMain.Controls.Clear();
                     pMain.Controls.Add(new SEM(sheet) { Dock = DockStyle.Fill });
+                    break;
+                case "IQC Peeling Test":
+                    pMain.Controls.Clear();
+                    pMain.Controls.Add(new UC_IQCPeelingTest() { Dock = DockStyle.Fill });
                     break;
                 default:
                     if (sheet != "")

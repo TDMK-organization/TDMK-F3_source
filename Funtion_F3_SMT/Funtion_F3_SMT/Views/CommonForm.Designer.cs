@@ -43,8 +43,7 @@
             // 
             // menuStrip1
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.fileToolStripMenuItem });
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1324, 24);
@@ -53,10 +52,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.backToMainMenuToolStripMenuItem,
-            this.resetWindowToolStripMenuItem,
-            this.exitProgramToolStripMenuItem});
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.backToMainMenuToolStripMenuItem, this.resetWindowToolStripMenuItem, this.exitProgramToolStripMenuItem });
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -64,21 +60,21 @@
             // backToMainMenuToolStripMenuItem
             // 
             this.backToMainMenuToolStripMenuItem.Name = "backToMainMenuToolStripMenuItem";
-            this.backToMainMenuToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.backToMainMenuToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.backToMainMenuToolStripMenuItem.Text = "Back To Main Menu";
             this.backToMainMenuToolStripMenuItem.Click += new System.EventHandler(this.backToMainMenuToolStripMenuItem_Click);
             // 
             // resetWindowToolStripMenuItem
             // 
             this.resetWindowToolStripMenuItem.Name = "resetWindowToolStripMenuItem";
-            this.resetWindowToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resetWindowToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.resetWindowToolStripMenuItem.Text = "Reset Window";
             this.resetWindowToolStripMenuItem.Click += new System.EventHandler(this.resetWindowToolStripMenuItem_Click);
             // 
             // exitProgramToolStripMenuItem
             // 
             this.exitProgramToolStripMenuItem.Name = "exitProgramToolStripMenuItem";
-            this.exitProgramToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitProgramToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.exitProgramToolStripMenuItem.Text = "Exit Program";
             this.exitProgramToolStripMenuItem.Click += new System.EventHandler(this.exitProgramToolStripMenuItem_Click);
             // 
@@ -121,6 +117,7 @@
             this.Name = "CommonForm";
             this.Text = "CommonForm";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.CommonForm_FormClosed);
+            this.Load += new System.EventHandler(this.CommonForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.spc_Main.Panel1.ResumeLayout(false);
@@ -128,7 +125,6 @@
             this.spc_Main.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

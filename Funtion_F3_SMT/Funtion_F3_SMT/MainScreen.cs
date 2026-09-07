@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OK2SHIP_SMT.UserControls.Build2Ship;
 
 namespace Funtion_F3_SMT
 {
@@ -151,8 +152,15 @@ namespace Funtion_F3_SMT
 
         private void lblFormatSetup_Click(object sender, EventArgs e)
         {
-            UC_NewFeature uC = new UC_NewFeature();
-            CommonForm frm = new CommonForm("Format Setup", uC, true);
+            // UC_NewFeature uC = new UC_NewFeature();
+            // CommonForm frm = new CommonForm("Format Setup", uC, true);
+            // frm.Show();
+            // this.Hide();
+            
+            AntdForm frm = new AntdForm();
+            UC_Mainscreen uC = new UC_Mainscreen();
+            frm.Controls.Add(uC);
+            uC.Dock = DockStyle.Fill; 
             frm.Show();
             this.Hide();
         }
@@ -240,6 +248,13 @@ namespace Funtion_F3_SMT
                 MessageBox.Show(ex.Message);
 
             }
+
+        }
+
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            new BendingForm().Show();
 
         }
     }

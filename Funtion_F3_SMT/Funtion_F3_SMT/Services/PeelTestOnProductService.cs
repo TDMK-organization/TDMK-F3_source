@@ -598,15 +598,20 @@ namespace OK2SHIP_SMT.Services
                 if (step < files.Count)
                 {
                     KeyValuePair<Image, string> paire = solveFileData(files[step]);
+                    int numZSS = int.Parse(FileFolderRepository.GetFileNameWithoutExtension(files[step]).Split('-')[0].Trim());
                     try
                     {
 
                         int iStep = int.Parse(FileFolderRepository.GetFileNameWithoutExtension(files[step + 1]).Split('-')[0].Trim());
-                        if (i + 1 == iStep)
+                        if (numZSS  == iStep)
                         {
                             KeyValuePair<Image, string> paireZ = solveFileData(files[step + 1]);
                             paire = new KeyValuePair<Image, string>(paire.Key, $"{paireZ.Value.Split(',')[0]},{paire.Value.Split(',')[1]}");
                             step++;
+                            
+                        }
+                        else
+                        {
                             
                         }
                         
@@ -820,7 +825,6 @@ namespace OK2SHIP_SMT.Services
         }
         public void SaveData(bool prime = false)
         {
-            
             string fakeItemCode = $"{_ITEMCODE}" + (_TYPE == "Displacement" ? "&D" : "");
             DataTable dt = new DataTable();
             if (!prime)
@@ -1062,7 +1066,7 @@ namespace OK2SHIP_SMT.Services
                             if (!key.Contains("REFER") && key.ToUpper().Split('-')[0].Trim().Equals(tape.ToUpper()) && key.Split('_')[1].Trim().ToUpper().Equals(stage.ToUpper()))
                             {
                                 // maker name
-                                ws.Cells[item].Value = $"{valueZ.Split('_')[0]}_ {key.Split('-', '_')[1]} {valueZ.Split('_')[1]}";
+                                ws.Cells[item].Value = $"{valueZ.Split('_')[0]}_ {key.Split('-', '_')[1]} {valueZ.Split('_')[2]}";
                                 keyMAIN = key;
                                 break;
                             }
@@ -1219,8 +1223,8 @@ namespace OK2SHIP_SMT.Services
                         ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 2)].FormulaR1C1 = $"=Average(R[-8]C[-1]:R[-8]C[30])";
                         ws.Cells[ExportProcess.AddRow(addressZ, 3)].FormulaR1C1 = $"=STDEV(R[-10]C:R[-10]C[31])";
                         ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 3)].FormulaR1C1 = $"=STDEV(R[-9]C[-1]:R[-9]C[30])";
-                        ws.Cells[ExportProcess.AddRow(addressZ, 4)].FormulaR1C1 = $"=MIN((R[-2]C - {peakMin})*(3 * R[-1]C), ({peakMax} - R[-2]C)*(3 * R[-1]C))";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {averageMin})*(3 * R[-1]C),({averageMax} - R[-2]C)*(3 * R[-1]C))";
+                        ws.Cells[ExportProcess.AddRow(addressZ, 4)].FormulaR1C1 = $"=MIN((R[-2]C - {peakMin})/(3 * R[-1]C), ({peakMax} - R[-2]C)/(3 * R[-1]C))";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {averageMin})/(3 * R[-1]C),({averageMax} - R[-2]C)/(3 * R[-1]C))";
                     }
                     else
                     {
@@ -1246,10 +1250,10 @@ namespace OK2SHIP_SMT.Services
                         ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 3)].FormulaR1C1 = $"=STDEV(R[-10]C[-1]:R[-10]C[30])";
                         ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), 3)].FormulaR1C1 = $"=STDEV(R[-11]C[-2]:R[-11]C[29])";
                         ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), 3)].FormulaR1C1 = $"=STDEV(R[-9]C[-3]:R[-9]C[28])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {peakGFMin} )*(3 * R[-1]C), ( {peakGFMax} - R[-2]C)*(3 * R[-1]C))";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {peakMin})*(3 * R[-1]C), ({peakMax} - R[-2]C)*(3 * R[-1]C))";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {averageGFMin})*(3 * R[-1]C), ({averageGFMax} - R[-2]C)*(3 * R[-1]C))";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {averageMin})*(3 * R[-1]C), ({averageMax} - R[-2]C)*(3 * R[-1]C))";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {peakGFMin} )/(3 * R[-1]C), ( {peakGFMax} - R[-2]C)/(3 * R[-1]C))";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {peakMin})/(3 * R[-1]C), ({peakMax} - R[-2]C)/(3 * R[-1]C))";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {averageGFMin})/(3 * R[-1]C), ({averageGFMax} - R[-2]C)/(3 * R[-1]C))";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {averageMin})/(3 * R[-1]C), ({averageMax} - R[-2]C)/(3 * R[-1]C))";
 
                     }
                 }
@@ -1278,7 +1282,7 @@ namespace OK2SHIP_SMT.Services
             foreach (var item in dic["Tape"].Split('-'))
             {
                 int r = ws.Cells[item].End.Row;
-                if (r > addBase)
+                if (r > addBase) 
                 {
                     ne.Add(item);
                 }

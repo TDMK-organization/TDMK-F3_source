@@ -16,7 +16,7 @@ namespace OK2SHIP_SMT.Repositories
     public class NasRepository
     {
         IniFile TDMK_init;
-        private string _nasAddress = "";
+        public string _nasAddress = "";
         public NasRepository()
         {
             //config file
@@ -29,12 +29,7 @@ namespace OK2SHIP_SMT.Repositories
             {
                 if (FileFolderRepository.checkLocationIsValid(_nasAddress))
                 {
-                    string year = DateTimeOffset.UtcNow.ToString("yyyy");
-                    string month = DateTimeOffset.UtcNow.ToString("MM");
-                    string quy = ((DateTimeOffset.UtcNow.Month - 1) / 3 + 1).ToString();
-                    string day = DateTimeOffset.UtcNow.ToString("dd");
-                    // nam/quy/month-day
-                    _nasAddress = $"{_nasAddress}\\{year}\\{quy}\\{month}-{day}";
+                    _nasAddress = $"{_nasAddress}";
                 }
                 else
                 {
