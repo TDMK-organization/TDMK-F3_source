@@ -15,9 +15,11 @@
   <component name="ChangeListManager">
     <list default="true" id="79693909-c6be-4431-90a9-36eba68f2a7a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_F3_SMT.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_F3_SMT.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/GAPConnectorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/GAPConnectorService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.Designer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA/CraftSynth.ImageEditor.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA/CraftSynth.ImageEditor.dll" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -29,7 +31,7 @@
     <option name="firstShow" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="317" />
+    <option name="cachedIndexableFilesCount" value="3" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -68,6 +70,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/b0/eb469ff4/CellButton.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/d8/6a71fffa/IControl.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c115104f117b4d32a574806f587753714bf8/bb/0eb736d1/SystemDrawingImageHandler.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cfbe3cd186514c71ae576a8663cf2300531738/6d/659dd204/Path.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cfbe3cd186514c71ae576a8663cf2300531738/7f/aca1c9e6/CultureInfo.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cfbe3cd186514c71ae576a8663cf2300531738/85/54a40701/__Error.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cfbe3cd186514c71ae576a8663cf2300531738/9d/7ca6efbe/ThrowHelper.cs" root0="FORCE_HIGHLIGHTING" />
@@ -105,60 +108,60 @@
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
       <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0000000061500987" />
-      <entry key="S30" value="1.0031248002862934" />
-      <entry key="S60" value="1.0920781875637346" />
-      <entry key="M2" value="1.564823365193408" />
-      <entry key="M5" value="4.121177873150561" />
-      <entry key="M10" value="16.066950759491213" />
-      <entry key="M15" value="32.86681870197016" />
-      <entry key="M30" value="77.33154849567437" />
-      <entry key="H1" value="139.79141878206477" />
-      <entry key="H2" value="259.453474125799" />
-      <entry key="H4" value="447.416920461116" />
-      <entry key="D1" value="1178.1429102351742" />
-      <entry key="W1" value="5759.3600785365825" />
+      <entry key="MS500" value="1.0000010603597707" />
+      <entry key="S2" value="1.1091054608762507" />
+      <entry key="S5" value="2.4780193803296884" />
+      <entry key="S10" value="4.622332025005161" />
+      <entry key="S30" value="7.634934301391064" />
+      <entry key="S60" value="8.726062765720528" />
+      <entry key="M2" value="9.338353078124886" />
+      <entry key="M5" value="9.769850664949438" />
+      <entry key="M10" value="11.097982794571326" />
+      <entry key="M15" value="14.54309681939227" />
+      <entry key="M30" value="31.90893783887173" />
+      <entry key="H1" value="63.69099626477466" />
+      <entry key="H2" value="98.95489979354123" />
+      <entry key="H4" value="163.54138648425896" />
+      <entry key="D1" value="1039.897026407155" />
+      <entry key="W1" value="5773.712155475157" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="2.3024481701771554E-177" />
-      <entry key="S2" value="1.1378364205209887E-44" />
-      <entry key="S5" value="4.001173719794405E-18" />
-      <entry key="S10" value="2.8279025456062152E-9" />
-      <entry key="S30" value="0.0022446195021613956" />
-      <entry key="S60" value="0.06700117430987522" />
-      <entry key="M2" value="0.3663833897163213" />
-      <entry key="M5" value="1.2746961953097553" />
-      <entry key="M10" value="4.702780610553817" />
-      <entry key="M15" value="9.9805320243815" />
-      <entry key="M30" value="25.270343927610757" />
-      <entry key="H1" value="48.27575640944651" />
-      <entry key="H2" value="91.28369904731123" />
-      <entry key="H4" value="155.14636082087827" />
-      <entry key="D1" value="376.8386586584185" />
-      <entry key="W1" value="1713.4901171508654" />
+      <entry key="MS100" value="1.1114307703890704E-22" />
+      <entry key="MS500" value="4.066085281652897E-5" />
+      <entry key="S2" value="0.07985353027921757" />
+      <entry key="S5" value="0.36384603646684166" />
+      <entry key="S10" value="0.6031965156288966" />
+      <entry key="S30" value="0.8449278164493512" />
+      <entry key="S60" value="0.9191995520284868" />
+      <entry key="M2" value="0.9587490994553698" />
+      <entry key="M5" value="0.9871587015674805" />
+      <entry key="M10" value="1.18271052991462" />
+      <entry key="M15" value="1.8653396668983189" />
+      <entry key="M30" value="5.876993016733642" />
+      <entry key="H1" value="13.691502072112344" />
+      <entry key="H2" value="22.725569090000274" />
+      <entry key="H4" value="41.319551752979606" />
+      <entry key="D1" value="307.51003529467715" />
+      <entry key="W1" value="1694.9231995336816" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.16042823719536303" />
-      <entry key="MS500" value="0.6935154845656926" />
-      <entry key="S2" value="0.9125654885434519" />
-      <entry key="S5" value="0.9640634460492294" />
-      <entry key="S10" value="0.9818673349551582" />
-      <entry key="S30" value="0.9992588214514448" />
-      <entry key="S60" value="1.1555929378598035" />
-      <entry key="M2" value="1.9284575695312554" />
-      <entry key="M5" value="5.392352093755123" />
-      <entry key="M10" value="20.75954338588226" />
-      <entry key="M15" value="42.83185388624222" />
-      <entry key="M30" value="102.58199243262634" />
-      <entry key="H1" value="188.0481506971259" />
-      <entry key="H2" value="350.71868602189153" />
-      <entry key="H4" value="602.5470101209339" />
-      <entry key="D1" value="1554.9736801567794" />
-      <entry key="W1" value="7472.843007792334" />
+      <entry key="MS100" value="0.7120250977985358" />
+      <entry key="MS500" value="0.9343412600439663" />
+      <entry key="S2" value="1.148903677687548" />
+      <entry key="S5" value="2.771421838409399" />
+      <entry key="S10" value="5.155260649349981" />
+      <entry key="S30" value="8.440800093297534" />
+      <entry key="S60" value="9.622932712995299" />
+      <entry key="M2" value="10.285153772715901" />
+      <entry key="M5" value="10.751971822398389" />
+      <entry key="M10" value="12.276945610289834" />
+      <entry key="M15" value="16.403385833075323" />
+      <entry key="M30" value="37.77702142290204" />
+      <entry key="H1" value="77.37253899412455" />
+      <entry key="H2" value="121.67255767441873" />
+      <entry key="H4" value="204.85445465609308" />
+      <entry key="D1" value="1347.400133916647" />
+      <entry key="W1" value="7468.628275985676" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -265,92 +268,14 @@
           <option name="timeStamp" value="3" />
         </breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs</url>
-          <line>1338</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\PeelTestOnProductService.cs" containingFunctionPresentation="Method 'SetUpExport'">
-            <startOffsets>
-              <option value="61173" />
-            </startOffsets>
-            <endOffsets>
-              <option value="61313" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/UC_AirBubble.cs</url>
-          <line>203</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\UC_AirBubble.cs" containingFunctionPresentation="Method 'tdmK_Button1_Click_1'">
-            <startOffsets>
-              <option value="7542" />
-            </startOffsets>
-            <endOffsets>
-              <option value="7575" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/UC_AirBubble.cs</url>
-          <line>197</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\UC_AirBubble.cs" containingFunctionPresentation="Method 'tdmK_Button1_Click_1'">
-            <startOffsets>
-              <option value="7333" />
-            </startOffsets>
-            <endOffsets>
-              <option value="7334" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs</url>
-          <line>1309</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\PeelTestOnProductService.cs" containingFunctionPresentation="Method 'SetUpExport'">
-            <startOffsets>
-              <option value="59677" />
-            </startOffsets>
-            <endOffsets>
-              <option value="59707" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs</url>
-          <line>1323</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\PeelTestOnProductService.cs" containingFunctionPresentation="Method 'SetUpExport'">
-            <startOffsets>
-              <option value="60169" />
-            </startOffsets>
-            <endOffsets>
-              <option value="60222" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="44" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs</url>
-          <line>360</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\Bending\UC_BendingData.cs" containingFunctionPresentation="Method 'btn_Save_Click'">
-            <startOffsets>
-              <option value="16113" />
-            </startOffsets>
-            <endOffsets>
-              <option value="16155" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="86" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs</url>
-          <line>405</line>
+          <line>461</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\Bending\UC_BendingData.cs" containingFunctionPresentation="Method 'buttonShadow2_Click'">
             <startOffsets>
-              <option value="17868" />
+              <option value="21370" />
             </startOffsets>
             <endOffsets>
-              <option value="17869" />
+              <option value="21371" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="90" />

@@ -108,6 +108,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
 
         private void DisplayData()
         {
+            dgv.DataSource = new DataTable();
             //Menu option
             menu_option.Items.Clear();
 
@@ -260,6 +261,38 @@ namespace OK2SHIP_SMT.UserControls.Bending
                     {
                         dgv.AutoGenerateColumns = true; // Cho phép tự sinh cột theo dữ liệu chi tiết mới
                         dgv.DataSource = dt;
+                        // Hien thi mau loi
+                        foreach (string key in __Service._ERROR_LIST.Keys)
+                        {
+                            if (__Service._ERROR_LIST[key] != "OK")
+                                if (
+                                    key.Contains(flexSN)
+                                    && key.Split('-')[2] == __Service.switchCategory(category))
+                                {
+                                    if (int.TryParse(key.Split('-')[3], out int i))
+                                    {
+                                        string s = __Service._ERROR_LIST[key];
+                                        switch (__Service._ERROR_LIST[key])
+                                        {
+                                            case "Over USL":
+                                                dgv.Rows[i - 1].Cells[key.Split('-')[1]].Style.BackColor = Color.Yellow;
+                                                break;
+                                            case "Over LSL":
+                                                dgv.Rows[i - 1].Cells[key.Split('-')[1]].Style.BackColor = Color.Cyan;
+                                                break;
+                                            case "Vanability R NG":
+                                                dgv.Rows[i - 1].Cells[key.Split('-')[1]].Style.BackColor = Color.Red;
+                                                break;
+                                            case "Vanability T NG":
+                                                dgv.Rows[i - 1].Cells[key.Split('-')[1]].Style.BackColor =
+                                                    Color.Goldenrod;
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
+                        }
                     }));
                 }
                 else
@@ -273,6 +306,8 @@ namespace OK2SHIP_SMT.UserControls.Bending
                 MessageBox.Show("Lỗi hiển thị chi tiết: " + ex.Message);
             }
         }
+
+        private string cycleCache = "";
 
         private void dgv_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -317,6 +352,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
                                 string category = menu_option.GetSelectItem().Text.ToString();
                                 string cycle = dt.Rows[e.RowIndex][1]?.ToString() ?? "";
                                 // Gọi hàm ShowDetail
+                                cycleCache = cycle;
                                 ShowDetailbyCycle(category, cycle);
                             }
                             catch (Exception ex)
@@ -351,10 +387,42 @@ namespace OK2SHIP_SMT.UserControls.Bending
             {
                 dgv.AutoGenerateColumns = true; // Cho phép tự sinh cột theo dữ liệu chi tiết mới
                 dgv.DataSource = dt;
+                dgv.ShowCellToolTips = true;
             }));
         }
 
         TAlignFrom align = TAlignFrom.Top;
+
+        private void dataGridView1_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
+        {
+            // Bỏ qua tiêu đề cột/hàng (Index = -1)
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            {
+                // 1. Lấy giá trị của "Cột 1" (Cột NetNo - Index 0) tại HÀNG bạn đang hover
+                string netNoValue = dgv.Rows[e.RowIndex].Cells[0].Value?.ToString();
+                // Hoặc lấy theo tên cột cho chắc chắn: dataGridView1.Rows[e.RowIndex].Cells["NetNo"].Value
+
+                // 2. Lấy giá trị của "Hàng 1" (Hàng chứa FNJHREL08... - Index 0) tại CỘT bạn đang hover
+                string flexSnValue = dgv.Rows[0].Cells[e.ColumnIndex].Value?.ToString();
+
+                // 3. Lấy giá trị của chính ô đang hover (ví dụ: 0.2755)
+                string currentCellValue = dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].Value?.ToString();
+
+                // Hiển thị thông tin lên ToolTip
+                try
+                {
+                    string category = menu_option.GetSelectItem().Text.ToString();
+                    if (double.TryParse(currentCellValue, out double z))
+                    {
+                        e.ToolTipText = __Service.GetDelta(netNoValue, flexSnValue, cycleCache, category, z);
+                    }
+                }
+                catch
+                {
+                    e.ToolTipText = "git";
+                }
+            }
+        }
 
         private void btn_Save_Click(object sender, EventArgs e)
         {

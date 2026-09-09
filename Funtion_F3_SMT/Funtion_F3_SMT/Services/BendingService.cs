@@ -69,10 +69,6 @@ namespace OK2SHIP_SMT.Services
         /// <summary>
         /// lấy danh sách kết quả theo tên hạng mục và thêm cột select để người dùng có thể xóa chu kỳ
         /// </summary>
-        /// <param name="key">The key of the data table to retrieve.</param>
-        /// <returns>A copy of the <see cref="T:System.Data.DataTable"/> associated with the specified key,
-        /// potentially modified to include a "Selected" column.</returns>
-        /// <exception cref="T:System.Data.DataException">Thrown when the specified key does not exist in the internal data store.</exception>
         public DataTable getValue(string category)
         {
             if (_RESULT.TryGetValue(category, out DataTable dt))
@@ -143,7 +139,6 @@ namespace OK2SHIP_SMT.Services
                 DataTable dt = SolveCategory(folderAdd, nameFolder);
                 if (_RESULT.TryGetValue(key, out _))
                 {
-                    // Tại sao lại có key giống nhau ở đây???
                     Debugger.Break();
                 }
                 else
@@ -161,26 +156,20 @@ namespace OK2SHIP_SMT.Services
 
             string[] cycles = FileFolderRepository.GetSubFolders(location).OrderBy(folderPath =>
             {
-                // Lấy tên thư mục ở cuối (đề phòng mảng trả về đường dẫn tuyệt đối kiểu C:\...\L1)
                 string folderName = Path.GetFileName(folderPath);
 
-                // 1. Ưu tiên "BF" lên đầu tiên bằng cách gán cho nó giá trị sắp xếp nhỏ nhất
                 if (folderName.Equals("BF", StringComparison.OrdinalIgnoreCase))
                 {
                     return -1;
                 }
 
-                // 2. Nếu là thư mục "L", tách phần số phía sau để sắp xếp
                 if (folderName.StartsWith("L", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Chuyển đổi phần chuỗi sau chữ "L" thành số nguyên (VD: "L10" -> cắt lấy "10" -> số 10)
                     if (int.TryParse(folderName.Substring(1), out int number))
                     {
                         return number;
                     }
                 }
-
-                // 3. Đẩy bất kỳ thư mục nào không đúng chuẩn (nếu có) xuống cuối danh sách
                 return int.MaxValue;
             }).ToArray();
 
@@ -210,9 +199,6 @@ namespace OK2SHIP_SMT.Services
             return dataTable;
         }
 
-        // Key         
-        // "FlexSN"-"Cycle"-"Category"-"NetNo" = "Detail Error Item"    
-        // Đếm số lượng NG của mỗi mục trên
         public Dictionary<string, string> _ERROR_LIST = new Dictionary<string, string>();
 
         public DataTable totalErr(string key, out int total, out int lsl, out int usl, out int rng, out int ok,
@@ -277,12 +263,6 @@ namespace OK2SHIP_SMT.Services
                     }
                 }
             }
-
-            List<string> es = new List<string>();
-            // foreach (string keyz in dic.Keys)
-            // {
-            //     es.Add($"{keyz}:{dic[keyz]}");
-            // }
 
             return dt;
         }
@@ -392,7 +372,7 @@ namespace OK2SHIP_SMT.Services
             return result;
         }
 
-        private string switchCategory(string category)
+        public string switchCategory(string category)
         {
             switch (category)
             {
@@ -463,81 +443,67 @@ namespace OK2SHIP_SMT.Services
                 }
             }
 
-            if (__SPEC[category].Rows.Count > 0)
+            try
             {
-                if (!dt.Columns.Contains("Net Name"))
+                if (__SPEC[category].Rows.Count > 0)
                 {
-                    // 1. Thêm cột mới vào result (mặc định sẽ nằm ở cuối bảng)
-                    DataColumn newColumn = dt.Columns.Add("Net Name", typeof(string));
-
-                    // 2. Di chuyển cột này về vị trí thứ 2 (Index = 1)
-                    newColumn.SetOrdinal(3);
-
-                    // 3. Copy dữ liệu từ __SPEC sang result theo từng dòng
-                    for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
+                    if (!dt.Columns.Contains("Net Name"))
                     {
-                        if (__SPEC[category].Columns.Contains("Net Name"))
+                        DataColumn newColumn = dt.Columns.Add("Net Name", typeof(string));
+                        newColumn.SetOrdinal(3);
+                        for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
                         {
-                            dt.Rows[i]["Net Name"] = __SPEC[category].Rows[i]["Net Name"];
+                            if (__SPEC[category].Columns.Contains("Net Name"))
+                            {
+                                dt.Rows[i]["Net Name"] = __SPEC[category].Rows[i]["Net Name"];
+                            }
+                        }
+                    }
+
+                    if (!dt.Columns.Contains("Pin1"))
+                    {
+                        DataColumn newColumn = dt.Columns.Add("Pin1", typeof(string));
+                        newColumn.SetOrdinal(4);
+                        for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
+                        {
+                            if (__SPEC[category].Columns.Contains("Pin1"))
+                            {
+                                dt.Rows[i]["Pin1"] = __SPEC[category].Rows[i]["Pin1"];
+                            }
+                        }
+                    }
+
+                    if (!dt.Columns.Contains("Pin2"))
+                    {
+                        DataColumn newColumn = dt.Columns.Add("Pin2", typeof(string));
+                        newColumn.SetOrdinal(5);
+                        for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
+                        {
+                            if (__SPEC[category].Columns.Contains("Pin2"))
+                            {
+                                dt.Rows[i]["Pin2"] = __SPEC[category].Rows[i]["Pin2"];
+                            }
+                        }
+                    }
+
+                    if (!dt.Columns.Contains("Select"))
+                    {
+                        DataColumn newColumn = dt.Columns.Add("Select", typeof(string));
+                        newColumn.SetOrdinal(5);
+                        for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
+                        {
+                            if (__SPEC[category].Columns.Contains("Select"))
+                            {
+                                dt.Rows[i]["Select"] = __SPEC[category].Rows[i]["Select"].ToString().ToUpper() == "TRUE"
+                                    ? "YES"
+                                    : "NO";
+                            }
                         }
                     }
                 }
-
-                if (!dt.Columns.Contains("Pin1"))
-                {
-                    // 1. Thêm cột mới vào result (mặc định sẽ nằm ở cuối bảng)
-                    DataColumn newColumn = dt.Columns.Add("Pin1", typeof(string));
-
-                    // 2. Di chuyển cột này về vị trí thứ 2 (Index = 1)
-                    newColumn.SetOrdinal(4);
-
-                    // 3. Copy dữ liệu từ __SPEC sang result theo từng dòng
-                    for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
-                    {
-                        if (__SPEC[category].Columns.Contains("Pin1"))
-                        {
-                            dt.Rows[i]["Pin1"] = __SPEC[category].Rows[i]["Pin1"];
-                        }
-                    }
-                }
-
-                if (!dt.Columns.Contains("Pin2"))
-                {
-                    // 1. Thêm cột mới vào result (mặc định sẽ nằm ở cuối bảng)
-                    DataColumn newColumn = dt.Columns.Add("Pin2", typeof(string));
-
-                    // 2. Di chuyển cột này về vị trí thứ 2 (Index = 1)
-                    newColumn.SetOrdinal(5);
-
-                    // 3. Copy dữ liệu từ __SPEC sang result theo từng dòng
-                    for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
-                    {
-                        if (__SPEC[category].Columns.Contains("Pin2"))
-                        {
-                            dt.Rows[i]["Pin2"] = __SPEC[category].Rows[i]["Pin2"];
-                        }
-                    }
-                }
-
-                if (!dt.Columns.Contains("Select"))
-                {
-                    // 1. Thêm cột mới vào result (mặc định sẽ nằm ở cuối bảng)
-                    DataColumn newColumn = dt.Columns.Add("Select", typeof(string));
-
-                    // 2. Di chuyển cột này về vị trí thứ 2 (Index = 1)
-                    newColumn.SetOrdinal(5);
-
-                    // 3. Copy dữ liệu từ __SPEC sang result theo từng dòng
-                    for (int i = 0; i < Math.Min(__SPEC[category].Rows.Count, dt.Rows.Count); i++)
-                    {
-                        if (__SPEC[category].Columns.Contains("Select"))
-                        {
-                            dt.Rows[i]["Select"] = __SPEC[category].Rows[i]["Select"].ToString().ToUpper() == "TRUE"
-                                ? "YES"
-                                : "NO";
-                        }
-                    }
-                }
+            }
+            catch
+            {
             }
 
             return dt;
@@ -551,8 +517,7 @@ namespace OK2SHIP_SMT.Services
             return result;
         }
 
-        public void
-            Save(string itemCode, string lotNo, string maker, int skip) // 0: chưa kiểm tra, 1: ghi đè, số khác: ghi mới
+        public void Save(string itemCode, string lotNo, string maker, int skip) 
         {
             DataTable dt;
             if (skip == 0 || skip == 1)
@@ -566,7 +531,6 @@ namespace OK2SHIP_SMT.Services
 
                 if (skip == 1)
                 {
-                    //Kết hợp data từ database ra
                     List<string> dataZ = dt.Rows[0]["Data"].ToString().Split('\u2060').ToList();
                     foreach (string s in dataZ)
                     {
@@ -576,7 +540,6 @@ namespace OK2SHIP_SMT.Services
                             _DATA.Add(split[0], split[1]);
                         }
                     }
-                  
                 }
             }
             else
@@ -592,10 +555,6 @@ namespace OK2SHIP_SMT.Services
 
             string dataJson = string.Join("\u2060", data);
 
-           
-          
-
-         
 
             DataRow row;
             if (skip == 1)
@@ -621,7 +580,6 @@ namespace OK2SHIP_SMT.Services
 
         private DataTable SolveResult(string category, bool isSpec = false)
         {
-
             DataTable dt = new DataTable();
             dt.Columns.Add("Cycle", typeof(string));
 
@@ -642,7 +600,7 @@ namespace OK2SHIP_SMT.Services
                 }
             }
 
-            if (_dic.Count == 0) return dt; // Tránh lỗi nếu dic rỗng
+            if (_dic.Count == 0) return dt; 
 
             foreach (string s in _dic[_dic.Keys.First()])
             {
@@ -673,7 +631,6 @@ namespace OK2SHIP_SMT.Services
                     specSelectArray[r] = specTable.Rows[r]["Select"]?.ToString()?.ToUpper();
                 }
             }
-            // =====================================================================
 
             foreach (string cycle in keys)
             {
@@ -790,7 +747,7 @@ namespace OK2SHIP_SMT.Services
             __SPEC = _service._DATA;
         }
 
-        public void  Load(string itemCode, string lotNo, string maker)
+        public void Load(string itemCode, string lotNo, string maker)
         {
             _DATA.Clear();
             __SPEC.Clear();
@@ -814,7 +771,7 @@ namespace OK2SHIP_SMT.Services
             List<string> result = dt.Rows[0]["Result"].ToString().Split('\u2060').ToList();
             List<string> data = dt.Rows[0]["Data"].ToString().Split('\u2060').ToList();
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            
+
             foreach (string s in data)
             {
                 string[] split = s.Split('\u200F');
@@ -825,12 +782,11 @@ namespace OK2SHIP_SMT.Services
                     dic.Add(category, "1");
                 }
             }
-            
+
 
             foreach (string s in dic.Keys)
             {
                 _RESULT.Add(switchCategory(s), SolveResult(s, true));
-                // kiểm tra lại result
             }
         }
 
@@ -914,7 +870,6 @@ namespace OK2SHIP_SMT.Services
                                 DataTable dt = _RESULT[category];
                                 ExportDataToWS(worksheet, category, dt, maker, slot);
 
-                                // Tránh add trùng tên xraysheet nhiều lần vào danh sách name
                                 if (!name.Contains(xraysheet))
                                 {
                                     name.Add(xraysheet);
@@ -927,33 +882,22 @@ namespace OK2SHIP_SMT.Services
                                 ExportDataToWSNotBend(worksheet, category, slot);
                             }
 
-                            // ==========================================
-                            // XỬ LÝ DUPLICATE ICT SHEET CHO NHIỀU MAKER
-                            // ==========================================
-                            ExcelWorksheet currentIctSheet = worksheet_ICT; // Mặc định Maker 1 xài sheet gốc
+                            ExcelWorksheet currentIctSheet = worksheet_ICT; 
 
                             if (slot > 0)
                             {
-                                // Tạo tên sheet mới (VD: ICT1, ICT2...)
                                 string newIctSheetName = $"{ictsheet}{slot}";
-
-                                // Duplicate sheet từ sheet ICT gốc
                                 currentIctSheet = package.Workbook.Worksheets.Add(newIctSheetName, worksheet_ICT);
-
-                                // Đưa tên sheet mới vào danh sách giữ lại (tránh bị xóa ở bước Save)
                                 name.Add(newIctSheetName);
                             }
 
-                            // Đổ dữ liệu vào sheet tương ứng với Maker hiện tại
                             ExportDataToICT(currentIctSheet, category, primeBend);
-                            // ==========================================
-
                             slot++;
                         }
 
                         try
                         {
-                            if (makers.Count > 0) // Cẩn thận kiểm tra tránh truyền list rỗng
+                            if (makers.Count > 0) 
                             {
                                 XRayPictureService service = new XRayPictureService();
                                 service.ExportMultipleMakers(worksheetXray, itemCode, lotNo, makers, category);
@@ -966,7 +910,7 @@ namespace OK2SHIP_SMT.Services
 #endif
                         }
 
-                        package.Compression = OfficeOpenXml.CompressionLevel.BestSpeed; // Đã ép xung tốc độ Save
+                        package.Compression = OfficeOpenXml.CompressionLevel.BestSpeed; 
                         process.SaveExcelWorksheet(package, string.Join(":", name), $"{itemCode}-{lotNo}-{category}");
                     }
                 }
@@ -1068,7 +1012,6 @@ namespace OK2SHIP_SMT.Services
             _dic["Sample no."] = _dic["Sample no."].Split('-')[slot];
             _dic["Before"] = _dic["Before"].Split('-')[slot];
             DataTable dt = _RESULT[category];
-            //Debugger.Break();
             string addressSample = ExportProcess.AddColumn(_dic["Sample no."], 2);
             string valueSample = ws.Cells[addressSample].Value.ToString();
             int rowFlexSN = ws.Cells[_dic["Flex SN"]].Start.Row;
@@ -1099,12 +1042,10 @@ namespace OK2SHIP_SMT.Services
 
                             foreach (DataRow row in dt.Rows)
                             {
-                                // Kiểm tra xem cột "Cycle" có khác null và giá trị có khớp với cycleZ không
                                 if (row["Cycle"] != DBNull.Value && row["Cycle"].ToString() == cycleZ.ToString())
                                 {
-                                    // Lấy giá trị tại cột thứ i (hoặc tên cột)
                                     value = row[dt.Columns[i]].ToString();
-                                    break; // Thoát vòng lặp ngay khi tìm thấy dòng đầu tiên thỏa mãn
+                                    break; 
                                 }
                             }
 
@@ -1213,7 +1154,6 @@ namespace OK2SHIP_SMT.Services
                                 int cycle = GetFirstNumber(ws.Cells[echeckAdd].Text);
 
                                 int row = ws.Cells[echeckAdd].Start.Row;
-                                //Debugger.Break();
                                 string valueCycle = "BF";
                                 if (cycle != 0)
                                 {
@@ -1230,7 +1170,7 @@ namespace OK2SHIP_SMT.Services
                                         ws.Cells[row, column].Value = value;
                                         if (category == "Heat soak and Flex bend" && valueCycle == "BF")
                                         {
-                                            //Debugger.Break();
+                                            
                                         }
                                         else
                                         {
@@ -1251,69 +1191,87 @@ namespace OK2SHIP_SMT.Services
 
         private void ExportDataToICT(ExcelWorksheet ws, string category, bool primeBend = false)
         {
-            // 1. Tìm các tọa độ gốc
-            IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws,
-                new[]
-                {
-                    "Sample no.", "Net no.", "Flex SN", "Sumitomo net name", "Customer net name", "Pin 1", "Pin 2",
-                    "LSL", "USL", "Before"
-                });
+            IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[]
+            {
+                "Sample no.", "Net no.", "Flex SN", "Sumitomo net name", "Customer net name", "Pin 1", "Pin 2",
+                "LSL", "USL", "Before", "% Resistance change", "Judgement"
+            });
 
             dic["Before"] = dic["Before"].Split('-').Last();
 
-            // 2. Chuyển đổi TẤT CẢ tọa độ chuỗi sang số nguyên (Row, Col) ĐÚNG 1 LẦN
             int row_Sample = ws.Cells[dic["Sample no."]].Start.Row;
             int col_Sample = ws.Cells[dic["Sample no."]].Start.Column;
-
             int row_Net = ws.Cells[dic["Net no."]].Start.Row;
             int col_Net = ws.Cells[dic["Net no."]].Start.Column;
-
             int row_Flex = ws.Cells[dic["Flex SN"]].Start.Row;
             int col_Flex = ws.Cells[dic["Flex SN"]].Start.Column;
-
             int row_Sumi = ws.Cells[dic["Sumitomo net name"]].Start.Row;
             int col_Sumi = ws.Cells[dic["Sumitomo net name"]].Start.Column;
-
             int row_Cus = ws.Cells[dic["Customer net name"]].Start.Row;
             int col_Cus = ws.Cells[dic["Customer net name"]].Start.Column;
-
             int row_Pin1 = ws.Cells[dic["Pin 1"]].Start.Row;
             int col_Pin1 = ws.Cells[dic["Pin 1"]].Start.Column;
-
             int row_Pin2 = ws.Cells[dic["Pin 2"]].Start.Row;
             int col_Pin2 = ws.Cells[dic["Pin 2"]].Start.Column;
-
             int row_LSL = ws.Cells[dic["LSL"]].Start.Row;
             int col_LSL = ws.Cells[dic["LSL"]].Start.Column;
-
             int row_USL = ws.Cells[dic["USL"]].Start.Row;
             int col_USL = ws.Cells[dic["USL"]].Start.Column;
-
             int row_Before = ws.Cells[dic["Before"]].Start.Row;
             int col_Before = ws.Cells[dic["Before"]].Start.Column;
 
-            // 3. TIỀN XỬ LÝ CÁC CỘT ĐỘNG (CYCLE): CHỈ QUÉT ĐÚNG 1 LẦN
-            Dictionary<int, string> cycleColumns = new Dictionary<int, string>();
-            int headerRow = row_Before; // Hàng chứa tiêu đề
-            int currentCol = col_Before + 1; // Bắt đầu quét từ ô bên phải cột "Before"
+            int col_Judge = -1;
+            if (dic.ContainsKey("Judgement"))
+            {
+                col_Judge = ws.Cells[dic["Judgement"].Split('-').Last()].Start.Column;
+            }
+
+            Dictionary<string, int> rawCycleCols = new Dictionary<string, int>();
+            
+            // CỘNG THÊM "BF" VÀO rawCycleCols ĐỂ BẢNG SUMMARY TÍNH ĐƯỢC CỘT BEFORE
+            rawCycleCols["BF"] = col_Before; 
+            int currentCol = col_Before + 1; 
 
             while (true)
             {
-                string headerValue = ws.Cells[headerRow, currentCol].Text;
-                if (string.IsNullOrEmpty(headerValue)) break; // Hết tiêu đề thì dừng
+                string headerValue = ws.Cells[row_Before, currentCol].Text;
+                if (string.IsNullOrEmpty(headerValue) || headerValue.Contains("%") || headerValue.ToUpper().Contains("RESISTANCE")) 
+                    break; 
 
                 int cycle = GetFirstNumber(headerValue);
-                if (!primeBend)
+                if (cycle > 0)
                 {
-                    cycle /= 100;
+                    if (!primeBend) cycle /= 100;
+                    rawCycleCols[$"L{cycle}"] = currentCol;
                 }
-
-                // Lưu lại ColumnIndex -> Tên cột trong DataTable ("L50", "L100"...)
-                cycleColumns.Add(currentCol, $"L{cycle}");
+                else break;
                 currentCol++;
             }
 
-            // Lọc danh sách cột cần xử lý
+            Dictionary<string, int> percentCycleCols = new Dictionary<string, int>();
+            if (dic.ContainsKey("% Resistance change"))
+            {
+                string percentAddr = dic["% Resistance change"].Split('-').Last();
+                int percentStartCol = ws.Cells[percentAddr].Start.Column;
+                
+                currentCol = percentStartCol;
+                while (true)
+                {
+                    string headerValue = ws.Cells[row_Before, currentCol].Text;
+                    if (string.IsNullOrEmpty(headerValue) || headerValue.ToUpper().Contains("JUDGEMENT")) 
+                        break;
+
+                    int cycle = GetFirstNumber(headerValue);
+                    if (cycle > 0)
+                    {
+                        if (!primeBend) cycle /= 100;
+                        percentCycleCols[$"L{cycle}"] = currentCol;
+                    }
+                    else break;
+                    currentCol++;
+                }
+            }
+
             List<string> listFlexSN = _RESULT[category].Columns.Cast<DataColumn>()
                 .Select(col => col.ColumnName)
                 .Where(flexSN => !flexSN.Contains("Select") && !flexSN.Contains("Cycle"))
@@ -1321,7 +1279,11 @@ namespace OK2SHIP_SMT.Services
 
             int SampleNO = 0, skip = 0;
 
-            // 4. VÒNG LẶP ĐIỀN DỮ LIỆU TỐC ĐỘ CAO (BẰNG TỌA ĐỘ INT)
+            Dictionary<string, List<double>> allNetValues = new Dictionary<string, List<double>>();
+            Dictionary<string, List<double>> allNetPercents = new Dictionary<string, List<double>>();
+            Dictionary<string, List<double>> susNetValues = new Dictionary<string, List<double>>();
+            Dictionary<string, List<double>> susNetPercents = new Dictionary<string, List<double>>();
+
             foreach (string flexSN in listFlexSN)
             {
                 SampleNO++;
@@ -1332,49 +1294,251 @@ namespace OK2SHIP_SMT.Services
                 {
                     foreach (DataRow row in dt_Detail.Rows)
                     {
-                        if (row["Select"]?.ToString().ToUpper() == "YES" ||
-                            row["Select"]?.ToString().ToUpper() == "TRUE")
+                        string selectVal = row["Select"]?.ToString().ToUpper();
+                        if (selectVal == "YES" || selectVal == "TRUE")
                         {
                             skip++;
-
-                            // giữ nguyên logic skip và skip + 1
-                            ws.Cells[row_Sample + skip + 1, col_Sample].Value = SampleNO;
-                            // ws.Cells[row_Net + skip + 1, col_Net].Value = row["Net No"];
-                            ws.Cells[row_Net + skip + 1, col_Net].Value = netNo++;
-                            ws.Cells[row_Flex + skip + 1, col_Flex].Value = row["Flex SN"];
-                            ws.Cells[row_Sumi + skip + 1, col_Sumi].Value = row["Test Result"];
-                            ws.Cells[row_Cus + skip + 1, col_Cus].Value = row["Net Name"];
-
-                            // Pin1, Pin2, LSL, USL đang cộng "skip" ở code cũ
+                            int targetRow = row_Sample + skip + 1; 
+                            
+                            ws.Cells[targetRow, col_Sample].Value = SampleNO;
+                            ws.Cells[targetRow, col_Net].Value = netNo++;
+                            ws.Cells[targetRow, col_Flex].Value = row["Flex SN"];
+                            ws.Cells[targetRow, col_Sumi].Value = row["Test Result"];
+                            ws.Cells[targetRow, col_Cus].Value = row["Net Name"];
                             ws.Cells[row_Pin1 + skip, col_Pin1].Value = row["Pin1"];
                             ws.Cells[row_Pin2 + skip, col_Pin2].Value = row["Pin2"];
                             ws.Cells[row_Pin2 + skip, col_Pin2 + 1].Value = "yes";
 
-                            if (double.TryParse(row["LSL"]?.ToString(), out double lsl))
-                                ws.Cells[row_LSL + skip, col_LSL].Value = lsl;
+                            if (double.TryParse(row["LSL"]?.ToString(), out double lsl)) ws.Cells[row_LSL + skip, col_LSL].Value = lsl;
+                            if (double.TryParse(row["USL"]?.ToString(), out double usl)) ws.Cells[row_USL + skip, col_USL].Value = usl;
 
-                            if (double.TryParse(row["USL"]?.ToString(), out double usl))
-                                ws.Cells[row_USL + skip, col_USL].Value = usl;
-
-                            if (double.TryParse(row["BF"]?.ToString(), out double bf))
-                                ws.Cells[row_Before + skip + 1, col_Before].Value = bf;
-
-                            // 5. ĐIỀN DỮ LIỆU CYCLE DỰA VÀO BẢN ĐỒ cycleColumns
-                            foreach (var kvp in cycleColumns)
+                            double bf = 0;
+                            bool hasBf = false;
+                            if (double.TryParse(row["BF"]?.ToString(), out double parsedBf))
                             {
-                                int targetCol = kvp.Key;
-                                string columnNameInDataTable = kvp.Value;
+                                bf = parsedBf;
+                                hasBf = true;
+                            }
 
-                                // TryParse sẽ xử lý an toàn giá trị rỗng/null mà không văng Exception
-                                if (row.Table.Columns.Contains(columnNameInDataTable) &&
-                                    double.TryParse(row[columnNameInDataTable]?.ToString(), out double cycleVal))
+                            bool isOver10Percent = false;
+                            bool hasCalc = false;
+
+                            string netNameVal = row["Net Name"]?.ToString().ToUpper() ?? "";
+                            string sumiNameVal = row["Test Result"]?.ToString().ToUpper() ?? "";
+                            
+                            // Phân loại: Netname có chứa chữ SUS
+                            bool isRowSus = netNameVal.Contains("SUS") || sumiNameVal.Contains("SUS");
+
+                            foreach (var kvp in rawCycleCols)
+                            {
+                                string colName = kvp.Key;      
+                                int rawColIndex = kvp.Value;   
+                                
+                                if (row.Table.Columns.Contains(colName) &&
+                                    double.TryParse(row[colName]?.ToString(), out double cycleVal))
                                 {
-                                    ws.Cells[row_Before + skip + 1, targetCol].Value = cycleVal;
+                                    ws.Cells[targetRow, rawColIndex].Value = cycleVal;
+
+                                    if (isRowSus)
+                                    {
+                                        if (!susNetValues.ContainsKey(colName)) susNetValues[colName] = new List<double>();
+                                        susNetValues[colName].Add(cycleVal);
+                                    }
+                                    else
+                                    {
+                                        if (!allNetValues.ContainsKey(colName)) allNetValues[colName] = new List<double>();
+                                        allNetValues[colName].Add(cycleVal);
+                                    }
+
+                                    if (hasBf && percentCycleCols.TryGetValue(colName, out int percentColIndex))
+                                    {
+                                        var percentCell = ws.Cells[targetRow, percentColIndex];
+                                        percentCell.Formula = ""; 
+                                        
+                                        if (bf != 0)
+                                        {
+                                            double percentChange = (cycleVal - bf) / bf;
+                                            percentCell.Value = percentChange;
+                                            percentCell.Style.Numberformat.Format = "0.00%"; 
+                                            hasCalc = true;
+
+                                            if (isRowSus)
+                                            {
+                                                if (!susNetPercents.ContainsKey(colName)) susNetPercents[colName] = new List<double>();
+                                                susNetPercents[colName].Add(percentChange);
+                                            }
+                                            else
+                                            {
+                                                if (!allNetPercents.ContainsKey(colName)) allNetPercents[colName] = new List<double>();
+                                                allNetPercents[colName].Add(percentChange);
+                                            }
+
+                                            if (percentChange > 0.1 || percentChange < -0.1)
+                                            {
+                                                isOver10Percent = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            percentCell.Value = ""; 
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (col_Judge != -1)
+                            {
+                                var judgeCell = ws.Cells[targetRow, col_Judge];
+                                judgeCell.Formula = ""; 
+                                
+                                if (hasCalc)
+                                {
+                                    judgeCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid; 
+
+                                    if (!isOver10Percent)
+                                    {
+                                        judgeCell.Value = "Pass-resistance change is within ±10%.";
+                                        judgeCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(198, 239, 206));
+                                        judgeCell.Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(0, 97, 0));
+                                    }
+                                    else
+                                    {
+                                        bool isBending = category.ToUpper().Contains("BEND");
+                                        if (isBending && !isRowSus)
+                                        {
+                                            judgeCell.Value = "Resistance change over ±10%";
+                                            judgeCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(255, 235, 156)); 
+                                            judgeCell.Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(156, 87, 0)); 
+                                        }
+                                        else
+                                        {
+                                            judgeCell.Value = "Pass following Sumitomo spec-resistance change is outside ±10%.";
+                                            judgeCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(198, 239, 206));
+                                            judgeCell.Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(0, 97, 0));
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    judgeCell.Value = "";
+                                    judgeCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.None;
                                 }
                             }
                         }
                     }
                 }
+            }
+
+            // ==============================================================================
+            // 5. ĐIỀN BẢNG SUMMARY VÀO TEMPLATE ĐÃ CÓ SẴN (KHÔNG TỰ ĐỘNG SINH HÀNG)
+            // ==============================================================================
+            try
+            {
+                int summaryRowStart = -1;
+                int susRowStart = -1;
+
+                // Quét 100 dòng đầu tiên để lấy tọa độ dòng "Max" của 2 bảng All nets & SUS net
+                int maxRowCheck = Math.Min(ws.Dimension?.End.Row ?? 100, 80);
+                for (int r = 1; r <= maxRowCheck; r++)
+                {
+                    for (int c = 1; c <= 15; c++)
+                    {
+                        string cellText = ws.Cells[r, c].Text?.ToUpper() ?? "";
+                        
+                        // Tìm bảng All nets (Có chữ ALL NETS và có chữ EXCLUDE để đảm bảo lấy đúng cụm từ "exclude SUS net")
+                        if (summaryRowStart == -1 && cellText.Contains("ALL NETS") && cellText.Contains("EXCLUDE"))
+                        {
+                            summaryRowStart = r;
+                        }
+                        
+                        // Tìm bảng SUS net (Có chữ SUS NET nhưng TUYỆT ĐỐI KHÔNG ĐƯỢC có chữ EXCLUDE)
+                        if (susRowStart == -1 && cellText.Contains("SUS NET") && !cellText.Contains("EXCLUDE"))
+                        {
+                            susRowStart = r;
+                        }
+                    }
+                }
+
+                void FillSummaryBlock(int startRow, Dictionary<string, List<double>> valDict, Dictionary<string, List<double>> perDict)
+                {
+                    if (startRow == -1) return;
+
+                    // Xóa rác và công thức cũ (nếu có)
+                    for (int r = startRow; r <= startRow + 2; r++)
+                    {
+                        foreach (var colIdx in rawCycleCols.Values) ws.Cells[r, colIdx].Formula = "";
+                        foreach (var colIdx in percentCycleCols.Values) ws.Cells[r, colIdx].Formula = "";
+                    }
+
+                    // Điền data giá trị (Resistance value summary)
+                    foreach (var kvp in rawCycleCols)
+                    {
+                        string cycleKey = kvp.Key;
+                        int colIdx = kvp.Value;
+
+                        if (valDict.ContainsKey(cycleKey) && valDict[cycleKey].Count > 0)
+                        {
+                            var list = valDict[cycleKey];
+                            ws.Cells[startRow, colIdx].Value = Math.Round(list.Max(), 3);         
+                            ws.Cells[startRow + 1, colIdx].Value = Math.Round(list.Min(), 3);     
+                            ws.Cells[startRow + 2, colIdx].Value = Math.Round(list.Average(), 3); 
+                        }
+                        else
+                        {
+                            ws.Cells[startRow, colIdx].Value = "";
+                            ws.Cells[startRow + 1, colIdx].Value = "";
+                            ws.Cells[startRow + 2, colIdx].Value = "";
+                        }
+                    }
+
+                    // Điền data % (% Resistance change summary)
+                    foreach (var kvp in percentCycleCols)
+                    {
+                        string cycleKey = kvp.Key;
+                        int colIdx = kvp.Value;
+
+                        if (perDict.ContainsKey(cycleKey) && perDict[cycleKey].Count > 0)
+                        {
+                            var list = perDict[cycleKey];
+                            
+                            var maxCell = ws.Cells[startRow, colIdx];
+                            maxCell.Value = list.Max();
+                            maxCell.Style.Numberformat.Format = "0.00%";
+
+                            var minCell = ws.Cells[startRow + 1, colIdx];
+                            minCell.Value = list.Min();
+                            minCell.Style.Numberformat.Format = "0.00%";
+
+                            var averCell = ws.Cells[startRow + 2, colIdx];
+                            averCell.Value = list.Average();
+                            averCell.Style.Numberformat.Format = "0.00%";
+                        }
+                        else
+                        {
+                            ws.Cells[startRow, colIdx].Value = "";
+                            ws.Cells[startRow + 1, colIdx].Value = "";
+                            ws.Cells[startRow + 2, colIdx].Value = "";
+                        }
+                    }
+                }
+
+                // 1. Điền bảng All nets Summary (Bỏ qua SUS net)
+                if (summaryRowStart != -1)
+                {
+                    FillSummaryBlock(summaryRowStart, allNetValues, allNetPercents);
+                }
+
+                // 2. Điền bảng SUS net Summary (Chỉ gồm các net có chứa SUS)
+                if (susRowStart != -1)
+                {
+                    FillSummaryBlock(susRowStart, susNetValues, susNetPercents);
+                }
+            }
+            catch (Exception ex)
+            {
+                #if DEBUG
+                Debugger.Break();
+                #endif
             }
         }
 
@@ -1383,7 +1547,6 @@ namespace OK2SHIP_SMT.Services
             if (string.IsNullOrEmpty(input))
                 return 0;
 
-            // Biểu thức chính quy tìm chuỗi chữ số đầu tiên
             Match match = Regex.Match(input, @"\d+");
 
             if (match.Success && int.TryParse(match.Value, out int result))
@@ -1391,7 +1554,7 @@ namespace OK2SHIP_SMT.Services
                 return result;
             }
 
-            return 0; // Trả về null nếu không có số nào trong chuỗi
+            return 0;
         }
 
         public DataTable GetDetailByCycle(string category, string cycle)
@@ -1403,7 +1566,6 @@ namespace OK2SHIP_SMT.Services
 
             foreach (string key in _DATA.Keys)
             {
-                //key : {flexSn}-{cycle}-{switchCategory(category)}
                 string[] keySplit = key.Split('-');
                 if (keySplit[1] == cycle && keySplit[2] == switchCategory(category))
                 {
@@ -1474,6 +1636,29 @@ namespace OK2SHIP_SMT.Services
             if (_ERROR_LIST.TryGetValue(key, out string value))
             {
                 return value;
+            }
+
+            return "";
+        }
+
+        public string GetDelta(string netNoValue, string flexSnValue,
+            string cycle, string category, double valuez)
+        {
+            string key = $"{flexSnValue}-BF-{switchCategory(category)}";
+
+            if (_DATA.TryGetValue(key, out string value) && int.TryParse(netNoValue, out int i))
+            {
+                if (i > 0)
+                {
+                    List<string> z = value.Split('\u200D').ToList();
+                    string valueBF = z[i - 1].Split('\u200B')[0];
+                    if (double.TryParse(valueBF, out double valueN))
+                    {
+                        double Hz = Math.Abs((valuez - valueN) / valueN * 100);
+                        string delta = $"Before Value = {valueBF}\n △R = {Hz:F2}%";
+                        return delta;
+                    }
+                }
             }
 
             return "";

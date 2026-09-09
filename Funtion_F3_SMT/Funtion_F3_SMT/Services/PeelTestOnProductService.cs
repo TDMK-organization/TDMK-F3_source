@@ -25,6 +25,7 @@ namespace OK2SHIP_SMT.Services
         public Dictionary<string, DataTable> _SPEC = new Dictionary<string, DataTable>();
         public Dictionary<string, DataTable> _DIC = new Dictionary<string, DataTable>();
         public Dictionary<string, DataTable> _BEFOREIMAGE = new Dictionary<string, DataTable>();
+
         private DataTable SetUpDT()
         {
             DataTable dataTable = new DataTable();
@@ -34,7 +35,6 @@ namespace OK2SHIP_SMT.Services
             dataTable.Columns.Add("LotNo");
             dataTable.Columns.Add("Picture", typeof(Image));
             return dataTable;
-
         }
 
         public void CheckSpec(string key)
@@ -49,9 +49,9 @@ namespace OK2SHIP_SMT.Services
                     break;
                 }
             }
+
             try
             {
-
                 double maxPeakN = double.Parse(r["Peak(N)"].ToString().Split('~')[1]);
                 double minPeakN = double.Parse(r["Peak(N)"].ToString().Split('~')[0]);
                 double maxAveN = double.Parse(r["Average(N)"].ToString().Split('~')[1]);
@@ -60,7 +60,8 @@ namespace OK2SHIP_SMT.Services
                 foreach (DataRow row in _DIC[key].Rows)
                 {
                     bool prime = true;
-                    if (double.TryParse(row["Peak(N)"].ToString().Trim(), out double num) && (num <= maxPeakN && minPeakN <= num))
+                    if (double.TryParse(row["Peak(N)"].ToString().Trim(), out double num) &&
+                        (num <= maxPeakN && minPeakN <= num))
                     {
                     }
                     else
@@ -68,7 +69,8 @@ namespace OK2SHIP_SMT.Services
                         prime = false;
                     }
 
-                    if (double.TryParse(row["Average(N)"].ToString().Trim(), out num) && (num <= maxAveN && minAveN <= num))
+                    if (double.TryParse(row["Average(N)"].ToString().Trim(), out num) &&
+                        (num <= maxAveN && minAveN <= num))
                     {
                     }
                     else
@@ -84,7 +86,6 @@ namespace OK2SHIP_SMT.Services
                     {
                         row["JudgementForce"] = "NG";
                     }
-
                 }
             }
             catch
@@ -92,6 +93,7 @@ namespace OK2SHIP_SMT.Services
                 return;
             }
         }
+
         public void MakerSpec(string itemCode, string lotNo)
         {
             //List<DataTable> listDt = new List<DataTable>();
@@ -171,6 +173,7 @@ namespace OK2SHIP_SMT.Services
             //    _SPEC[_key].Rows.Add(item);
             //}
         }
+
         private DataTable setUpSpec()
         {
             DataTable dataTable = new DataTable();
@@ -185,6 +188,7 @@ namespace OK2SHIP_SMT.Services
             dataTable.Columns.Add("Average(Gf)");
             return dataTable;
         }
+
         public PeelTestOnProductService(string iTEMCODE, string lOTNO, string type)
         {
             _ITEMCODE = iTEMCODE;
@@ -213,12 +217,11 @@ namespace OK2SHIP_SMT.Services
                 {
                     lotNo = ValidateService.lotNoHandle($"{s[2]}");
                 }
-
             }
             else
             {
-
             }
+
             return new KeyValuePair<string, string>(itemCode, lotNo);
         }
 
@@ -228,14 +231,15 @@ namespace OK2SHIP_SMT.Services
             clearData();
             string msg = "";
             string makerName = FileFolderRepository.GetFolderName(location).Split('_')[1].Split('-')[0].Trim();
-            KeyValuePair<string, string> pair = getItemCodeLotNo(location.Split('\\')[location.Split('\\').Count() - 1]);
+            KeyValuePair<string, string>
+                pair = getItemCodeLotNo(location.Split('\\')[location.Split('\\').Count() - 1]);
             if (pair.Key == null || pair.Value == null)
             {
                 throw new Exception("ItemCode lotno khong ton tai");
             }
+
             if (pair.Key.Trim().Equals(_ITEMCODE) && pair.Value.Trim().Equals(_LOTNO))
             {
-
             }
             else
             {
@@ -269,17 +273,18 @@ namespace OK2SHIP_SMT.Services
                     case "BF":
                     case "LINER TRUOC KEO":
                     case "ANH BF":
-                        List<KeyValuePair<Image, string>> listIamge = FileFolderRepository.ListAllPictureInAFolder(locationItem, ".jpg");
-                        listIamge.Sort(delegate (KeyValuePair<Image, string> item1, KeyValuePair<Image, string> item2)
+                        List<KeyValuePair<Image, string>> listIamge =
+                            FileFolderRepository.ListAllPictureInAFolder(locationItem, ".jpg");
+                        listIamge.Sort(delegate(KeyValuePair<Image, string> item1, KeyValuePair<Image, string> item2)
                         {
-                            if (int.TryParse(item1.Value.Split('.')[0], out int num1) && int.TryParse(item2.Value.Split('.')[0], out int num2))
+                            if (int.TryParse(item1.Value.Split('.')[0], out int num1) &&
+                                int.TryParse(item2.Value.Split('.')[0], out int num2))
                             {
                                 return num1 > num2 ? 1 : -1;
                             }
                             else
                             {
                                 return -1;
-
                             }
                         });
                         int i = 1;
@@ -296,6 +301,7 @@ namespace OK2SHIP_SMT.Services
                                 row["Picture"] = itemZ.Key;
                                 dt.Rows.Add(row);
                             }
+
                             _BEFOREIMAGE[key] = dt;
                         }
                         else
@@ -310,13 +316,16 @@ namespace OK2SHIP_SMT.Services
                                 row["Picture"] = itemZ.Key;
                                 dt.Rows.Add(row);
                             }
+
                             _BEFOREIMAGE.Add(key, dt);
                         }
+
                         break;
                     default:
                         break;
                 }
             }
+
             //fill PID 
             if (string.IsNullOrEmpty(pid))
             {
@@ -324,7 +333,8 @@ namespace OK2SHIP_SMT.Services
             }
             else
             {
-                ProductIDService pidService = new ProductIDService(_ITEMCODE, _LOTNO, pid, new[] { "OQC", "peeling force" }, new[] { "Liner", "PSA" });
+                ProductIDService pidService = new ProductIDService(_ITEMCODE, _LOTNO, pid,
+                    new[] { "OQC", "peeling force" }, new[] { "Liner", "PSA" });
                 foreach (string key in _DIC.Keys.ToArray())
                 {
                     bool primePID = false;
@@ -337,6 +347,7 @@ namespace OK2SHIP_SMT.Services
                             primePID = true;
                         }
                     }
+
                     if (key.ToUpper().Contains("PSA"))
                     {
                         if (pidService._listFile.TryGetValue("PSA", out addValaue))
@@ -344,6 +355,7 @@ namespace OK2SHIP_SMT.Services
                             primePID = true;
                         }
                     }
+
                     if (primePID)
                     {
                         List<string> listPID = pidService.getListProductID(addValaue);
@@ -356,13 +368,13 @@ namespace OK2SHIP_SMT.Services
                             }
                         }
                     }
-
-
                 }
             }
+
             CalculationSpec();
             throw new Exception(msg + "Lấy dữ liệu thành công!");
         }
+
         public void CalculationSpec()
         {
             // Hệ số quy đổi: 1 N = 101.9716 gf
@@ -382,7 +394,8 @@ namespace OK2SHIP_SMT.Services
                     ProcessColumnPair(row, "Average(N)", "Average(Gf)", N_TO_GF);
                 }
             }
-            foreach(string key in _DIC.Keys)
+
+            foreach (string key in _DIC.Keys)
             {
                 CheckSpec(key);
             }
@@ -403,13 +416,13 @@ namespace OK2SHIP_SMT.Services
             if (hasN && !hasGf)
             {
                 row[colGf] = TransformRangeValue(valN, factor, true); // Tính và làm tròn Gf mới
-                row[colN] = FormatOldValue(valN);                     // Làm tròn N cũ
+                row[colN] = FormatOldValue(valN); // Làm tròn N cũ
             }
             // 2. Ngược lại: Nếu cột Gf có dữ liệu mà cột N trống -> Quy đổi từ Gf sang N
             else if (hasGf && !hasN)
             {
                 row[colN] = TransformRangeValue(valGf, factor, false); // Tính và làm tròn N mới
-                row[colGf] = FormatOldValue(valGf);                    // Làm tròn Gf cũ
+                row[colGf] = FormatOldValue(valGf); // Làm tròn Gf cũ
             }
             // 3. Nếu cả 2 đều đã có dữ liệu -> Chỉ làm tròn lại cho đồng nhất (Tùy chọn)
             else if (hasN && hasGf)
@@ -462,6 +475,7 @@ namespace OK2SHIP_SMT.Services
 
             return input;
         }
+
         public DataTable MakerTable()
         {
             DataTable dt = new DataTable();
@@ -480,14 +494,15 @@ namespace OK2SHIP_SMT.Services
             dt.Columns.Add("KeyDic");
             return dt;
         }
+
         private void clearData()
         {
             SetUpDT();
             _DIC = new Dictionary<string, DataTable>();
         }
+
         public string solveSigma(double[] list)
         {
-
             // 1. Tính giá trị trung bình (Mean / Average)
             double mean = list.Average();
 
@@ -505,7 +520,8 @@ namespace OK2SHIP_SMT.Services
 
             return $"{lowerLimit} ~ {upperLimit}";
         }
-        public DataTable readSubTapeFolder(string location, string keyDic, out string sigma )
+
+        public DataTable readSubTapeFolder(string location, string keyDic, out string sigma)
         {
             DataTable dataTable = MakerTable();
             string locaImg = location;
@@ -516,11 +532,13 @@ namespace OK2SHIP_SMT.Services
             {
                 locaImg += "\\ANH\\";
             }
+
             List<KeyValuePair<Image, string>> list = FileFolderRepository.ListAllPictureInAFolder(locaImg, ".jpg");
             List<string> files = FileFolderRepository.GetFileByExtension(location, "xlsx").ToList();
-            list.Sort(delegate (KeyValuePair<Image, string> item1, KeyValuePair<Image, string> item2)
+            list.Sort(delegate(KeyValuePair<Image, string> item1, KeyValuePair<Image, string> item2)
             {
-                if (int.TryParse(item1.Value.Split('.')[0], out int i1) && int.TryParse(item2.Value.Split('.')[0], out int i2))
+                if (int.TryParse(item1.Value.Split('.')[0], out int i1) &&
+                    int.TryParse(item2.Value.Split('.')[0], out int i2))
                 {
                     if (i1 < i2)
                     {
@@ -536,7 +554,7 @@ namespace OK2SHIP_SMT.Services
                     return -1;
                 }
             });
-            files.Sort(delegate (string item1, string item2)
+            files.Sort(delegate(string item1, string item2)
             {
                 string name1 = FileFolderRepository.GetFolderName(item1);
                 string name2 = FileFolderRepository.GetFolderName(item2);
@@ -560,7 +578,9 @@ namespace OK2SHIP_SMT.Services
 
                     // Nếu số chính bằng nhau, so sánh số phụ (nếu có)
                     int sub1 = (parts1.Length > 1 && int.TryParse(parts1[0], out int s1)) ? s1 : 0;
-                    int sub2 = (parts2.Length > 1 && int.TryParse(parts2[1], out int s2)) ? s2 : 0; // Sửa lỗi cú pháp index của bạn thành s2
+                    int sub2 = (parts2.Length > 1 && int.TryParse(parts2[1], out int s2))
+                        ? s2
+                        : 0; // Sửa lỗi cú pháp index của bạn thành s2
 
                     return sub1.CompareTo(sub2);
                 }
@@ -577,9 +597,9 @@ namespace OK2SHIP_SMT.Services
                 {
                     peakRange = row["Peak(N)"].ToString();
                     averageRange = row["Average(N)"].ToString();
-
                 }
             }
+
             int z = 0;
             int step = 0;
 
@@ -595,32 +615,31 @@ namespace OK2SHIP_SMT.Services
                     row["Picture"] = (Image)list[z].Key;
                     z++;
                 }
+
                 if (step < files.Count)
                 {
                     KeyValuePair<Image, string> paire = solveFileData(files[step]);
-                    int numZSS = int.Parse(FileFolderRepository.GetFileNameWithoutExtension(files[step]).Split('-')[0].Trim());
+                    int numZSS = int.Parse(FileFolderRepository.GetFileNameWithoutExtension(files[step]).Split('-')[0]
+                        .Trim());
                     try
                     {
-
-                        int iStep = int.Parse(FileFolderRepository.GetFileNameWithoutExtension(files[step + 1]).Split('-')[0].Trim());
-                        if (numZSS  == iStep)
+                        int iStep = int.Parse(FileFolderRepository.GetFileNameWithoutExtension(files[step + 1])
+                            .Split('-')[0].Trim());
+                        if (numZSS == iStep)
                         {
                             KeyValuePair<Image, string> paireZ = solveFileData(files[step + 1]);
-                            paire = new KeyValuePair<Image, string>(paire.Key, $"{paireZ.Value.Split(',')[0]},{paire.Value.Split(',')[1]}");
+                            paire = new KeyValuePair<Image, string>(paire.Key,
+                                $"{paireZ.Value.Split(',')[0]},{paire.Value.Split(',')[1]}");
                             step++;
-                            
                         }
                         else
                         {
-                            
                         }
-                        
-                        
                     }
                     catch
                     {
-
                     }
+
                     step++;
                     row["Graph"] = paire.Key;
                     if (keyDic.Contains("PSA"))
@@ -632,7 +651,10 @@ namespace OK2SHIP_SMT.Services
 
                         if (!string.IsNullOrEmpty(peakRange))
                         {
-                            if (double.TryParse(row["Peak(N)"].ToString(), out double numZ) && double.TryParse(peakRange.Split('~')[0].Trim(), out double num1) && double.TryParse(peakRange.Split('~')[1].Trim(), out double num2) && num1 < numZ && numZ < num2)
+                            if (double.TryParse(row["Peak(N)"].ToString(), out double numZ) &&
+                                double.TryParse(peakRange.Split('~')[0].Trim(), out double num1) &&
+                                double.TryParse(peakRange.Split('~')[1].Trim(), out double num2) && num1 < numZ &&
+                                numZ < num2)
                             {
                                 prime1 = true;
                             }
@@ -641,12 +663,15 @@ namespace OK2SHIP_SMT.Services
 
                         if (!string.IsNullOrEmpty(averageRange))
                         {
-                            if (double.TryParse(row["Average(N)"].ToString(), out double numZ) && double.TryParse(averageRange.Split('~')[0].Trim(), out double num1) && double.TryParse(averageRange.Split('~')[1].Trim(), out double num2) && num1 < numZ && numZ < num2)
+                            if (double.TryParse(row["Average(N)"].ToString(), out double numZ) &&
+                                double.TryParse(averageRange.Split('~')[0].Trim(), out double num1) &&
+                                double.TryParse(averageRange.Split('~')[1].Trim(), out double num2) && num1 < numZ &&
+                                numZ < num2)
                             {
                                 prime2 = true;
                             }
-
                         }
+
                         if (prime1 && prime2)
                         {
                             row["JudgementForce"] = "OK";
@@ -663,40 +688,50 @@ namespace OK2SHIP_SMT.Services
                             row["Peak(N)"] = num * 0.0098;
                             if (!string.IsNullOrEmpty(peakRange))
                             {
-                                if (double.TryParse(row["Peak(N)"].ToString(), out double numZ) && double.TryParse(peakRange.Split('~')[0].Trim(), out double num1) && double.TryParse(peakRange.Split('~')[1].Trim(), out double num2) && num1 < numZ && numZ < num2)
+                                if (double.TryParse(row["Peak(N)"].ToString(), out double numZ) &&
+                                    double.TryParse(peakRange.Split('~')[0].Trim(), out double num1) &&
+                                    double.TryParse(peakRange.Split('~')[1].Trim(), out double num2) && num1 < numZ &&
+                                    numZ < num2)
                                 {
                                     prime1 = true;
                                 }
                             }
                         }
+
                         if (double.TryParse(row["Average(gf)"].ToString(), out num))
                         {
                             row["Average(N)"] = num * 0.0098;
                             if (!string.IsNullOrEmpty(averageRange))
                             {
-                                if (double.TryParse(row["Average(N)"].ToString(), out double numZ) && double.TryParse(averageRange.Split('~')[0].Trim(), out double num1) && double.TryParse(averageRange.Split('~')[1].Trim(), out double num2) && num1 < numZ && numZ < num2)
+                                if (double.TryParse(row["Average(N)"].ToString(), out double numZ) &&
+                                    double.TryParse(averageRange.Split('~')[0].Trim(), out double num1) &&
+                                    double.TryParse(averageRange.Split('~')[1].Trim(), out double num2) &&
+                                    num1 < numZ && numZ < num2)
                                 {
                                     prime2 = true;
                                 }
                             }
                         }
+
                         if (prime1 && prime2)
                         {
                             row["JudgementForce"] = "OK";
                         }
                     }
+
                     listPeak.Add(double.Parse(row["Peak(N)"].ToString()));
                     listAverage.Add(double.Parse(row["Average(N)"].ToString()));
                 }
 
                 i++;
                 dataTable.Rows.Add(row);
-
             }
+
             sigma = $"{solveSigma(listAverage.ToArray())}-{solveSigma(listPeak.ToArray())}";
-            
+
             return dataTable;
         }
+
         private KeyValuePair<Image, string> solveFileData(string location)
         {
             KeyValuePair<Image, string> pair = new KeyValuePair<Image, string>();
@@ -707,14 +742,17 @@ namespace OK2SHIP_SMT.Services
                 using (ExcelWorksheet ws = package.Workbook.Worksheets[0])
                 {
                     byte[] image = (ws.Drawings["Picture 1"] as ExcelPicture).Image.ImageBytes;
-                    IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[] { "Max", "Average" }, true);
-                    string value = ""; bool prime = false;
+                    IDictionary<string, string> dic =
+                        ExportProcess.FindAddressByText(ws, new[] { "Max", "Average" }, true);
+                    string value = "";
+                    bool prime = false;
                     if (dic.TryGetValue("Max", out string address))
                     {
                         int i = 1;
                         while (i <= 20)
                         {
-                            string addressZ = ws.Cells[ws.Cells[address].End.Row, ws.Cells[address].End.Column + i].Address;
+                            string addressZ = ws.Cells[ws.Cells[address].End.Row, ws.Cells[address].End.Column + i]
+                                .Address;
                             var z = ws.Cells[addressZ].Value;
                             if (z != null)
                             {
@@ -724,10 +762,10 @@ namespace OK2SHIP_SMT.Services
                                     if (double.TryParse(value, out double ressz))
                                     {
                                         break;
-
                                     }
                                 }
                             }
+
                             i++;
                         }
                         //if (string.IsNullOrEmpty(value))
@@ -736,12 +774,14 @@ namespace OK2SHIP_SMT.Services
                         //    value += ws.Cells[address].Value.ToString().Trim();
                         //}
                     }
+
                     if (dic.TryGetValue("Average", out address))
                     {
                         int i = 1;
                         while (i <= 20)
                         {
-                            string addressZ = ws.Cells[ws.Cells[address].End.Row, ws.Cells[address].End.Column + i].Address;
+                            string addressZ = ws.Cells[ws.Cells[address].End.Row, ws.Cells[address].End.Column + i]
+                                .Address;
                             var z = ws.Cells[addressZ].Value;
                             if (z != null)
                             {
@@ -752,21 +792,23 @@ namespace OK2SHIP_SMT.Services
                                     {
                                         value += "," + valueZ;
                                         break;
-
                                     }
                                 }
                             }
+
                             i++;
                         }
                     }
+
                     pair = new KeyValuePair<Image, string>(TDMK_ImageConverter.ByteArrayToImage(image), value);
                 }
             }
+
             return pair;
         }
+
         public void readFolderLinerPSA(string locationItem, string name, string makerName, bool primeSpec)
         {
-
             string[] subs = FileFolderRepository.GetSubFolders(locationItem);
             foreach (string s in subs)
             {
@@ -785,9 +827,9 @@ namespace OK2SHIP_SMT.Services
                     row["Peak(N)"] = sigma.Split('-')[1];
                     _SPEC[$"{_ITEMCODE} - {_LOTNO}"].Rows.Add(row);
                 }
-                
             }
         }
+
         public bool checkNG()
         {
             foreach (string key in _DIC.Keys)
@@ -800,8 +842,10 @@ namespace OK2SHIP_SMT.Services
                     }
                 }
             }
+
             return true;
         }
+
         //public DataTable _SPEC = new DataTable();
         //public Dictionary<string, DataTable> _DIC = new Dictionary<string, DataTable>();
         //public DataTable _BEFOREIMAGE;
@@ -823,18 +867,21 @@ namespace OK2SHIP_SMT.Services
             dt.Columns.Add("KeyDic", typeof(string));
             return dt;
         }
+
         public void SaveData(bool prime = false)
         {
             string fakeItemCode = $"{_ITEMCODE}" + (_TYPE == "Displacement" ? "&D" : "");
             DataTable dt = new DataTable();
             if (!prime)
             {
-                dt = _dbContext.LoadDataTable("PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" }, new[] { fakeItemCode, _LOTNO });
+                dt = _dbContext.LoadDataTable("PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" },
+                    new[] { fakeItemCode, _LOTNO });
                 if (dt.Rows.Count > 0)
                 {
                     throw new Exception("1402 - Đã có dữ liệu bạn muốn tiếp tục?");
                 }
             }
+
             dt = getStructor();
             foreach (string key in _DIC.Keys)
             {
@@ -847,14 +894,18 @@ namespace OK2SHIP_SMT.Services
                         {
                             rowA[col.ColumnName] = rowZ[col.ColumnName];
                         }
+
                         dt.Rows.Add(rowA);
                     }
                 }
             }
+
             NasRepository nas = new NasRepository();
             string location = nas.HandleImageDataTable(dt, "PT_ONPRODUCT", fakeItemCode, _LOTNO);
-            string location_spec = nas.HandleImageDataTable(_SPEC[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_SEPC", fakeItemCode, _LOTNO);
-            string location_before = nas.HandleImageDataTable(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_BEFOREIMAGE", fakeItemCode, _LOTNO);
+            string location_spec = nas.HandleImageDataTable(_SPEC[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_SEPC",
+                fakeItemCode, _LOTNO);
+            string location_before = nas.HandleImageDataTable(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"],
+                "PT_ONPRODUCT_BEFOREIMAGE", fakeItemCode, _LOTNO);
             DataTable dataTable = _dbContext.GetTableStructure("PT_ONPRODUCT_NAS");
             DataRow row = dataTable.NewRow();
             row["ItemCode"] = fakeItemCode;
@@ -866,15 +917,17 @@ namespace OK2SHIP_SMT.Services
             row["DataSpec"] = ConverterService.DataTableToJson(_SPEC[$"{_ITEMCODE} - {_LOTNO}"]);
             row["DataBefore"] = ConverterService.DataTableToJson(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"]);
             dataTable.Rows.Add(row);
-            int res = _dbContext.BuckDataTable(dataTable, "PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" }, null, "ID");
+            int res = _dbContext.BuckDataTable(dataTable, "PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" }, null,
+                "ID");
             //int res = _dbContext.BuckDataTable(dt, "PT_ONPRODUCT", new[] { "ItemCode", "LotNo" }, null, "Id");
             //res += _dbContext.BuckDataTable(_SPEC[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_SEPC", new[] { "ItemCode", "LotNo" }, null, "Id");
             //res += _dbContext.BuckDataTable(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_BEFOREIMAGE", new[] { "ItemCode", "LotNo" }, null, "Id");
 
 
-
-            DataTable dtZ = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemCodeRefer", "LotNoRefer" }, new[] { fakeItemCode, _LOTNO });
-            DataTable dtZ2 = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemMain", "LotMain" }, new[] { fakeItemCode, _LOTNO });
+            DataTable dtZ = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemCodeRefer", "LotNoRefer" },
+                new[] { fakeItemCode, _LOTNO });
+            DataTable dtZ2 = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemMain", "LotMain" },
+                new[] { fakeItemCode, _LOTNO });
             if (dtZ.Rows.Count <= 0 && dtZ2.Rows.Count <= 0)
             {
                 DataTable dtRes = _dbContext.GetTableStructure("AIR_BUBBLE_AVAILABLE");
@@ -883,7 +936,8 @@ namespace OK2SHIP_SMT.Services
                 rowZ["LotNo"] = _LOTNO;
                 rowZ["Status"] = 1;
                 dtRes.Rows.Add(rowZ);
-                res += _dbContext.BuckDataTable(dtRes, "AIR_BUBBLE_AVAILABLE", new[] { "ItemCode", "LotNo" }, null, "ID");
+                res += _dbContext.BuckDataTable(dtRes, "AIR_BUBBLE_AVAILABLE", new[] { "ItemCode", "LotNo" }, null,
+                    "ID");
             }
 
             throw new Exception($"{res} lưu thành công!");
@@ -899,18 +953,19 @@ namespace OK2SHIP_SMT.Services
             {
                 throw new Exception("ItemCode hoặc LotNo không được để trống!");
             }
+
             List<string> list = new List<string>();
             list.Add($"{fakeItemCode} - {LOTNO}");
             if (refer)
             {
-                DataTable dtZ = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemMain", "LotMain" }, new[] { fakeItemCode, _LOTNO });
+                DataTable dtZ = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemMain", "LotMain" },
+                    new[] { fakeItemCode, _LOTNO });
                 if (dtZ.Rows.Count <= 0)
                 {
                     msg += "Không có refer!";
                 }
                 else
                 {
-
                     foreach (DataRow row in dtZ.Rows)
                     {
                         list.Add($"{row["ItemCodeRefer"]}-{row["LotNoRefer"]}");
@@ -925,20 +980,26 @@ namespace OK2SHIP_SMT.Services
                 {
                     break;
                 }
+
                 ITEMCODE = item.Split('-')[0].Trim();
                 LOTNO = item.Split('-')[1].Trim();
                 string keyZ = $"{ITEMCODE.Replace("&D", "")} - {LOTNO}";
                 DataTable dataTable = new DataTable();
                 if (legacy)
                 {
-
-                    _BEFOREIMAGE.Add(keyZ, _dbContext.LoadDataTable("PT_ONPRODUCT_BEFOREIMAGE", new[] { "ItemCode", "LotNo" }, new[] { ITEMCODE, LOTNO }));
-                    _SPEC.Add(keyZ, _dbContext.LoadDataTable("PT_ONPRODUCT_SEPC", new[] { "ItemCode", "LotNo" }, new[] { ITEMCODE, LOTNO }));
-                    dataTable = _dbContext.LoadDataTable("PT_ONPRODUCT", new[] { "ItemCode", "LotNo" }, new[] { ITEMCODE, LOTNO });
+                    _BEFOREIMAGE.Add(keyZ,
+                        _dbContext.LoadDataTable("PT_ONPRODUCT_BEFOREIMAGE", new[] { "ItemCode", "LotNo" },
+                            new[] { ITEMCODE, LOTNO }));
+                    _SPEC.Add(keyZ,
+                        _dbContext.LoadDataTable("PT_ONPRODUCT_SEPC", new[] { "ItemCode", "LotNo" },
+                            new[] { ITEMCODE, LOTNO }));
+                    dataTable = _dbContext.LoadDataTable("PT_ONPRODUCT", new[] { "ItemCode", "LotNo" },
+                        new[] { ITEMCODE, LOTNO });
                 }
                 else
                 {
-                    dataTable = _dbContext.LoadDataTable("PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" }, new[] { ITEMCODE, LOTNO });
+                    dataTable = _dbContext.LoadDataTable("PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" },
+                        new[] { ITEMCODE, LOTNO });
                     if (dataTable.Rows.Count <= 0)
                     {
                         if (!refer)
@@ -950,22 +1011,28 @@ namespace OK2SHIP_SMT.Services
                             return;
                         }
                     }
+
                     DataRow rowZ = dataTable.Rows[0];
                     NasRepository _nas = new NasRepository();
                     DataTable beforeDT = ConverterService.JsonToDataTable(rowZ["DataBefore"].ToString());
-                    _nas.MergeDataTable(beforeDT, "PT_ONPRODUCT_BEFOREIMAGE", ITEMCODE, LOTNO, rowZ["LoactionBefore"].ToString());
+                    _nas.MergeDataTable(beforeDT, "PT_ONPRODUCT_BEFOREIMAGE", ITEMCODE, LOTNO,
+                        rowZ["LoactionBefore"].ToString());
                     _BEFOREIMAGE.Add(keyZ, beforeDT);
                     DataTable specDT = ConverterService.JsonToDataTable(rowZ["DataSpec"].ToString());
                     _nas.MergeDataTable(specDT, "PT_ONPRODUCT_SEPC", ITEMCODE, LOTNO, rowZ["LocationSpec"].ToString());
                     _SPEC.Add(keyZ, specDT);
                     dataTable = ConverterService.JsonToDataTable(rowZ["Data"].ToString());
-                    _nas.MergeDataTable(dataTable, "PT_ONPRODUCT_NAS", ITEMCODE, LOTNO, rowZ["LocationImage"].ToString());
-
+                    _nas.MergeDataTable(dataTable, "PT_ONPRODUCT_NAS", ITEMCODE, LOTNO,
+                        rowZ["LocationImage"].ToString());
                 }
+
                 //_DIC
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    string key = row["KeyDic"].ToString() + (refer && !ITEMCODE.Equals(fakeItemCode) || !LOTNO.Equals(_LOTNO) ? " REFER " + $"({fakeItemCode}-{LOTNO})" : "");
+                    string key = row["KeyDic"].ToString() +
+                                 (refer && !ITEMCODE.Equals(fakeItemCode) || !LOTNO.Equals(_LOTNO)
+                                     ? " REFER " + $"({fakeItemCode}-{LOTNO})"
+                                     : "");
                     if (_DIC.TryGetValue(key, out DataTable dt))
                     {
                         DataRow newRow = dt.NewRow();
@@ -973,6 +1040,7 @@ namespace OK2SHIP_SMT.Services
                         {
                             newRow[col.ColumnName] = row[col.ColumnName];
                         }
+
                         dt.Rows.Add(newRow);
                         _DIC[key] = dt;
                     }
@@ -984,12 +1052,12 @@ namespace OK2SHIP_SMT.Services
                         {
                             newRow[col.ColumnName] = row[col.ColumnName];
                         }
+
                         dt.Rows.Add(newRow);
                         _DIC.Add(key, dt);
                     }
                 }
             }
-
         }
 
         public void Export(bool legacy)
@@ -1003,9 +1071,9 @@ namespace OK2SHIP_SMT.Services
                 }
                 catch
                 {
-
                 }
             }
+
             ExportProcess exportProcess = new ExportProcess();
 
             using (ExcelPackage package = exportProcess.FindFormatProcess("AIR", _ITEMCODE, _LOTNO))
@@ -1016,252 +1084,16 @@ namespace OK2SHIP_SMT.Services
                     FillData(ws, true);
                     using (ExcelWorksheet ws2 = exportProcess.FindSheet(package, "PSA peel test (On product)"))
                     {
-
                         SetUpExport(ws2);
                         FillData(ws2, false);
-                        exportProcess.SaveExcelWorksheet(package, "Liner peel test (On product):PSA peel test (On product)", $"{_ITEMCODE.Trim()}-{_LOTNO.Trim()}");
-
+                        exportProcess.SaveExcelWorksheet(package,
+                            "Liner peel test (On product):PSA peel test (On product)",
+                            $"{_ITEMCODE.Trim()}-{_LOTNO.Trim()}");
                     }
                 }
             }
         }
-
-        private void FillData(ExcelWorksheet ws, bool liner)
-        {
-            List<string> listHelder = new[] { "supplier" }.ToList();
-            string stage = "";
-            if (liner)
-            {
-                stage = "Liner";
-                listHelder.Add("Liner peeling");
-            }
-            else
-            {
-                stage = "PSA";
-                listHelder.Add("PSA peeling");
-            }
-            IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, listHelder.ToArray());
-            int rCom = ws.Cells[dic[stage + " peeling"].Split('-')[0]].End.Row;
-            foreach (var item in dic["supplier"].Split('-'))
-            {
-                int r = ws.Cells[item].End.Row;
-                if (rCom < r)
-                {
-                    string valueZ = ws.Cells[item].Value.ToString();
-                    string tape;
-                    if(_TYPE == "Displacement")
-                    {
-                        tape = valueZ.Split('_')[2].Trim();
-                    }
-                    else
-                    {
-                        tape = valueZ.Split('(')[1].Replace(")", "").Trim();
-                    }
-                    string keyMAIN = "";
-                    if (string.IsNullOrEmpty(valueZ.Split('_', '(')[1].ToUpper().Replace("SUPPLIER", "").Replace("NAME", "").Trim()))
-                    {
-                        //peek key no refer
-                        foreach (string key in _DIC.Keys)
-                        {
-                            if (!key.Contains("REFER") && key.ToUpper().Split('-')[0].Trim().Equals(tape.ToUpper()) && key.Split('_')[1].Trim().ToUpper().Equals(stage.ToUpper()))
-                            {
-                                // maker name
-                                ws.Cells[item].Value = $"{valueZ.Split('_')[0]}_ {key.Split('-', '_')[1]} {valueZ.Split('_')[2]}";
-                                keyMAIN = key;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (string key in _DIC.Keys)
-                        {
-                            string z = key.Split('-', '_')[1].Trim();
-                            string za = valueZ.Split('_', '(')[1].ToUpper().Replace("SUPPLIER", "").Replace("NAME", "").Trim().ToUpper();
-                            if (z.Equals(za) && key.Contains("REFER") && key.Split('-')[0].Trim().Equals(tape) && key.Split('_')[1].Trim().ToUpper().Contains(stage.ToUpper()))
-                            {
-                                // peek key co refer
-                                keyMAIN = key;
-                                break;
-                            }
-                        }
-                    }
-                    int i = 0;
-                    string icln = keyMAIN.Contains("REFER") ? keyMAIN.Split('(')[1].Replace(")", "").Trim() : $"{_ITEMCODE}-{_LOTNO}";
-                    icln = icln.Replace("-", " - ");
-                    double peakMin = 0, peakMax = 0, averageMin = 0, averageMax = 0;
-                    double peakGFMin = 0, peakGFMax = 0, averageGFMin = 0, averageGFMax = 0;
-                    if (_BEFOREIMAGE.TryGetValue(icln, out DataTable valueDT))
-                    {
-                        if (_SPEC.TryGetValue(icln, out DataTable spec))
-                        {
-                            foreach (DataRow row in spec.Rows)
-                            {
-                                if (row["Tape"].ToString().Contains(tape) && row["Type"].ToString().ToUpper().Contains(stage.ToUpper()))
-                                {
-                                    //Debugger.Break();
-                                    try
-                                    {
-
-                                        string peak = row["Peak(Gf)"].ToString();
-                                        if (peak.Contains('~'))
-                                        {
-
-                                            peakGFMin = double.Parse(peak.Split('~')[0]);
-                                            peakGFMax = double.Parse(peak.Split('~')[1]);
-                                        }
-                                    }
-                                    catch
-                                    {
-
-                                    }
-
-                                    //Debugger.Break();
-                                    try
-                                    {
-
-                                        string peak = row["Peak(N)"].ToString();
-                                        if (peak.Contains('~'))
-                                        {
-
-                                            peakMin = double.Parse(peak.Split('~')[0]);
-                                            peakMax = double.Parse(peak.Split('~')[1]);
-                                        }
-                                    }
-                                    catch
-                                    {
-
-                                    }
-                                    try
-                                    {
-
-                                        string average = row["Average(N)"].ToString();
-                                        if (average.Contains('~'))
-                                        {
-                                            averageMin = double.Parse(average.Split('~')[0]);
-                                            averageMax = double.Parse(average.Split('~')[1]);
-                                        }
-                                    }
-                                    catch
-                                    {
-
-                                    }
-                                    try
-                                    {
-
-                                        string average = row["Average(Gf)"].ToString();
-                                        if (average.Contains('~'))
-                                        {
-                                            averageGFMin = double.Parse(average.Split('~')[0]);
-                                            averageGFMax = double.Parse(average.Split('~')[1]);
-                                        }
-                                    }
-                                    catch
-                                    {
-
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                        foreach (DataRow row in _DIC[keyMAIN].Rows)
-                        {
-                            string address = ExportProcess.AddColumn(item, 2 + i);
-                            ws.Cells[ExportProcess.AddRow(address, -1)].Value = row["ProductID"];
-                            if (liner)
-                            {
-                                address = ExportProcess.AddRow(address, 1);
-                                if (valueDT.Rows.Count > i)
-                                {
-                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address], (byte[])valueDT.Rows[i]["Picture"], $"{Guid.NewGuid()}");
-                                }
-
-                            }
-                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)], (byte[])row["Picture"], $"{Guid.NewGuid()}");
-                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)], (byte[])row["Graph"], $"{Guid.NewGuid()}");
-                            if (liner)
-                            {
-                                address = ExportProcess.AddRow(address, 1);
-                                if (double.TryParse(row["Peak(gf)"].ToString(), out double res))
-                                {
-                                    ws.Cells[ExportProcess.AddRow(address, 2)].Value = Math.Round(res, 2);
-                                }
-                                address = ExportProcess.AddRow(address, 1);
-                                if (double.TryParse(row["Average(gf)"].ToString(), out res))
-                                {
-                                    ws.Cells[ExportProcess.AddRow(address, 2)].Value = Math.Round(res, 2);
-                                }
-                            }
-                            if (double.TryParse(row["Peak(N)"].ToString(), out double resZ))
-                            {
-                                ws.Cells[ExportProcess.AddRow(address, 3)].Value = Math.Round(resZ, 2);
-                            }
-                            if (double.TryParse(row["Average(N)"].ToString(), out resZ))
-                            {
-                                ws.Cells[ExportProcess.AddRow(address, 4)].Value = Math.Round(resZ, 2);
-                            }
-
-                            //_SPEC[keyMAIN].Rows
-                            ws.Cells[ExportProcess.AddRow(address, 5)].FormulaR1C1 = $"=IF(AND(R[-1]C<{averageMax},R[-1]C>{averageMin},R[-2]C<{peakMax},R[-2]C>{peakMin}),\"OK\",\"NG\")";
-                            ws.Cells[ExportProcess.AddRow(address, 6)].Value = row["JudgementMode"];
-                            // Debugger.Break();
-                            i++;
-                        }
-
-                    }
-                    if (!liner)
-                    {
-                        string addressZ = ExportProcess.AddRow(ExportProcess.AddColumn(item, 2), 10);
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), -1)].Value = $"{peakMin} ~ {peakMax}";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), -1)].Value = $"{averageMin} ~ {averageMax}";
-
-                        ws.Cells[addressZ].FormulaR1C1 = $"=MIN(R[-7]C:R[-7]C[31])";
-                        ws.Cells[ExportProcess.AddColumn(addressZ, 1)].FormulaR1C1 = $"=MIN(R[-6]C[-1]:R[-6]C[30])";
-                        ws.Cells[ExportProcess.AddRow(addressZ, 1)].FormulaR1C1 = $"=MAX(R[-8]C:R[-8]C[31])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 1)].FormulaR1C1 = $"=MAX(R[-7]C[-1]:R[-7]C[30])";
-                        ws.Cells[ExportProcess.AddRow(addressZ, 2)].FormulaR1C1 = $"=Average(R[-9]C:R[-9]C[31])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 2)].FormulaR1C1 = $"=Average(R[-8]C[-1]:R[-8]C[30])";
-                        ws.Cells[ExportProcess.AddRow(addressZ, 3)].FormulaR1C1 = $"=STDEV(R[-10]C:R[-10]C[31])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 3)].FormulaR1C1 = $"=STDEV(R[-9]C[-1]:R[-9]C[30])";
-                        ws.Cells[ExportProcess.AddRow(addressZ, 4)].FormulaR1C1 = $"=MIN((R[-2]C - {peakMin})/(3 * R[-1]C), ({peakMax} - R[-2]C)/(3 * R[-1]C))";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {averageMin})/(3 * R[-1]C),({averageMax} - R[-2]C)/(3 * R[-1]C))";
-                    }
-                    else
-                    {
-                        string addressZ = ExportProcess.AddRow(ExportProcess.AddColumn(item, 2), 13);
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), -1)].Value = $"{peakGFMin} ~ {peakGFMax}";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), -1)].Value = $"{peakMin} ~ {peakMax}";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), -1)].Value = $"{averageGFMin} ~ {averageGFMax}";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), -1)].Value = $"{averageMin} ~ {averageMax}";
-
-                        ws.Cells[addressZ].FormulaR1C1 = $"=MIN(R[-9]C:R[-9]C[31])";
-                        ws.Cells[ExportProcess.AddColumn(addressZ, 1)].FormulaR1C1 = $"=MIN(R[-7]C[-1]:R[-7]C[31])";
-                        ws.Cells[ExportProcess.AddColumn(addressZ, 2)].FormulaR1C1 = $"=MIN(R[-8]C[-2]:R[-8]C[29])";
-                        ws.Cells[ExportProcess.AddColumn(addressZ, 3)].FormulaR1C1 = $"=MIN(R[-6]C[-3]:R[-6]C[28])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), 1)].FormulaR1C1 = $"=MAX(R[-10]C:R[-10]C[31])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 1)].FormulaR1C1 = $"=MAX(R[-8]C[-1]:R[-8]C[30])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), 1)].FormulaR1C1 = $"=MAX(R[-9]C[-2]:R[-9]C[29])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), 1)].FormulaR1C1 = $"=MAX(R[-7]C[-3]:R[-7]C[28])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), 2)].FormulaR1C1 = $"=AVERAGE(R[-11]C:R[-11]C[31])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 2)].FormulaR1C1 = $"=AVERAGE(R[-9]C[-1]:R[-9]C[30])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), 2)].FormulaR1C1 = $"=AVERAGE(R[-10]C[-2]:R[-10]C[29])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), 2)].FormulaR1C1 = $"=AVERAGE(R[-8]C[-3]:R[-8]C[28])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), 3)].FormulaR1C1 = $"=STDEV(R[-12]C:R[-12]C[31])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 3)].FormulaR1C1 = $"=STDEV(R[-10]C[-1]:R[-10]C[30])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), 3)].FormulaR1C1 = $"=STDEV(R[-11]C[-2]:R[-11]C[29])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), 3)].FormulaR1C1 = $"=STDEV(R[-9]C[-3]:R[-9]C[28])";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {peakGFMin} )/(3 * R[-1]C), ( {peakGFMax} - R[-2]C)/(3 * R[-1]C))";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {peakMin})/(3 * R[-1]C), ({peakMax} - R[-2]C)/(3 * R[-1]C))";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {averageGFMin})/(3 * R[-1]C), ({averageGFMax} - R[-2]C)/(3 * R[-1]C))";
-                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), 4)].FormulaR1C1 = $"=MIN((R[-2]C - {averageMin})/(3 * R[-1]C), ({averageMax} - R[-2]C)/(3 * R[-1]C))";
-
-                    }
-                }
-            }
-
-        }
-
-        public void SetUpExport(ExcelWorksheet ws, bool liner = false)
+public void SetUpExport1(ExcelWorksheet ws, bool liner = false)
         {
             List<string> list = new[] { "Tape", "Flex SN", "Sample 32", "CPK" }.ToList();
             string caseZ = "";
@@ -1346,6 +1178,318 @@ namespace OK2SHIP_SMT.Services
                 }
 
             }
+        }
+        private void FillData(ExcelWorksheet ws, bool liner)
+        {
+            List<string> listHelder = new[] { "supplier" }.ToList();
+            string stage = "";
+            if (liner)
+            {
+                stage = "Liner";
+                listHelder.Add("Liner peeling");
+            }
+            else
+            {
+                stage = "PSA";
+                listHelder.Add("PSA peeling");
+            }
+
+            IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, listHelder.ToArray());
+            int rCom = ws.Cells[dic[stage + " peeling"].Split('-')[0]].End.Row;
+            foreach (var item in dic["supplier"].Split('-'))
+            {
+                int r = ws.Cells[item].End.Row;
+                if (rCom < r)
+                {
+                    string valueZ = ws.Cells[item].Value.ToString();
+                    string tape;
+                    if (_TYPE == "Displacement")
+                    {
+                        tape = valueZ.Split('_')[2].Trim();
+                    }
+                    else
+                    {
+                        tape = valueZ.Split('(')[1].Replace(")", "").Trim();
+                    }
+
+                    string keyMAIN = "";
+                    if (string.IsNullOrEmpty(valueZ.Split('_', '(')[1].ToUpper().Replace("SUPPLIER", "")
+                            .Replace("NAME", "").Trim()))
+                    {
+                        //peek key no refer
+                        foreach (string key in _DIC.Keys)
+                        {
+                            if (!key.Contains("REFER") && key.ToUpper().Split('-')[0].Trim().Equals(tape.ToUpper()) &&
+                                key.Split('_')[1].Trim().ToUpper().Equals(stage.ToUpper()))
+                            {
+                                // maker name
+                                ws.Cells[item].Value =
+                                    $"{valueZ.Split('_')[0]}_ {key.Split('-', '_')[1]} {valueZ.Split('_')[2]}";
+                                keyMAIN = key;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (string key in _DIC.Keys)
+                        {
+                            string z = key.Split('-', '_')[1].Trim();
+                            string za = valueZ.Split('_', '(')[1].ToUpper().Replace("SUPPLIER", "").Replace("NAME", "")
+                                .Trim().ToUpper();
+                            if (z.Equals(za) && key.Contains("REFER") && key.Split('-')[0].Trim().Equals(tape) &&
+                                key.Split('_')[1].Trim().ToUpper().Contains(stage.ToUpper()))
+                            {
+                                // peek key co refer
+                                keyMAIN = key;
+                                break;
+                            }
+                        }
+                    }
+
+                    int i = 0;
+                    string icln = keyMAIN.Contains("REFER")
+                        ? keyMAIN.Split('(')[1].Replace(")", "").Trim()
+                        : $"{_ITEMCODE}-{_LOTNO}";
+                    icln = icln.Replace("-", " - ");
+                    double peakMin = 0, peakMax = 0, averageMin = 0, averageMax = 0;
+                    double peakGFMin = 0, peakGFMax = 0, averageGFMin = 0, averageGFMax = 0;
+                    if (_BEFOREIMAGE.TryGetValue(icln, out DataTable valueDT))
+                    {
+                        if (_SPEC.TryGetValue(icln, out DataTable spec))
+                        {
+                            foreach (DataRow row in spec.Rows)
+                            {
+                                if (row["Tape"].ToString().Contains(tape) &&
+                                    row["Type"].ToString().ToUpper().Contains(stage.ToUpper()))
+                                {
+                                    //Debugger.Break();
+                                    try
+                                    {
+                                        string peak = row["Peak(Gf)"].ToString();
+                                        if (peak.Contains('~'))
+                                        {
+                                            peakGFMin = double.Parse(peak.Split('~')[0]);
+                                            peakGFMax = double.Parse(peak.Split('~')[1]);
+                                        }
+                                    }
+                                    catch
+                                    {
+                                    }
+
+                                    //Debugger.Break();
+                                    try
+                                    {
+                                        string peak = row["Peak(N)"].ToString();
+                                        if (peak.Contains('~'))
+                                        {
+                                            peakMin = double.Parse(peak.Split('~')[0]);
+                                            peakMax = double.Parse(peak.Split('~')[1]);
+                                        }
+                                    }
+                                    catch
+                                    {
+                                    }
+
+                                    try
+                                    {
+                                        string average = row["Average(N)"].ToString();
+                                        if (average.Contains('~'))
+                                        {
+                                            averageMin = double.Parse(average.Split('~')[0]);
+                                            averageMax = double.Parse(average.Split('~')[1]);
+                                        }
+                                    }
+                                    catch
+                                    {
+                                    }
+
+                                    try
+                                    {
+                                        string average = row["Average(Gf)"].ToString();
+                                        if (average.Contains('~'))
+                                        {
+                                            averageGFMin = double.Parse(average.Split('~')[0]);
+                                            averageGFMax = double.Parse(average.Split('~')[1]);
+                                        }
+                                    }
+                                    catch
+                                    {
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        foreach (DataRow row in _DIC[keyMAIN].Rows)
+                        {
+                            string address = ExportProcess.AddColumn(item, 2 + i);
+                            ws.Cells[ExportProcess.AddRow(address, -1)].Value = row["ProductID"];
+                            if (liner)
+                            {
+                                address = ExportProcess.AddRow(address, 1);
+                                if (valueDT.Rows.Count > i)
+                                {
+                                    ExportProcess.InsertImageToCell(ws, ws.Cells[address],
+                                        (byte[])valueDT.Rows[i]["Picture"], $"{Guid.NewGuid()}");
+                                }
+                            }
+
+                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 1)],
+                                (byte[])row["Picture"], $"{Guid.NewGuid()}");
+                            ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddRow(address, 2)],
+                                (byte[])row["Graph"], $"{Guid.NewGuid()}");
+                            if (liner)
+                            {
+                                address = ExportProcess.AddRow(address, 1);
+                                if (double.TryParse(row["Peak(gf)"].ToString(), out double res))
+                                {
+                                    ws.Cells[ExportProcess.AddRow(address, 2)].Value = Math.Round(res, 2);
+                                }
+
+                                address = ExportProcess.AddRow(address, 1);
+                                if (double.TryParse(row["Average(gf)"].ToString(), out res))
+                                {
+                                    ws.Cells[ExportProcess.AddRow(address, 2)].Value = Math.Round(res, 2);
+                                }
+                            }
+
+                            if (double.TryParse(row["Peak(N)"].ToString(), out double resZ))
+                            {
+                                ws.Cells[ExportProcess.AddRow(address, 3)].Value = Math.Round(resZ, 2);
+                            }
+
+                            if (double.TryParse(row["Average(N)"].ToString(), out resZ))
+                            {
+                                ws.Cells[ExportProcess.AddRow(address, 4)].Value = Math.Round(resZ, 2);
+                            }
+
+                            //_SPEC[keyMAIN].Rows
+                            ws.Cells[ExportProcess.AddRow(address, 5)].FormulaR1C1 =
+                                $"=IF(AND(R[-1]C<{averageMax},R[-1]C>{averageMin},R[-2]C<{peakMax},R[-2]C>{peakMin}),\"OK\",\"NG\")";
+                            ws.Cells[ExportProcess.AddRow(address, 6)].Value = row["JudgementMode"];
+                            // Debugger.Break();
+                            i++;
+                        }
+                    }
+
+                    if (!liner)
+                    {
+                        string addressZ = ExportProcess.AddRow(ExportProcess.AddColumn(item, 2), 10);
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), -1)].Value =
+                            $"{peakMin} ~ {peakMax}";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), -1)].Value =
+                            $"{averageMin} ~ {averageMax}";
+
+                        ws.Cells[addressZ].FormulaR1C1 = $"=MIN(R[-7]C:R[-7]C[31])";
+                        ws.Cells[ExportProcess.AddColumn(addressZ, 1)].FormulaR1C1 = $"=MIN(R[-6]C[-1]:R[-6]C[30])";
+                        ws.Cells[ExportProcess.AddRow(addressZ, 1)].FormulaR1C1 = $"=MAX(R[-8]C:R[-8]C[31])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 1)].FormulaR1C1 =
+                            $"=MAX(R[-7]C[-1]:R[-7]C[30])";
+                        ws.Cells[ExportProcess.AddRow(addressZ, 2)].FormulaR1C1 = $"=Average(R[-9]C:R[-9]C[31])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 2)].FormulaR1C1 =
+                            $"=Average(R[-8]C[-1]:R[-8]C[30])";
+                        ws.Cells[ExportProcess.AddRow(addressZ, 3)].FormulaR1C1 = $"=STDEV(R[-10]C:R[-10]C[31])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 3)].FormulaR1C1 =
+                            $"=STDEV(R[-9]C[-1]:R[-9]C[30])";
+                        ws.Cells[ExportProcess.AddRow(addressZ, 4)].FormulaR1C1 =
+                            $"=MIN((R[-2]C - {peakMin})/(3 * R[-1]C), ({peakMax} - R[-2]C)/(3 * R[-1]C))";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 4)].FormulaR1C1 =
+                            $"=MIN((R[-2]C - {averageMin})/(3 * R[-1]C),({averageMax} - R[-2]C)/(3 * R[-1]C))";
+                    }
+                    else
+                    {
+                        string addressZ = ExportProcess.AddRow(ExportProcess.AddColumn(item, 2), 13);
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), -1)].Value =
+                            $"{peakGFMin} ~ {peakGFMax}";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), -1)].Value =
+                            $"{peakMin} ~ {peakMax}";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), -1)].Value =
+                            $"{averageGFMin} ~ {averageGFMax}";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), -1)].Value =
+                            $"{averageMin} ~ {averageMax}";
+
+                        ws.Cells[addressZ].FormulaR1C1 = $"=MIN(R[-9]C:R[-9]C[31])";
+                        ws.Cells[ExportProcess.AddColumn(addressZ, 1)].FormulaR1C1 = $"=MIN(R[-7]C[-1]:R[-7]C[31])";
+                        ws.Cells[ExportProcess.AddColumn(addressZ, 2)].FormulaR1C1 = $"=MIN(R[-8]C[-2]:R[-8]C[29])";
+                        ws.Cells[ExportProcess.AddColumn(addressZ, 3)].FormulaR1C1 = $"=MIN(R[-6]C[-3]:R[-6]C[28])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), 1)].FormulaR1C1 =
+                            $"=MAX(R[-10]C:R[-10]C[31])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 1)].FormulaR1C1 =
+                            $"=MAX(R[-8]C[-1]:R[-8]C[30])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), 1)].FormulaR1C1 =
+                            $"=MAX(R[-9]C[-2]:R[-9]C[29])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), 1)].FormulaR1C1 =
+                            $"=MAX(R[-7]C[-3]:R[-7]C[28])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), 2)].FormulaR1C1 =
+                            $"=AVERAGE(R[-11]C:R[-11]C[31])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 2)].FormulaR1C1 =
+                            $"=AVERAGE(R[-9]C[-1]:R[-9]C[30])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), 2)].FormulaR1C1 =
+                            $"=AVERAGE(R[-10]C[-2]:R[-10]C[29])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), 2)].FormulaR1C1 =
+                            $"=AVERAGE(R[-8]C[-3]:R[-8]C[28])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), 3)].FormulaR1C1 =
+                            $"=STDEV(R[-12]C:R[-12]C[31])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 3)].FormulaR1C1 =
+                            $"=STDEV(R[-10]C[-1]:R[-10]C[30])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), 3)].FormulaR1C1 =
+                            $"=STDEV(R[-11]C[-2]:R[-11]C[29])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), 3)].FormulaR1C1 =
+                            $"=STDEV(R[-9]C[-3]:R[-9]C[28])";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 0), 4)].FormulaR1C1 =
+                            $"=MIN((R[-2]C - {peakGFMin} )/(3 * R[-1]C), ( {peakGFMax} - R[-2]C)/(3 * R[-1]C))";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 1), 4)].FormulaR1C1 =
+                            $"=MIN((R[-2]C - {peakMin})/(3 * R[-1]C), ({peakMax} - R[-2]C)/(3 * R[-1]C))";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 2), 4)].FormulaR1C1 =
+                            $"=MIN((R[-2]C - {averageGFMin})/(3 * R[-1]C), ({averageGFMax} - R[-2]C)/(3 * R[-1]C))";
+                        ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(addressZ, 3), 4)].FormulaR1C1 =
+                            $"=MIN((R[-2]C - {averageMin})/(3 * R[-1]C), ({averageMax} - R[-2]C)/(3 * R[-1]C))";
+                    }
+                }
+            }
+        }
+
+        public void SetUpExport(ExcelWorksheet ws, bool liner = false)
+        {
+            List<string> list = new[] { "Tape", "Flex SN", "Sample 32", "CPK" }.ToList();
+            IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, list.ToArray());
+            List<string> listKey = new List<string>();
+            foreach (string key in _DIC.Keys)
+            {
+                if (liner && key.ToUpper().Contains("LINER"))
+                {
+                    listKey.Add(key);
+                }
+
+                if (!liner && key.ToUpper().Contains("PSA"))
+                {
+                    listKey.Add(key);
+                }
+            }
+
+            string endCell = ws.Cells[ws.Cells[dic["CPK"]].End.Row, ws.Cells[dic["Sample 32"]].End.Column].Address;
+            string range = $"{dic["Flex SN"]}:{endCell}";
+            string dist = ExportProcess.AddColumn(ExportProcess.AddRow(dic["CPK"], 2), -1);
+
+
+            for (int i = 1; i < listKey.Count; i++)
+            {
+                string ad = ExportProcess.AddRow(dist, 2);
+                new ExportProcess().CopyAndInsert(ws, range, ref dist, true);
+
+                ws.Cells[ad].Value = $"{ws.Cells[ad].Value.ToString().Replace("TAPE", HandleName(listKey[i]))}";
+            }
+
+            ws.Cells[ExportProcess.AddRow(dic["Flex SN"], 1)].Value = $"{ws.Cells[ExportProcess.AddRow(dic["Flex SN"], 1)].Value.ToString().Replace("TAPE", HandleName(listKey[0]))}";
+        }
+
+      
+        private string HandleName(string listKey)
+        {
+            string[] split = listKey.Split(new[] { '-', '_' });
+            return $"{split[0]}";
         }
     }
 }
