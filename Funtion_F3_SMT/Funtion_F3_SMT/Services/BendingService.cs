@@ -1075,6 +1075,7 @@ namespace OK2SHIP_SMT.Services
 
                     addressSample = ExportProcess.AddColumn(addressSample, 1);
                     valueSample = ws.Cells[addressSample].Value.ToString();
+                    i++;
                 }
             }
             catch

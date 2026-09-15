@@ -16,9 +16,7 @@
     <list default="true" id="79693909-c6be-4431-90a9-36eba68f2a7a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_export_file_le_EPPlus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_export_file_le_EPPlus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/XRayPictureService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/XRayPictureService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA/CraftSynth.ImageEditor.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA/CraftSynth.ImageEditor.dll" afterDir="false" />
     </list>
@@ -107,61 +105,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="9.511286372808841E-5" />
-      <entry key="MS500" value="0.1569089989103304" />
-      <entry key="S2" value="0.6293785867524289" />
-      <entry key="S5" value="0.8309306718688981" />
-      <entry key="S10" value="0.9117738350370034" />
-      <entry key="S30" value="1.3285141430168452" />
-      <entry key="S60" value="3.775979511319662" />
-      <entry key="M2" value="9.077176801697197" />
-      <entry key="M5" value="16.483347745628315" />
-      <entry key="M10" value="20.26834336377166" />
-      <entry key="M15" value="21.735178611148125" />
-      <entry key="M30" value="24.00302254900338" />
-      <entry key="H1" value="34.905339701032226" />
-      <entry key="H2" value="75.75195395145289" />
-      <entry key="H4" value="160.50998830271877" />
-      <entry key="D1" value="1043.6045477593937" />
-      <entry key="W1" value="5812.691645708542" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.000002638582553" />
+      <entry key="S2" value="1.2281572661172282" />
+      <entry key="S5" value="4.611127077394926" />
+      <entry key="S10" value="11.593755117961875" />
+      <entry key="S30" value="24.367223077047214" />
+      <entry key="S60" value="31.50286036517253" />
+      <entry key="M2" value="39.50311800441069" />
+      <entry key="M5" value="49.16249091621691" />
+      <entry key="M10" value="53.98320941481673" />
+      <entry key="M15" value="55.84619469129256" />
+      <entry key="M30" value="58.53442466932897" />
+      <entry key="H1" value="69.61704560326758" />
+      <entry key="H2" value="110.50732333466946" />
+      <entry key="H4" value="195.28345061174142" />
+      <entry key="D1" value="1078.3858207617795" />
+      <entry key="W1" value="5847.520781457903" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.0000000000015403" />
-      <entry key="MS500" value="1.0045404741148427" />
-      <entry key="S2" value="1.402431985095062" />
-      <entry key="S5" value="2.2424477132633402" />
-      <entry key="S10" value="2.900204511041069" />
-      <entry key="S30" value="3.583183455408405" />
-      <entry key="S60" value="3.9018065370095587" />
-      <entry key="M2" value="4.242294403798237" />
-      <entry key="M5" value="4.6161675173452" />
-      <entry key="M10" value="4.7907446048095075" />
-      <entry key="M15" value="4.857050809247482" />
-      <entry key="M30" value="5.039684784748787" />
-      <entry key="H1" value="6.85241429855595" />
-      <entry key="H2" value="14.597281305088464" />
-      <entry key="H4" value="33.41326837778544" />
-      <entry key="D1" value="290.3879303499461" />
-      <entry key="W1" value="1686.8088816357224" />
+      <entry key="MS100" value="1.2732037456132697E-77" />
+      <entry key="MS500" value="4.197077814633949E-16" />
+      <entry key="S2" value="2.0050569084597683E-4" />
+      <entry key="S5" value="0.06498607143682847" />
+      <entry key="S10" value="0.4937164559121619" />
+      <entry key="S30" value="1.9858755882844457" />
+      <entry key="S60" value="2.904739754242823" />
+      <entry key="M2" value="3.660341049590749" />
+      <entry key="M5" value="4.351608936605031" />
+      <entry key="M10" value="4.651437274964396" />
+      <entry key="M15" value="4.762431547078319" />
+      <entry key="M30" value="4.990354796621291" />
+      <entry key="H1" value="6.818795055682131" />
+      <entry key="H2" value="14.561428762263619" />
+      <entry key="H4" value="33.37220980358862" />
+      <entry key="D1" value="290.32842792204013" />
+      <entry key="W1" value="1686.7595003826584" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="2.5481212132660494E-4" />
-      <entry key="MS500" value="0.24120767134738857" />
-      <entry key="S2" value="1.3736239932527086" />
-      <entry key="S5" value="2.6029653072513357" />
-      <entry key="S10" value="3.498452852087484" />
-      <entry key="S30" value="4.77701931718921" />
-      <entry key="S60" value="7.5943096978064135" />
-      <entry key="M2" value="13.263753824000693" />
-      <entry key="M5" value="21.06985227093523" />
-      <entry key="M10" value="25.042409554774334" />
-      <entry key="M15" value="26.58063601147275" />
-      <entry key="M30" value="29.036511949713574" />
-      <entry key="H1" value="41.75345112926559" />
-      <entry key="H2" value="90.34457433695549" />
-      <entry key="H4" value="193.918072486935" />
-      <entry key="D1" value="1333.9858639732583" />
-      <entry key="W1" value="7499.493497662806" />
+      <entry key="MS100" value="0.9265880618903709" />
+      <entry key="MS500" value="0.9848681837067224" />
+      <entry key="S2" value="1.2140881125958611" />
+      <entry key="S5" value="4.619663480012533" />
+      <entry key="S10" value="11.984349374965836" />
+      <entry key="S30" value="26.24722316245158" />
+      <entry key="S60" value="34.326953071340206" />
+      <entry key="M2" value="43.10529665653987" />
+      <entry key="M5" value="53.48188368261272" />
+      <entry key="M10" value="58.61628882476103" />
+      <entry key="M15" value="60.59580719970263" />
+      <entry key="M30" value="63.51791469391696" />
+      <entry key="H1" value="76.43119280586988" />
+      <entry key="H2" value="125.06391930808606" />
+      <entry key="H4" value="228.65039086599896" />
+      <entry key="D1" value="1368.7076206059226" />
+      <entry key="W1" value="7534.273250179369" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -292,6 +290,19 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="99" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs</url>
+          <line>1024</line>
+          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\BendingService.cs" containingFunctionPresentation="Method 'ExportDataToWSNotBend'">
+            <startOffsets>
+              <option value="40174" />
+            </startOffsets>
+            <endOffsets>
+              <option value="40244" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="102" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
