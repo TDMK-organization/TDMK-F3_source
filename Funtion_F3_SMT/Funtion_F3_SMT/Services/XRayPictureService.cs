@@ -85,7 +85,7 @@ namespace OK2SHIP_SMT.Services
 
             DataTable resDataTable = _dbContext.GetTableStructure(_NAME_SQL + "_NAS");
             NasRepository nas = new NasRepository();
-            string location = nas.HandleImageDataTable(dataTable, _NAME_SQL, itemCode, lotNo);
+            string location = nas.HandleImageDataTable(dataTable, $"{_NAME_SQL}\\{maker}\\{type}", itemCode, lotNo);
 
             DataRow dr = resDataTable.NewRow();
             dr["ItemCode"] = itemCode;
@@ -228,8 +228,21 @@ namespace OK2SHIP_SMT.Services
             return dataTable;
         }
 
+        public string switchCategory(string category)
+        {
+            switch (category)
+            {
+                case "Heat soak and Flex bend":
+                    return "Heat Soak And Bend";
+                case "Thermal cycling and Flex bending":
+                    return "Thermal Cycling And Bend";
+                default:
+                    return category;
+            }
+        }
         public DataTable Load(string itemCode, string lotNo, string maker, string type, bool prime = false)
         {
+            type = switchCategory(type);
             if (string.IsNullOrEmpty(type.Trim()))
             {
                 throw new Exception("Hãy chọn type!");
@@ -255,7 +268,7 @@ namespace OK2SHIP_SMT.Services
                 DataTable res = dataTable;
                 NasRepository _nas = new NasRepository();
                 res = ConverterService.JsonToDataTable(dataTable.Rows[0]["Data"].ToString());
-                _nas.MergeDataTable(res, _NAME_SQL, itemCode, lotNo, dataTable.Rows[0]["Area"].ToString());
+                _nas.MergeDataTable(res, $"{_NAME_SQL}\\{maker}\\{type}", itemCode, lotNo, dataTable.Rows[0]["Area"].ToString());
                 return res;
             }
             else
@@ -269,12 +282,22 @@ namespace OK2SHIP_SMT.Services
         }
 
         public void ExportMultipleMakers(ExcelWorksheet workSheet, string itemCode, string lotNo, List<string> makers,
-            string type, bool prime = false)
+            List<string> listFlexSN
+            , string type, bool prime = false)
         {
             ExportProcess.CleanPhantomDimension(workSheet);
             // 1. Quét tìm template
             IDictionary<string, string> dicTemplate = ExportProcess.FindAddressByText(workSheet,
-                new[] { "Bending 1", "FlexSN", "Sample", "Result" });
+                new[] { "Bending 1", "Flex SN", "Sample", "Result" });
+            // Điền flex SN
+            if (dicTemplate.TryGetValue("Flex SN", out string add))
+            {
+                foreach (string flexSN in listFlexSN)
+                {
+                    add = ExportProcess.AddColumn(add, 1);
+                    workSheet.Cells[add].Value = flexSN;
+                }
+            }
 
             string[] bendingAddresses = dicTemplate["Bending 1"].Split('-');
             string[] resultAddresses = dicTemplate["Result"].Split('-');
@@ -301,6 +324,7 @@ namespace OK2SHIP_SMT.Services
             {
                 string currentMaker = makers[slot];
                 DataTable dt = Load(itemCode, lotNo, currentMaker, type, prime);
+
 
                 var sortedAreaList = dt.AsEnumerable()
                     .Select(row => new { Area = row.Field<string>("Area"), ID = Convert.ToInt32(row["ID"]) })
@@ -437,7 +461,7 @@ namespace OK2SHIP_SMT.Services
                 {
                     // 1. Quét tìm tất cả các vị trí Slot có sẵn trong Template
                     IDictionary<string, string> dicTemplate = ExportProcess.FindAddressByText(workSheet,
-                        new[] { "Bending 1", "FlexSN", "Sample", "Result" });
+                        new[] { "Bending 1", "Flex SN", "Sample", "Result" });
 
                     // Cắt chuỗi để lấy mảng tọa độ của các slot (VD: ["A10", "A30"])
                     string[] bendingAddresses = dicTemplate["Bending 1"].Split('-');
@@ -565,10 +589,21 @@ namespace OK2SHIP_SMT.Services
         }
 
         public void Export(ExcelWorksheet workSheet, string itemCode, string lotNo, string maker, string type,
-            bool prime, int slot)
+            bool prime, int slot, List<String> listSN)
         {
             IDictionary<string, string> dic = ExportProcess.FindAddressByText(workSheet,
-                new[] { "Bending 1", "FlexSN", "Sample", "Result" });
+                new[] { "Bending 1", "Flex SN", "Sample", "Result" });
+
+            // Điền flex SN
+            if (dic.TryGetValue("Flex SN", out string add))
+            {
+                foreach (string flexSN in listSN)
+                {
+                    add = ExportProcess.AddColumn(add, 1);
+                    workSheet.Cells[add].Value = flexSN;
+                }
+            }
+
             dic["Bending 1"] = dic["Bending 1"].Split('-')[slot];
             dic["Result"] = dic["Result"].Split('-')[slot];
             DataTable dt = Load(itemCode, lotNo, maker, type, prime);

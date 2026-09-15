@@ -3200,6 +3200,9 @@ namespace Funtion_F3_SMT
                 }
 
                 insert_columns_other(ws, count_sample, r_end, type, dt_spec, sheet);
+                IDictionary<string, string> dic =
+                    ExportProcess.FindAddressByText(ws, new[] { "Picture", "Graph", "Mode #1" });
+
                 foreach (string spec_region in dt_spec.Rows[0]["Location"].ToString().Split('_'))
                 {
                     if (spec_region != "")
@@ -3209,12 +3212,19 @@ namespace Funtion_F3_SMT
                             DataTable dt_region = lst_Table[reg];
 
                             string[] str_location = spec_region.Split('+');
-                            ExcelRangeBase cell_Pic = ws.Cells[int.Parse(str_location[1].Split(';')[1]),
-                                int.Parse(str_location[1].Split(';')[2]) + 1];
-                            ExcelRangeBase cell_graph = ws.Cells[int.Parse(str_location[2].Split(';')[1]),
-                                int.Parse(str_location[1].Split(';')[2]) + 1];
-                            ExcelRangeBase cell_data = ws.Cells[int.Parse(str_location[3].Split(';')[1]),
-                                int.Parse(str_location[1].Split(';')[2]) + 1];
+
+                            ExcelRangeBase cell_Pic = ws.Cells[ExportProcess.AddColumn(dic["Picture"], 1)];
+                            ExcelRangeBase cell_graph = ws.Cells[ExportProcess.AddColumn(dic["Graph"], 1)];
+                            ExcelRangeBase cell_data =
+                               ws.Cells[ ExportProcess.AddRow(ExportProcess.AddColumn(dic["Mode #1"], 1), -1)];
+
+
+                            // ExcelRangeBase cell_Pic = ws.Cells[int.Parse(str_location[1].Split(';')[1]),
+                            //     int.Parse(str_location[1].Split(';')[2]) + 1];
+                            // ExcelRangeBase cell_graph = ws.Cells[int.Parse(str_location[2].Split(';')[1]),
+                            //     int.Parse(str_location[1].Split(';')[2]) + 1];
+                            // ExcelRangeBase cell_data = ws.Cells[int.Parse(str_location[3].Split(';')[1]),
+                            //     int.Parse(str_location[1].Split(';')[2]) + 1];
 
                             // string spec = get_number_spec2(spec_region.Split('+')[3].Split(';')[0].Split('(')[1].Split(')')[0].Replace(" ", string.Empty).Replace("N", ""));
 

@@ -170,6 +170,7 @@ namespace OK2SHIP_SMT.Services
                         return number;
                     }
                 }
+
                 return int.MaxValue;
             }).ToArray();
 
@@ -517,7 +518,7 @@ namespace OK2SHIP_SMT.Services
             return result;
         }
 
-        public void Save(string itemCode, string lotNo, string maker, int skip) 
+        public void Save(string itemCode, string lotNo, string maker, int skip)
         {
             DataTable dt;
             if (skip == 0 || skip == 1)
@@ -600,7 +601,7 @@ namespace OK2SHIP_SMT.Services
                 }
             }
 
-            if (_dic.Count == 0) return dt; 
+            if (_dic.Count == 0) return dt;
 
             foreach (string s in _dic[_dic.Keys.First()])
             {
@@ -882,7 +883,7 @@ namespace OK2SHIP_SMT.Services
                                 ExportDataToWSNotBend(worksheet, category, slot);
                             }
 
-                            ExcelWorksheet currentIctSheet = worksheet_ICT; 
+                            ExcelWorksheet currentIctSheet = worksheet_ICT;
 
                             if (slot > 0)
                             {
@@ -897,10 +898,15 @@ namespace OK2SHIP_SMT.Services
 
                         try
                         {
-                            if (makers.Count > 0) 
+                            if (makers.Count > 0)
                             {
+                                List<string> listFlexSN = _RESULT[category].Columns.Cast<DataColumn>()
+                                    .Select(col => col.ColumnName)
+                                    .Where(flexSN => !flexSN.Contains("Select") && !flexSN.Contains("Cycle"))
+                                    .ToList();
                                 XRayPictureService service = new XRayPictureService();
-                                service.ExportMultipleMakers(worksheetXray, itemCode, lotNo, makers, category);
+                                service.ExportMultipleMakers(worksheetXray, itemCode, lotNo, makers, listFlexSN,
+                                    category);
                             }
                         }
                         catch (Exception ex)
@@ -910,7 +916,7 @@ namespace OK2SHIP_SMT.Services
 #endif
                         }
 
-                        package.Compression = OfficeOpenXml.CompressionLevel.BestSpeed; 
+                        package.Compression = OfficeOpenXml.CompressionLevel.BestSpeed;
                         process.SaveExcelWorksheet(package, string.Join(":", name), $"{itemCode}-{lotNo}-{category}");
                     }
                 }
@@ -934,7 +940,11 @@ namespace OK2SHIP_SMT.Services
                             name.Add(xraysheet);
                             try
                             {
-                                service.Export(worksheetXray, itemCode, lotNo, maker, category, false, 0);
+                                List<string> listFlexSN = _RESULT[category].Columns.Cast<DataColumn>()
+                                    .Select(col => col.ColumnName)
+                                    .Where(flexSN => !flexSN.Contains("Select") && !flexSN.Contains("Cycle"))
+                                    .ToList();
+                                service.Export(worksheetXray, itemCode, lotNo, maker, category, false, 0, listFlexSN);
                             }
                             catch
                             {
@@ -1045,7 +1055,7 @@ namespace OK2SHIP_SMT.Services
                                 if (row["Cycle"] != DBNull.Value && row["Cycle"].ToString() == cycleZ.ToString())
                                 {
                                     value = row[dt.Columns[i]].ToString();
-                                    break; 
+                                    break;
                                 }
                             }
 
@@ -1170,7 +1180,6 @@ namespace OK2SHIP_SMT.Services
                                         ws.Cells[row, column].Value = value;
                                         if (category == "Heat soak and Flex bend" && valueCycle == "BF")
                                         {
-                                            
                                         }
                                         else
                                         {
@@ -1227,16 +1236,17 @@ namespace OK2SHIP_SMT.Services
             }
 
             Dictionary<string, int> rawCycleCols = new Dictionary<string, int>();
-            
+
             // CỘNG THÊM "BF" VÀO rawCycleCols ĐỂ BẢNG SUMMARY TÍNH ĐƯỢC CỘT BEFORE
-            rawCycleCols["BF"] = col_Before; 
-            int currentCol = col_Before + 1; 
+            rawCycleCols["BF"] = col_Before;
+            int currentCol = col_Before + 1;
 
             while (true)
             {
                 string headerValue = ws.Cells[row_Before, currentCol].Text;
-                if (string.IsNullOrEmpty(headerValue) || headerValue.Contains("%") || headerValue.ToUpper().Contains("RESISTANCE")) 
-                    break; 
+                if (string.IsNullOrEmpty(headerValue) || headerValue.Contains("%") ||
+                    headerValue.ToUpper().Contains("RESISTANCE"))
+                    break;
 
                 int cycle = GetFirstNumber(headerValue);
                 if (cycle > 0)
@@ -1245,6 +1255,7 @@ namespace OK2SHIP_SMT.Services
                     rawCycleCols[$"L{cycle}"] = currentCol;
                 }
                 else break;
+
                 currentCol++;
             }
 
@@ -1253,12 +1264,12 @@ namespace OK2SHIP_SMT.Services
             {
                 string percentAddr = dic["% Resistance change"].Split('-').Last();
                 int percentStartCol = ws.Cells[percentAddr].Start.Column;
-                
+
                 currentCol = percentStartCol;
                 while (true)
                 {
                     string headerValue = ws.Cells[row_Before, currentCol].Text;
-                    if (string.IsNullOrEmpty(headerValue) || headerValue.ToUpper().Contains("JUDGEMENT")) 
+                    if (string.IsNullOrEmpty(headerValue) || headerValue.ToUpper().Contains("JUDGEMENT"))
                         break;
 
                     int cycle = GetFirstNumber(headerValue);
@@ -1268,6 +1279,7 @@ namespace OK2SHIP_SMT.Services
                         percentCycleCols[$"L{cycle}"] = currentCol;
                     }
                     else break;
+
                     currentCol++;
                 }
             }
@@ -1298,8 +1310,8 @@ namespace OK2SHIP_SMT.Services
                         if (selectVal == "YES" || selectVal == "TRUE")
                         {
                             skip++;
-                            int targetRow = row_Sample + skip + 1; 
-                            
+                            int targetRow = row_Sample + skip + 1;
+
                             ws.Cells[targetRow, col_Sample].Value = SampleNO;
                             ws.Cells[targetRow, col_Net].Value = netNo++;
                             ws.Cells[targetRow, col_Flex].Value = row["Flex SN"];
@@ -1309,8 +1321,10 @@ namespace OK2SHIP_SMT.Services
                             ws.Cells[row_Pin2 + skip, col_Pin2].Value = row["Pin2"];
                             ws.Cells[row_Pin2 + skip, col_Pin2 + 1].Value = "yes";
 
-                            if (double.TryParse(row["LSL"]?.ToString(), out double lsl)) ws.Cells[row_LSL + skip, col_LSL].Value = lsl;
-                            if (double.TryParse(row["USL"]?.ToString(), out double usl)) ws.Cells[row_USL + skip, col_USL].Value = usl;
+                            if (double.TryParse(row["LSL"]?.ToString(), out double lsl))
+                                ws.Cells[row_LSL + skip, col_LSL].Value = lsl;
+                            if (double.TryParse(row["USL"]?.ToString(), out double usl))
+                                ws.Cells[row_USL + skip, col_USL].Value = usl;
 
                             double bf = 0;
                             bool hasBf = false;
@@ -1325,15 +1339,15 @@ namespace OK2SHIP_SMT.Services
 
                             string netNameVal = row["Net Name"]?.ToString().ToUpper() ?? "";
                             string sumiNameVal = row["Test Result"]?.ToString().ToUpper() ?? "";
-                            
+
                             // Phân loại: Netname có chứa chữ SUS
                             bool isRowSus = netNameVal.Contains("SUS") || sumiNameVal.Contains("SUS");
 
                             foreach (var kvp in rawCycleCols)
                             {
-                                string colName = kvp.Key;      
-                                int rawColIndex = kvp.Value;   
-                                
+                                string colName = kvp.Key;
+                                int rawColIndex = kvp.Value;
+
                                 if (row.Table.Columns.Contains(colName) &&
                                     double.TryParse(row[colName]?.ToString(), out double cycleVal))
                                 {
@@ -1341,35 +1355,39 @@ namespace OK2SHIP_SMT.Services
 
                                     if (isRowSus)
                                     {
-                                        if (!susNetValues.ContainsKey(colName)) susNetValues[colName] = new List<double>();
+                                        if (!susNetValues.ContainsKey(colName))
+                                            susNetValues[colName] = new List<double>();
                                         susNetValues[colName].Add(cycleVal);
                                     }
                                     else
                                     {
-                                        if (!allNetValues.ContainsKey(colName)) allNetValues[colName] = new List<double>();
+                                        if (!allNetValues.ContainsKey(colName))
+                                            allNetValues[colName] = new List<double>();
                                         allNetValues[colName].Add(cycleVal);
                                     }
 
                                     if (hasBf && percentCycleCols.TryGetValue(colName, out int percentColIndex))
                                     {
                                         var percentCell = ws.Cells[targetRow, percentColIndex];
-                                        percentCell.Formula = ""; 
-                                        
+                                        percentCell.Formula = "";
+
                                         if (bf != 0)
                                         {
                                             double percentChange = (cycleVal - bf) / bf;
                                             percentCell.Value = percentChange;
-                                            percentCell.Style.Numberformat.Format = "0.00%"; 
+                                            percentCell.Style.Numberformat.Format = "0.00%";
                                             hasCalc = true;
 
                                             if (isRowSus)
                                             {
-                                                if (!susNetPercents.ContainsKey(colName)) susNetPercents[colName] = new List<double>();
+                                                if (!susNetPercents.ContainsKey(colName))
+                                                    susNetPercents[colName] = new List<double>();
                                                 susNetPercents[colName].Add(percentChange);
                                             }
                                             else
                                             {
-                                                if (!allNetPercents.ContainsKey(colName)) allNetPercents[colName] = new List<double>();
+                                                if (!allNetPercents.ContainsKey(colName))
+                                                    allNetPercents[colName] = new List<double>();
                                                 allNetPercents[colName].Add(percentChange);
                                             }
 
@@ -1380,7 +1398,7 @@ namespace OK2SHIP_SMT.Services
                                         }
                                         else
                                         {
-                                            percentCell.Value = ""; 
+                                            percentCell.Value = "";
                                         }
                                     }
                                 }
@@ -1389,16 +1407,17 @@ namespace OK2SHIP_SMT.Services
                             if (col_Judge != -1)
                             {
                                 var judgeCell = ws.Cells[targetRow, col_Judge];
-                                judgeCell.Formula = ""; 
-                                
+                                judgeCell.Formula = "";
+
                                 if (hasCalc)
                                 {
-                                    judgeCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid; 
+                                    judgeCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
 
                                     if (!isOver10Percent)
                                     {
                                         judgeCell.Value = "Pass-resistance change is within ±10%.";
-                                        judgeCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(198, 239, 206));
+                                        judgeCell.Style.Fill.BackgroundColor.SetColor(
+                                            System.Drawing.Color.FromArgb(198, 239, 206));
                                         judgeCell.Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(0, 97, 0));
                                     }
                                     else
@@ -1407,14 +1426,19 @@ namespace OK2SHIP_SMT.Services
                                         if (isBending && !isRowSus)
                                         {
                                             judgeCell.Value = "Resistance change over ±10%";
-                                            judgeCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(255, 235, 156)); 
-                                            judgeCell.Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(156, 87, 0)); 
+                                            judgeCell.Style.Fill.BackgroundColor.SetColor(
+                                                System.Drawing.Color.FromArgb(255, 235, 156));
+                                            judgeCell.Style.Font.Color.SetColor(
+                                                System.Drawing.Color.FromArgb(156, 87, 0));
                                         }
                                         else
                                         {
-                                            judgeCell.Value = "Pass following Sumitomo spec-resistance change is outside ±10%.";
-                                            judgeCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(198, 239, 206));
-                                            judgeCell.Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(0, 97, 0));
+                                            judgeCell.Value =
+                                                "Pass following Sumitomo spec-resistance change is outside ±10%.";
+                                            judgeCell.Style.Fill.BackgroundColor.SetColor(
+                                                System.Drawing.Color.FromArgb(198, 239, 206));
+                                            judgeCell.Style.Font.Color.SetColor(
+                                                System.Drawing.Color.FromArgb(0, 97, 0));
                                         }
                                     }
                                 }
@@ -1444,13 +1468,13 @@ namespace OK2SHIP_SMT.Services
                     for (int c = 1; c <= 15; c++)
                     {
                         string cellText = ws.Cells[r, c].Text?.ToUpper() ?? "";
-                        
+
                         // Tìm bảng All nets (Có chữ ALL NETS và có chữ EXCLUDE để đảm bảo lấy đúng cụm từ "exclude SUS net")
                         if (summaryRowStart == -1 && cellText.Contains("ALL NETS") && cellText.Contains("EXCLUDE"))
                         {
                             summaryRowStart = r;
                         }
-                        
+
                         // Tìm bảng SUS net (Có chữ SUS NET nhưng TUYỆT ĐỐI KHÔNG ĐƯỢC có chữ EXCLUDE)
                         if (susRowStart == -1 && cellText.Contains("SUS NET") && !cellText.Contains("EXCLUDE"))
                         {
@@ -1459,7 +1483,8 @@ namespace OK2SHIP_SMT.Services
                     }
                 }
 
-                void FillSummaryBlock(int startRow, Dictionary<string, List<double>> valDict, Dictionary<string, List<double>> perDict)
+                void FillSummaryBlock(int startRow, Dictionary<string, List<double>> valDict,
+                    Dictionary<string, List<double>> perDict)
                 {
                     if (startRow == -1) return;
 
@@ -1479,9 +1504,9 @@ namespace OK2SHIP_SMT.Services
                         if (valDict.ContainsKey(cycleKey) && valDict[cycleKey].Count > 0)
                         {
                             var list = valDict[cycleKey];
-                            ws.Cells[startRow, colIdx].Value = Math.Round(list.Max(), 3);         
-                            ws.Cells[startRow + 1, colIdx].Value = Math.Round(list.Min(), 3);     
-                            ws.Cells[startRow + 2, colIdx].Value = Math.Round(list.Average(), 3); 
+                            ws.Cells[startRow, colIdx].Value = Math.Round(list.Max(), 3);
+                            ws.Cells[startRow + 1, colIdx].Value = Math.Round(list.Min(), 3);
+                            ws.Cells[startRow + 2, colIdx].Value = Math.Round(list.Average(), 3);
                         }
                         else
                         {
@@ -1500,13 +1525,13 @@ namespace OK2SHIP_SMT.Services
                         if (perDict.ContainsKey(cycleKey) && perDict[cycleKey].Count > 0)
                         {
                             var list = perDict[cycleKey];
-                            
+
                             var maxCell = ws.Cells[startRow, colIdx];
-                            maxCell.Value = list.Max();
+                            maxCell.Value = list.OrderByDescending(x => Math.Abs(x)).First();
                             maxCell.Style.Numberformat.Format = "0.00%";
 
                             var minCell = ws.Cells[startRow + 1, colIdx];
-                            minCell.Value = list.Min();
+                            minCell.Value = list.OrderByDescending(x => Math.Abs(x)).Last();
                             minCell.Style.Numberformat.Format = "0.00%";
 
                             var averCell = ws.Cells[startRow + 2, colIdx];
@@ -1536,9 +1561,9 @@ namespace OK2SHIP_SMT.Services
             }
             catch (Exception ex)
             {
-                #if DEBUG
+#if DEBUG
                 Debugger.Break();
-                #endif
+#endif
             }
         }
 

@@ -14,11 +14,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79693909-c6be-4431-90a9-36eba68f2a7a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_export_file_le_EPPlus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_export_file_le_EPPlus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.Designer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/XRayPictureService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/XRayPictureService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA/CraftSynth.ImageEditor.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA/CraftSynth.ImageEditor.dll" afterDir="false" />
     </list>
@@ -31,7 +31,7 @@
     <option name="firstShow" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="3" />
+    <option name="cachedIndexableFilesCount" value="317" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -107,61 +107,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0000010603597707" />
-      <entry key="S2" value="1.1091054608762507" />
-      <entry key="S5" value="2.4780193803296884" />
-      <entry key="S10" value="4.622332025005161" />
-      <entry key="S30" value="7.634934301391064" />
-      <entry key="S60" value="8.726062765720528" />
-      <entry key="M2" value="9.338353078124886" />
-      <entry key="M5" value="9.769850664949438" />
-      <entry key="M10" value="11.097982794571326" />
-      <entry key="M15" value="14.54309681939227" />
-      <entry key="M30" value="31.90893783887173" />
-      <entry key="H1" value="63.69099626477466" />
-      <entry key="H2" value="98.95489979354123" />
-      <entry key="H4" value="163.54138648425896" />
-      <entry key="D1" value="1039.897026407155" />
-      <entry key="W1" value="5773.712155475157" />
+      <entry key="MS100" value="9.511286372808841E-5" />
+      <entry key="MS500" value="0.1569089989103304" />
+      <entry key="S2" value="0.6293785867524289" />
+      <entry key="S5" value="0.8309306718688981" />
+      <entry key="S10" value="0.9117738350370034" />
+      <entry key="S30" value="1.3285141430168452" />
+      <entry key="S60" value="3.775979511319662" />
+      <entry key="M2" value="9.077176801697197" />
+      <entry key="M5" value="16.483347745628315" />
+      <entry key="M10" value="20.26834336377166" />
+      <entry key="M15" value="21.735178611148125" />
+      <entry key="M30" value="24.00302254900338" />
+      <entry key="H1" value="34.905339701032226" />
+      <entry key="H2" value="75.75195395145289" />
+      <entry key="H4" value="160.50998830271877" />
+      <entry key="D1" value="1043.6045477593937" />
+      <entry key="W1" value="5812.691645708542" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.1114307703890704E-22" />
-      <entry key="MS500" value="4.066085281652897E-5" />
-      <entry key="S2" value="0.07985353027921757" />
-      <entry key="S5" value="0.36384603646684166" />
-      <entry key="S10" value="0.6031965156288966" />
-      <entry key="S30" value="0.8449278164493512" />
-      <entry key="S60" value="0.9191995520284868" />
-      <entry key="M2" value="0.9587490994553698" />
-      <entry key="M5" value="0.9871587015674805" />
-      <entry key="M10" value="1.18271052991462" />
-      <entry key="M15" value="1.8653396668983189" />
-      <entry key="M30" value="5.876993016733642" />
-      <entry key="H1" value="13.691502072112344" />
-      <entry key="H2" value="22.725569090000274" />
-      <entry key="H4" value="41.319551752979606" />
-      <entry key="D1" value="307.51003529467715" />
-      <entry key="W1" value="1694.9231995336816" />
+      <entry key="MS100" value="1.0000000000015403" />
+      <entry key="MS500" value="1.0045404741148427" />
+      <entry key="S2" value="1.402431985095062" />
+      <entry key="S5" value="2.2424477132633402" />
+      <entry key="S10" value="2.900204511041069" />
+      <entry key="S30" value="3.583183455408405" />
+      <entry key="S60" value="3.9018065370095587" />
+      <entry key="M2" value="4.242294403798237" />
+      <entry key="M5" value="4.6161675173452" />
+      <entry key="M10" value="4.7907446048095075" />
+      <entry key="M15" value="4.857050809247482" />
+      <entry key="M30" value="5.039684784748787" />
+      <entry key="H1" value="6.85241429855595" />
+      <entry key="H2" value="14.597281305088464" />
+      <entry key="H4" value="33.41326837778544" />
+      <entry key="D1" value="290.3879303499461" />
+      <entry key="W1" value="1686.8088816357224" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.7120250977985358" />
-      <entry key="MS500" value="0.9343412600439663" />
-      <entry key="S2" value="1.148903677687548" />
-      <entry key="S5" value="2.771421838409399" />
-      <entry key="S10" value="5.155260649349981" />
-      <entry key="S30" value="8.440800093297534" />
-      <entry key="S60" value="9.622932712995299" />
-      <entry key="M2" value="10.285153772715901" />
-      <entry key="M5" value="10.751971822398389" />
-      <entry key="M10" value="12.276945610289834" />
-      <entry key="M15" value="16.403385833075323" />
-      <entry key="M30" value="37.77702142290204" />
-      <entry key="H1" value="77.37253899412455" />
-      <entry key="H2" value="121.67255767441873" />
-      <entry key="H4" value="204.85445465609308" />
-      <entry key="D1" value="1347.400133916647" />
-      <entry key="W1" value="7468.628275985676" />
+      <entry key="MS100" value="2.5481212132660494E-4" />
+      <entry key="MS500" value="0.24120767134738857" />
+      <entry key="S2" value="1.3736239932527086" />
+      <entry key="S5" value="2.6029653072513357" />
+      <entry key="S10" value="3.498452852087484" />
+      <entry key="S30" value="4.77701931718921" />
+      <entry key="S60" value="7.5943096978064135" />
+      <entry key="M2" value="13.263753824000693" />
+      <entry key="M5" value="21.06985227093523" />
+      <entry key="M10" value="25.042409554774334" />
+      <entry key="M15" value="26.58063601147275" />
+      <entry key="M30" value="29.036511949713574" />
+      <entry key="H1" value="41.75345112926559" />
+      <entry key="H2" value="90.34457433695549" />
+      <entry key="H4" value="193.918072486935" />
+      <entry key="D1" value="1333.9858639732583" />
+      <entry key="W1" value="7499.493497662806" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -178,28 +178,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.Funtion_F3_SMT.executor": "Debug",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "XThreadsFramesViewSplitterKey": "0.317757",
-    "cidr.known.project.marker": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.editor"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.Funtion_F3_SMT.executor&quot;: &quot;Debug&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.317757&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Funtion_F3_SMT" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -279,6 +279,19 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="90" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs</url>
+          <line>906</line>
+          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\BendingService.cs" containingFunctionPresentation="Method 'Export'">
+            <startOffsets>
+              <option value="34016" />
+            </startOffsets>
+            <endOffsets>
+              <option value="34070" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="99" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
