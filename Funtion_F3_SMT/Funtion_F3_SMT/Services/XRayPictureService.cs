@@ -180,7 +180,8 @@ namespace OK2SHIP_SMT.Services
             dataTable.Columns.Add("ProductID");
             dataTable.Columns.Add("Type");
             dataTable.Columns.Add("Image", typeof(byte[]));
-            string[] listSubFolder = FileFolderRepository.GetSubFolders(location);
+            List<string> listSubFolder = FileFolderRepository.GetSubFolders(location).ToList();
+            listSubFolder.Add(location);
             foreach (string subFolderLocation in listSubFolder)
             {
                 string[] listFile = FileFolderRepository.GetFileByExtension(subFolderLocation, "png");
@@ -269,6 +270,10 @@ namespace OK2SHIP_SMT.Services
                 NasRepository _nas = new NasRepository();
                 res = ConverterService.JsonToDataTable(dataTable.Rows[0]["Data"].ToString());
                 _nas.MergeDataTable(res, $"{_NAME_SQL}\\{maker}\\{type}", itemCode, lotNo, dataTable.Rows[0]["Area"].ToString());
+                res.AsEnumerable()
+                    .OrderBy(row => int.Parse(row.Field<string>("PT").Replace("PT", "")))
+                    .ThenBy(row => int.Parse(row.Field<string>("ID")))
+                    .CopyToDataTable();
                 return res;
             }
             else

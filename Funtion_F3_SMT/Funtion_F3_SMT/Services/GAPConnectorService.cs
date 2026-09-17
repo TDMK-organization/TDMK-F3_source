@@ -210,7 +210,7 @@ namespace OK2SHIP_SMT.Services
                                         double.TryParse(data[indexY - 1]?.ToString(), out floatValueY))
                                     {
                                         // Nếu thành công, gán giá trị int (Excel sẽ hiểu đây là số)
-                                        ws.Cells[cellAddress].Value = $"{floatValueX} - {floatValueY}";
+                                        ws.Cells[cellAddress].Value = floatValueX - floatValueY;
                                     }
                                     else
                                     {

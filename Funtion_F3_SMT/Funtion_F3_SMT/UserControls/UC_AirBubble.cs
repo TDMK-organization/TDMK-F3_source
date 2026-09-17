@@ -442,9 +442,11 @@ namespace OK2SHIP_SMT.UserControls
                 }
                 else
                 {
-                    dgv_Before.DataSource = _service2._BEFOREIMAGE[$"{_service2._ITEMCODE} - {_service2._LOTNO}"];
+                    string tape = key.Split('-')[0].ToUpper().Trim();
+                    dgv_Before.DataSource = _service2._BEFOREIMAGE[$"{_service2._ITEMCODE} - {_service2._LOTNO} - {tape}"];
                 }
                 FillID(dgv_Before);
+                Makeup(dgv_Before);
                 dgv_custom = new CustomDataGridView(_service2._DIC[key], dicZ);
 
                 tableLayoutPanel11.Controls.Clear();

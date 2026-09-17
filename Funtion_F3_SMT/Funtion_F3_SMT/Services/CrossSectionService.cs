@@ -79,7 +79,6 @@ namespace OK2SHIP_SMT.Services
             List<string> list = new List<string>();
             foreach (DataRow row in dt.Rows)
             {
-                Debugger.Break();
                 string region = row["Region"].ToString();
                 if (spec.TryGetValue(region.ToUpper(), out string valueSpec))
                 {
@@ -185,7 +184,6 @@ namespace OK2SHIP_SMT.Services
             List<string> distinctRegions = dt_data.AsEnumerable()
                 .Select(row => row.Field<string>("Region"))
                 .Distinct()
-                .ToList().Select(x => x != null ? x.Replace("PIN", "").Trim() : x)
                 .ToList();
 
             ExportProcess process = new ExportProcess();
@@ -209,10 +207,6 @@ namespace OK2SHIP_SMT.Services
             foreach (string key in dicAddress.Keys)
             {
                 string z = key;
-                if (key.Contains("NGANG") && !key.Contains("SHIELD"))
-                {
-                    z = $"PIN {key}";
-                }
 
                 List<DataRow> filteredRows = dt_data.AsEnumerable()
                     .Where(row => row.Field<string>("Region").Equals(z))
@@ -335,11 +329,12 @@ namespace OK2SHIP_SMT.Services
                                 int ireal;
                                 switch (ix)
                                 {
+                                    // ỉneal
                                     case 0:
-                                        ireal = 4;
+                                        ireal = 1;
                                         break;
                                     case 1:
-                                        ireal = 0;
+                                        ireal = 4;
                                         break;
 
                                     case 2:
@@ -351,7 +346,7 @@ namespace OK2SHIP_SMT.Services
                                         break;
 
                                     case 4:
-                                        ireal = 1;
+                                        ireal = 0;
                                         break;
 
                                     case 5:
@@ -394,8 +389,37 @@ namespace OK2SHIP_SMT.Services
                         {
                             try
                             {
+                                int ix = 0;
                                 ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddColumn(add, number + 3)],
                                     (byte[])row["Image"], $"{row["NameImage"]}_{number}");
+                                string[] splitData = row["Data"].ToString().Split(';');
+                                while (dic.TryGetValue($"text0_{ix}", out string addPercent))
+                                {
+                                    if (ix >= splitData.Length)
+                                    {
+                                        break;
+                                    }
+
+// Đặt biến cho địa chỉ ô để code dễ đọc hơn
+                                    string targetCell = ExportProcess.AddColumn(addPercent, number + 3);
+
+// Thử chuyển đổi chuỗi thành số thập phân (double)
+                                    if (double.TryParse(splitData[ix], out double parsedNumber))
+                                    {
+                                        // Làm tròn 2 chữ số và gán vào ô
+                                        ws.Cells[targetCell].Value = Math.Round(parsedNumber, 2);
+
+                                        // (Tùy chọn) Định dạng ô Excel để luôn hiển thị đủ 2 chữ số (VD: hiển thị 15.50 thay vì 15.5)
+                                        ws.Cells[targetCell].Style.Numberformat.Format = "0.00";
+                                    }
+                                    else
+                                    {
+                                        // Nếu dữ liệu không phải là số (ví dụ: bị rỗng, hoặc chữ "N/A"), cứ ghi chuỗi gốc vào
+                                        ws.Cells[targetCell].Value = "N/A";
+                                    }
+
+                                    ix++;
+                                }
                             }
                             catch (Exception ex)
                             {

@@ -825,7 +825,7 @@ namespace OK2SHIP_SMT.Services
                     ictsheet = "Thermal Cycling - ICT data";
                     break;
                 case "Thermal shock":
-                    namesheet = "Thermal Shock ";
+                    namesheet = "Thermal Shock";
                     ictsheet = "Thermal Shock - ICT data";
                     break;
 

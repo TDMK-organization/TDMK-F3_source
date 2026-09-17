@@ -5277,15 +5277,21 @@ namespace Funtion_F3_SMT
                         }
                     }
 
-                    if (check_enough_data(dgv_Analysis) && chk_)
+                    try
                     {
-                        lbl_judge.Text = "OK";
-                        lbl_judge.BackColor = Color.Green;
+                        if (check_enough_data(dgv_Analysis) && chk_)
+                        {
+                            lbl_judge.Text = "OK";
+                            lbl_judge.BackColor = Color.Green;
+                        }
+                        else
+                        {
+                            lbl_judge.Text = "NG";
+                            lbl_judge.BackColor = Color.Red;
+                        }
                     }
-                    else
+                    catch
                     {
-                        lbl_judge.Text = "NG";
-                        lbl_judge.BackColor = Color.Red;
                     }
 
                     myCode.Disable_Sort_DGV(dgv_Analysis);
@@ -5438,13 +5444,13 @@ namespace Funtion_F3_SMT
                             case "GAP_CONNECTOR":
                                 try
                                 {
-
                                     Check_spec_GAP(dgv_Analysis, sheet);
                                 }
                                 catch
                                 {
                                     MessageBox.Show("Error Check spec");
                                 }
+
                                 break;
                         }
                     }
@@ -5453,22 +5459,35 @@ namespace Funtion_F3_SMT
                     bool chk_ = true;
                     for (int i = 0; i < dgv_Analysis.Rows.Count; i++)
                     {
-                        if (dgv_Analysis.Rows[i].Cells["Data"].Style.BackColor == Color.Red)
+                        try
                         {
-                            chk_ = false;
+                            if (dgv_Analysis.Rows[i].Cells["Data"].Style.BackColor == Color.Red)
+                            {
+                                chk_ = false;
+                                break;
+                            }
+                        }
+                        catch
+                        {
                             break;
                         }
                     }
 
-                    if (check_enough_data(dgv_Analysis) && chk_)
+                    try
                     {
-                        lbl_judge.Text = "OK";
-                        lbl_judge.BackColor = Color.Green;
+                        if (check_enough_data(dgv_Analysis) && chk_)
+                        {
+                            lbl_judge.Text = "OK";
+                            lbl_judge.BackColor = Color.Green;
+                        }
+                        else
+                        {
+                            lbl_judge.Text = "NG";
+                            lbl_judge.BackColor = Color.Red;
+                        }
                     }
-                    else
+                    catch
                     {
-                        lbl_judge.Text = "NG";
-                        lbl_judge.BackColor = Color.Red;
                     }
 
                     btnEdit.Visible = true;
@@ -7193,6 +7212,7 @@ namespace Funtion_F3_SMT
                 MessageBox.Show(ex.Message);
                 return;
             }
+
             DataTable dt_spec = new DataTable();
             //DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, sheet, cb_Type.SelectedItem.ToString() }));
             if (cb_Type.SelectedItem.ToString().Contains("MASS"))
@@ -7513,7 +7533,8 @@ namespace Funtion_F3_SMT
                     {
                         chk = true;
                     }
-                    else if ((sheet == "CROSS_SECTION" || sheet == "GAP_CONNECTOR") && (cbStatus.Text == "Shield b2b" || cbStatus.Text == "Clip"))
+                    else if ((sheet == "CROSS_SECTION" || sheet == "GAP_CONNECTOR") &&
+                             (cbStatus.Text == "Shield b2b" || cbStatus.Text == "Clip"))
                     {
                         string[] f_name =
                             Path.GetFileNameWithoutExtension(txtLogfile.Text).TrimEnd(new char[] { ',', '.', ' ' })
@@ -12959,19 +12980,19 @@ namespace Funtion_F3_SMT
                     if (sheet == "CROSS_SECTION")
                     {
                         CrossSectionService.Export(txtItemCode.Text, txtLotNo.Text);
-                    return;
+                        return;
                     }
-
                 }
+
                 if (cbStatus.Text == "Shield b2b")
                 {
                     if (sheet == "GAP_CONNECTOR")
                     {
                         GAPConnectorService.Export(txtItemCode.Text, txtLotNo.Text);
-                    return;
+                        return;
                     }
-
                 }
+
                 if (cbStatus.Text == "Clip")
                 {
                     if (sheet == "CROSS_SECTION")

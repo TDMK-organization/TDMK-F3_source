@@ -273,51 +273,65 @@ namespace OK2SHIP_SMT.Services
                     case "BF":
                     case "LINER TRUOC KEO":
                     case "ANH BF":
-                        List<KeyValuePair<Image, string>> listIamge =
-                            FileFolderRepository.ListAllPictureInAFolder(locationItem, ".jpg");
-                        listIamge.Sort(delegate(KeyValuePair<Image, string> item1, KeyValuePair<Image, string> item2)
+                        string[] listSUBFolder = FileFolderRepository.GetSubFolders(locationItem);
+                        foreach (string item in listSUBFolder)
                         {
-                            if (int.TryParse(item1.Value.Split('.')[0], out int num1) &&
-                                int.TryParse(item2.Value.Split('.')[0], out int num2))
+                            string nameFolder = FileFolderRepository.GetFolderName(item);
+                            if (nameFolder.ToUpper().Contains("TAPE"))
                             {
-                                return num1 > num2 ? 1 : -1;
-                            }
-                            else
-                            {
-                                return -1;
-                            }
-                        });
-                        int i = 1;
-                        string key = $"{_ITEMCODE} - {_LOTNO}";
+                                string tapename = nameFolder.ToUpper().Replace("TAPE", "").Replace(" ", "");
+                                if (int.TryParse(tapename, out int tapeNum))
+                                {
+                                    string tape = $"TAPE {tapeNum}";
+                                    List<KeyValuePair<Image, string>> listIamge =
+                                        FileFolderRepository.ListAllPictureInAFolder(item, ".jpg");
+                                    listIamge.Sort(delegate(KeyValuePair<Image, string> item1,
+                                        KeyValuePair<Image, string> item2)
+                                    {
+                                        if (int.TryParse(item1.Value.Split('.')[0], out int num1) &&
+                                            int.TryParse(item2.Value.Split('.')[0], out int num2))
+                                        {
+                                            return num1 > num2 ? 1 : -1;
+                                        }
+                                        else
+                                        {
+                                            return -1;
+                                        }
+                                    });
+                                    int i = 1;
+                                    string key = $"{_ITEMCODE} - {_LOTNO} - {tape}";
 
-                        if (_BEFOREIMAGE.TryGetValue(key, out DataTable dt))
-                        {
-                            foreach (KeyValuePair<Image, string> itemZ in listIamge)
-                            {
-                                DataRow row = dt.NewRow();
-                                row["Id"] = i++;
-                                row["ItemCode"] = _ITEMCODE;
-                                row["LotNo"] = _LOTNO;
-                                row["Picture"] = itemZ.Key;
-                                dt.Rows.Add(row);
-                            }
+                                    if (_BEFOREIMAGE.TryGetValue(key, out DataTable dt))
+                                    {
+                                        foreach (KeyValuePair<Image, string> itemZ in listIamge)
+                                        {
+                                            DataRow row = dt.NewRow();
+                                            row["Id"] = i++;
+                                            row["ItemCode"] = _ITEMCODE;
+                                            row["LotNo"] = _LOTNO;
+                                            row["Picture"] = itemZ.Key;
+                                            dt.Rows.Add(row);
+                                        }
 
-                            _BEFOREIMAGE[key] = dt;
-                        }
-                        else
-                        {
-                            dt = SetUpDT();
-                            foreach (KeyValuePair<Image, string> itemZ in listIamge)
-                            {
-                                DataRow row = dt.NewRow();
-                                row["Id"] = i++;
-                                row["ItemCode"] = _ITEMCODE;
-                                row["LotNo"] = _LOTNO;
-                                row["Picture"] = itemZ.Key;
-                                dt.Rows.Add(row);
-                            }
+                                        _BEFOREIMAGE[key] = dt;
+                                    }
+                                    else
+                                    {
+                                        dt = SetUpDT();
+                                        foreach (KeyValuePair<Image, string> itemZ in listIamge)
+                                        {
+                                            DataRow row = dt.NewRow();
+                                            row["Id"] = i++;
+                                            row["ItemCode"] = _ITEMCODE;
+                                            row["LotNo"] = _LOTNO;
+                                            row["Picture"] = itemZ.Key;
+                                            dt.Rows.Add(row);
+                                        }
 
-                            _BEFOREIMAGE.Add(key, dt);
+                                        _BEFOREIMAGE.Add(key, dt);
+                                    }
+                                }
+                            }
                         }
 
                         break;
@@ -904,25 +918,32 @@ namespace OK2SHIP_SMT.Services
             string location = nas.HandleImageDataTable(dt, "PT_ONPRODUCT", fakeItemCode, _LOTNO);
             string location_spec = nas.HandleImageDataTable(_SPEC[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_SEPC",
                 fakeItemCode, _LOTNO);
-            string location_before = nas.HandleImageDataTable(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"],
-                "PT_ONPRODUCT_BEFOREIMAGE", fakeItemCode, _LOTNO);
+            List<string> beforeList = new List<string>();
+            List<string> beforeDT = new List<string>();
+            foreach (string key in _BEFOREIMAGE.Keys)
+            {
+                if (key.Contains($"{_ITEMCODE} - {_LOTNO}"))
+                {
+                    string location_before = nas.HandleImageDataTable(_BEFOREIMAGE[$"{key}"],
+                        "PT_ONPRODUCT_BEFOREIMAGE", fakeItemCode, $"{key}");
+                    beforeList.Add($"{key}\u2060{location_before}");
+                    beforeDT.Add($"{key}\u2060{ConverterService.DataTableToJson(_BEFOREIMAGE[$"{key}"])}");
+                }
+            }
+
             DataTable dataTable = _dbContext.GetTableStructure("PT_ONPRODUCT_NAS");
             DataRow row = dataTable.NewRow();
             row["ItemCode"] = fakeItemCode;
             row["LotNo"] = _LOTNO;
             row["LocationImage"] = location;
             row["LocationSpec"] = location_spec;
-            row["LoactionBefore"] = location_before;
+            row["LoactionBefore"] = string.Join("\u200F", beforeList);
             row["Data"] = ConverterService.DataTableToJson(dt);
             row["DataSpec"] = ConverterService.DataTableToJson(_SPEC[$"{_ITEMCODE} - {_LOTNO}"]);
-            row["DataBefore"] = ConverterService.DataTableToJson(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"]);
+            row["DataBefore"] = string.Join("\u200F", beforeDT);
             dataTable.Rows.Add(row);
             int res = _dbContext.BuckDataTable(dataTable, "PT_ONPRODUCT_NAS", new[] { "ItemCode", "LotNo" }, null,
                 "ID");
-            //int res = _dbContext.BuckDataTable(dt, "PT_ONPRODUCT", new[] { "ItemCode", "LotNo" }, null, "Id");
-            //res += _dbContext.BuckDataTable(_SPEC[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_SEPC", new[] { "ItemCode", "LotNo" }, null, "Id");
-            //res += _dbContext.BuckDataTable(_BEFOREIMAGE[$"{_ITEMCODE} - {_LOTNO}"], "PT_ONPRODUCT_BEFOREIMAGE", new[] { "ItemCode", "LotNo" }, null, "Id");
-
 
             DataTable dtZ = _dbContext.LoadDataTable("AIR_BUBBLE_REFER", new[] { "ItemCodeRefer", "LotNoRefer" },
                 new[] { fakeItemCode, _LOTNO });
@@ -1014,10 +1035,26 @@ namespace OK2SHIP_SMT.Services
 
                     DataRow rowZ = dataTable.Rows[0];
                     NasRepository _nas = new NasRepository();
-                    DataTable beforeDT = ConverterService.JsonToDataTable(rowZ["DataBefore"].ToString());
-                    _nas.MergeDataTable(beforeDT, "PT_ONPRODUCT_BEFOREIMAGE", ITEMCODE, LOTNO,
-                        rowZ["LoactionBefore"].ToString());
-                    _BEFOREIMAGE.Add(keyZ, beforeDT);
+                    // Xử lý dữ liệu before
+                    string[] value = rowZ["DataBefore"].ToString().Split('\u200F');
+                    Dictionary<string, string> dz = new Dictionary<string, string>();
+                    string[] imgLocation = rowZ["LoactionBefore"].ToString().Split('\u200F');
+                    foreach (string z in imgLocation)
+                    {
+                        string[] split = z.Split('\u2060');
+                        dz.Add(split[0], split[1]);
+                    }
+
+                    foreach (string Z in value)
+                    {
+                        string[] split = Z.Split('\u2060');
+                        DataTable beforeDT = ConverterService.JsonToDataTable(split[1]);
+                        _nas.MergeDataTable(beforeDT, "PT_ONPRODUCT_BEFOREIMAGE", fakeItemCode, $"{split[0]}",
+                            dz[split[0]]
+                        );
+                        _BEFOREIMAGE.Add(split[0], beforeDT);
+                    }
+
                     DataTable specDT = ConverterService.JsonToDataTable(rowZ["DataSpec"].ToString());
                     _nas.MergeDataTable(specDT, "PT_ONPRODUCT_SEPC", ITEMCODE, LOTNO, rowZ["LocationSpec"].ToString());
                     _SPEC.Add(keyZ, specDT);
@@ -1093,7 +1130,8 @@ namespace OK2SHIP_SMT.Services
                 }
             }
         }
-public void SetUpExport1(ExcelWorksheet ws, bool liner = false)
+
+        public void SetUpExport1(ExcelWorksheet ws, bool liner = false)
         {
             List<string> list = new[] { "Tape", "Flex SN", "Sample 32", "CPK" }.ToList();
             string caseZ = "";
@@ -1104,8 +1142,8 @@ public void SetUpExport1(ExcelWorksheet ws, bool liner = false)
             else
             {
                 caseZ = "PSA peeling";
-
             }
+
             list.Add(caseZ);
             IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, list.ToArray());
 
@@ -1114,11 +1152,12 @@ public void SetUpExport1(ExcelWorksheet ws, bool liner = false)
             foreach (var item in dic["Tape"].Split('-'))
             {
                 int r = ws.Cells[item].End.Row;
-                if (r > addBase) 
+                if (r > addBase)
                 {
                     ne.Add(item);
                 }
             }
+
             dic["Tape"] = string.Join("-", ne.ToArray());
             string[] keys = _DIC.Keys.ToArray();
             Dictionary<string, string> listZ = new Dictionary<string, string>();
@@ -1136,20 +1175,19 @@ public void SetUpExport1(ExcelWorksheet ws, bool liner = false)
                     }
                     else
                     {
-
                         listZ.Add(tapeZ, key);
                     }
                 }
                 //}
-
             }
+
             keys = dic["Tape"].Split('-');
 
             for (int i = keys.Length - 1; i >= 0; i--)
             {
                 //Debugger.Break();
                 string tape;
-                if(_TYPE == "Displacement")
+                if (_TYPE == "Displacement")
                 {
                     tape = ws.Cells[keys[i]].Value.ToString().Split('_')[2].Trim();
                 }
@@ -1157,6 +1195,7 @@ public void SetUpExport1(ExcelWorksheet ws, bool liner = false)
                 {
                     tape = ws.Cells[keys[i]].Value.ToString().Split('(', ')')[1].Trim();
                 }
+
                 int z = listZ[tape.ToUpper()].Split(',').Count() - 1;
                 for (int iZ = 0; iZ < z; iZ++)
                 {
@@ -1173,12 +1212,12 @@ public void SetUpExport1(ExcelWorksheet ws, bool liner = false)
 
 
                     string valueTape = ws.Cells[tapeAdd].Value.ToString();
-                    ws.Cells[tapeAdd].Value = $"{valueTape.Split('_')[0]}_{listZ[tape].Split(',')[iZ + 1].Split('-', '_')[1].Trim()} {valueTape.Split('_')[1]}";
-
+                    ws.Cells[tapeAdd].Value =
+                        $"{valueTape.Split('_')[0]}_{listZ[tape].Split(',')[iZ + 1].Split('-', '_')[1].Trim()} {valueTape.Split('_')[1]}";
                 }
-
             }
         }
+
         private void FillData(ExcelWorksheet ws, bool liner)
         {
             List<string> listHelder = new[] { "supplier" }.ToList();
@@ -1254,7 +1293,7 @@ public void SetUpExport1(ExcelWorksheet ws, bool liner = false)
                     icln = icln.Replace("-", " - ");
                     double peakMin = 0, peakMax = 0, averageMin = 0, averageMax = 0;
                     double peakGFMin = 0, peakGFMax = 0, averageGFMin = 0, averageGFMax = 0;
-                    if (_BEFOREIMAGE.TryGetValue(icln, out DataTable valueDT))
+                    if (_BEFOREIMAGE.TryGetValue($"{icln} - {tape.ToUpper()}", out DataTable valueDT))
                     {
                         if (_SPEC.TryGetValue(icln, out DataTable spec))
                         {
@@ -1482,10 +1521,11 @@ public void SetUpExport1(ExcelWorksheet ws, bool liner = false)
                 ws.Cells[ad].Value = $"{ws.Cells[ad].Value.ToString().Replace("TAPE", HandleName(listKey[i]))}";
             }
 
-            ws.Cells[ExportProcess.AddRow(dic["Flex SN"], 1)].Value = $"{ws.Cells[ExportProcess.AddRow(dic["Flex SN"], 1)].Value.ToString().Replace("TAPE", HandleName(listKey[0]))}";
+            ws.Cells[ExportProcess.AddRow(dic["Flex SN"], 1)].Value =
+                $"{ws.Cells[ExportProcess.AddRow(dic["Flex SN"], 1)].Value.ToString().Replace("TAPE", HandleName(listKey[0]))}";
         }
 
-      
+
         private string HandleName(string listKey)
         {
             string[] split = listKey.Split(new[] { '-', '_' });
