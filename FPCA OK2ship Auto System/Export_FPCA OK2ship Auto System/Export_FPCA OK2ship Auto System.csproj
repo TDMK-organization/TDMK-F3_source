@@ -100,8 +100,10 @@
     <Compile Include="Services\PIDService.cs" />
     <Compile Include="Services\ProductIDService.cs" />
     <Compile Include="Services\SEMServices.cs" />
+    <Compile Include="Services\SetupService.cs" />
     <Compile Include="Services\TableOfContentService.cs" />
     <Compile Include="Services\TCHSTSService.cs" />
+    <Compile Include="Services\TDMK_ReportManagerService.cs" />
     <Compile Include="Services\TDMK_services\TDMK_ConverterService.cs" />
     <Compile Include="Services\TDMK_services\TDMK_DictionaryService.cs" />
     <Compile Include="Services\TDMK_services\TDMK_ImageConverter.cs" />
@@ -130,6 +132,36 @@
     </Compile>
     <Compile Include="Views\ExportManager.Designer.cs">
       <DependentUpon>ExportManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReportManager\DBScreen.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ReportManager\DBScreen.Designer.cs">
+      <DependentUpon>DBScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReportManager\ReportManagerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ReportManager\ReportManagerForm.Designer.cs">
+      <DependentUpon>ReportManagerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReportManager\RunProgess.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ReportManager\RunProgess.Designer.cs">
+      <DependentUpon>RunProgess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReportManager\SetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ReportManager\SetupForm.Designer.cs">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReportManager\WorksheetScreen.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ReportManager\WorksheetScreen.Designer.cs">
+      <DependentUpon>WorksheetScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingManual.cs">
       <SubType>Form</SubType>
@@ -165,6 +197,21 @@
     <EmbeddedResource Include="Views\ExportManager.resx">
       <DependentUpon>ExportManager.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\ReportManager\DBScreen.resx">
+      <DependentUpon>DBScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ReportManager\ReportManagerForm.resx">
+      <DependentUpon>ReportManagerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ReportManager\RunProgess.resx">
+      <DependentUpon>RunProgess.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ReportManager\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ReportManager\WorksheetScreen.resx">
+      <DependentUpon>WorksheetScreen.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\SettingManual.resx">
       <DependentUpon>SettingManual.cs</DependentUpon>
     </EmbeddedResource>
@@ -186,8 +233,8 @@
     <Content Include="TDMK.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="AntdUI, Version=2.4.4.0, Culture=neutral, PublicKeyToken=0e24e5118ea3d6af, processorArchitecture=MSIL">
-      <HintPath>..\packages\AntdUI.2.4.4\lib\net48\AntdUI.dll</HintPath>
+    <Reference Include="AntdUI, Version=2.4.11.0, Culture=neutral, PublicKeyToken=0e24e5118ea3d6af, processorArchitecture=MSIL">
+      <HintPath>..\packages\AntdUI.2.4.11\lib\net48\AntdUI.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus, Version=7.7.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.7.7.3\lib\net462\EPPlus.dll</HintPath>

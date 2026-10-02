@@ -22,7 +22,6 @@ using FAI_Export;
 using OK2SHIP_Lib;
 using System.Diagnostics;
 using OfficeOpenXml;
-
 using IniLibs;
 using Export_FPCA_OK2ship_Auto_System.Services;
 using Export_FPCA_OK2ship_Auto_System.Libary;
@@ -32,12 +31,12 @@ using Export_FPCA_OK2ship_Auto_System.Views;
 using OK2SHIP_SMT.Views;
 
 
-
 namespace Export_FPCA_OK2ship_Auto_System
 {
     public partial class Form1 : Form
     {
         private AirBubbleService airService = null;
+
         //public Bending_Export_Lib Bending_Exp = new Bending_Export_Lib();
         public Bending_Export_EPPLUS_Lib Bending_Exp = new Bending_Export_EPPLUS_Lib();
         public TDMK_SQL_Lib TDMK_Code = new TDMK_SQL_Lib();
@@ -73,7 +72,6 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         private void label3_Click(object sender, EventArgs e)
         {
-
         }
 
         private void txtLotNo_TextChanged(object sender, EventArgs e)
@@ -86,10 +84,12 @@ namespace Export_FPCA_OK2ship_Auto_System
             string dr_progress = "";
             if (ItemCode != "" && LotNo != "")
             {
-                DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet, TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo }));
+                DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet,
+                    TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode, LotNo }));
                 if (dt_analysis.Rows.Count > 0)
                 {
-                    string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Sheet")).Distinct().ToArray();
+                    string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Sheet")).Distinct()
+                        .ToArray();
                     string filter = "";
                     foreach (string item in arr_val)
                     {
@@ -99,16 +99,16 @@ namespace Export_FPCA_OK2ship_Auto_System
                             break;
                         }
                     }
+
                     if (filter != "")
                     {
                         dr_progress = "x";
                     }
                 }
             }
+
             return dr_progress;
-
         }
-
 
 
         private void btn_check_Click(object sender, EventArgs e)
@@ -143,25 +143,31 @@ namespace Export_FPCA_OK2ship_Auto_System
                     DataRow dr = dt_sum.NewRow();
                     dr[0] = isheet.Key;
                     dr[1] = isheet.Value;
-                    Dictionary<string, DataTable> dic_data_FAI = FAI_lib.Export_FAI_Batch(sqlcon, txtItemCode.Text, txtLotNo.Text, "NPI");
+                    Dictionary<string, DataTable> dic_data_FAI =
+                        FAI_lib.Export_FAI_Batch(sqlcon, txtItemCode.Text, txtLotNo.Text, "NPI");
 
                     if (sheet == "ACF")
                     {
-                        string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
+                        string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" },
+                            new string[] { txtItemCode.Text, txtLotNo.Text });
                         DataTable dt_wetting = TDMK_Code.Datatable_Filter(sqlcon, "ACF_WETTING", filter_str);
 
-                        DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, "ACF_BONDING", TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text }));
+                        DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, "ACF_BONDING",
+                            TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" },
+                                new string[] { txtItemCode.Text, txtLotNo.Text }));
                         DataTable dt_bonding = new DataTable();
                         if (dt_analysis.Rows.Count > 0)
                         {
-                            string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Remark")).Distinct().ToArray();
+                            string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Remark"))
+                                .Distinct().ToArray();
                             string filter = "";
                             foreach (string item in arr_val)
                             {
                                 if (item.Contains("NPI"))
                                 {
                                     filter = item;
-                                    dt_bonding = dt_analysis.AsEnumerable().Where(r => r.Field<string>("Remark").Contains("NPI")).CopyToDataTable();
+                                    dt_bonding = dt_analysis.AsEnumerable()
+                                        .Where(r => r.Field<string>("Remark").Contains("NPI")).CopyToDataTable();
                                     break;
                                 }
                             }
@@ -170,7 +176,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                         DataTable dt_flatness = TDMK_Code.Datatable_Filter(sqlcon, "ACF_FLATNESS", filter_str);
                         DataTable dt_roughness = TDMK_Code.Datatable_Filter(sqlcon, "Roughness", filter_str);
 
-                        if (dt_wetting.Rows.Count > 0 && dt_bonding.Rows.Count > 0 && dt_flatness.Rows.Count > 0 && dt_roughness.Rows.Count > 0)
+                        if (dt_wetting.Rows.Count > 0 && dt_bonding.Rows.Count > 0 && dt_flatness.Rows.Count > 0 &&
+                            dt_roughness.Rows.Count > 0)
                         {
                             dr_progress = "x";
                         }
@@ -185,7 +192,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                     }
                     else if (sheet.Contains("BENDING"))
                     {
-                        string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
+                        string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" },
+                            new string[] { txtItemCode.Text, txtLotNo.Text });
                         string s = "";
                         switch (isheet.Value.Replace(" ", "").Replace("&", "").ToUpper())
                         {
@@ -200,8 +208,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                             case "HEATSOAKBENDING":
                                 s = "HEAT_SOAK_AND_BEND";
                                 break;
-
                         }
+
                         if (s != "")
                         {
                             DataTable src_tbl = TDMK_Code.Datatable_Filter(sqlcon, s, filter_str);
@@ -210,7 +218,6 @@ namespace Export_FPCA_OK2ship_Auto_System
                                 dr_progress = "x";
                             }
                         }
-
                     }
                     else if (sheet.Contains("UNMATING") && !sheet.Contains("OQC"))
                     {
@@ -220,9 +227,9 @@ namespace Export_FPCA_OK2ship_Auto_System
                         }
                         else
                         {
-                            MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của (IQC Unmating) Pull Test", "Thông báo");
+                            MessageBox.Show(new Form { TopMost = true },
+                                "Chưa nhập ItemCode(NVL) và LotNo(NVL) của (IQC Unmating) Pull Test", "Thông báo");
                         }
-
                     }
                     else if (sheet.Contains("COUPON") && sheet.Contains("LINER"))
                     {
@@ -232,7 +239,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                         }
                         else
                         {
-                            MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC Liner peeling (Coupon)", "Thông báo");
+                            MessageBox.Show(new Form { TopMost = true },
+                                "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC Liner peeling (Coupon)", "Thông báo");
                         }
                     }
                     else if (sheet.Contains("COUPON") && sheet.Contains("PSA"))
@@ -243,7 +251,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                         }
                         else
                         {
-                            MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC PSA peeling (Coupon)", "Thông báo");
+                            MessageBox.Show(new Form { TopMost = true },
+                                "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC PSA peeling (Coupon)", "Thông báo");
                         }
                     }
                     //else if (sheet.Contains("CROSS") || sheet.Contains("GAP"))
@@ -257,12 +266,16 @@ namespace Export_FPCA_OK2ship_Auto_System
                     //        MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode/LOTNO (OK2BUILD) của " + sheet, "Thông báo");
                     //    }
                     //}
-                    else if (lst_auto_new.Contains(isheet.Value.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper()))
+                    else if (lst_auto_new.Contains(isheet.Value.Replace(" ", "").Replace("(", "").Replace(")", "")
+                                 .ToUpper()))
                     {
-                        DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet, TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text }));
+                        DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet,
+                            TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" },
+                                new string[] { txtItemCode.Text, txtLotNo.Text }));
                         if (dt_analysis.Rows.Count > 0)
                         {
-                            string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Sheet")).Distinct().ToArray();
+                            string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Sheet"))
+                                .Distinct().ToArray();
                             string filter = "";
                             foreach (string item in arr_val)
                             {
@@ -272,12 +285,12 @@ namespace Export_FPCA_OK2ship_Auto_System
                                     break;
                                 }
                             }
+
                             if (filter != "")
                             {
                                 dr_progress = "x";
                             }
                         }
-
                     }
                     else if (sheet.Contains("SEM"))
                     {
@@ -317,11 +330,13 @@ namespace Export_FPCA_OK2ship_Auto_System
                             dr_progress = "x";
                         }
                     }
+
                     dr[2] = dr_progress;
                     dr[3] = "";
 
                     dt_sum.Rows.Add(dr);
                 }
+
                 dgv_progress.DataSource = dt_sum;
                 dgv_progress.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 myCode.Disable_Sort_DGV(dgv_progress);
@@ -331,6 +346,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                 MessageBox.Show(new Form { TopMost = true }, "Vui lòng điền đầy đủ thông tin!", "Thông báo");
             }
         }
+
         public void Hide_column(DataGridView dgv, ref bool en_)
         {
             string[] col_hide = { "ItemCode", "LotNo", "Sheet", "Operator", "Time_Update", "Remark" };
@@ -356,12 +372,17 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
 
             en_ = !en_;
-
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             //sqlcon = initial_data("OK2SHIP_SMT", true);
-            lst_auto = new List<string> { "FAI", "Cross section", "GAP Connector", "Peel Test", "(Mating) Pull Test", "(IQC Unmating) Pull Test", "Shear test", "IQC Liner peeling (Coupon)", "IQC PSA peeling (Coupon)", "Flex bending", "Thermal Cycling & bending", "Heat Soak & bending", "ACF" };
+            lst_auto = new List<string>
+            {
+                "FAI", "Cross section", "GAP Connector", "Peel Test", "(Mating) Pull Test", "(IQC Unmating) Pull Test",
+                "Shear test", "IQC Liner peeling (Coupon)", "IQC PSA peeling (Coupon)", "Flex bending",
+                "Thermal Cycling & bending", "Heat Soak & bending", "ACF"
+            };
 
             foreach (string item in lst_auto)
             {
@@ -377,7 +398,6 @@ namespace Export_FPCA_OK2ship_Auto_System
             data_loc = za.Read("Format_Folder", "SMT_Config") + $"\\SEEV Data";
             // app_path = System.Windows.Forms.Application.StartupPath; 
             SortedDictionary<int, string> dic_sheet = new SortedDictionary<int, string> { };
-
         }
 
 
@@ -393,7 +413,6 @@ namespace Export_FPCA_OK2ship_Auto_System
                 ItemCode_psa_coupon = arr_info[4];
                 LotNo_psa_coupon = arr_info[5];
             }
-
         }
 
         //public SqlConnection initial_data(string DB_name, bool sa_en)
@@ -449,7 +468,9 @@ namespace Export_FPCA_OK2ship_Auto_System
                     result = string.Format("{0:00000}", Convert.ToInt32(lotno));
                     result = result.Substring(0, 5);
                 }
-                catch { }
+                catch
+                {
+                }
             }
             else
             {
@@ -465,6 +486,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                     }
                 }
             }
+
             return result;
         }
 
@@ -492,6 +514,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                 // lst_sheet_export = new List<string> { };
             }
         }
+
         public string find_format(string in_data_loc, string ItemCode)
         {
             string result = "";
@@ -510,7 +533,6 @@ namespace Export_FPCA_OK2ship_Auto_System
                     if (file_xlsx.Length > 0)
                     {
                         result = file_xlsx[0];
-
                     }
                 }
             }
@@ -526,20 +548,25 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 for (int i = 0; i < dgv_progress.Rows.Count; i++)
                 {
-                    if (dgv_progress.Rows[i].Cells["Sheet"].Value.ToString().Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper() == sheet && en_exp == true && dgv_progress.Rows[i].Cells["Progress"].Value.ToString() == "x")
+                    if (dgv_progress.Rows[i].Cells["Sheet"].Value.ToString().Replace(" ", "").Replace("(", "")
+                            .Replace(")", "").ToUpper() == sheet && en_exp == true &&
+                        dgv_progress.Rows[i].Cells["Progress"].Value.ToString() == "x")
                     {
                         dgv_progress.Rows[i].Cells["Export Success"].Style.BackColor = Color.Green;
                         break;
                     }
-                    else if (dgv_progress.Rows[i].Cells["Sheet"].Value.ToString().Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper() == sheet && en_exp == false && dgv_progress.Rows[i].Cells["Progress"].Value.ToString() == "x")
+                    else if (dgv_progress.Rows[i].Cells["Sheet"].Value.ToString().Replace(" ", "").Replace("(", "")
+                                 .Replace(")", "").ToUpper() == sheet && en_exp == false &&
+                             dgv_progress.Rows[i].Cells["Progress"].Value.ToString() == "x")
                     {
                         dgv_progress.Rows[i].Cells["Export Success"].Style.BackColor = Color.Red;
-                        break; ;
+                        break;
+                        ;
                     }
                 }
             }
-
         }
+
         public void Update_dgv_complete_FAI(string sheet, List<string> lst_sht_OK)
         {
             List<string> FAI_keys_lst = new List<string> { "FAI", "SPC", "CPK", "parentheses" };
@@ -547,17 +574,19 @@ namespace Export_FPCA_OK2ship_Auto_System
             for (int i = 0; i < dgv_progress.Rows.Count; i++)
             {
                 string sht = dgv_progress.Rows[i].Cells["Sheet"].Value.ToString();
-                if (FAI_keys_lst.Any(x => sht.Contains(x) && lst_sht_OK.Contains(sht) && dgv_progress.Rows[i].Cells["Progress"].Value.ToString() == "x"))
+                if (FAI_keys_lst.Any(x =>
+                        sht.Contains(x) && lst_sht_OK.Contains(sht) &&
+                        dgv_progress.Rows[i].Cells["Progress"].Value.ToString() == "x"))
                 {
                     dgv_progress.Rows[i].Cells["Export Success"].Style.BackColor = Color.Green;
                 }
-                else if (FAI_keys_lst.Any(x => sht.Contains(x)) && !lst_sht_OK.Contains(sht) && dgv_progress.Rows[i].Cells["Progress"].Value.ToString() == "x")
+                else if (FAI_keys_lst.Any(x => sht.Contains(x)) && !lst_sht_OK.Contains(sht) &&
+                         dgv_progress.Rows[i].Cells["Progress"].Value.ToString() == "x")
                 {
                     dgv_progress.Rows[i].Cells["Export Success"].Style.BackColor = Color.Red;
                 }
             }
         }
-
 
 
         public void resize_column_image(DataGridView dgv, string sheet)
@@ -595,7 +624,6 @@ namespace Export_FPCA_OK2ship_Auto_System
                 }
                 else
                 {
-
                     ((DataGridViewImageColumn)dgv.Columns["Image"]).ImageLayout = DataGridViewImageCellLayout.Zoom;
                     ((DataGridViewImageColumn)dgv.Columns["Image"]).Width = 100;
 
@@ -606,14 +634,15 @@ namespace Export_FPCA_OK2ship_Auto_System
                     {
                         dr.Height = 70;
                     }
-
                 }
             }
         }
+
         public string remove_special_char(string src_str, List<char> remove_char)
         {
             return new string(src_str.Where(x => remove_char.IndexOf(x) == -1).ToArray());
         }
+
         public ExcelPackage open_excel(string file_name)
         {
             ExcelPackage myexcel = null;
@@ -623,8 +652,10 @@ namespace Export_FPCA_OK2ship_Auto_System
                 ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                 myexcel = new ExcelPackage(excel_file);
             }
+
             return myexcel;
         }
+
         public bool CHECK_PEELTEST = false;
 
         private void btn_export_Click(object sender, EventArgs e)
@@ -636,15 +667,19 @@ namespace Export_FPCA_OK2ship_Auto_System
                 {
                     string f_name = Path.GetFileNameWithoutExtension(file_format);
                     string report_folder = Path.Combine(data_loc, "Report", "NPI");
-                    string export_path = Path.Combine(report_folder, f_name + "-" + txtLotNo.Text + Path.GetExtension(file_format));
+                    string export_path = Path.Combine(report_folder,
+                        f_name + "-" + txtLotNo.Text + Path.GetExtension(file_format));
 
                     ExcelWorkbook report_saved = null;
                     ExcelPackage sourcePackage = null;
                     ExcelPackage xlPackage = null;
-                lbl_export:
+                    lbl_export:
                     if (System.IO.File.Exists(export_path))
                     {
-                        DialogResult result = MessageBox.Show(new Form { TopMost = true }, "Báo cáo của " + txtItemCode.Text + "-" + txtLotNo.Text + " đã tồn tại. Bạn có muốn cập nhật không?\nYes: Cập nhật\nNo: Tạo mới\nCancel: Thoát", "Thông báo", MessageBoxButtons.YesNoCancel);
+                        DialogResult result = MessageBox.Show(new Form { TopMost = true },
+                            "Báo cáo của " + txtItemCode.Text + "-" + txtLotNo.Text +
+                            " đã tồn tại. Bạn có muốn cập nhật không?\nYes: Cập nhật\nNo: Tạo mới\nCancel: Thoát",
+                            "Thông báo", MessageBoxButtons.YesNoCancel);
 
                         if (result == DialogResult.Yes)
                         {
@@ -656,12 +691,15 @@ namespace Export_FPCA_OK2ship_Auto_System
                             }
                             catch (Exception ex)
                             {
-                                DialogResult resultz = MessageBox.Show("Hiện tại không thể mở thư mục này để chỉnh sửa bạn có muốn ghi đè không?", "Thông báo", MessageBoxButtons.YesNoCancel);
+                                DialogResult resultz = MessageBox.Show(
+                                    "Hiện tại không thể mở thư mục này để chỉnh sửa bạn có muốn ghi đè không?",
+                                    "Thông báo", MessageBoxButtons.YesNoCancel);
                                 if (resultz == DialogResult.Yes)
                                 {
                                     System.IO.File.Delete(export_path);
                                     goto lbl_export;
                                 }
+
                                 return;
                             }
                         }
@@ -684,7 +722,6 @@ namespace Export_FPCA_OK2ship_Auto_System
                         sourcePackage = new ExcelPackage(new FileInfo(file_format));
                         //sourcePackage.Settings.ImageSettings.PrimaryImageHandler = new OfficeOpenXml.Drawing.GenericImageHandler();
                         report_saved = sourcePackage.Workbook;
-
                     }
 
                     int error_count = 0;
@@ -704,19 +741,24 @@ namespace Export_FPCA_OK2ship_Auto_System
                             }
                         }
                     }
+
                     try
                     {
                         report_saved.ExternalLinks.Clear();
                     }
                     catch
                     {
-
                     }
 
                     //MessageBox.Show(new Form { TopMost = true }, "Đang xuất báo cáo. Vui lòng đợi!", "Thông báo", MessageBoxButtons.OK);
 
                     lst_sheet_export = new List<string> { };
-                    string[] skipSheet = new[] { "Coverpage", "Process Comparison", "Mishandling test", "Rev History", "User Guideline", "Low CPK Action", "Declaration", "Deviation summary", "OQC Test", "ORT-Assy", "Electrical", "Switch Quality", "Process flow", "Process Comparison" };
+                    string[] skipSheet = new[]
+                    {
+                        "Coverpage", "Process Comparison", "Mishandling test", "Rev History", "User Guideline",
+                        "Low CPK Action", "Declaration", "Deviation summary", "OQC Test", "ORT-Assy", "Electrical",
+                        "Switch Quality", "Process flow", "Process Comparison"
+                    };
 
                     foreach (string sheet in cbl_sheet.CheckedItems)
                     {
@@ -725,6 +767,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                             lst_sheet_export.Add(sheet);
                         }
                     }
+
                     List<string> lst_manual_exp = new List<string> { };
                     List<string> lst_auto_exp = new List<string> { };
 
@@ -739,11 +782,11 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                     for (int i = 0; i < dgv_progress.Rows.Count; i++)
                     {
-                        string s = dgv_progress.Rows[i].Cells["Sheet"].Value.ToString().Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper();
+                        string s = dgv_progress.Rows[i].Cells["Sheet"].Value.ToString().Replace(" ", "")
+                            .Replace("(", "").Replace(")", "").ToUpper();
                         if (lst_manual_exp.IndexOf(s) != -1 || lst_auto_exp.IndexOf(s) != -1)
                         {
                             dgv_progress.Rows[i].Cells["Export Success"].Style.BackColor = Color.White;
-
                         }
                         else if (lst_auto_exp.IndexOf("FAI") != -1 && (s.Contains("FAI") || s.Contains("SPC")))
                         {
@@ -755,7 +798,9 @@ namespace Export_FPCA_OK2ship_Auto_System
                         }
                     }
 
-                    DataTable dt_spec_all = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" }, new string[] { txtItemCode.Text, "NPI" }));
+                    DataTable dt_spec_all = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3",
+                        TDMK_Code.filter_str(new string[] { "ItemCode", "Remark" },
+                            new string[] { txtItemCode.Text, "NPI" }));
                     foreach (string item in lst_sheet_export)
                     {
                         if (item != "FAI")
@@ -764,24 +809,29 @@ namespace Export_FPCA_OK2ship_Auto_System
                             //{
                             string sheet = item.Replace(" ", "_").Replace("(", "").Replace(")", "").ToUpper();
                             //DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, sheet, "NPI" }));
-                            DataRow rowZ = dt_spec_all.AsEnumerable().FirstOrDefault(x => x["Sheet"].ToString().Trim().Contains(sheet));
+                            DataRow rowZ = dt_spec_all.AsEnumerable()
+                                .FirstOrDefault(x => x["Sheet"].ToString().Trim().Contains(sheet));
                             DataTable dt_spec = dt_spec_all.Clone();
                             if (rowZ != null)
                             {
                                 dt_spec.ImportRow(rowZ);
                             }
+
                             DataTable Data_all = new DataTable();
-                            string _process = item.Replace("_", "").Replace("-", "").Replace(" ", "").Replace("(", "").Replace(")", "").Replace("&", "").ToUpper();
+                            string _process = item.Replace("_", "").Replace("-", "").Replace(" ", "").Replace("(", "")
+                                .Replace(")", "").Replace("&", "").ToUpper();
                             string mySheet = "";
                             foreach (ExcelWorksheet tg_sht in report_saved.Worksheets)
                             {
-                                string cur_sht_name = tg_sht.Name.ToUpper().Replace("_", "").Replace("-", "").Replace(" ", "").Replace("(", "").Replace(")", "").Replace("&", "");
+                                string cur_sht_name = tg_sht.Name.ToUpper().Replace("_", "").Replace("-", "")
+                                    .Replace(" ", "").Replace("(", "").Replace(")", "").Replace("&", "");
                                 if (_process == cur_sht_name)
                                 {
                                     mySheet = tg_sht.Name;
                                     break;
                                 }
                             }
+
                             if (mySheet != "")
                             {
                                 ExcelWorksheet ws = report_saved.Worksheets[mySheet];
@@ -789,49 +839,56 @@ namespace Export_FPCA_OK2ship_Auto_System
                                 bool export_ok = true;
                                 try
                                 {
-
                                     switch (mySheet.Trim())
                                     {
                                         case "ACF":
                                             string msgACF = "";
-                                            string filter_str = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
-                                            DataTable src_dt = TDMK_Code.Datatable_Filter(sqlcon, "Roughness", filter_str);
+                                            string filter_str = TDMK_Code.filter_str(
+                                                new string[] { "ItemCode", "LotNo" },
+                                                new string[] { txtItemCode.Text, txtLotNo.Text });
+                                            DataTable src_dt =
+                                                TDMK_Code.Datatable_Filter(sqlcon, "Roughness", filter_str);
                                             if (F_expNPI.check_roughness_data(src_dt))
                                             {
-                                                bool chk = F_expNPI.check_cpk_roughness(sqlcon, txtItemCode.Text, txtLotNo.Text);
-                                            lbl_continue_exp:
+                                                bool chk = F_expNPI.check_cpk_roughness(sqlcon, txtItemCode.Text,
+                                                    txtLotNo.Text);
+                                                lbl_continue_exp:
                                                 if (chk)
                                                 {
                                                     try
                                                     {
-
-                                                        F_expNPI.export_ACF_Wetting(ws, txtItemCode.Text, txtLotNo.Text, sqlcon, !cb_legacy.Checked);
+                                                        F_expNPI.export_ACF_Wetting(ws, txtItemCode.Text, txtLotNo.Text,
+                                                            sqlcon, !cb_legacy.Checked);
                                                     }
                                                     catch (Exception ex)
                                                     {
                                                         msgACF += $"ACF WETTING: {ex.Message}";
                                                     }
+
                                                     try
                                                     {
-
-                                                        F_expNPI.Export_ACF_Peel(ws, txtItemCode.Text, txtLotNo.Text, sqlcon, !cb_legacy.Checked);
+                                                        F_expNPI.Export_ACF_Peel(ws, txtItemCode.Text, txtLotNo.Text,
+                                                            sqlcon, !cb_legacy.Checked);
                                                     }
                                                     catch (Exception ex)
                                                     {
                                                         msgACF += $"ACF peel: {ex.Message}";
                                                     }
+
                                                     try
                                                     {
-
-                                                        F_expNPI.Export_ACFFlatness(ws, txtItemCode.Text, txtLotNo.Text, sqlcon, !cb_legacy.Checked);
+                                                        F_expNPI.Export_ACFFlatness(ws, txtItemCode.Text, txtLotNo.Text,
+                                                            sqlcon, !cb_legacy.Checked);
                                                     }
                                                     catch (Exception ex)
                                                     {
                                                         msgACF += $"ACF flatness: {ex.Message}";
                                                     }
+
                                                     try
                                                     {
-                                                        F_expNPI.Export_ACF_Roughness(ws, txtItemCode.Text, txtLotNo.Text, sqlcon, !cb_legacy.Checked);
+                                                        F_expNPI.Export_ACF_Roughness(ws, txtItemCode.Text,
+                                                            txtLotNo.Text, sqlcon, !cb_legacy.Checked);
                                                     }
                                                     catch (Exception ex)
                                                     {
@@ -840,7 +897,9 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                 }
                                                 else
                                                 {
-                                                    if (MessageBox.Show(new Form { TopMost = true }, "Roughness: cpk < 1.33. Tiếp tục xuất dữ liệu ?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                                    if (MessageBox.Show(new Form { TopMost = true },
+                                                            "Roughness: cpk < 1.33. Tiếp tục xuất dữ liệu ?",
+                                                            "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
                                                     {
                                                         chk = true;
                                                         goto lbl_continue_exp;
@@ -849,18 +908,20 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                     {
                                                         export_ok = false;
                                                     }
-
                                                 }
                                             }
                                             else
                                             {
                                                 export_ok = false;
                                             }
+
                                             break;
                                         case "Flex bending":
-                                            if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text, "FLEX_BENDING"))
+                                            if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text,
+                                                    "FLEX_BENDING"))
                                             {
-                                                Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text, txtLotNo.Text, "FLEX_BENDING", mySheet, 20, "NPI", ws);
+                                                Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text,
+                                                    txtLotNo.Text, "FLEX_BENDING", mySheet, 20, "NPI", ws);
                                             }
                                             else
                                             {
@@ -869,9 +930,11 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                                             break;
                                         case "Thermal Cycling & bending":
-                                            if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text, "THERMAL_CYCLING_AND_BEND"))
+                                            if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text,
+                                                    "THERMAL_CYCLING_AND_BEND"))
                                             {
-                                                Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text, txtLotNo.Text, "THERMAL_CYCLING_AND_BEND", mySheet, 20, "NPI", ws);
+                                                Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text,
+                                                    txtLotNo.Text, "THERMAL_CYCLING_AND_BEND", mySheet, 20, "NPI", ws);
                                             }
                                             else
                                             {
@@ -880,9 +943,11 @@ namespace Export_FPCA_OK2ship_Auto_System
 
                                             break;
                                         case "Heat Soak & bending":
-                                            if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text, "HEAT_SOAK_AND_BEND"))
+                                            if (Bending_Exp.check_bending_data(sqlcon, txtItemCode.Text, txtLotNo.Text,
+                                                    "HEAT_SOAK_AND_BEND"))
                                             {
-                                                Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text, txtLotNo.Text, "HEAT_SOAK_AND_BEND", mySheet, 20, "NPI", ws);
+                                                Bending_Exp.Export_Thermal_HeatSoak_Bend_All(sqlcon, txtItemCode.Text,
+                                                    txtLotNo.Text, "HEAT_SOAK_AND_BEND", mySheet, 20, "NPI", ws);
                                             }
                                             else
                                             {
@@ -894,31 +959,38 @@ namespace Export_FPCA_OK2ship_Auto_System
                                             //new PackagingService().ExportToExcel(ws, txtItemCode.Text.Trim());
                                             break;
                                         case "Impedance":
-                                            new ImpedanceService().Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            new ImpedanceService().Export(ws, txtItemCode.Text.Trim(),
+                                                txtLotNo.Text.Trim());
                                             break;
                                         case "SEM BSE & Binarization":
-                                            SEMServices.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            SEMServices.Export(sqlcon, ws, txtItemCode.Text.Trim(),
+                                                txtLotNo.Text.Trim());
                                             break;
                                         case "OQC B2B Mating-Unmating":
-                                            OQCB2BMatingUnmatting.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            OQCB2BMatingUnmatting.Export(sqlcon, ws, txtItemCode.Text.Trim(),
+                                                txtLotNo.Text.Trim());
                                             break;
                                         //case 
                                         case "Table of Contents":
-                                            TableOfContentService.Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            TableOfContentService.Export(sqlcon, ws, txtItemCode.Text.Trim(),
+                                                txtLotNo.Text.Trim());
                                             break;
                                         case "Environment en-durance":
                                             //new EEDService(sqlcon).Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
                                             break;
                                         case "Assy Yield":
-                                            new AssyYieldService(sqlcon).Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            new AssyYieldService(sqlcon).Export(ws, txtItemCode.Text.Trim(),
+                                                txtLotNo.Text.Trim());
                                             break;
                                         case "Bar Code Verification":
-                                            new BarCodeVertification().Export(sqlcon, ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                            new BarCodeVertification().Export(sqlcon, ws, txtItemCode.Text.Trim(),
+                                                txtLotNo.Text.Trim());
                                             break;
                                         case "Air bubble btw Liner-PSA":
                                             if (airService == null)
                                             {
-                                                airService = new AirBubbleService(txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                                airService = new AirBubbleService(txtItemCode.Text.Trim(),
+                                                    txtLotNo.Text.Trim());
                                                 airService.LoadDataRefer();
                                             }
 
@@ -928,18 +1000,22 @@ namespace Export_FPCA_OK2ship_Auto_System
                                         case "Air bubble btw PSA-FPC":
                                             if (airService == null)
                                             {
-                                                airService = new AirBubbleService(txtItemCode.Text.Trim(), txtLotNo.Text.Trim());
+                                                airService = new AirBubbleService(txtItemCode.Text.Trim(),
+                                                    txtLotNo.Text.Trim());
                                                 airService.LoadDataRefer();
                                             }
+
                                             airService.Export(ws, "PSA");
                                             break;
                                         case "Thermal Cycling":
                                         case "Thermal Shock":
                                         case "Heat Soak and Recovery":
-                                            new TCHSTSService().Export(ws, txtItemCode.Text.Trim(), txtLotNo.Text.Trim(), mySheet);
+                                            new TCHSTSService().Export(ws, txtItemCode.Text.Trim(),
+                                                txtLotNo.Text.Trim(), mySheet);
                                             break;
                                         case "X-Ray picture":
-                                            string[] types = new[] { "Flex bending", "Thermal Cycling & bending", "Heat Soak & bending" };
+                                            string[] types = new[]
+                                                { "Flex bending", "Thermal Cycling & bending", "Heat Soak & bending" };
                                             foreach (string type in types)
                                             {
                                                 string nameSheet = "";
@@ -955,53 +1031,68 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                         nameSheet = "X-ray after HS & Bending";
                                                         break;
                                                 }
+
                                                 sourcePackage.Workbook.Worksheets.Add(nameSheet, ws);
                                                 //new XRayPictureService().Export(sourcePackage.Workbook.Worksheets[nameSheet], txtItemCode.Text.Trim(), txtLotNo.Text.Trim(), type);
                                             }
+
                                             sourcePackage.Workbook.Worksheets.Delete(ws);
                                             break;
                                         default:
-                                            string str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text });
+                                            string str_filter = TDMK_Code.filter_str(
+                                                new string[] { "ItemCode", "LotNo" },
+                                                new string[] { txtItemCode.Text, txtLotNo.Text });
                                             if (sheet.Contains("UNMATING"))
                                             {
                                                 if (Itemcode_unmating != "" && LotNo_unmating != "")
                                                 {
-                                                    str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { Itemcode_unmating, LotNo_unmating });
+                                                    str_filter = TDMK_Code.filter_str(
+                                                        new string[] { "ItemCode", "LotNo" },
+                                                        new string[] { Itemcode_unmating, LotNo_unmating });
                                                 }
                                                 else
                                                 {
-                                                    MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của (IQC Unmating) Pull Test", "Thông báo");
+                                                    MessageBox.Show(new Form { TopMost = true },
+                                                        "Chưa nhập ItemCode(NVL) và LotNo(NVL) của (IQC Unmating) Pull Test",
+                                                        "Thông báo");
                                                 }
-
                                             }
                                             else if (sheet.Contains("COUPON") && sheet.Contains("LINER"))
                                             {
                                                 if (ItemCode_liner_coupon != "" && LotNo_liner_coupon != "")
                                                 {
-                                                    str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode_liner_coupon, LotNo_liner_coupon });
+                                                    str_filter = TDMK_Code.filter_str(
+                                                        new string[] { "ItemCode", "LotNo" },
+                                                        new string[] { ItemCode_liner_coupon, LotNo_liner_coupon });
                                                 }
                                                 else
                                                 {
-                                                    MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC Liner peeling (Coupon)", "Thông báo");
+                                                    MessageBox.Show(new Form { TopMost = true },
+                                                        "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC Liner peeling (Coupon)",
+                                                        "Thông báo");
                                                 }
                                             }
                                             else if (sheet.Contains("COUPON") && sheet.Contains("PSA"))
                                             {
                                                 if (ItemCode_psa_coupon != "" && LotNo_psa_coupon != "")
                                                 {
-                                                    str_filter = TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { ItemCode_psa_coupon, LotNo_psa_coupon });
+                                                    str_filter = TDMK_Code.filter_str(
+                                                        new string[] { "ItemCode", "LotNo" },
+                                                        new string[] { ItemCode_psa_coupon, LotNo_psa_coupon });
                                                 }
                                                 else
                                                 {
-                                                    MessageBox.Show(new Form { TopMost = true }, "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC PSA peeling (Coupon)", "Thông báo");
+                                                    MessageBox.Show(new Form { TopMost = true },
+                                                        "Chưa nhập ItemCode(NVL) và LotNo(NVL) của IQC PSA peeling (Coupon)",
+                                                        "Thông báo");
                                                 }
                                             }
                                             else if (sheet.Contains("ON_PRODUCT"))
                                             {
                                                 try
                                                 {
-
-                                                    new PeelTestOnProductService(txtItemCode.Text, txtLotNo.Text).Export(ws, !sheet.Contains("LINER"));
+                                                    new PeelTestOnProductService(txtItemCode.Text, txtLotNo.Text)
+                                                        .Export(ws, !sheet.Contains("LINER"));
                                                     export_ok = true;
                                                     //F_expNPI.export_excel_onproduct(ws, Data_all, dt_spec, sheet, ref export_ok);
                                                 }
@@ -1009,8 +1100,10 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                 {
                                                     throw new Exception(exZ.Message);
                                                 }
+
                                                 break;
                                             }
+
                                             switch (sheet)
                                             {
                                                 case "OQC_B2B_MATING-UNMATING":
@@ -1023,11 +1116,13 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                     break;
                                             }
 
-                                            DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet, str_filter);
+                                            DataTable dt_analysis =
+                                                TDMK_Code.Datatable_Filter(sqlcon, sheet, str_filter);
 
                                             if (dt_analysis.Rows.Count > 0)
                                             {
-                                                string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Sheet")).Distinct().ToArray();
+                                                string[] arr_val = dt_analysis.AsEnumerable()
+                                                    .Select(x => x.Field<string>("Sheet")).Distinct().ToArray();
                                                 string filter = "";
                                                 foreach (string i in arr_val)
                                                 {
@@ -1037,22 +1132,24 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                         break;
                                                     }
                                                 }
+
                                                 if (filter != "")
                                                 {
-                                                    Data_all = dt_analysis.AsEnumerable().Where(r => r.Field<string>("Sheet") == filter).CopyToDataTable();
-
+                                                    Data_all = dt_analysis.AsEnumerable()
+                                                        .Where(r => r.Field<string>("Sheet") == filter)
+                                                        .CopyToDataTable();
                                                 }
                                             }
+
                                             if (Data_all.Rows.Count > 0 && dt_spec.Rows.Count > 0)
                                             {
                                                 try
                                                 {
-
-                                                    PIDService.FillProductID(Data_all, txtItemCode.Text, txtLotNo.Text, sheet);
+                                                    PIDService.FillProductID(Data_all, txtItemCode.Text, txtLotNo.Text,
+                                                        sheet);
                                                 }
                                                 catch
                                                 {
-
                                                 }
 
                                                 int st = 1;
@@ -1061,20 +1158,22 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                     dr["ID"] = st;
                                                     st++;
                                                 }
+
                                                 if (sheet == "GAP_CONNECTOR")
                                                 {
                                                     new GAPConnectorService().Export(ws, Data_all, dt_spec);
                                                 }
                                                 else if (sheet == "CROSS_SECTION")
                                                 {
-                                                    F_expNPI.export_excel_cross_section(txtItemCode.Text, txtLotNo.Text, ws, Data_all, dt_spec, ref export_ok);
-
+                                                    F_expNPI.export_excel_cross_section(txtItemCode.Text, txtLotNo.Text,
+                                                        ws, Data_all, dt_spec, ref export_ok);
                                                 }
                                                 //else if (sheet.Contains("ON_PRODUCT"))
                                                 //{
                                                 //    F_expNPI.export_excel_onproduct(ws, Data_all, dt_spec, sheet, ref export_ok);
                                                 //}
-                                                else if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST" || sheet == "Peel test without SUS")
+                                                else if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" ||
+                                                         sheet == "SHEAR_TEST" || sheet == "Peel test without SUS")
                                                 {
                                                     if (sheet == "PEEL_TEST")
                                                     {
@@ -1083,49 +1182,52 @@ namespace Export_FPCA_OK2ship_Auto_System
                                                             CHECK_PEELTEST = false;
                                                             break;
                                                         }
+
                                                         foreach (DataRow row in Data_all.Rows)
                                                         {
-                                                            string numStr = row["Mode 1: Solder joint crack"].ToString().Trim().Split('%')[0];
+                                                            string numStr = row["Mode 1: Solder joint crack"].ToString()
+                                                                .Trim().Split('%')[0];
                                                             double num = double.Parse(numStr);
                                                             if (num > 50)
                                                             {
                                                                 CHECK_PEELTEST = true;
-                                                                sourcePackage.Workbook.Worksheets.Add("Peel test without SUS", ws);
+                                                                sourcePackage.Workbook.Worksheets.Add(
+                                                                    "Peel test without SUS", ws);
                                                                 break;
                                                             }
                                                         }
                                                     }
-                                                    F_expNPI.export_excel_peel_pull_shear(ws, sheet, Data_all, dt_spec, ref export_ok);
+
+                                                    F_expNPI.export_excel_peel_pull_shear(ws, sheet, Data_all, dt_spec,
+                                                        ref export_ok);
                                                 }
                                                 else if (sheet == "IQC_UNMATING_PULL_TEST")
                                                 {
-                                                    F_expNPI.export_excel_unmating(ws, Data_all, dt_spec, ref export_ok);
+                                                    F_expNPI.export_excel_unmating(ws, Data_all, dt_spec,
+                                                        ref export_ok);
                                                 }
                                                 else
                                                 {
-                                                    F_expNPI.export_excel_coupon(ws, Data_all, dt_spec, sheet, ref export_ok);
+                                                    F_expNPI.export_excel_coupon(ws, Data_all, dt_spec, sheet,
+                                                        ref export_ok);
                                                 }
-
                                             }
                                             else
                                             {
                                                 export_ok = false;
                                             }
-                                            break;
 
+                                            break;
                                     }
 
                                     Update_dgv_complete(item, export_ok);
                                     if (export_ok)
                                         ws.TabColor = Color.Green;
-
                                 }
                                 catch (Exception ex)
                                 {
                                     MessageBox.Show($"{mySheet}: {ex.Message}");
                                 }
-
-
                             }
 
                             //}
@@ -1138,16 +1240,19 @@ namespace Export_FPCA_OK2ship_Auto_System
                         else
                         {
                             bool chk = FAI_lib.Check_FAI_data(txtItemCode.Text, txtLotNo.Text, sqlcon, 1.67);
-                        lbl_export_FAI:
+                            lbl_export_FAI:
                             if (chk)
                             {
                                 List<string> lst_sht_OK = new List<string>();
-                                FAI_lib.Export_FAI_Process(sqlcon, report_saved, txtItemCode.Text, txtLotNo.Text, "NPI", 1.67, ref lst_sht_OK);
+                                FAI_lib.Export_FAI_Process(sqlcon, report_saved, txtItemCode.Text, txtLotNo.Text, "NPI",
+                                    1.67, ref lst_sht_OK);
                                 Update_dgv_complete_FAI(item, lst_sht_OK);
                             }
                             else
                             {
-                                if (MessageBox.Show(new Form { TopMost = true }, "FAI: cpk < 1.67. Tiếp tục xuất dữ liệu ?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                if (MessageBox.Show(new Form { TopMost = true },
+                                        "FAI: cpk < 1.67. Tiếp tục xuất dữ liệu ?", "Thông báo",
+                                        MessageBoxButtons.YesNo) == DialogResult.Yes)
                                 {
                                     chk = true;
                                     goto lbl_export_FAI;
@@ -1159,6 +1264,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                             }
                         }
                     }
+
                     string xlFile_path = Path.Combine(data_loc, "Report", "Report_Manual");
                     if (!System.IO.Directory.Exists(xlFile_path))
                         System.IO.Directory.CreateDirectory(xlFile_path);
@@ -1197,7 +1303,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                 }
                 else
                 {
-                    MessageBox.Show(new Form { TopMost = true }, "Không tìm thấy format " + txtItemCode.Text, "Thông báo");
+                    MessageBox.Show(new Form { TopMost = true }, "Không tìm thấy format " + txtItemCode.Text,
+                        "Thông báo");
                 }
             }
             else
@@ -1210,35 +1317,38 @@ namespace Export_FPCA_OK2ship_Auto_System
         {
             try
             {
-
                 if (CHECK_PEELTEST)
                 {
                     foreach (var ws in package.Workbook.Worksheets)
                     {
                         if (ws.Name.Contains("Peel Test"))
                         {
-
                             int index = ws.Index;
                             package.Workbook.Worksheets.MoveAfter(package.Workbook.Worksheets.Count() - 1, index + 1);
-
                         }
+
                         if (ws.Name.Contains("Peel test without SUS"))
                         {
-                            DataTable data_all = new DBContext().LoadDataTable("PEEL_TEST_WITHOUT_SUS", new[] { "ItemCode", "LotNo" }, new[] { txtItemCode.Text, txtLotNo.Text });
+                            DataTable data_all = new DBContext().LoadDataTable("PEEL_TEST_WITHOUT_SUS",
+                                new[] { "ItemCode", "LotNo" }, new[] { txtItemCode.Text, txtLotNo.Text });
                             try
                             {
-                                PIDService.FillProductID(data_all, txtItemCode.Text, txtLotNo.Text, "PEEL_TEST_WITHOUT_SUS");
+                                PIDService.FillProductID(data_all, txtItemCode.Text, txtLotNo.Text,
+                                    "PEEL_TEST_WITHOUT_SUS");
                             }
                             catch
                             {
-
                             }
+
                             if (data_all.Rows.Count <= 0)
                             {
                                 MessageBox.Show("Cần đánh giá peeling without SUS");
                                 return;
                             }
-                            DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3", TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" }, new string[] { txtItemCode.Text, "PEEL_TEST", "NPI" }));
+
+                            DataTable dt_spec = TDMK_Code.Datatable_Filter(sqlcon, "SPEC_COMMENT_3",
+                                TDMK_Code.filter_str(new string[] { "ItemCode", "Sheet", "Remark" },
+                                    new string[] { txtItemCode.Text, "PEEL_TEST", "NPI" }));
                             bool export_ok = true;
                             F_expNPI.export_excel_peel_pull_shear(ws, ws.Name, data_all, dt_spec, ref export_ok);
                         }
@@ -1247,7 +1357,6 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
             catch
             {
-
             }
         }
 
@@ -1264,15 +1373,21 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 if (dgv_progress.Columns[col_inx].Name == "Sheet")
                 {
-                    string sheet = dgv_progress.Rows[e.RowIndex].Cells["Sheet"].Value.ToString().Replace(" ", "_").Replace("(", "").Replace(")", "").ToUpper();
+                    string sheet = dgv_progress.Rows[e.RowIndex].Cells["Sheet"].Value.ToString().Replace(" ", "_")
+                        .Replace("(", "").Replace(")", "").ToUpper();
 
                     DataTable Data_all = new DataTable();
-                    if (sheet != "ACF" && !sheet.Contains("BENDING") && sheet != "FAI" && lst_auto_new.Contains(dgv_progress.Rows[e.RowIndex].Cells["Sheet"].Value.ToString().Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper()))
+                    if (sheet != "ACF" && !sheet.Contains("BENDING") && sheet != "FAI" && lst_auto_new.Contains(
+                            dgv_progress.Rows[e.RowIndex].Cells["Sheet"].Value.ToString().Replace(" ", "")
+                                .Replace("(", "").Replace(")", "").ToUpper()))
                     {
-                        DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet, TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" }, new string[] { txtItemCode.Text, txtLotNo.Text }));
+                        DataTable dt_analysis = TDMK_Code.Datatable_Filter(sqlcon, sheet,
+                            TDMK_Code.filter_str(new string[] { "ItemCode", "LotNo" },
+                                new string[] { txtItemCode.Text, txtLotNo.Text }));
                         if (dt_analysis.Rows.Count > 0)
                         {
-                            string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Sheet")).Distinct().ToArray();
+                            string[] arr_val = dt_analysis.AsEnumerable().Select(x => x.Field<string>("Sheet"))
+                                .Distinct().ToArray();
                             string filter = "";
                             foreach (string i in arr_val)
                             {
@@ -1282,10 +1397,11 @@ namespace Export_FPCA_OK2ship_Auto_System
                                     break;
                                 }
                             }
+
                             if (filter != "")
                             {
-                                Data_all = dt_analysis.AsEnumerable().Where(r => r.Field<string>("Sheet") == filter).CopyToDataTable();
-
+                                Data_all = dt_analysis.AsEnumerable().Where(r => r.Field<string>("Sheet") == filter)
+                                    .CopyToDataTable();
                             }
                         }
                         else
@@ -1309,7 +1425,6 @@ namespace Export_FPCA_OK2ship_Auto_System
                             case "HEATSOAKBENDING":
                                 process_name = "HEAT_SOAK_AND_BEND";
                                 break;
-
                         }
                         //if(process_name != "")
                         //{
@@ -1341,10 +1456,9 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         private void lblFAI_Click(object sender, EventArgs e)
         {
-
             Get_Latest_Version(Path.Combine(app_path, "OK2SHIP_Measurements"), "OK2SHIP_Measurements");
-
         }
+
         private void lblBending_Click(object sender, EventArgs e)
         {
             BendingForm form = new BendingForm();
@@ -1354,6 +1468,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 Get_Latest_Version(Path.Combine(app_path, "VHX-IMADA"), "VHX-IMADA", "BENDING");
             }
+
             if (form.PRIME == false)
             {
                 Get_Latest_Version(Path.Combine(app_path, "Bending_Items"), "Bending_Items");
@@ -1362,9 +1477,7 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         private void lblType3_Click(object sender, EventArgs e)
         {
-
             Get_Latest_Version(Path.Combine(app_path, "VHX-IMADA"), "VHX-IMADA");
-
         }
 
 
@@ -1389,6 +1502,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                             v += a;
                         }
                     }
+
                     if (Double.Parse(v) > ver)
                     {
                         ver = Double.Parse(v);
@@ -1424,6 +1538,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             frmsetup.Show();
             // this.Hide();
         }
+
         public Boolean Check_Exist_report_Manual(string sheet, string ItemCode, string LotNo, string tar_folder)
         {
             bool chk = false;
@@ -1433,13 +1548,15 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 if (Path.GetFileName(f).Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper() == sheet)
                 {
-                    string[] list_file = Directory.GetFiles(f, "*.xlsx").Where(s => s.Contains(tar_file_name)).ToArray();
+                    string[] list_file =
+                        Directory.GetFiles(f, "*.xlsx").Where(s => s.Contains(tar_file_name)).ToArray();
                     if (list_file.Length > 0)
                         return true;
 
                     break;
                 }
             }
+
             return chk;
         }
 
@@ -1449,14 +1566,18 @@ namespace Export_FPCA_OK2ship_Auto_System
             string[] folders = System.IO.Directory.GetDirectories(tar_folder);
             string tar_file_name = ItemCode + "-" + LotNo;
             /***************************************************************** Old Version **************************************************************************************/
-            List<string> auto_lst = new List<string>();// { "FAI", "SPC", "CPK", "IPQC", "Recycle", "Materials", "Coverpage", "User Guidelines", "Declaration and Contents" };
+            List<string>
+                auto_lst =
+                    new List<string>(); // { "FAI", "SPC", "CPK", "IPQC", "Recycle", "Materials", "Coverpage", "User Guidelines", "Declaration and Contents" };
             auto_lst = lst_auto;
             List<string> lst_checked_manual = new List<string>();
             foreach (string sheet in cbl_sheet.CheckedItems)
             {
                 lst_checked_manual.Add(sheet.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
             }
-            List<string> lst_ignore = new List<string>() { "Thermal Cycling", "Thermal Shock", "Heat Soak and Recovery" };
+
+            List<string> lst_ignore = new List<string>()
+                { "Thermal Cycling", "Thermal Shock", "Heat Soak and Recovery" };
 
             foreach (ExcelWorksheet wrksheet in myWrkbook.Worksheets)
             {
@@ -1467,14 +1588,19 @@ namespace Export_FPCA_OK2ship_Auto_System
                     string bef_sht_name = myWrkbook.Worksheets[sht_inx - 1].Name;
                     foreach (string c in folders)
                     {
-                        string f_sheet = Path.GetFileName(c).Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper();
-                        if (f_sheet.Contains(sel_tbl.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper().Trim()))
+                        string f_sheet = Path.GetFileName(c).Replace(" ", "").Replace("(", "").Replace(")", "")
+                            .ToUpper();
+                        if (f_sheet.Contains(
+                                sel_tbl.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper().Trim()))
                         {
                             int iz = TDMK_Code.check_exist_list_index(f_sheet, auto_lst);
                             int izz = TDMK_Code.check_exist_list_index(f_sheet, lst_checked_manual);
-                            if (TDMK_Code.check_exist_list_index(f_sheet, auto_lst) == -1 && TDMK_Code.check_exist_list_index(f_sheet, lst_checked_manual) != -1) //new version: if (TDMK_Code.check_exist_list_index(c, ignoredList) != -1)
+                            if (TDMK_Code.check_exist_list_index(f_sheet, auto_lst) == -1 &&
+                                TDMK_Code.check_exist_list_index(f_sheet, lst_checked_manual) !=
+                                -1) //new version: if (TDMK_Code.check_exist_list_index(c, ignoredList) != -1)
                             {
-                                string[] list_file = Directory.GetFiles(c, "*.xlsx").Where(s => s.Contains(tar_file_name)).ToArray();
+                                string[] list_file = Directory.GetFiles(c, "*.xlsx")
+                                    .Where(s => s.Contains(tar_file_name)).ToArray();
                                 if (list_file.Length > 0 && lst_ignore.IndexOf(sel_tbl) == -1)
                                 {
                                     try
@@ -1495,6 +1621,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                     }
                                 }
                             }
+
                             break;
                         }
                     }
@@ -1502,20 +1629,24 @@ namespace Export_FPCA_OK2ship_Auto_System
             }
         }
 
-        public void Export_fromExcel_Manual_ignore(myExcel.Workbook myWrkbook, string ItemCode, string LotNo, string xlFile_path)
+        public void Export_fromExcel_Manual_ignore(myExcel.Workbook myWrkbook, string ItemCode, string LotNo,
+            string xlFile_path)
         {
             string tar_folder = xlFile_path;
             string[] folders = System.IO.Directory.GetDirectories(tar_folder);
             string tar_file_name = ItemCode + "-" + LotNo;
             /***************************************************************** Old Version **************************************************************************************/
-            List<string> auto_lst = new List<string>();// { "FAI", "SPC", "CPK", "IPQC", "Recycle", "Materials", "Coverpage", "User Guidelines", "Declaration and Contents" };
+            List<string>
+                auto_lst =
+                    new List<string>(); // { "FAI", "SPC", "CPK", "IPQC", "Recycle", "Materials", "Coverpage", "User Guidelines", "Declaration and Contents" };
             auto_lst = lst_auto;
             List<string> lst_checked_manual = new List<string>();
             //foreach (string sheet in cbl_sheet_manual.CheckedItems)
             //{
             //    lst_checked_manual.Add(sheet.Replace(" ", "").Replace("(", "").Replace(")", "").ToUpper());
             //}
-            List<string> ignoredList = new List<string>() { "Thermal Cycling", "Thermal Shock", "Heat Soak and Recovery" };
+            List<string> ignoredList = new List<string>()
+                { "Thermal Cycling", "Thermal Shock", "Heat Soak and Recovery" };
 
             myExcel.Application xlsApp = TDMK_Code.StartExcel();
             foreach (myExcel.Worksheet wrksheet in myWrkbook.Sheets)
@@ -1526,9 +1657,11 @@ namespace Export_FPCA_OK2ship_Auto_System
                 {
                     if (c.Contains(sel_tbl.Trim()))
                     {
-                        if (TDMK_Code.check_exist_list_index(c, ignoredList) != -1 && TDMK_Code.check_exist_list_index(c, lst_checked_manual) != -1)
+                        if (TDMK_Code.check_exist_list_index(c, ignoredList) != -1 &&
+                            TDMK_Code.check_exist_list_index(c, lst_checked_manual) != -1)
                         {
-                            string[] list_file = Directory.GetFiles(c, "*.xlsx").Where(s => s.Contains(tar_file_name)).ToArray();
+                            string[] list_file = Directory.GetFiles(c, "*.xlsx").Where(s => s.Contains(tar_file_name))
+                                .ToArray();
                             if (list_file.Length > 0)
                             {
                                 myExcel.Worksheet mywrksheet = myWrkbook.Sheets[sel_tbl];
@@ -1543,6 +1676,7 @@ namespace Export_FPCA_OK2ship_Auto_System
                                 Update_dgv_complete(sel_tbl, true);
                             }
                         }
+
                         break;
                     }
                 }
@@ -1552,12 +1686,10 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         private void GBInfo_Enter(object sender, EventArgs e)
         {
-
         }
 
         private void cbl_sheet_manual_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
 
         private void cbAll_manual_CheckedChanged(object sender, EventArgs e)
@@ -1587,7 +1719,8 @@ namespace Export_FPCA_OK2ship_Auto_System
                 NVL_SP fr1 = new NVL_SP(getval) { TopMost = true };
                 fr1.ItemCodeSMT_ = txtItemCode.Text;
                 fr1.LotNoSMT_ = txtLotNo.Text;
-                fr1.infor_item_lot_ = Itemcode_unmating + "^" + LotNo_unmating + "^" + ItemCode_liner_coupon + "^" + LotNo_liner_coupon + "^" + ItemCode_psa_coupon + "^" + LotNo_psa_coupon;
+                fr1.infor_item_lot_ = Itemcode_unmating + "^" + LotNo_unmating + "^" + ItemCode_liner_coupon + "^" +
+                                      LotNo_liner_coupon + "^" + ItemCode_psa_coupon + "^" + LotNo_psa_coupon;
                 fr1.Show();
             }
             else
@@ -1598,7 +1731,6 @@ namespace Export_FPCA_OK2ship_Auto_System
 
         private void lbltitle_Click(object sender, EventArgs e)
         {
-
         }
 
         private void tabMain_SelectedIndexChanged(object sender, EventArgs e)
@@ -1610,8 +1742,13 @@ namespace Export_FPCA_OK2ship_Auto_System
             ExportManager form = new ExportManager();
 
             form.Show();
+        }
 
 
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            ReportManagerForm form = new ReportManagerForm();
+            form.Show();
         }
     }
 }

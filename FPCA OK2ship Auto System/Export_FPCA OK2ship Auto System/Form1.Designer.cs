@@ -57,6 +57,7 @@
             this.btn_export = new System.Windows.Forms.Button();
             this.spDataView = new System.Windows.Forms.SplitContainer();
             this.ExportManager = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
             this.btn_open = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_progress)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -93,54 +94,11 @@
             // 
             // cbl_sheet
             // 
-            this.cbl_sheet.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbl_sheet.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.cbl_sheet.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbl_sheet.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbl_sheet.FormattingEnabled = true;
-            this.cbl_sheet.Items.AddRange(new object[] {
-            "Coverpage",
-            "Rev History",
-            "User Guideline",
-            "Low CPK Action",
-            "Declaration",
-            "Table of Contents",
-            "Deviation summary",
-            "Assy Yield",
-            "FAI",
-            "OQC Test",
-            "Cross section",
-            "GAP Connector",
-            "Peel Test",
-            "(Mating) Pull Test",
-            "IQC Liner peeling (Coupon)",
-            "IQC PSA peeling (Coupon)",
-            "Shear test",
-            "Liner peel test (On product)",
-            "Air bubble btw Liner-PSA",
-            "PSA peel test (On product)",
-            "Air bubble btw PSA-FPC",
-            "(IQC Unmating) Pull Test",
-            "OQC B2B Mating-Unmating",
-            "ORT-Assy",
-            "Flex bending",
-            "Thermal Cycling & bending",
-            "Heat Soak & bending",
-            "X-Ray picture",
-            "Heat Soak and Recovery",
-            "Thermal Cycling",
-            "Thermal Shock",
-            "Environment en-durance",
-            "Impedance",
-            "Switch Quality",
-            "ACF",
-            "SEM BSE & Binarization",
-            "Bar Code Verification",
-            "Packaging",
-            "Mishandling test",
-            "Process flow",
-            "Process Comparison"});
+            this.cbl_sheet.Items.AddRange(new object[] { "Coverpage", "Rev History", "User Guideline", "Low CPK Action", "Declaration", "Table of Contents", "Deviation summary", "Assy Yield", "FAI", "OQC Test", "Cross section", "GAP Connector", "Peel Test", "(Mating) Pull Test", "IQC Liner peeling (Coupon)", "IQC PSA peeling (Coupon)", "Shear test", "Liner peel test (On product)", "Air bubble btw Liner-PSA", "PSA peel test (On product)", "Air bubble btw PSA-FPC", "(IQC Unmating) Pull Test", "OQC B2B Mating-Unmating", "ORT-Assy", "Flex bending", "Thermal Cycling & bending", "Heat Soak & bending", "X-Ray picture", "Heat Soak and Recovery", "Thermal Cycling", "Thermal Shock", "Environment en-durance", "Impedance", "Switch Quality", "ACF", "SEM BSE & Binarization", "Bar Code Verification", "Packaging", "Mishandling test", "Process flow", "Process Comparison" });
             this.cbl_sheet.Location = new System.Drawing.Point(3, 59);
             this.cbl_sheet.Name = "cbl_sheet";
             this.cbl_sheet.Size = new System.Drawing.Size(244, 340);
@@ -493,6 +451,7 @@
             // 
             // ExportManager
             // 
+            this.ExportManager.Controls.Add(this.button1);
             this.ExportManager.Controls.Add(this.btn_open);
             this.ExportManager.Location = new System.Drawing.Point(4, 27);
             this.ExportManager.Name = "ExportManager";
@@ -502,13 +461,23 @@
             this.ExportManager.Text = "Export Manager";
             this.ExportManager.UseVisualStyleBackColor = true;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(439, 252);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(210, 51);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Report Manager";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            // 
             // btn_open
             // 
-            this.btn_open.Location = new System.Drawing.Point(330, 260);
+            this.btn_open.Location = new System.Drawing.Point(192, 252);
             this.btn_open.Name = "btn_open";
             this.btn_open.Size = new System.Drawing.Size(210, 51);
             this.btn_open.TabIndex = 0;
-            this.btn_open.Text = "Open Manager";
+            this.btn_open.Text = "Export Manager";
             this.btn_open.UseVisualStyleBackColor = true;
             this.btn_open.Click += new System.EventHandler(this.btn_open_Click);
             // 
@@ -543,8 +512,9 @@
             this.spDataView.ResumeLayout(false);
             this.ExportManager.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
+
+        private System.Windows.Forms.Button button1;
 
         #endregion
         private System.Windows.Forms.CheckBox cbAll;

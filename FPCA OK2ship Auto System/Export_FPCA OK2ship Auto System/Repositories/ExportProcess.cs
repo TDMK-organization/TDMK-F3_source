@@ -36,6 +36,10 @@ namespace Export_FPCA_OK2ship_Auto_System
             EXPORT_LOACTION_LAST = TDMK_init.Read("Report_Location", "SMT_Config") + $"\\SEEV Data\\Report\\{type}";
         }
 
+        public string getFormatLocation()
+        {
+            return FORMAT_LOACTION;
+        }
         public string getExportLocation()
         {
             return EXPORT_LOACTION;
