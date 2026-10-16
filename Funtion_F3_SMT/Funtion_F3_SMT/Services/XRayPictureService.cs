@@ -194,18 +194,18 @@ namespace OK2SHIP_SMT.Services
                         DataRow row = dataTable.NewRow();
                         if (int.TryParse(spitFileName[2], out int number))
                         {
-                            row["ID"] = spitFileName[2];
+                            row["ID"] = spitFileName[2].Replace(" ", "");
                             row["Result"] = spitFileName[3].Split('.')[0];
                         }
                         else
                         {
-                            row["ID"] = "0";
+                            row["ID"] = "0".Replace(" ", "");
                             row["Result"] = spitFileName[2].Split('.')[0];
                         }
 
-                        row["PT"] = spitFileName[0];
+                        row["PT"] = spitFileName[0].Replace(" ", "");
                         row["Image"] = TDMK_ImageConverter.ImageFileToByteArray(fileLocation);
-                        row["Area"] = spitFileName[1];
+                        row["Area"] = spitFileName[1].Replace(" ", "");
                         dataTable.Rows.Add(row);
                     }
                     catch
@@ -241,6 +241,7 @@ namespace OK2SHIP_SMT.Services
                     return category;
             }
         }
+
         public DataTable Load(string itemCode, string lotNo, string maker, string type, bool prime = false)
         {
             type = switchCategory(type);
@@ -269,12 +270,33 @@ namespace OK2SHIP_SMT.Services
                 DataTable res = dataTable;
                 NasRepository _nas = new NasRepository();
                 res = ConverterService.JsonToDataTable(dataTable.Rows[0]["Data"].ToString());
-                _nas.MergeDataTable(res, $"{_NAME_SQL}\\{maker}\\{type}", itemCode, lotNo, dataTable.Rows[0]["Area"].ToString());
-                res.AsEnumerable()
+                _nas.MergeDataTable(res, $"{_NAME_SQL}\\{maker}\\{type}", itemCode, lotNo,
+                    dataTable.Rows[0]["Area"].ToString());
+
+                return res.AsEnumerable()
+                    // 1. Ưu tiên 1: Sắp xếp theo PT
                     .OrderBy(row => int.Parse(row.Field<string>("PT").Replace("PT", "")))
+
+                    // ================= XỬ LÝ AREA =================
+                    // 2.1. Lấy phần số chính trước dấu phẩy (VD: "B1,2" -> "B1" -> 1 | "B1" -> 1)
+                    .ThenBy(row =>
+                        int.Parse(System.Text.RegularExpressions.Regex.Replace(row.Field<string>("Area").Split(',')[0],
+                            "[^0-9]", "")))
+
+                    // 2.2. Đẩy những Area CÓ dấu phẩy lên trên (Có phẩy = 0, Không phẩy = 1. Vì 0 < 1 nên sẽ lên trước)
+                    .ThenBy(row => row.Field<string>("Area").Contains(",") ? 0 : 1)
+
+                    // 2.3. Nếu có dấu phẩy thì trích xuất số phía sau để sắp xếp (VD: để B1,2 xếp trước B1,3)
+                    .ThenBy(row => row.Field<string>("Area").Contains(",")
+                        ? int.Parse(
+                            System.Text.RegularExpressions.Regex.Replace(row.Field<string>("Area").Split(',')[1],
+                                "[^0-9]", ""))
+                        : 0)
+                    // ==============================================
+
+                    // 3. Ưu tiên 3: Sắp xếp theo ID
                     .ThenBy(row => int.Parse(row.Field<string>("ID")))
                     .CopyToDataTable();
-                return res;
             }
             else
             {
@@ -287,30 +309,24 @@ namespace OK2SHIP_SMT.Services
         }
 
         public void ExportMultipleMakers(ExcelWorksheet workSheet, string itemCode, string lotNo, List<string> makers,
-            List<string> listFlexSN
-            , string type, bool prime = false)
+            Dictionary<string, string> listFlexSN, string type, bool prime = false)
         {
             ExportProcess.CleanPhantomDimension(workSheet);
+
             // 1. Quét tìm template
             IDictionary<string, string> dicTemplate = ExportProcess.FindAddressByText(workSheet,
                 new[] { "Bending 1", "Flex SN", "Sample", "Result" });
-            // Điền flex SN
-            if (dicTemplate.TryGetValue("Flex SN", out string add))
-            {
-                foreach (string flexSN in listFlexSN)
-                {
-                    add = ExportProcess.AddColumn(add, 1);
-                    workSheet.Cells[add].Value = flexSN;
-                }
-            }
 
             string[] bendingAddresses = dicTemplate["Bending 1"].Split('-');
             string[] resultAddresses = dicTemplate["Result"].Split('-');
 
+            // BỔ SUNG: Lấy mảng địa chỉ của các ô chứa chữ "Flex SN"
+            string[] flexSNAddresses = dicTemplate["Flex SN"].Split('-');
+
             int totalSlots = Math.Min(makers.Count, bendingAddresses.Length);
 
-            // TỐI ƯU 1: CHỈ GỌI Dimension ĐÚNG 1 LẦN để giết "thủ phạm GetDimension" 129 giây
-            int totalColumnsToCopy = 40; // Số cột an toàn mặc định
+            // TỐI ƯU 1: CHỈ GỌI Dimension ĐÚNG 1 LẦN
+            int totalColumnsToCopy = 40;
             if (workSheet.Dimension != null)
             {
                 totalColumnsToCopy = Math.Min(workSheet.Dimension.End.Column, 40);
@@ -325,21 +341,33 @@ namespace OK2SHIP_SMT.Services
             // ==========================================
             // PHA 1: XÂY DỰNG KHUNG (CHÈN DÒNG VÀ COPY STYLE)
             // ==========================================
-            for (int slot = 0; slot < totalSlots; slot++) // DUYỆT TỪ TRÊN XUỐNG DƯỚI
+            for (int slot = 0; slot < totalSlots; slot++)
             {
                 string currentMaker = makers[slot];
                 DataTable dt = Load(itemCode, lotNo, currentMaker, type, prime);
 
-
                 var sortedAreaList = dt.AsEnumerable()
                     .Select(row => new { Area = row.Field<string>("Area"), ID = Convert.ToInt32(row["ID"]) })
-                    .Distinct().OrderBy(x => x.Area).ThenBy(x => x.ID)
-                    .Select(x => $"{x.Area}-{x.ID}").ToList();
+                    .Distinct()
+                    .OrderBy(x =>
+                        int.Parse(System.Text.RegularExpressions.Regex.Replace(x.Area.Split(',')[0], "[^0-9]", "")))
+                    .ThenBy(x => x.Area.Contains(",") ? 0 : 1)
+                    .ThenBy(x => x.Area.Contains(",")
+                        ? int.Parse(System.Text.RegularExpressions.Regex.Replace(x.Area.Split(',')[1], "[^0-9]", ""))
+                        : 0)
+                    .ThenBy(x => x.ID)
+                    .Select(x => $"{x.Area}-{x.ID}")
+                    .ToList();
 
                 // Tính tọa độ thực tế của Template sau khi bị đẩy xuống bởi các Slot trước đó
                 int originalBendingRow = workSheet.Cells[bendingAddresses[slot]].Start.Row;
                 int originalResultRow = workSheet.Cells[resultAddresses[slot]].Start.Row;
                 int startCol = workSheet.Cells[bendingAddresses[slot]].Start.Column;
+
+                // BỔ SUNG: Lấy tọa độ gốc và tính tọa độ thực tế cho dòng Flex SN
+                int originalFlexSNRow = workSheet.Cells[flexSNAddresses[slot]].Start.Row;
+                int flexSNStartCol = workSheet.Cells[flexSNAddresses[slot]].Start.Column;
+                int currentFlexSNRow = originalFlexSNRow + rowOffset;
 
                 int currentBendingRow = originalBendingRow + rowOffset;
                 int currentResultRow = originalResultRow + rowOffset;
@@ -351,7 +379,6 @@ namespace OK2SHIP_SMT.Services
                     int startInsertRow = currentResultRow + 1;
                     int totalRowsToInsert = n * 2;
 
-                    // LỆNH NÀY BÂY GIỜ SẼ SIÊU NHANH VÌ KHÔNG CÓ ẢNH ĐỂ ĐIỀU CHỈNH
                     workSheet.InsertRow(startInsertRow, totalRowsToInsert);
 
                     double heightBending = workSheet.Row(currentBendingRow).Height;
@@ -371,7 +398,6 @@ namespace OK2SHIP_SMT.Services
                         workSheet.Row(currentInsertPos + 1).Height = heightResult;
                     }
 
-                    // Cập nhật độ lệch dòng cho Slot tiếp theo
                     rowOffset += totalRowsToInsert;
                 }
 
@@ -383,18 +409,41 @@ namespace OK2SHIP_SMT.Services
                     SortedAreas = sortedAreaList,
                     ActualBendingRow = currentBendingRow,
                     StartColumn = startCol,
-                    SlotIndex = slot
+                    SlotIndex = slot,
+                    // BỔ SUNG: Truyền toạ độ dòng và cột Flex SN sang pha 2
+                    ActualFlexSNRow = currentFlexSNRow,
+                    FlexSNStartCol = flexSNStartCol
                 });
             }
 
             // ==========================================
-            // PHA 2: ĐỔ DỮ LIỆU & HÌNH ẢNH (KHÔNG CÒN LỆNH INSERT ROW)
+            // PHA 2: ĐỔ DỮ LIỆU & HÌNH ẢNH
             // ==========================================
             foreach (var slotData in slotDataList)
             {
                 int currentRowForFill = slotData.ActualBendingRow;
                 string templateValueBend = workSheet.Cells[slotData.ActualBendingRow, slotData.StartColumn].Text;
                 var dicLocalRowMapping = new Dictionary<string, int>();
+
+                // ----------------------------------------------------
+                // BỔ SUNG: Điền dữ liệu Flex SN
+                // ----------------------------------------------------
+                if (listFlexSN.TryGetValue(slotData.Maker, out string flexSnStr))
+                {
+                    if (listFlexSN != null && !string.IsNullOrEmpty(flexSnStr))
+                    {
+                        string[] arrFlexSN = flexSnStr.Split('-'); // Cắt chuỗi theo dấu "-"
+                        for (int i = 0; i < arrFlexSN.Length; i++)
+                        {
+                            // Bắt đầu từ cột chữ "Flex SN" (FlexSNStartCol), bỏ qua 1 ô để ghi 1 giá trị.
+                       
+                            int flexColIndex = slotData.FlexSNStartCol + 1 + i ;
+                            workSheet.Cells[slotData.ActualFlexSNRow, flexColIndex].Value = arrFlexSN[i];
+                        }
+                    }
+                }
+
+                // ----------------------------------------------------
 
                 // Điền Header bên trái và Map dòng
                 foreach (string item in slotData.SortedAreas)

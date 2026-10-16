@@ -37,6 +37,9 @@ namespace OK2SHIP_SMT.UserControls.Bending
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
@@ -49,13 +52,14 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.tableLayoutPanel12 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
             this.tabs1 = new AntdUI.Tabs();
-            this.tabPage1 = new AntdUI.TabPage();
-            this.button_loading = new AntdUI.Button();
-            this.tb_logfile = new AntdUI.Input();
             this.tabPage2 = new AntdUI.TabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.btn_loadData = new AntdUI.ButtonShadow();
+            this.btn_exportALL = new AntdUI.ButtonShadow();
             this.btn_export = new AntdUI.ButtonShadow();
+            this.tabPage1 = new AntdUI.TabPage();
+            this.button_loading = new AntdUI.Button();
+            this.tb_logfile = new AntdUI.Input();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.tb_maker = new AntdUI.Input();
             this.label5 = new System.Windows.Forms.Label();
@@ -86,9 +90,9 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.panel1.SuspendLayout();
             this.tableLayoutPanel12.SuspendLayout();
             this.tabs1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
             this.tableLayoutPanel10.SuspendLayout();
@@ -284,14 +288,84 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.tabs1.TabIndex = 0;
             this.tabs1.Text = "tabs1";
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.tableLayoutPanel5);
+            this.tabPage2.Location = new System.Drawing.Point(0, 35);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(599, 19);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Database";
+            // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 3;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel5.Controls.Add(this.btn_loadData, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(this.btn_exportALL, 2, 0);
+            this.tableLayoutPanel5.Controls.Add(this.btn_export, 1, 0);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 1;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(599, 19);
+            this.tableLayoutPanel5.TabIndex = 0;
+            // 
+            // btn_loadData
+            // 
+            this.btn_loadData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_loadData.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_loadData.Location = new System.Drawing.Point(2, 2);
+            this.btn_loadData.Margin = new System.Windows.Forms.Padding(2);
+            this.btn_loadData.Name = "btn_loadData";
+            this.btn_loadData.Size = new System.Drawing.Size(195, 15);
+            this.btn_loadData.TabIndex = 2;
+            this.btn_loadData.Text = "Load Data";
+            this.btn_loadData.Type = AntdUI.TTypeMini.Primary;
+            this.btn_loadData.Click += new System.EventHandler(this.buttonShadow2_Click);
+            // 
+            // btn_exportALL
+            // 
+            this.btn_exportALL.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_exportALL.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_exportALL.Location = new System.Drawing.Point(400, 2);
+            this.btn_exportALL.Margin = new System.Windows.Forms.Padding(2);
+            this.btn_exportALL.Name = "btn_exportALL";
+            this.btn_exportALL.Size = new System.Drawing.Size(197, 15);
+            this.btn_exportALL.TabIndex = 4;
+            this.btn_exportALL.Text = "Export ALL Net";
+            this.btn_exportALL.Type = AntdUI.TTypeMini.Primary;
+            this.btn_exportALL.Click += new System.EventHandler(this.btn_exportAllNotSus_Click);
+            // 
+            // btn_export
+            // 
+            this.btn_export.BorderWidth = 2F;
+            this.btn_export.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_export.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_export.Ghost = true;
+            this.btn_export.Location = new System.Drawing.Point(201, 2);
+            this.btn_export.Margin = new System.Windows.Forms.Padding(2);
+            this.btn_export.Name = "btn_export";
+            this.btn_export.Size = new System.Drawing.Size(195, 15);
+            this.btn_export.TabIndex = 3;
+            this.btn_export.Text = "Export ERS";
+            this.btn_export.Type = AntdUI.TTypeMini.Primary;
+            this.btn_export.Click += new System.EventHandler(this.btn_exportALL_Click);
+            // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.button_loading);
             this.tabPage1.Controls.Add(this.tb_logfile);
-            this.tabPage1.Location = new System.Drawing.Point(-1198, -46);
+            this.tabPage1.Location = new System.Drawing.Point(-1198, -38);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(599, 23);
+            this.tabPage1.Size = new System.Drawing.Size(599, 19);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Logfile";
             // 
@@ -307,7 +381,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.button_loading.Location = new System.Drawing.Point(474, 0);
             this.button_loading.Margin = new System.Windows.Forms.Padding(2);
             this.button_loading.Name = "button_loading";
-            this.button_loading.Size = new System.Drawing.Size(125, 23);
+            this.button_loading.Size = new System.Drawing.Size(125, 19);
             this.button_loading.TabIndex = 5;
             this.button_loading.Type = AntdUI.TTypeMini.Primary;
             this.button_loading.WaveSize = 0;
@@ -321,65 +395,11 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.tb_logfile.Margin = new System.Windows.Forms.Padding(2);
             this.tb_logfile.Name = "tb_logfile";
             this.tb_logfile.PlaceholderText = "Double Click for select folder or copy on here";
-            this.tb_logfile.Size = new System.Drawing.Size(599, 23);
+            this.tb_logfile.Size = new System.Drawing.Size(599, 19);
             this.tb_logfile.TabIndex = 4;
             this.tb_logfile.WaveSize = 0;
             this.tb_logfile.TextChanged += new System.EventHandler(this.tb_logfile_TextChanged);
             this.tb_logfile.DoubleClick += new System.EventHandler(this.tb_logfile_DoubleClick);
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.tableLayoutPanel5);
-            this.tabPage2.Location = new System.Drawing.Point(0, 31);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(599, 23);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Database";
-            // 
-            // tableLayoutPanel5
-            // 
-            this.tableLayoutPanel5.ColumnCount = 2;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Controls.Add(this.btn_loadData, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.btn_export, 1, 0);
-            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2);
-            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 1;
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(599, 23);
-            this.tableLayoutPanel5.TabIndex = 0;
-            // 
-            // btn_loadData
-            // 
-            this.btn_loadData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_loadData.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_loadData.Location = new System.Drawing.Point(2, 2);
-            this.btn_loadData.Margin = new System.Windows.Forms.Padding(2);
-            this.btn_loadData.Name = "btn_loadData";
-            this.btn_loadData.Size = new System.Drawing.Size(295, 19);
-            this.btn_loadData.TabIndex = 2;
-            this.btn_loadData.Text = "Load Data";
-            this.btn_loadData.Type = AntdUI.TTypeMini.Primary;
-            this.btn_loadData.Click += new System.EventHandler(this.buttonShadow2_Click);
-            // 
-            // btn_export
-            // 
-            this.btn_export.BorderWidth = 2F;
-            this.btn_export.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_export.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_export.Ghost = true;
-            this.btn_export.Location = new System.Drawing.Point(301, 2);
-            this.btn_export.Margin = new System.Windows.Forms.Padding(2);
-            this.btn_export.Name = "btn_export";
-            this.btn_export.Size = new System.Drawing.Size(296, 19);
-            this.btn_export.TabIndex = 3;
-            this.btn_export.Text = "Export Data";
-            this.btn_export.Type = AntdUI.TTypeMini.Primary;
-            this.btn_export.Click += new System.EventHandler(this.btn_export_Click);
             // 
             // tableLayoutPanel6
             // 
@@ -647,6 +667,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.dgv.Location = new System.Drawing.Point(2, 2);
             this.dgv.Margin = new System.Windows.Forms.Padding(2);
             this.dgv.Name = "dgv";
+            this.dgv.ReadOnly = true;
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -692,10 +713,34 @@ namespace OK2SHIP_SMT.UserControls.Bending
             // 
             // dgv_error
             // 
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_error.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dgv_error.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_error.DefaultCellStyle = dataGridViewCellStyle5;
             this.dgv_error.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgv_error.Location = new System.Drawing.Point(4, 244);
             this.dgv_error.Name = "dgv_error";
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_error.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.dgv_error.Size = new System.Drawing.Size(234, 77);
             this.dgv_error.TabIndex = 1;
             // 
@@ -714,9 +759,9 @@ namespace OK2SHIP_SMT.UserControls.Bending
             this.panel1.ResumeLayout(false);
             this.tableLayoutPanel12.ResumeLayout(false);
             this.tabs1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);
             this.tableLayoutPanel8.ResumeLayout(false);
             this.tableLayoutPanel10.ResumeLayout(false);
@@ -726,6 +771,10 @@ namespace OK2SHIP_SMT.UserControls.Bending
             ((System.ComponentModel.ISupportInitialize)(this.dgv_error)).EndInit();
             this.ResumeLayout(false);
         }
+
+        private AntdUI.ButtonShadow buttonShadow1;
+
+        private AntdUI.ButtonShadow btn_exportALL;
 
         private System.Windows.Forms.DataGridView dgv_error;
 

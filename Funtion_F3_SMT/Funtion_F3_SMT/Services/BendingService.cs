@@ -4,10 +4,15 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using NationalInstruments.Restricted;
 using OfficeOpenXml;
 using OK2SHIP_SMT.Repositories;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace OK2SHIP_SMT.Services
 {
@@ -518,6 +523,22 @@ namespace OK2SHIP_SMT.Services
             return result;
         }
 
+        public string GetSpecResult()
+        {
+            List<string> s = new List<string>();
+            foreach (string category in _RESULT.Keys)
+            {
+                //Debugger.Break();
+                DataTable dt = _RESULT[category];
+                int ngColumnCount = dt.Columns.Cast<DataColumn>()
+                    .Count(col => dt.AsEnumerable()
+                        .Any(row => row[col] != DBNull.Value && row[col].ToString().Trim().ToUpper() == "NG"));
+                s.Add($"{category}\u200B{ngColumnCount}/{_RESULT[category].Columns.Count - 1}");
+            }
+
+            return string.Join("\u200F", s);
+        }
+
         public void Save(string itemCode, string lotNo, string maker, int skip)
         {
             DataTable dt;
@@ -571,6 +592,7 @@ namespace OK2SHIP_SMT.Services
             row["LotNo"] = lotNo;
             row["Maker"] = maker;
             row["Data"] = dataJson;
+            row["Result"] = GetSpecResult();
             if (skip != 1)
             {
                 dt.Rows.Add(row);
@@ -646,7 +668,7 @@ namespace OK2SHIP_SMT.Services
                         string[] listData = data.Split('\u200D');
                         string[] listBF = null;
 
-                        if (dt.Rows.Count > 0 && category.Contains("F") && cycle != "BF")
+                        if (dt.Rows.Count > 0 && cycle != "BF")
                         {
                             if (_DATA.TryGetValue($"{flexSN}-BF-{category}", out string bf))
                             {
@@ -707,7 +729,42 @@ namespace OK2SHIP_SMT.Services
 
                                             if (check)
                                             {
-                                                if (z > 0.1 || z < -0.1)
+                                                // viết biến thiên custom ở đây
+                                                var table = __SPEC[switchCategory(category)];
+                                                string specCustomer = table.Columns.Contains("Custom Spec") &&
+                                                                      !table.Rows[i].IsNull("Custom Spec")
+                                                    ? table.Rows[i]["Custom Spec"].ToString()
+                                                    : string.Empty;
+
+                                                // mặc định spec là 10% - theo sumitomo
+                                                double checkAgain = 0.1;
+
+                                                // mặc định spec là 500% đối với các mục - theo sumitomo
+
+                                                if (category.Contains("TC") || category.Contains("TS") ||
+                                                    category.Contains("HS"))
+                                                {
+                                                    checkAgain = 5;
+                                                }
+
+                                                if (!string.IsNullOrEmpty(specCustomer))
+                                                {
+                                                    string[] split = specCustomer.Split(';');
+                                                    foreach (string itemCycle in split)
+                                                    {
+                                                        string[] sList = itemCycle.Split(':');
+                                                        if (sList[0].Contains(cycle))
+                                                        {
+                                                            if (double.TryParse(sList[1], out double value))
+                                                            {
+                                                                checkAgain = value;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+
+                                                if (z > checkAgain || z < -checkAgain)
                                                 {
                                                     res = "NG";
                                                     result_err = "Vanability R NG";
@@ -769,7 +826,6 @@ namespace OK2SHIP_SMT.Services
                 throw new DataException("Data is empty");
             }
 
-            List<string> result = dt.Rows[0]["Result"].ToString().Split('\u2060').ToList();
             List<string> data = dt.Rows[0]["Data"].ToString().Split('\u2060').ToList();
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
@@ -791,8 +847,220 @@ namespace OK2SHIP_SMT.Services
             }
         }
 
+        public void MergeExcelFiles(string[] sourceFiles, string destinationFile)
+        {
+            // 1. Khởi tạo file đích
+            using (SpreadsheetDocument destDoc =
+                   SpreadsheetDocument.Create(destinationFile, SpreadsheetDocumentType.Workbook))
+            {
+                WorkbookPart destWorkbookPart = destDoc.AddWorkbookPart();
+                destWorkbookPart.Workbook = new Workbook();
+                Sheets destSheets = destDoc.WorkbookPart.Workbook.AppendChild(new Sheets());
 
-        public void Export(string itemCode, string lotNo, string maker, string category = "Flex Bending")
+                // Tạo bảng chứa chuỗi (SharedStringTable) cho file đích
+                SharedStringTablePart destStringTablePart = destWorkbookPart.AddNewPart<SharedStringTablePart>();
+                destStringTablePart.SharedStringTable = new SharedStringTable();
+
+                uint sheetId = 1;
+                bool isFirstFile = true;
+
+                // Cấu trúc dữ liệu để cache SharedStrings, giúp tăng tốc đáng kể
+                var globalStringCache = new Dictionary<string, int>();
+
+                // 2. Lặp qua danh sách file
+                foreach (var file in sourceFiles)
+                {
+                    Console.WriteLine($"Dang xu ly: {Path.GetFileName(file)}");
+
+                    using (SpreadsheetDocument srcDoc = SpreadsheetDocument.Open(file, false))
+                    {
+                        WorkbookPart srcWorkbookPart = srcDoc.WorkbookPart;
+                        SharedStringTablePart srcStringTablePart =
+                            srcWorkbookPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
+
+                        // 3. Copy bộ Style (định dạng ô, màu sắc) từ file đầu tiên
+                        if (isFirstFile)
+                        {
+                            WorkbookStylesPart srcStylesPart =
+                                srcWorkbookPart.GetPartsOfType<WorkbookStylesPart>().FirstOrDefault();
+                            if (srcStylesPart != null)
+                            {
+                                WorkbookStylesPart destStylesPart = destWorkbookPart.AddNewPart<WorkbookStylesPart>();
+                                destStylesPart.FeedData(srcStylesPart.GetStream());
+                            }
+
+                            isFirstFile = false;
+                        }
+
+                        // 4. Lặp qua từng Sheet trong file nguồn
+                        foreach (Sheet srcSheet in srcWorkbookPart.Workbook.Sheets.Elements<Sheet>())
+                        {
+                            WorksheetPart srcWorksheetPart = (WorksheetPart)srcWorkbookPart.GetPartById(srcSheet.Id);
+
+                            // Clone toàn bộ Worksheet (kéo theo cả Hình ảnh và Drawings)
+                            WorksheetPart clonedSheetPart = destWorkbookPart.AddPart(srcWorksheetPart);
+                            string relationId = destWorkbookPart.GetIdOfPart(clonedSheetPart);
+
+                            // 5. Remap lại dữ liệu chữ (Shared Strings)
+                            if (srcStringTablePart != null)
+                            {
+                                // Ánh xạ Old Index -> New Index chỉ cho Sheet hiện tại
+                                var localStringDict = new Dictionary<int, int>();
+
+                                // Tìm tất cả các ô chứa dữ liệu chuỗi (SharedString)
+                                var cells = clonedSheetPart.Worksheet.Descendants<Cell>()
+                                    .Where(c => c.DataType != null && c.DataType.Value == CellValues.SharedString);
+
+                                foreach (Cell cell in cells)
+                                {
+                                    int oldIndex = int.Parse(cell.CellValue.Text);
+
+                                    if (!localStringDict.ContainsKey(oldIndex))
+                                    {
+                                        // Lấy text thực tế từ file nguồn
+                                        SharedStringItem oldItem = srcStringTablePart.SharedStringTable
+                                            .Elements<SharedStringItem>().ElementAt(oldIndex);
+                                        string realText = oldItem.InnerText;
+
+                                        // Kiểm tra xem text này đã tồn tại trong file tổng chưa (để tránh phình dung lượng)
+                                        if (!globalStringCache.ContainsKey(realText))
+                                        {
+                                            int newIndex = globalStringCache.Count;
+                                            destStringTablePart.SharedStringTable.AppendChild(
+                                                new SharedStringItem(new Text(realText)));
+                                            globalStringCache[realText] = newIndex;
+                                        }
+
+                                        localStringDict[oldIndex] = globalStringCache[realText];
+                                    }
+
+                                    // Cập nhật lại Cell với Index mới của file đích
+                                    cell.CellValue.Text = localStringDict[oldIndex].ToString();
+                                }
+
+                                // Lưu lại thay đổi của Sheet vừa remap
+                                clonedSheetPart.Worksheet.Save();
+                            }
+
+                            // 6. Đăng ký Sheet vào file đích
+                            string safeSheetName = TruncateSheetName($"{srcSheet.Name}_{sheetId}");
+                            Sheet newSheet = new Sheet() { Id = relationId, SheetId = sheetId, Name = safeSheetName };
+                            destSheets.Append(newSheet);
+                            sheetId++;
+                        }
+                    }
+                }
+
+                // Lưu toàn bộ file tổng hợp
+                destStringTablePart.SharedStringTable.Save();
+                destWorkbookPart.Workbook.Save();
+            }
+        }
+
+        // Hàm phụ trợ: Excel giới hạn tên Sheet tối đa 31 ký tự
+        private static string TruncateSheetName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return "Sheet";
+            return name.Length > 31 ? name.Substring(0, 31) : name;
+        }
+
+
+        public void MergeFile(string[] listFileSave, string nameDIC)
+        {
+            try
+            {
+                string dirOutPut = new ExportProcess().getLocationSave();
+
+                dirOutPut = Path.Combine(dirOutPut, $"ORT\\{nameDIC}.xlsx");
+                string folderPath = Path.GetDirectoryName(dirOutPut);
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                if (false)
+                {
+                    // mở khóa sức mạnh tiềm ẩn
+                    MergeExcelFiles(listFileSave, dirOutPut);
+                    return;
+                }
+
+                // 1. Lấy đường dẫn động tới thư mục chứa phần mềm
+                string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+                // Tạo đường dẫn chuẩn đến file .exe
+                string exePath = Path.Combine(baseDirectory, "MergeService", "MergeHeavyExcelService.exe");
+
+                // Kiểm tra xem file .exe có tồn tại không
+                if (!File.Exists(exePath))
+                {
+                    throw new Exception("Không tìm thấy file dịch vụ MergeHeavyExcelService.exe tại: " + exePath);
+                }
+
+                // 2. Tạo chuỗi arguments (tham số)
+                StringBuilder arguments = new StringBuilder();
+
+                // Nối danh sách các file input (Mỗi đường dẫn bọc trong dấu ngoặc kép "")
+                foreach (string file in listFileSave)
+                {
+                    arguments.Append($"\"{file}\" ");
+                }
+
+                // Nối file output vào cuối cùng (Bọc trong ngoặc kép "")
+                arguments.Append($"\"{dirOutPut}\"");
+
+                // 3. Cấu hình tiến trình (Process) chạy file exe
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = exePath,
+                    Arguments = arguments.ToString(),
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    // THÊM: Đọc luồng để bắt lỗi từ Python
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    StandardOutputEncoding = Encoding.UTF8,
+                    StandardErrorEncoding = Encoding.UTF8
+                };
+
+                // 4. Khởi chạy tiến trình
+                using (Process process = new Process())
+                {
+                    process.StartInfo = startInfo;
+                    process.Start();
+
+                    // Đọc lại toàn bộ nội dung mà Python đã print() ra
+                    string outputLog = process.StandardOutput.ReadToEnd();
+                    string errorLog = process.StandardError.ReadToEnd();
+
+                    process.WaitForExit();
+
+                    // 5. Kiểm tra mã trả về
+                    if (process.ExitCode != 0)
+                    {
+                        // Bắn ra Exception kèm theo log của file Python để dễ debug
+                        throw new Exception(
+                            $"Dịch vụ ghép file thất bại (Mã lỗi: {process.ExitCode}).\n\nLog hệ thống:\n{outputLog}\n{errorLog}");
+                    }
+                }
+
+                // 6. MỞ FILE SAU KHI GHÉP THÀNH CÔNG
+                Process.Start(new ProcessStartInfo(dirOutPut)
+                {
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                // Ném lỗi lên hàm gọi nó (để UI có thể catch và show MessageBox nếu cần)
+                throw new Exception("Lỗi trong quá trình MergeFile: " + ex.Message);
+            }
+        }
+
+        public string Export(string itemCode, string lotNo, string maker, string category = "Flex Bending",
+            bool lockZ = true, bool ers = true)
         {
             string namesheet = "", ictsheet = "", xraysheet = "";
             bool primeBend = false;
@@ -830,7 +1098,7 @@ namespace OK2SHIP_SMT.Services
                     break;
 
                 default:
-                    break;
+                    return "";
             }
 
             if (string.IsNullOrEmpty(maker))
@@ -843,9 +1111,9 @@ namespace OK2SHIP_SMT.Services
                 {
                     List<string> name = new[] { namesheet, ictsheet }.ToList();
 
-                    using (ExcelWorksheet worksheet = process.FindSheet(package, namesheet))
-                    using (ExcelWorksheet worksheet_ICT = process.FindSheet(package, ictsheet))
-                    using (ExcelWorksheet worksheetXray = process.FindSheet(package, xraysheet))
+                    using (ExcelWorksheet worksheet = process.FindSheetWithKey(package, namesheet))
+                    using (ExcelWorksheet worksheet_ICT = process.FindSheetWithKey(package, ictsheet))
+                    using (ExcelWorksheet worksheetXray = process.FindSheetWithKey(package, xraysheet))
                     {
                         int slot = 0;
                         if (dt_maker.Rows.Count > 0)
@@ -857,6 +1125,7 @@ namespace OK2SHIP_SMT.Services
                             }
                         }
 
+                        Dictionary<string, string> flexSNDIC = new Dictionary<string, string>();
                         List<string> makers = new List<string>();
                         foreach (DataRow row in dt_maker.Rows)
                         {
@@ -865,7 +1134,11 @@ namespace OK2SHIP_SMT.Services
                             maker = row["Maker"].ToString();
 
                             Load(itemCode, lotNo, maker);
-
+                            List<string> listFlexSN = _RESULT[category].Columns.Cast<DataColumn>()
+                                .Select(col => col.ColumnName)
+                                .Where(flexSN => !flexSN.Contains("Select") && !flexSN.Contains("Cycle"))
+                                .ToList();
+                            flexSNDIC.Add(maker, string.Join("-", listFlexSN));
                             if (primeBend)
                             {
                                 DataTable dt = _RESULT[category];
@@ -892,7 +1165,7 @@ namespace OK2SHIP_SMT.Services
                                 name.Add(newIctSheetName);
                             }
 
-                            ExportDataToICT(currentIctSheet, category, primeBend);
+                            ExportDataToICT(currentIctSheet, category, primeBend, ers);
                             slot++;
                         }
 
@@ -900,12 +1173,8 @@ namespace OK2SHIP_SMT.Services
                         {
                             if (makers.Count > 0)
                             {
-                                List<string> listFlexSN = _RESULT[category].Columns.Cast<DataColumn>()
-                                    .Select(col => col.ColumnName)
-                                    .Where(flexSN => !flexSN.Contains("Select") && !flexSN.Contains("Cycle"))
-                                    .ToList();
                                 XRayPictureService service = new XRayPictureService();
-                                service.ExportMultipleMakers(worksheetXray, itemCode, lotNo, makers, listFlexSN,
+                                service.ExportMultipleMakers(worksheetXray, itemCode, lotNo, makers, flexSNDIC,
                                     category);
                             }
                         }
@@ -917,7 +1186,8 @@ namespace OK2SHIP_SMT.Services
                         }
 
                         package.Compression = OfficeOpenXml.CompressionLevel.BestSpeed;
-                        process.SaveExcelWorksheet(package, string.Join(":", name), $"{itemCode}-{lotNo}-{category}");
+                        return process.SaveExcelWorksheet(package, string.Join(":", name),
+                            $"{itemCode}-{lotNo}-{category}", "NPI", lockZ);
                     }
                 }
             }
@@ -948,7 +1218,7 @@ namespace OK2SHIP_SMT.Services
                             }
                             catch
                             {
-                                Debugger.Break();
+                                //Debugger.Break();
                             }
                         }
                         else
@@ -956,16 +1226,61 @@ namespace OK2SHIP_SMT.Services
                             ExportDataToWSNotBend(worksheet, category, 0);
                         }
 
-                        ExportDataToICT(worksheet_ICT, category, primeBend);
+                        ExportDataToICT(worksheet_ICT, category, primeBend, ers);
                         package.Compression = OfficeOpenXml.CompressionLevel.BestSpeed;
-                        process.SaveExcelWorksheet(package, string.Join(":", name), $"{itemCode}-{lotNo}");
+                        return process.SaveExcelWorksheet(package, string.Join(":", name), $"{itemCode}-{lotNo}", "NPI",
+                            lockZ);
                     }
                 }
             }
         }
 
+        public void checkERS(string itemCode, string lotNo, string maker)
+        {
+            try
+            {
+                // kiểm tra có tồn tại hay không
+                ERS_NetSpecService service = new ERS_NetSpecService();
+                service.LoadData(itemCode, maker);
+
+                int numSpec = service.getNumberOfData();
+
+                DataTable dt = _dbContext.LoadDataTable(_NAMETABLE, new[] { "ItemCode", "LotNo", "Maker" },
+                    new[] { itemCode, lotNo, maker });
+
+                if (dt.Rows.Count <= 0)
+                {
+                    throw new DataException("Data is empty");
+                }
+
+                List<string> data = dt.Rows[0]["Data"].ToString().Split('\u2060').ToList();
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+
+                foreach (string s in data)
+                {
+                    string[] split = s.Split('\u200F');
+                    int z = split[1].Split('\u200D').Length;
+                    if (numSpec != z)
+                    {
+                        string[] d = split[0].Split('-');
+
+                        throw new Exception($"Number of Ers not match data Flex {d[0]} - cycle {d[1]}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Check ERS: {ex.Message}");
+            }
+        }
+
         private void SetupXray(ExcelWorksheet worksheet, int slot)
         {
+            if (worksheet == null)
+            {
+                throw new Exception("worksheet xray is not valid");
+            }
+
             IDictionary<string, string> _dic = ExportProcess.FindAddressByText(worksheet, new[]
                 { "Flex SN", "Result", "#" });
             ExportProcess process = new ExportProcess();
@@ -982,6 +1297,11 @@ namespace OK2SHIP_SMT.Services
 
         private void SetupResultSheet(ExcelWorksheet worksheet, bool bend, int slot)
         {
+            if (worksheet == null)
+            {
+                throw new Exception("worksheet is not valid");
+            }
+
             if (bend)
             {
                 IDictionary<string, string> _dic = ExportProcess.FindAddressByText(worksheet, new[]
@@ -1080,7 +1400,7 @@ namespace OK2SHIP_SMT.Services
             }
             catch
             {
-                Debugger.Break();
+                //Debugger.Break();
             }
         }
 
@@ -1199,7 +1519,7 @@ namespace OK2SHIP_SMT.Services
             }
         }
 
-        private void ExportDataToICT(ExcelWorksheet ws, string category, bool primeBend = false)
+        private void ExportDataToICT(ExcelWorksheet ws, string category, bool primeBend = false, bool isSus = true)
         {
             IDictionary<string, string> dic = ExportProcess.FindAddressByText(ws, new[]
             {
@@ -1296,7 +1616,7 @@ namespace OK2SHIP_SMT.Services
             Dictionary<string, List<double>> allNetPercents = new Dictionary<string, List<double>>();
             Dictionary<string, List<double>> susNetValues = new Dictionary<string, List<double>>();
             Dictionary<string, List<double>> susNetPercents = new Dictionary<string, List<double>>();
-
+            int lastRow = 0;
             foreach (string flexSN in listFlexSN)
             {
                 SampleNO++;
@@ -1307,20 +1627,49 @@ namespace OK2SHIP_SMT.Services
                 {
                     foreach (DataRow row in dt_Detail.Rows)
                     {
-                        string selectVal = row["Select"]?.ToString().ToUpper();
-                        if (selectVal == "YES" || selectVal == "TRUE")
+                        string selectVal;
+                        try
+                        {
+                            selectVal = row["Select"]?.ToString().ToUpper();
+                        }
+                        catch
+                        {
+                            selectVal = "";
+                        }
+
+                        // kiểm tra xem có ers không
+                        if (string.IsNullOrEmpty(selectVal))
+                        {
+                            if (isSus)
+                            {
+                                selectVal = "YES";
+                            }
+                            else
+                            {
+                                throw new Exception("Ers is not setup!");
+                            }
+                        }
+
+                        if (selectVal == "YES" || selectVal == "TRUE" || isSus)
                         {
                             skip++;
                             int targetRow = row_Sample + skip + 1;
-
+                            lastRow = Math.Max(targetRow, lastRow);
                             ws.Cells[targetRow, col_Sample].Value = SampleNO;
                             ws.Cells[targetRow, col_Net].Value = netNo++;
                             ws.Cells[targetRow, col_Flex].Value = row["Flex SN"];
                             ws.Cells[targetRow, col_Sumi].Value = row["Test Result"];
-                            ws.Cells[targetRow, col_Cus].Value = row["Net Name"];
-                            ws.Cells[row_Pin1 + skip, col_Pin1].Value = row["Pin1"];
-                            ws.Cells[row_Pin2 + skip, col_Pin2].Value = row["Pin2"];
-                            ws.Cells[row_Pin2 + skip, col_Pin2 + 1].Value = "yes";
+                            try
+                            {
+                                ws.Cells[targetRow, col_Cus].Value = row["Net Name"];
+
+                                ws.Cells[row_Pin1 + skip, col_Pin1].Value = row["Pin1"];
+                                ws.Cells[row_Pin2 + skip, col_Pin2].Value = row["Pin2"];
+                                ws.Cells[row_Pin2 + skip, col_Pin2 + 1].Value = "yes";
+                            }
+                            catch
+                            {
+                            }
 
                             if (double.TryParse(row["LSL"]?.ToString(), out double lsl))
                                 ws.Cells[row_LSL + skip, col_LSL].Value = lsl;
@@ -1338,12 +1687,18 @@ namespace OK2SHIP_SMT.Services
                             bool isOver10Percent = false;
                             bool hasCalc = false;
 
-                            string netNameVal = row["Net Name"]?.ToString().ToUpper() ?? "";
-                            string sumiNameVal = row["Test Result"]?.ToString().ToUpper() ?? "";
+                            string netNameVal = "", sumiNameVal = "";
+                            try
+                            {
+                                netNameVal = row["Net Name"]?.ToString().ToUpper();
+                                sumiNameVal = row["Test Result"]?.ToString().ToUpper() ?? "";
+                            }
+                            catch
+                            {
+                            }
 
                             // Phân loại: Netname có chứa chữ SUS
                             bool isRowSus = netNameVal.Contains("SUS") || sumiNameVal.Contains("SUS");
-
                             foreach (var kvp in rawCycleCols)
                             {
                                 string colName = kvp.Key;
@@ -1392,7 +1747,53 @@ namespace OK2SHIP_SMT.Services
                                                 allNetPercents[colName].Add(percentChange);
                                             }
 
-                                            if (percentChange > 0.1 || percentChange < -0.1)
+                                            //Debugger.Break();
+                                            //sumitomo
+                                            double specCustom = 0.1;
+                                            string c = switchCategory(category);
+                                            if (c == "TS" || c == "HS" || c == "TC")
+                                            {
+                                                specCustom = 5;
+                                            }
+
+                                            string iitem = row["Net No"].ToString();
+                                            int i = int.Parse(iitem);
+                                            // // viết biến thiên custom ở đây
+                                            var table = __SPEC[category];
+
+                                            string specCustomer = "";
+                                            try
+                                            {
+                                                if (table.Rows.Count > i)
+                                                {
+                                                    specCustomer = table.Columns.Contains("Custom Spec") &&
+                                                                   !table.Rows[i].IsNull("Custom Spec")
+                                                        ? table.Rows[i]["Custom Spec"].ToString()
+                                                        : string.Empty;
+                                                }
+                                            }
+                                            catch
+                                            {
+                                            }
+
+
+                                            if (!string.IsNullOrEmpty(specCustomer))
+                                            {
+                                                string[] split = specCustomer.Split(';');
+                                                foreach (string itemCycle in split)
+                                                {
+                                                    string[] sList = itemCycle.Split(':');
+                                                    if (sList[0].Contains(kvp.Key))
+                                                    {
+                                                        if (double.TryParse(sList[1], out double value))
+                                                        {
+                                                            specCustom = value;
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            if (percentChange > specCustom || percentChange < -specCustom)
                                             {
                                                 isOver10Percent = true;
                                             }
@@ -1417,6 +1818,8 @@ namespace OK2SHIP_SMT.Services
                                     if (!isOver10Percent)
                                     {
                                         judgeCell.Value = "Pass-resistance change is within ±10%.";
+
+
                                         judgeCell.Style.Fill.BackgroundColor.SetColor(
                                             System.Drawing.Color.FromArgb(198, 239, 206));
                                         judgeCell.Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(0, 97, 0));
@@ -1434,8 +1837,26 @@ namespace OK2SHIP_SMT.Services
                                         }
                                         else
                                         {
-                                            judgeCell.Value =
-                                                "Pass following Sumitomo spec-resistance change is outside ±10%.";
+                                            if (isRowSus)
+                                            {
+                                                judgeCell.Value =
+                                                    "Pass following Sumitomo spec-resistance change is outside ±10%.";
+                                            }
+                                            else
+                                            {
+                                                if (category == "Heat soak" || category == "Thermal shock" ||
+                                                    category == "Thermal cycling")
+                                                {
+                                                    judgeCell.Value =
+                                                        "Pass following Sumitomo spec-resistance change is outside ±10%.";
+                                                }
+                                                else
+                                                {
+                                                    judgeCell.Value =
+                                                        "Fail-resistance change is within ±10%";
+                                                }
+                                            }
+
                                             judgeCell.Style.Fill.BackgroundColor.SetColor(
                                                 System.Drawing.Color.FromArgb(198, 239, 206));
                                             judgeCell.Style.Font.Color.SetColor(
@@ -1452,6 +1873,16 @@ namespace OK2SHIP_SMT.Services
                         }
                     }
                 }
+            }
+
+            try
+            {
+                lastRow = lastRow + 1;
+                int lastRowZ = ws.Dimension.End.Row;
+                ws.DeleteRow(lastRow, lastRowZ - lastRow + 1);
+            }
+            catch
+            {
             }
 
             // ==============================================================================

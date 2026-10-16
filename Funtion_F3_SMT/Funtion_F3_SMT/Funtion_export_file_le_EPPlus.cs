@@ -1365,9 +1365,7 @@ namespace Funtion_F3_SMT
             {
                 if (count < 2 * count_sample)
                 {
-                    byte[] _img_byte = (dr[Image_Col_name].GetType() != typeof(byte[]))
-                        ? TDMK_ImageConverter.ImageToByteArray((Image)(dr[Image_Col_name]), ImageFormat.Jpeg)
-                        : (byte[])(dr[Image_Col_name]);
+                    byte[] _img_byte = ExportProcess.ConvertDataRowToByte(dr, Image_Col_name);
                     byte[] img_byte = ImageCompress.CompressImage(_img_byte);
                     //Image img = byteArrayToImage(img_byte);
                     //Image test_img = resizeImage(0.2, img);
@@ -2794,7 +2792,7 @@ namespace Funtion_F3_SMT
                             if (item["Image"] != DBNull.Value && item["Image"] is Image)
                             {
                                 InsertPicture_Name(ws, ws.Cells[address],
-                                    TDMK_ImageConverter.ImageToByteArray((Image)item["Image"], ImageFormat.Jpeg),
+                                    ExportProcess.ConvertDataRowToByte(item, "Image"),
                                     $"{rowIndex} - picture");
                             }
                         }
@@ -2810,7 +2808,7 @@ namespace Funtion_F3_SMT
                             if (item["Graph"] != DBNull.Value && item["Graph"] is Image)
                             {
                                 InsertPicture_Name(ws, ws.Cells[address],
-                                    TDMK_ImageConverter.ImageToByteArray((Image)item["Graph"], ImageFormat.Jpeg),
+                                    ExportProcess.ConvertDataRowToByte(item, "Graph"),
                                     $"{rowIndex} - Graph");
                             }
                         }
@@ -4929,9 +4927,9 @@ namespace Funtion_F3_SMT
             int count = 0;
             foreach (DataRow dr in dt.Rows)
             {
-                Image _img_byte = (Image)(dr[Image_Col_name]);
+                
                 InsertPicture_Name(tar_wrksht, sel_rgn,
-                    TDMK_ImageConverter.ImageToByteArray(_img_byte, ImageFormat.Jpeg), sel_rgn.Address);
+                    ExportProcess.ConvertDataRowToByte(dr, Image_Col_name), sel_rgn.Address);
 
                 int col_offset = sel_rgn.Columns;
                 int row_off = sel_rgn.Rows;
@@ -4960,9 +4958,8 @@ namespace Funtion_F3_SMT
             int count = 0;
             foreach (DataRow dr in dt.Rows)
             {
-                Image _img_byte = (Image)(dr[Image_Col_name]);
                 InsertPicture_Name(tar_wrksht, sel_rgn,
-                    TDMK_ImageConverter.ImageToByteArray(_img_byte, ImageFormat.Jpeg), sel_rgn.Address);
+                    ExportProcess.ConvertDataRowToByte(dr, Image_Col_name), sel_rgn.Address);
 
                 int col_offset = sel_rgn.Columns;
                 int row_off = sel_rgn.Rows;

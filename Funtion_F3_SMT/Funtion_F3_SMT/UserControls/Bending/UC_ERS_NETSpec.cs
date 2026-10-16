@@ -16,6 +16,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
         public UC_ERS_NETSpec(AntdUI.Window _window)
         {
             InitializeComponent();
+            dgv.CellButtonClick += Dgv_CellButtonClick;
             displayMenu();
             window = _window;
             updateDisplay();
@@ -108,20 +109,17 @@ namespace OK2SHIP_SMT.UserControls.Bending
 
             if (dt == null) return;
 
-            // 1. CHUẨN HÓA CỘT SELECT: Đảm bảo cột "Select" trong DataTable có kiểu dữ liệu là bool (Boolean)
+            // 1. CHUẨN HÓA CỘT SELECT
             if (dt.Columns.Contains("Select"))
             {
-                // Nếu cột đang là kiểu chuỗi hoặc object, ta chuyển đổi sang bool an toàn
                 if (dt.Columns["Select"].DataType != typeof(bool))
                 {
-                    // Tạo một cột tạm kiểu bool
                     DataTable tempDt = dt.Clone();
                     tempDt.Columns["Select"].DataType = typeof(bool);
 
                     foreach (DataRow row in dt.Rows)
                     {
                         DataRow newRow = tempDt.NewRow();
-                        // Copy dữ liệu các cột khác
                         foreach (DataColumn col in dt.Columns)
                         {
                             if (col.ColumnName != "Select")
@@ -130,7 +128,6 @@ namespace OK2SHIP_SMT.UserControls.Bending
                             }
                         }
 
-                        // Chuyển đổi giá trị sang kiểu bool
                         bool val = false;
                         if (row["Select"] != DBNull.Value)
                         {
@@ -147,35 +144,104 @@ namespace OK2SHIP_SMT.UserControls.Bending
             }
             else
             {
-                // Nếu chưa có cột "Select" thì tự động thêm mới vào DataTable với kiểu bool
                 DataColumn colSelect = new DataColumn("Select", typeof(bool));
-                colSelect.DefaultValue = true; // Giá trị mặc định ban đầu (true/false tùy bạn)
+                colSelect.DefaultValue = true;
                 dt.Columns.Add(colSelect);
             }
 
-            // 2. KHỞI TẠO BỘ CỘT CHO ANTDUI TABLE
+            // 2. THÊM CỘT NÚT BẤM (ACTION) VÀO DATATABLE NẾU CHƯA CÓ
+            if (!dt.Columns.Contains("Action"))
+            {
+                // Phải để DataType là object để chứa được đối tượng CellButton của AntUI
+                dt.Columns.Add("Action", typeof(object));
+            }
+
+            // Gán nút "Setup Spec" cho toàn bộ các dòng hiện có
+            foreach (DataRow row in dt.Rows)
+            {
+                row["Action"] = new AntdUI.CellButton[]
+                {
+                    new AntdUI.CellButton("btn_setup_spec", "Setup Spec")
+                    {
+                        Type = AntdUI.TTypeMini.Primary // Màu xanh dương nổi bật
+                    }
+                };
+            }
+
+            // 3. KHỞI TẠO BỘ CỘT CHO ANTDUI TABLE
             var columns = new AntdUI.ColumnCollection();
 
-            // Thêm cột Checkbox đầu tiên (Tiêu đề hiển thị: "Select", Tên ánh xạ dữ liệu: "Select")
             columns.Add(new AntdUI.ColumnCheck("Select", "Select")
             {
-                Width = "60"
+                Width = "60",
+                Align = AntdUI.ColumnAlign.Center
             });
 
-            // 3. TỰ ĐỘNG SINH CÁC CỘT CÒN LẠI DỰA TRÊN DATATABLE
+            // 4. TỰ ĐỘNG SINH CÁC CỘT CÒN LẠI DỰA TRÊN DATATABLE
             foreach (DataColumn dc in dt.Columns)
             {
-                // Bỏ qua cột Select để tránh bị trùng lặp
-                if (dc.ColumnName == "Select" || dc.ColumnName == "Selected")
+                // Bỏ qua cột Select và Action để chủ động thêm theo ý muốn
+                if (dc.ColumnName == "Select" || dc.ColumnName == "Selected" || dc.ColumnName == "Action")
                     continue;
 
-                // Thêm các cột nội dung khác vào bảng
                 columns.Add(new AntdUI.Column(dc.ColumnName, dc.ColumnName));
             }
 
-            // 4. GÁN CỘT VÀ NGUỒN DỮ LIỆU CHO ANTDUI TABLE
+            // Thêm cột Action chứa nút bấm vào vị trí cuối cùng của bảng
+            columns.Add(new AntdUI.Column("Action", "Action", AntdUI.ColumnAlign.Center)
+            {
+                Width = "120"
+            });
+
+            // 5. GÁN NGUỒN DỮ LIỆU
             dgv.Columns = columns;
             dgv.DataSource = dt;
+        }
+
+        private void Dgv_CellButtonClick(object sender, AntdUI.TableButtonEventArgs e)
+        {
+            if (e.Column.Key == "Action" && e.Btn is AntdUI.CellButton btn)
+            {
+                if (btn.Id == "btn_setup_spec")
+                {
+                    // 1. Ép kiểu an toàn (Bao quát cả DataRow và DataRowView)
+                    DataRow rowToUpdate = null;
+
+                    if (e.Record is DataRowView rowView)
+                    {
+                        rowToUpdate = rowView.Row; // Lấy DataRow gốc từ View
+                    }
+                    else if (e.Record is DataRow dataRow)
+                    {
+                        rowToUpdate = dataRow;
+                    }
+
+                    // Nếu ép kiểu thành công và lấy được dòng dữ liệu
+                    if (rowToUpdate != null)
+                    {
+                        // Mở form CustomSpec
+                        CustomSpec form = new CustomSpec("");
+                        form.ShowDialog();
+
+                        // 2. An toàn: Kiểm tra xem DataTable đã có cột "Custom Spec" chưa.
+                        // Nếu chưa có, tự động thêm cột này vào DataTable dưới dạng chuỗi (string)
+                        if (!rowToUpdate.Table.Columns.Contains("Custom Spec"))
+                        {
+                            rowToUpdate.Table.Columns.Add("Custom Spec", typeof(string));
+                        }
+
+                        // 3. Gán giá trị JSON vào dòng
+                        rowToUpdate["Custom Spec"] = form._json;
+                        string category = menu.SelectItem.Text;
+                        // 4. Ép bảng AntUI vẽ lại để hiển thị giá trị mới (nếu cột này đang hiển thị trên bảng)
+                        DisplayData( category);
+
+                        // Thông báo kiểm tra
+                        AntdUI.Notification.success(window, "Thành công", $"Đã gán: {form._json}", autoClose: 3,
+                            align: align);
+                    }
+                }
+            }
         }
 
         private void tb_logfile_TextChanged(object sender, EventArgs e)
@@ -246,7 +312,10 @@ namespace OK2SHIP_SMT.UserControls.Bending
 
             if (!string.IsNullOrEmpty(s))
             {
-                _service._DATA[s] = (DataTable)dgv.DataSource;
+                DataTable currentDt =  (DataTable)dgv.DataSource;
+                currentDt.Columns.Remove("Action");
+
+                _service._DATA[s] = currentDt;
             }
 
             try
@@ -326,6 +395,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
             if (!string.IsNullOrEmpty(after_SELECTED) && dgv.DataSource is DataTable currentDt)
             {
                 // Ép kiểu an toàn (is DataTable) để tránh lỗi nếu DataSource bị rỗng
+                currentDt.Columns.Remove("Action");
                 _service._DATA[after_SELECTED] = currentDt;
             }
 

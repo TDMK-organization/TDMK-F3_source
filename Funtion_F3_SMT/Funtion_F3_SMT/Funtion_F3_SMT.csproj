@@ -47,6 +47,12 @@
     <Reference Include="AntdUI, Version=2.4.3.0, Culture=neutral, PublicKeyToken=0e24e5118ea3d6af, processorArchitecture=MSIL">
       <HintPath>..\packages\AntdUI.2.4.3\lib\net48\AntdUI.dll</HintPath>
     </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=3.5.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.3.5.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml.Framework, Version=3.5.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.Framework.3.5.1\lib\net46\DocumentFormat.OpenXml.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="EPPlus, Version=7.0.5.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.7.0.5\lib\net462\EPPlus.dll</HintPath>
     </Reference>
@@ -113,6 +119,7 @@
     <Reference Include="TDMK_SQL">
       <HintPath>..\..\..\TDMK_source\OK2SHIP_Software_EPPLUS\OK2SHIP_Software\DLLs\TDMK_SQL.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
     <Reference Include="ZedGraph">
       <HintPath>..\..\..\TDMK_source\OK2SHIP_Software_EPPLUS\OK2SHIP_Software\DLLs\ZedGraph.dll</HintPath>
     </Reference>
@@ -213,6 +220,12 @@
     </Compile>
     <Compile Include="ToolBoxs\TDMK_Label.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserControls\Bending\CustomSpec.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserControls\Bending\CustomSpec.Designer.cs">
+      <DependentUpon>CustomSpec.cs</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Bending\UC_BendingData.cs">
       <SubType>UserControl</SubType>
@@ -431,6 +444,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ToolBoxs\TDMK_Button.resx">
       <DependentUpon>TDMK_Button.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\Bending\CustomSpec.resx">
+      <DependentUpon>CustomSpec.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\Bending\UC_BendingData.resx">
       <DependentUpon>UC_BendingData.cs</DependentUpon>

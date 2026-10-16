@@ -1775,6 +1775,10 @@ namespace OK2SHIP_SMT
                 {
                     check_roughness(dgv_data);
                 }
+                if (type.Contains("MASS"))
+                {
+                    check_data_bonding_mass(dgv_peel);
+                }
             }
             else
             {
@@ -1821,6 +1825,7 @@ namespace OK2SHIP_SMT
             try
             {
                 Load_data_SMT("ACF_BONDING", dgv_peel);
+              
             }
             catch (Exception ex)
             {
@@ -2607,6 +2612,10 @@ namespace OK2SHIP_SMT
 
         public void save_data(string tbl_name, DataGridView dgv_data)
         {
+            if (dgv_data.DataSource != null)
+            {
+                check_data_bonding_mass(dgv_data);
+            }
             DataTable tbl_data = (DataTable)dgv_data.DataSource;
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && cb_Type.SelectedIndex != -1)
             {
@@ -2924,6 +2933,11 @@ namespace OK2SHIP_SMT
                         {
                             if (myCode.IsNumeric(txt_qty_peel.Text))
                             {
+                                
+                                if (dgv_peel.DataSource != null)
+                                {
+                                    check_data_bonding_mass(dgv_peel);
+                                }
                                 F_export_EPPlus.export_MASS_ACFpeel(format_bonding, report_folder_bonding, txtItemCode.Text, txtLotNo.Text, dgv_peel, cb_Type.SelectedItem.ToString(), txtOperator.Text);
                             }
                             else

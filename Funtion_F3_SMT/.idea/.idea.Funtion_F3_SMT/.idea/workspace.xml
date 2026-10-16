@@ -14,15 +14,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79693909-c6be-4431-90a9-36eba68f2a7a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Services/TDMK_ReportManagerService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Services/TDMK_ReportManagerService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/DBScreen.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/DBScreen.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/ReportManagerForm.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/ReportManagerForm.Designer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/ReportManagerForm.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/ReportManagerForm.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/RunProgess.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/RunProgess.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/ACF.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/ACF.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_F3_SMT.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_F3_SMT.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_export_file_le_EPPlus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_export_file_le_EPPlus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Repositories/ExportProcess.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Repositories/ExportProcess.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/ACFService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/ACFService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/CrossSectionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/CrossSectionService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/ERS_NetSpecService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/ERS_NetSpecService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/GAPConnectorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/GAPConnectorService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/XRayPictureService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/XRayPictureService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/UC_AirBubble.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/UC_AirBubble.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.Designer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_ERS_NETSpec.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_ERS_NETSpec.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.Designer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/packages.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/AntdUI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/AntdUI.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/AntdUI.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/AntdUI.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA/CraftSynth.ImageEditor.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/VHX-IMADA/CraftSynth.ImageEditor.dll" afterDir="false" />
     </list>
@@ -35,7 +51,7 @@
     <option name="firstShow" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="317" />
+    <option name="cachedIndexableFilesCount" value="320" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -49,6 +65,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4530c791bf814e4c9e2ce09d8a5986485b9598/32/82cb815c/CheckBox.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4530c791bf814e4c9e2ce09d8a5986485b9598/78/fa07ccc7/DataGridViewColumnCollection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4530c791bf814e4c9e2ce09d8a5986485b9598/79/1835396d/SizeType.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4530c791bf814e4c9e2ce09d8a5986485b9598/bf/50210e70/DataGridViewRowCollection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4530c791bf814e4c9e2ce09d8a5986485b9598/df/a61bced4/NativeWindow.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4530c791bf814e4c9e2ce09d8a5986485b9598/f5/09cc904a/DataGridView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/72bd0d212e84400c90c551e49ebcfe0b17000/2c/f20b215c/SEI_Lib.cs" root0="FORCE_HIGHLIGHTING" />
@@ -70,10 +87,12 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a7e2d1e772ec4222890bfeb750a1f9ac35b600/ea/c48d9225/ExcelPackage.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/1a/59bf19df/Button.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/66/8a3f4f73/Column.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/7b/ebe60356/Notification.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/99/e427e21e/Input.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/a2/eb58cf6d/TabPage.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/b0/eb469ff4/CellButton.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/d8/6a71fffa/IControl.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/bfd49f34d99346d9a858bbbd68128a6153d938/35/f1c30a38/Dictionary`2.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c115104f117b4d32a574806f587753714bf8/bb/0eb736d1/SystemDrawingImageHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cfbe3cd186514c71ae576a8663cf2300531738/6d/659dd204/Path.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cfbe3cd186514c71ae576a8663cf2300531738/7f/aca1c9e6/CultureInfo.cs" root0="FORCE_HIGHLIGHTING" />
@@ -86,10 +105,18 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cfbe3cd186514c71ae576a8663cf2300531738/de/cc810cd8/RuntimeMethodInfo.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cfbe3cd186514c71ae576a8663cf2300531738/f4/1c5a3a1b/String.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/eafedfdba3b1480cbdab940aa104cc5417ab00/65/82aa5635/Enumerable.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f16ad90e81d045dfa3410e50bb08ed27531738/02/fb8a45ec/List`1.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f16ad90e81d045dfa3410e50bb08ed27531738/2e/d96df810/Directory.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f16ad90e81d045dfa3410e50bb08ed27531738/81/d50c1a70/Number.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f16ad90e81d045dfa3410e50bb08ed27531738/ab/4cc48fcd/String.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f16ad90e81d045dfa3410e50bb08ed27531738/cf/4ea1da15/ExecutionContext.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f16ad90e81d045dfa3410e50bb08ed27531738/fa/c95723a0/Path.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/Funtion_export_file_le_EPPlus.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/Repositories/ExportProcess.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/Services/IQCPeelingTest.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/CustomSpec.Designer.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/CustomSpec.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.Designer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_ERS_NETSpec.Designer.cs" root0="FORCE_HIGHLIGHTING" />
@@ -105,6 +132,7 @@
     <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/Views/AntdForm.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/Views/BendingForm.Designer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/Views/BendingForm.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Funtion_F3_SMT/Views/BendingWindow.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
@@ -113,61 +141,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.6152273566426792E-29" />
-      <entry key="MS500" value="2.323800318940871E-6" />
-      <entry key="S2" value="0.07350730101269384" />
-      <entry key="S5" value="0.7360750352625716" />
-      <entry key="S10" value="1.6951085434200674" />
-      <entry key="S30" value="3.5432692314031113" />
-      <entry key="S60" value="4.99095659716911" />
-      <entry key="M2" value="7.671432311060399" />
-      <entry key="M5" value="22.729144312002482" />
-      <entry key="M10" value="50.77196185242157" />
-      <entry key="M15" value="76.1893540203677" />
-      <entry key="M30" value="130.28512758777805" />
-      <entry key="H1" value="185.22099610131195" />
-      <entry key="H2" value="245.65194353962386" />
-      <entry key="H4" value="339.5670984669636" />
-      <entry key="D1" value="1225.7363817102328" />
-      <entry key="W1" value="6036.052870897789" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="5.807257378497614E-84" />
+      <entry key="S2" value="2.610106373375653E-21" />
+      <entry key="S5" value="8.856716056407999E-9" />
+      <entry key="S10" value="1.3312156758533205E-4" />
+      <entry key="S30" value="0.09340980063600729" />
+      <entry key="S60" value="0.7659409908677085" />
+      <entry key="M2" value="3.303860783741695" />
+      <entry key="M5" value="11.69167963745687" />
+      <entry key="M10" value="23.08584055611251" />
+      <entry key="M15" value="33.63745587742245" />
+      <entry key="M30" value="62.6782626825253" />
+      <entry key="H1" value="107.52265315070494" />
+      <entry key="H2" value="171.63652608622536" />
+      <entry key="H4" value="268.00940468729414" />
+      <entry key="D1" value="1030.259023326372" />
+      <entry key="W1" value="6098.521385671336" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="1.0" />
       <entry key="MS500" value="1.0" />
       <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0000000000000002" />
-      <entry key="S30" value="1.0000126541417453" />
-      <entry key="S60" value="1.0070375702259697" />
-      <entry key="M2" value="1.207617604634137" />
-      <entry key="M5" value="3.304758189607667" />
-      <entry key="M10" value="8.316402931964003" />
-      <entry key="M15" value="13.556212052989633" />
-      <entry key="M30" value="25.52941968369555" />
-      <entry key="H1" value="37.63622743157984" />
-      <entry key="H2" value="48.79547242128536" />
-      <entry key="H4" value="65.0594346629795" />
-      <entry key="D1" value="303.17367829171195" />
-      <entry key="W1" value="1706.1173717068687" />
+      <entry key="S5" value="1.0000000025069842" />
+      <entry key="S10" value="1.0000500907909131" />
+      <entry key="S30" value="1.0465127595058812" />
+      <entry key="S60" value="1.4515255983469175" />
+      <entry key="M2" value="2.8267077566546233" />
+      <entry key="M5" value="6.023861109005871" />
+      <entry key="M10" value="9.78541312086412" />
+      <entry key="M15" value="13.260651778464588" />
+      <entry key="M30" value="22.7330764208362" />
+      <entry key="H1" value="37.63604054956067" />
+      <entry key="H2" value="58.88462075362315" />
+      <entry key="H4" value="89.19700041457439" />
+      <entry key="D1" value="300.34391886571456" />
+      <entry key="W1" value="1725.8413852629717" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="3.7312020193239406E-5" />
-      <entry key="MS500" value="0.13012993966219513" />
-      <entry key="S2" value="0.6734292692948604" />
-      <entry key="S5" value="1.5487351242265546" />
-      <entry key="S10" value="2.594264730860221" />
-      <entry key="S30" value="4.5009491777464925" />
-      <entry key="S60" value="5.971277649219862" />
-      <entry key="M2" value="8.859074251988886" />
-      <entry key="M5" value="26.008472955276876" />
-      <entry key="M10" value="59.05649655888516" />
-      <entry key="M15" value="89.71053772503554" />
-      <entry key="M30" value="155.78038020611916" />
-      <entry key="H1" value="222.83133008291765" />
-      <entry key="H2" value="294.4304093962786" />
-      <entry key="H4" value="404.6153049210934" />
-      <entry key="D1" value="1528.9027379747026" />
-      <entry key="W1" value="7742.163128450922" />
+      <entry key="MS100" value="0.009226505167418202" />
+      <entry key="MS500" value="0.39174859347467034" />
+      <entry key="S2" value="0.7911373011854499" />
+      <entry key="S5" value="0.9105436070450124" />
+      <entry key="S10" value="0.9543984591866689" />
+      <entry key="S30" value="1.1221015910668328" />
+      <entry key="S60" value="2.200117795897263" />
+      <entry key="M2" value="6.107558369417257" />
+      <entry key="M5" value="17.68804665797062" />
+      <entry key="M10" value="32.843145399784376" />
+      <entry key="M15" value="46.870207344331746" />
+      <entry key="M30" value="85.38515096676464" />
+      <entry key="H1" value="145.13667701817113" />
+      <entry key="H2" value="230.50424526580295" />
+      <entry key="H4" value="357.19368755935557" />
+      <entry key="D1" value="1330.595529145561" />
+      <entry key="W1" value="7824.3557592652" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -194,7 +222,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.317757&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.31619936&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
@@ -203,7 +231,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;HotReloadSettingsPage&quot;
   }
 }</component>
   <component name="RunManager">
@@ -274,95 +302,108 @@
           <option name="timeStamp" value="3" />
         </breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs</url>
-          <line>461</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\Bending\UC_BendingData.cs" containingFunctionPresentation="Method 'buttonShadow2_Click'">
-            <startOffsets>
-              <option value="21370" />
-            </startOffsets>
-            <endOffsets>
-              <option value="21371" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="90" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs</url>
-          <line>906</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\BendingService.cs" containingFunctionPresentation="Method 'Export'">
-            <startOffsets>
-              <option value="34015" />
-            </startOffsets>
-            <endOffsets>
-              <option value="34069" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="99" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs</url>
-          <line>5308</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\View_Data_3.cs" containingFunctionPresentation="Method 'btnLoadB_Click'">
-            <startOffsets>
-              <option value="237845" />
-            </startOffsets>
-            <endOffsets>
-              <option value="237858" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="104" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs</url>
-          <line>5044</line>
+          <line>5049</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\View_Data_3.cs" containingFunctionPresentation="Method 'btn_select_Click'">
             <startOffsets>
-              <option value="225168" />
+              <option value="225007" />
             </startOffsets>
             <endOffsets>
-              <option value="225199" />
+              <option value="225038" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="111" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs</url>
-          <line>12975</line>
+          <line>12983</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\View_Data_3.cs" containingFunctionPresentation="Method 'export_new'">
             <startOffsets>
-              <option value="619640" />
+              <option value="619482" />
             </startOffsets>
             <endOffsets>
-              <option value="619716" />
+              <option value="619558" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="113" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs</url>
-          <line>13171</line>
+          <line>13179</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\View_Data_3.cs" containingFunctionPresentation="Method 'btn_export_Click'">
             <startOffsets>
-              <option value="629474" />
+              <option value="629316" />
             </startOffsets>
             <endOffsets>
-              <option value="629475" />
+              <option value="629317" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="114" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/PeelTestOnProductService.cs</url>
-          <line>1057</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\PeelTestOnProductService.cs" containingFunctionPresentation="Method 'LoadData'">
+          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs</url>
+          <line>8882</line>
+          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\View_Data_3.cs" containingFunctionPresentation="Method 'btn_save_Click'">
             <startOffsets>
-              <option value="43532" />
+              <option value="409862" />
             </startOffsets>
             <endOffsets>
-              <option value="43613" />
+              <option value="409948" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="126" />
+          <option name="timeStamp" value="129" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/ACFService.cs</url>
+          <line>642</line>
+          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\ACFService.cs" containingFunctionPresentation="Method 'ExportBoding'">
+            <startOffsets>
+              <option value="29378" />
+            </startOffsets>
+            <endOffsets>
+              <option value="29408" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="130" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs</url>
+          <line>686</line>
+          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\Bending\UC_BendingData.cs" containingFunctionPresentation="Lambda expression inside Method 'btn_exportALL_Click'">
+            <startOffsets>
+              <option value="29587" />
+            </startOffsets>
+            <endOffsets>
+              <option value="29623" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="145" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs</url>
+          <line>1187</line>
+          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\BendingService.cs" containingFunctionPresentation="Method 'Export'">
+            <startOffsets>
+              <option value="47728" />
+            </startOffsets>
+            <endOffsets>
+              <option value="47791" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="146" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs</url>
+          <line>1784</line>
+          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\BendingService.cs" containingFunctionPresentation="Method 'ExportDataToICT'">
+            <startOffsets>
+              <option value="75427" />
+            </startOffsets>
+            <endOffsets>
+              <option value="75465" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="159" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

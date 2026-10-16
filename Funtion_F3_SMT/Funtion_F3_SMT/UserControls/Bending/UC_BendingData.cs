@@ -4,6 +4,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AntdUI;
@@ -602,6 +603,287 @@ namespace OK2SHIP_SMT.UserControls.Bending
                     tb_logfile.Text = selectedFolderPath;
                 }
             }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            // Gửi tín hiệu hủy vào bên trong Task đang chạy
+            if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
+            {
+                _cancellationTokenSource.Cancel();
+            }
+        }
+
+        private CancellationTokenSource _cancellationTokenSource;
+        private bool _isExporting = false;
+
+        private async void btn_exportALL_Click(object sender, EventArgs e)
+        {
+            string itemCode = tb_itemCode.Text;
+            string lotNo = tb_lotNo.Text;
+            string maker = tb_maker.Text;
+            // TRƯỜNG HỢP 1: NẾU ĐANG CHẠY MÀ BẤM NÚT NÀY -> HỦY TÁC VỤ
+            if (_isExporting)
+            {
+                if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
+                {
+                    _cancellationTokenSource.Cancel();
+                    btn_export.Enabled = false; // Tạm mờ nút đi để tránh người dùng click liên tục trong lúc đợi hủy
+                }
+
+                return; // Dừng hàm tại đây, không chạy xuống code Export phía dưới
+            }
+
+            // TRƯỜNG HỢP 2: NẾU CHƯA CHẠY -> BẮT ĐẦU CHẠY EXPORT
+            _isExporting = true;
+            btn_export.Text = "Hủy tác vụ"; // Đổi text của nút
+            // btnExport.BackColor = Color.LightCoral; // (Tuỳ chọn) đổi màu nền nút sang đỏ cho dễ nhận diện
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            var token = _cancellationTokenSource.Token;
+
+            try
+            {
+                // 1. Lấy dữ liệu
+                List<string> categoriesToExport = new List<string>();
+                if (menu_option.Items != null && menu_option.Items.Count > 0)
+                {
+                    for (int i = 0; i < menu_option.Items.Count; i++)
+                    {
+                        categoriesToExport.Add(menu_option.Items[i].ToString());
+                    }
+                }
+                else
+                {
+                    categoriesToExport.Add("Flex Bending");
+                }
+
+                __Service = new BendingService();
+                // 2. Chạy ngầm vòng lặp
+                await Task.Run(() =>
+                {
+                    __Service.checkERS(itemCode, lotNo, maker);
+
+
+                    //Chạy hàm export
+                    List<string> list = new[]
+                    {
+                        "Thermal cycling", "Thermal cycling", "Flex Bending",
+                        "Heat soak and Flex bend", "Thermal cycling and Flex bending",
+                        "Thermal shock", "Heat soak"
+                    }.ToList();
+                    List<string> ar = new List<string>();
+                    List<string> msg = new List<string>();
+// __Service.checkers
+                    foreach (string category in list)
+                    {
+                        try
+                        {
+                            string itemc = __Service.Export(itemCode, lotNo, maker, category, false, false);
+                            ar.Add(itemc);
+                        }
+                        catch (Exception ex)
+                        {
+                            msg.Add($"{category}:{ex.Message}");
+                        }
+                    }
+
+                    // List<string> ar = new[]
+                    // {
+                    //     "E:\\thuyht\\ObjectStorage\\SEEV Data\\Report\\NPI\\FLEX_BENDING\\THANG 9\\7S3814-00001.xlsx",
+                    //     "E:\\thuyht\\ObjectStorage\\SEEV Data\\Report\\NPI\\HEAT_SOAK_&_BENDING\\THANG 9\\7S3814-00001.xlsx",
+                    //     "E:\\thuyht\\ObjectStorage\\SEEV Data\\Report\\NPI\\THERMAL_CYCLING\\THANG 9\\7S3814-00001.xlsx"
+                    // }.ToList();
+                    //đo thời gian
+                    Stopwatch stopwatch = Stopwatch.StartNew();
+                    if (ar.Count > 0)
+                    {
+                        __Service.MergeFile(ar.ToArray(), $"ERS\\{itemCode.Trim()}-{lotNo.Trim()}");
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            $"Xuất dữ liệu hoàn tất! \n [KPI CHECK] Thời gian chạy MergeFile: {stopwatch.ElapsedMilliseconds} ms ({stopwatch.Elapsed.TotalSeconds} giây)",
+                            "Thông báo");
+                        throw new Exception("Không có sheet nào để merge");
+                    }
+
+                    // đo thời gian
+                    stopwatch.Stop();
+                    Console.WriteLine(
+                        $"[KPI CHECK] Thời gian chạy MergeFile: {stopwatch.ElapsedMilliseconds} ms ({stopwatch.Elapsed.TotalSeconds} giây)");
+                    MessageBox.Show(
+                        $"Xuất dữ liệu hoàn tất! \n [KPI CHECK] Thời gian chạy MergeFile: {stopwatch.ElapsedMilliseconds} ms ({stopwatch.Elapsed.TotalSeconds} giây)",
+                        "Thông báo");
+
+                    if (msg.Count > 0)
+                    {
+                        MessageBox.Show(string.Join("\n", msg));
+                    }
+                }, token);
+            }
+            catch (OperationCanceledException)
+            {
+                MessageBox.Show("Quá trình xuất dữ liệu đã bị dừng lại.", "Đã hủy");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Có lỗi xảy ra: " + ex.Message, "Lỗi");
+            }
+            finally
+            {
+                // 3. Cho dù chạy xong, lỗi, hay bị hủy thì cũng phải trả lại trạng thái gốc cho nút
+                _isExporting = false;
+                btn_export.Text = "Export ERS";
+                btn_export.Enabled = true; // Mở khóa lại nút (nếu lúc hủy bị mờ)
+                // btnExport.UseVisualStyleBackColor = true; // (Tuỳ chọn) Trả lại màu ban đầu
+
+                if (_cancellationTokenSource != null)
+                {
+                    _cancellationTokenSource.Dispose();
+                    _cancellationTokenSource = null;
+                }
+            }
+        }
+
+        private async void btn_exportAllNotSus_Click(object sender, EventArgs e)
+        {
+            string itemCode = tb_itemCode.Text;
+            string lotNo = tb_lotNo.Text;
+            string maker = tb_maker.Text;
+            // TRƯỜNG HỢP 1: NẾU ĐANG CHẠY MÀ BẤM NÚT NÀY -> HỦY TÁC VỤ
+            if (_isExporting)
+            {
+                if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
+                {
+                    _cancellationTokenSource.Cancel();
+                    btn_exportALL.Enabled = false; // Tạm mờ nút đi để tránh người dùng click liên tục trong lúc đợi hủy
+                }
+
+                return; // Dừng hàm tại đây, không chạy xuống code Export phía dưới
+            }
+
+            // TRƯỜNG HỢP 2: NẾU CHƯA CHẠY -> BẮT ĐẦU CHẠY EXPORT
+            _isExporting = true;
+            btn_exportALL.Text = "Hủy tác vụ"; // Đổi text của nút
+            // btnExport.BackColor = Color.LightCoral; // (Tuỳ chọn) đổi màu nền nút sang đỏ cho dễ nhận diện
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            var token = _cancellationTokenSource.Token;
+
+            try
+            {
+                // 1. Lấy dữ liệu
+                List<string> categoriesToExport = new List<string>();
+                if (menu_option.Items != null && menu_option.Items.Count > 0)
+                {
+                    for (int i = 0; i < menu_option.Items.Count; i++)
+                    {
+                        categoriesToExport.Add(menu_option.Items[i].ToString());
+                    }
+                }
+                else
+                {
+                    categoriesToExport.Add("Flex Bending");
+                }
+
+                __Service = new BendingService();
+
+                // 2. Chạy ngầm vòng lặp
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        __Service.checkERS(itemCode, lotNo, maker);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (MessageBox.Show($"{ex.Message}, do you want continue?", "Warning", MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning) == DialogResult.No)
+                        {
+                            throw new OperationCanceledException();
+                        }
+                    }
+
+                    //Chạy hàm export
+                    List<string> list = new[]
+                    {
+                        "Thermal cycling", "Thermal cycling", "Flex Bending",
+                        "Heat soak and Flex bend", "Thermal cycling and Flex bending",
+                        "Thermal shock", "Heat soak"
+                    }.ToList();
+                    List<string> ar = new List<string>();
+                    List<string> msg = new List<string>();
+
+                    foreach (string category in list)
+                    {
+                        try
+                        {
+                            string itemc = __Service.Export(itemCode, lotNo, maker, category, false, true);
+                            ar.Add(itemc);
+                        }
+                        catch (Exception ex)
+                        {
+                            msg.Add($"{category}: {ex.Message}");
+                        }
+
+                        if (Debugger.IsAttached)
+                        {
+                            Debugger.Break();
+                            break;
+                        }
+                    }
+
+
+                    //đo thời gian
+                    Stopwatch stopwatch = Stopwatch.StartNew();
+                    if (ar.Count <= 0)
+                    {
+                        throw new Exception("Không có dữ liệu");
+                    }
+
+                    __Service.MergeFile(ar.ToArray(), $"ALL_NET\\{itemCode}-{lotNo}");
+                    // đo thời gian
+                    stopwatch.Stop();
+                    Console.WriteLine(
+                        $"[KPI CHECK] Thời gian chạy MergeFile: {stopwatch.ElapsedMilliseconds} ms ({stopwatch.Elapsed.TotalSeconds} giây)");
+                    MessageBox.Show(
+                        $"Xuất dữ liệu thành công! \n [KPI CHECK] Thời gian chạy MergeFile: {stopwatch.ElapsedMilliseconds} ms ({stopwatch.Elapsed.TotalSeconds} giây)",
+                        "Thông báo");
+                    if (msg.Count > 0)
+                    {
+                        MessageBox.Show(string.Join("\n", msg));
+                    }
+                }, token);
+            }
+            catch (OperationCanceledException)
+            {
+                MessageBox.Show("Quá trình xuất dữ liệu đã bị dừng lại.", "Đã hủy");
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show("Có lỗi xảy ra: " + ex.Message, "Lỗi");
+            }
+            finally
+            {
+                // 3. Cho dù chạy xong, lỗi, hay bị hủy thì cũng phải trả lại trạng thái gốc cho nút
+                _isExporting = false;
+                btn_exportALL.Text = "Export ALL Net"; // Trả lại text ban đầu
+                btn_exportALL.Enabled = true; // Mở khóa lại nút (nếu lúc hủy bị mờ)
+                // btnExport.UseVisualStyleBackColor = true; // (Tuỳ chọn) Trả lại màu ban đầu
+
+                if (_cancellationTokenSource != null)
+                {
+                    _cancellationTokenSource.Dispose();
+                    _cancellationTokenSource = null;
+                }
+            }
+        }
+
+        private void btn_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

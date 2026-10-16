@@ -448,14 +448,9 @@ namespace OK2SHIP_SMT.Services
             foreach (string fileLocation in arraySub)
             {
                 string folderName = FileFolderRepository.GetFolderName(fileLocation);
-                switch (folderName)
+                if (folderName.ToUpper().Contains("GAP"))
                 {
-                    case "GAP Connector":
-                        solveB2B(fileLocation, dt);
-                        break;
-
-                    default:
-                        break;
+                    solveB2B(fileLocation, dt);
                 }
             }
 

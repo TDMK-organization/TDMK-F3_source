@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using OfficeOpenXml;
@@ -30,6 +31,7 @@ namespace OK2SHIP_SMT.Services
             dt.Columns.Add("High Limit");
             dt.Columns.Add("Min DCR");
             dt.Columns.Add("Max DCR");
+            dt.Columns.Add("Custom Spec");
             DataColumn colSelect = new DataColumn("Select", typeof(bool));
             colSelect.DefaultValue = false; // Giá trị mặc định là true (hoặc false tùy ý bạn)
             dt.Columns.Add(colSelect);
@@ -93,6 +95,7 @@ namespace OK2SHIP_SMT.Services
                         rowValue["High Limit"] = worksheet.Cells[row + i, colHighLimit].Value.ToString();
                         rowValue["Min DCR"] = worksheet.Cells[row + i, colMinDCR].Value.ToString();
                         rowValue["Max DCR"] = worksheet.Cells[row + i, colMaxDCR].Value.ToString();
+                        rowValue["Custom Spec"] = "";
                         try
                         {
                             rowValue["Select"] =
@@ -165,6 +168,10 @@ namespace OK2SHIP_SMT.Services
             _DBCONTEXT.BuckDataTable(dt, _NAMETABLE, new[] { "ItemCode", "Maker" }, null, "ID");
         }
 
+        public int getNumberOfData()
+        {
+            return _DATA[_DATA.Keys.First()].Rows.Count;
+        }
         public void LoadData(string itemCode, string maker)
         {
             DataTable dt = _DBCONTEXT.LoadDataTable(_NAMETABLE, new[] { "ItemCode", "Maker" },

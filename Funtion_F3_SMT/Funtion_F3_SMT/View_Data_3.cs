@@ -491,52 +491,51 @@ namespace Funtion_F3_SMT
 
             if (sheet == "CROSS_SECTION" || sheet == "GAP_CONNECTOR")
             {
-                // 1. Khởi tạo TableLayoutPanel với 1 hàng và 2 cột
-                TableLayoutPanel tlpStatus = new TableLayoutPanel();
-                tlpStatus.RowCount = 1;
-                tlpStatus.ColumnCount = 2;
-                tlpStatus.Dock =
-                    DockStyle.Top; // Dock lên trên cùng của Panel (bạn có thể đổi thành Fill nếu muốn lấp đầy)
-                tlpStatus.Height = 35; // Chiều cao dự kiến vừa vặn cho ComboBox
-                tlpStatus.Padding = new Padding(5); // Căn lề một chút cho đẹp
+                // 1. Tăng thêm 1 hàng cho tableLayoutPanel11 đã có sẵn
+                tableLayoutPanel16.RowCount += 1;
+// Thêm định dạng kích thước cho hàng mới (ví dụ AutoSize để tự động giãn theo control bên trong)
+                tableLayoutPanel16.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
-                // Thiết lập kích thước cho 2 cột: Cột 1 tự động vừa chữ, Cột 2 chiếm phần còn lại
-                tlpStatus.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-                tlpStatus.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+// Lấy chỉ số của hàng mới vừa được thêm (Index bắt đầu từ 0)
+                int newRowIndex = tableLayoutPanel16.RowCount - 1;
 
-                // 2. Khởi tạo Label "Status"
+// 2. Khởi tạo Label "Status"
                 System.Windows.Forms.Label lblStatus = new System.Windows.Forms.Label();
                 lblStatus.Text = "Status";
                 lblStatus.AutoSize = true;
-                lblStatus.Anchor = AnchorStyles.Left; // Để Label canh giữa theo chiều dọc của hàng
+                lblStatus.Anchor = AnchorStyles.Left; // Căn giữa theo chiều dọc
                 lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 
-                // 3. Khởi tạo ComboBox
-                cbStatus.DropDownStyle = ComboBoxStyle.DropDownList; // Chỉ cho phép chọn, không cho phép gõ text tự do
+// 3. Khởi tạo/Cấu hình ComboBox 
+// (Nếu cbStatus chưa được new thì bạn cần thêm: ComboBox cbStatus = new ComboBox();)
+                cbStatus.DropDownStyle = ComboBoxStyle.DropDownList;
+
+// Clear item cũ trước khi add nếu cbStatus được sử dụng lại nhiều lần
+                cbStatus.Items.Clear();
+
                 if (sheet == "CROSS_SECTION")
                 {
                     cbStatus.Items.Add("Normal");
                     cbStatus.Items.Add("Shield b2b");
                     cbStatus.Items.Add("Clip");
                 }
-
-                if (sheet == "GAP_CONNECTOR")
+                else if (sheet == "GAP_CONNECTOR")
                 {
                     cbStatus.Items.Add("Normal");
                     cbStatus.Items.Add("Shield b2b");
                 }
 
-                cbStatus.SelectedIndex = 0; // Đặt giá trị mặc định là "Normal" (vị trí index 0)
-                cbStatus.Dock = DockStyle.Fill; // Để ComboBox trải dài hết cột thứ 2
+                if (cbStatus.Items.Count > 0)
+                {
+                    cbStatus.SelectedIndex = 0; // Đặt giá trị mặc định là phần tử đầu tiên
+                }
 
-                // 4. Thêm Label và ComboBox vào TableLayoutPanel
+                cbStatus.Dock = DockStyle.Fill; // Để ComboBox trải dài hết cột
+
+                // 4. Thêm Label và ComboBox vào tableLayoutPanel16 tại hàng mới nhất
                 // Cú pháp: Add(Control, columnIndex, rowIndex)
-                tlpStatus.Controls.Add(lblStatus, 0, 0);
-                tlpStatus.Controls.Add(cbStatus, 1, 0);
-
-                // 5. Thêm TableLayoutPanel vào splitContainer2.Controls[1]
-                // (Lưu ý: trong WinForms, splitContainer2.Panel2 chính là splitContainer2.Controls[1])
-                splitContainer2.Panel2.Controls.Add(tlpStatus);
+                tableLayoutPanel16.Controls.Add(lblStatus, 0, newRowIndex); // Cột 0, hàng mới
+                tableLayoutPanel16.Controls.Add(cbStatus, 1, newRowIndex); // Cột 1, hàng mới
             }
 
             if (sheet == "PEEL_TEST" || sheet == "MATING_PULL_TEST" || sheet == "SHEAR_TEST")
@@ -2089,7 +2088,13 @@ namespace Funtion_F3_SMT
         {
             if (prime == "Shield b2b" || prime == "Clip")
             {
-                return CrossSectionService.ReadLogfile(in_src, infor, prime == "Shield b2b");
+                DataTable dt = CrossSectionService.ReadLogfile(in_src, infor, out string msg, prime);
+                if (!string.IsNullOrEmpty(msg))
+                {
+                    MessageBox.Show(msg);
+                }
+
+                return dt;
             }
 
 
@@ -8796,6 +8801,7 @@ namespace Funtion_F3_SMT
             if (txtItemCode.Text != "" && txtLotNo.Text != "" && cb_Type.SelectedIndex != -1 && txt_qty.Text != "")
             {
                 string itemCode = txtItemCode.Text, lotNo = txtLotNo.Text;
+
                 string infor = "";
                 string filter_str = "";
                 infor = "/" + txt_ItemName.Text + "_" + txt_line.Text + "_" + txt_ca.Text + "_" + txt_date.Text + "_" +
@@ -8872,6 +8878,8 @@ namespace Funtion_F3_SMT
                                 }
 
                                 NasRepository nas = new NasRepository();
+
+
                                 string location = nas.HandleImageDataTable(tbl_data_analysis, sheet, itemCode, lotNo);
                                 string json = ConverterService.DataTableToJson(tbl_data_analysis);
                                 DataRow row = dt.NewRow();

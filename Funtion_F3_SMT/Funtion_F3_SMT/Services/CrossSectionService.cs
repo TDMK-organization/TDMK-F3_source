@@ -53,6 +53,7 @@ namespace OK2SHIP_SMT.Services
             {
                 throw new Exception("Spec is not valid");
             }
+
             string specz = spec.Rows[0]["Location"].ToString();
             List<string> list = specz.Split('|').ToList();
             Dictionary<string, string> dic = new Dictionary<string, string>();
@@ -60,16 +61,14 @@ namespace OK2SHIP_SMT.Services
             {
                 try
                 {
-
                     string key = item.Split(';')[0].Trim();
                     dic.Add(key.ToUpper(), item);
                 }
                 catch
                 {
-                    
                 }
-                
             }
+
             return dic;
         }
 
@@ -85,6 +84,7 @@ namespace OK2SHIP_SMT.Services
                     string[] split = valueSpec.Split(';');
                 }
             }
+
             return list;
         }
 
@@ -105,9 +105,10 @@ namespace OK2SHIP_SMT.Services
             string json = dt.Rows[0]["Data"].ToString();
             string itemCode = dt.Rows[0]["ItemCode"].ToString().Trim();
             string lotNo = dt.Rows[0]["LotNo"].ToString().Trim();
+            string sheet = dt.Rows[0]["Sheet"].ToString().Trim();
             DataTable res = ConverterService.JsonToDataTable(json);
             NasRepository nas = new NasRepository();
-            nas.MergeDataTable(res, _DBNAME, itemCode, lotNo, locationImage);
+            nas.MergeDataTable(res, _DBNAME, itemCode, $"{lotNo}-{sheet}", locationImage);
             return res;
         }
 
@@ -125,7 +126,7 @@ namespace OK2SHIP_SMT.Services
             row["LotNo"] = lotno;
             row["Sheet"] = sheet;
             NasRepository nas = new NasRepository();
-            string location = nas.HandleImageDataTable(dataTable, _DBNAME, itemcode, lotno);
+            string location = nas.HandleImageDataTable(dataTable, _DBNAME, itemcode, $"{lotno}-{sheet}");
             row["Data"] = ConverterService.DataTableToJson(dataTable);
             row["LocationImg"] = location;
             dtSave.Rows.Add(row);
@@ -391,7 +392,7 @@ namespace OK2SHIP_SMT.Services
                             {
                                 int ix = 0;
                                 ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddColumn(add, number + 3)],
-                                    (byte[])row["Image"], $"{row["NameImage"]}_{number}");
+                                    (byte[])row["Image"], $"{row["NameImage"]}_{number}{Guid.NewGuid()}");
                                 string[] splitData = row["Data"].ToString().Split(';');
                                 while (dic.TryGetValue($"text0_{ix}", out string addPercent))
                                 {
@@ -431,55 +432,60 @@ namespace OK2SHIP_SMT.Services
             }
         }
 
-        public static DataTable ReadLogfile(string in_src, string infor, bool b2b = true)
+        public static DataTable ReadLogfile(string in_src, string infor, out string msg, string type)
         {
             DataTable dt = getStructor();
             DataColumn selectCol = dt.Columns.Add("Select", typeof(bool));
             selectCol.DefaultValue = true;
             string[] arraySub = FileFolderRepository.GetSubFolders(in_src);
+            List<string> msgList = new List<string>();
             foreach (string fileLocation in arraySub)
             {
                 string folderName = FileFolderRepository.GetFolderName(fileLocation);
-                switch (folderName)
+                string key = "";
+                if (type == "Shield b2b")
                 {
-                    case "Crosscut Section B2B":
-                        if (b2b)
-                        {
-                            solveB2B(fileLocation, dt);
-                        }
+                    if (folderName.Contains("GAP"))
+                    {
+                        key = "B2B";
+                    }
 
-                        break;
-                    case "Crosscut Section CLIP":
-                        if (!b2b)
-                        {
-                            solveClip(fileLocation, dt);
-                        }
+                    if (folderName.Contains("B2B"))
+                    {
+                        key = "B2B";
+                    }
+                }
 
-                        break;
-                    default:
-                        break;
+                if (type == "Clip")
+                {
+                    if (folderName.Contains("CLIP"))
+                    {
+                        key = "CLIP";
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(key))
+                {
+                    string[] arraySubFolder = FileFolderRepository.GetSubFolders(fileLocation);
+                    foreach (string subfolder in arraySubFolder)
+                    {
+                        GetPopulatedData(subfolder, dt);
+                    }
                 }
             }
 
+            if (dt.Rows.Count <= 0)
+            {
+                msgList.Add($"Không có Folder Match");
+            }
+
+            msg = string.Join("\n", msgList);
             return dt;
         }
 
-        private static void solveClip(string fileLocation, DataTable dt)
-        {
-            string[] arraySubFolder = FileFolderRepository.GetSubFolders(fileLocation + "\\CLIP");
-            foreach (string subfolder in arraySubFolder)
-            {
-                GetPopulatedData(subfolder, dt);
-            }
-        }
 
         public static void solveB2B(string fileLocation, DataTable dt)
         {
-            string[] arraySubFolder = FileFolderRepository.GetSubFolders(fileLocation);
-            foreach (string subfolder in arraySubFolder)
-            {
-                GetPopulatedData(subfolder, dt);
-            }
         }
 
         public static void GetPopulatedData(string fileLocation, DataTable dt)

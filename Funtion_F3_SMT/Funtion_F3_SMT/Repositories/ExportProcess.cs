@@ -50,7 +50,9 @@ namespace OK2SHIP_SMT.Repositories
                 throw new Exception("Đường dẫn không hợp lệ, kiểm tra lại config.ini");
             }
         }
-        public static void GetRealDimension(ExcelWorksheet sheet, out int realEndRow, out int realEndColumn, int limitRow = 5000, int limitCol = 100)
+
+        public static void GetRealDimension(ExcelWorksheet sheet, out int realEndRow, out int realEndColumn,
+            int limitRow = 5000, int limitCol = 100)
         {
             realEndRow = 1;
             realEndColumn = 1;
@@ -74,6 +76,7 @@ namespace OK2SHIP_SMT.Repositories
                         break;
                     }
                 }
+
                 if (hasData)
                 {
                     realEndRow = r;
@@ -94,6 +97,7 @@ namespace OK2SHIP_SMT.Repositories
                         break;
                     }
                 }
+
                 if (hasData)
                 {
                     realEndColumn = c;
@@ -101,6 +105,7 @@ namespace OK2SHIP_SMT.Repositories
                 }
             }
         }
+
         public static void CleanPhantomDimension(ExcelWorksheet sheet)
         {
             if (sheet.Dimension == null) return;
@@ -124,6 +129,7 @@ namespace OK2SHIP_SMT.Repositories
                 sheet.DeleteColumn(realEndColumn + 1, phantomEndCol - realEndColumn);
             }
         }
+
         public static ExcelPackage openPackage(string location)
         {
             ExcelPackage.LicenseContext = LicenseContext.Commercial;
@@ -133,17 +139,28 @@ namespace OK2SHIP_SMT.Repositories
 
         public static byte[] ConvertDataRowToByte(DataRow row, string columnName)
         {
-            byte[] image;
-            try
+            // Kiểm tra nếu dòng bị null hoặc dữ liệu trong cột là DBNull/null
+            if (row == null || row.IsNull(columnName))
             {
-                image = TDMK_ImageConverter.ImageToByteArray((Image)row[columnName], ImageFormat.Jpeg);
-            }
-            catch
-            {
-                image = (byte[])row[columnName];
+                return null; // Hoặc trả về new byte[0] tùy vào logic của bạn
             }
 
-            return image;
+            object data = row[columnName];
+
+            // Trường hợp 1: Dữ liệu đã là mảng byte[] (lấy trực tiếp từ Database)
+            if (data is byte[] byteArray)
+            {
+                return byteArray;
+            }
+
+            // Trường hợp 2: Dữ liệu là dạng Image (ảnh), cần chuyển đổi
+            if (data is Image img)
+            {
+                return TDMK_ImageConverter.ImageToByteArray(img, ImageFormat.Jpeg);
+            }
+
+            // Trường hợp khác: Không đúng định dạng, trả về null
+            return null; 
         }
 
         public static void CopyColumn(ExcelWorksheet worksheet, ExcelRangeBase rangeStart, string address)
@@ -459,6 +476,11 @@ namespace OK2SHIP_SMT.Repositories
             return file.FullName;
         }
 
+        public string getLocationSave()
+        {
+            return $"{EXPORT_LOACTION}\\";
+        }
+
         public static void InsertImageToCell(ExcelWorksheet wsSheet1, ExcelRangeBase tar_rgn, byte[] img_data,
             string pic_name)
         {
@@ -507,7 +529,7 @@ namespace OK2SHIP_SMT.Repositories
                 int num5 = (int)(0.05 * (double)Math.Min(num3, num4));
                 excelPicture.SetPosition(row2 - 1, num5, column2 - 1, num5);
                 excelPicture.SetSize(num4 - 2 * num5, num3 - 2 * num5);
-                //excelPicture.SetSize(50);
+                // excelPicture.SetSize(70);
             }
         }
 
@@ -522,9 +544,19 @@ namespace OK2SHIP_SMT.Repositories
             }
 
             return null;
-            throw new Exception("Không tìm thấy sheet kiểm tra lại tên sheet");
         }
+        public ExcelWorksheet FindSheetWithKey(ExcelPackage excelPackage, string sheetName)
+        {
+            foreach (ExcelWorksheet sheet in excelPackage.Workbook.Worksheets)
+            {
+                if (sheet.Name.Trim().Replace(" ", "_").ToUpper().Contains(sheetName.Replace(" ", "_").ToUpper()))
+                {
+                    return sheet;
+                }
+            }
 
+            return null;
+        }
         ///
         ///Not Fix
         public static string FindAddressByText(ExcelWorksheet excelWorksheet, string text, string address = null)
