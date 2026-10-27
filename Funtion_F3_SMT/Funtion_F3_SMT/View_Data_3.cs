@@ -2089,6 +2089,15 @@ namespace Funtion_F3_SMT
             if (prime == "Shield b2b" || prime == "Clip")
             {
                 DataTable dt = CrossSectionService.ReadLogfile(in_src, infor, out string msg, prime);
+                try
+                {
+
+                    CrossSectionService.GetFlexSN(dt, textBox1.Text, txtItemCode.Text, txtLotNo.Text);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("ProductID:" + ex.Message);
+                }
                 if (!string.IsNullOrEmpty(msg))
                 {
                     MessageBox.Show(msg);
@@ -7541,11 +7550,8 @@ namespace Funtion_F3_SMT
                     else if ((sheet == "CROSS_SECTION" || sheet == "GAP_CONNECTOR") &&
                              (cbStatus.Text == "Shield b2b" || cbStatus.Text == "Clip"))
                     {
-                        string[] f_name =
-                            Path.GetFileNameWithoutExtension(txtLogfile.Text).TrimEnd(new char[] { ',', '.', ' ' })
-                                .Split('-');
-                        if (txtItemCode.Text.ToString() == f_name[0].Trim() &&
-                            txtLotNo.Text.ToString() == f_name[1].Trim())
+                        string iz = $"{txtItemCode.Text.ToString().Trim()}-{txtLotNo.Text.ToString().Trim()}";
+                        if (Path.GetFileNameWithoutExtension(txtLogfile.Text).Contains(iz))
                         {
                             chk = true;
                         }

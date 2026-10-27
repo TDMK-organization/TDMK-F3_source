@@ -2087,7 +2087,7 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 string mySheet = "";
 
-                if (sheet == "Cross section")
+                if (sheet == "Cross section B2B")
                 {
                     int sample = 0;
                     List<string> listZ = new List<string>();

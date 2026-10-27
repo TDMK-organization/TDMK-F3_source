@@ -4,8 +4,19 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Export_FPCA_OK2ship_Auto_System.Repositories;
+using Microsoft.Office.Interop.Excel;
+using OfficeOpenXml;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DataTable = System.Data.DataTable;
+using Sheets = DocumentFormat.OpenXml.Spreadsheet.Sheets;
+using Workbook = DocumentFormat.OpenXml.Spreadsheet.Workbook;
 
 namespace Export_FPCA_OK2ship_Auto_System.Services
 {
@@ -86,6 +97,241 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             config = config.Trim();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="progress"></param>
+        /// <param name="reportForm">true is get sheet from report, false get sheet from format</param>
+        public async Task ExportAll(List<string> _listCategory, IProgress<float> progress = null,
+            bool reportForm = false, bool dbFirst = false)
+        {
+            if (_listCategory.Count <= 0)
+            {
+                _listCategory = listcategory;
+            }
+
+            string destinationFilePath = new ExportProcess().getExportLocation();
+            string targetFolder = Path.Combine(destinationFilePath,
+                $"{__ItemName}_{__Build}_{__ItemName}");
+            List<string> allFile = new List<string>();
+            float num = 80 / _listCategory.Count;
+            float percent = 0;
+
+            // [Step 1]: Lấy dữ liệu lẻ 
+            foreach (string item in _listCategory)
+            {
+                progress.Report(percent);
+                string status = "";
+                try
+                {
+                    if (__STATUS.TryGetValue(item, out string value))
+                    {
+                        //Debugger.Break();
+                        // trường hợp nếu là export từ nas
+                        if (value.ToUpper().Equals("NAS"))
+                        {
+                            status = ExportCategoryNas(item, targetFolder);
+                        }
+                        else if (value.ToUpper().Equals("NONE"))
+                        {
+                            // bỏ qua
+                        }
+                        else if (value.ToUpper().Contains("OK2SHIP") || value.ToUpper().Contains("OK2BUILD"))
+                        {
+                            Dictionary<string, string> dic = new Dictionary<string, string>();
+                            string[] valueArr = value.ToString().Split('(', ')', '-');
+                            try
+                            {
+                                dic.Add("TargetFolder", targetFolder);
+                                dic.Add("ItemCode", valueArr[1]);
+                                dic.Add("LotNo", valueArr[2]);
+                                dic.Add("Maker", valueArr[3]);
+                            }
+                            catch
+                            {
+                            }
+
+                            status = ExportCategoryDB(item, item, reportForm, dbFirst, dic);
+                        }
+                        else
+                        {
+                            // Trường hợp đặc biệt
+                            Debugger.Break();
+                            throw new Exception("Không có trường hợp này!");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    status = ex.Message;
+                }
+
+                allFile.Add($"{item}:{status}");
+                progress.Report(percent);
+                percent += num;
+            }
+
+            // [Step 2]: Gộp file
+            progress.Report(80);
+            // try
+            // {
+            //     // 2.1. Lấy đường dẫn động tới thư mục chứa phần mềm
+            //     string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            //
+            //     // Tạo đường dẫn chuẩn đến file .exe
+            //     string exePath = Path.Combine(baseDirectory, "VHX-IMADA", "MergeService", "MergeHeavyExcelService.exe");
+            //
+            //     // Kiểm tra xem file .exe có tồn tại không
+            //     if (!File.Exists(exePath))
+            //     {
+            //         throw new Exception("Không tìm thấy file dịch vụ MergeHeavyExcelService.exe tại: " + exePath);
+            //     }
+            //
+            //     // 2. Tạo chuỗi arguments (tham số)
+            //     StringBuilder arguments = new StringBuilder();
+            //
+            //     // Nối danh sách các file input (Mỗi đường dẫn bọc trong dấu ngoặc kép "")
+            //     foreach (string file in allFile)
+            //     {
+            //         arguments.Append($"\"{file}\" ");
+            //     }
+            //
+            //     string dirOutPut = new ExportProcess().getLocationSave();
+            //     // Nối file output vào cuối cùng (Bọc trong ngoặc kép "")
+            //     arguments.Append($"\"{dirOutPut}\"");
+            //
+            //     // 3. Cấu hình tiến trình (Process) chạy file exe
+            //     ProcessStartInfo startInfo = new ProcessStartInfo
+            //     {
+            //         FileName = exePath,
+            //         Arguments = arguments.ToString(),
+            //         UseShellExecute = false,
+            //         CreateNoWindow = true,
+            //         WindowStyle = ProcessWindowStyle.Hidden,
+            //         // THÊM: Đọc luồng để bắt lỗi từ Python
+            //         RedirectStandardOutput = true,
+            //         RedirectStandardError = true,
+            //         StandardOutputEncoding = Encoding.UTF8,
+            //         StandardErrorEncoding = Encoding.UTF8
+            //     };
+            //
+            //     // 4. Khởi chạy tiến trình
+            //     using (Process process = new Process())
+            //     {
+            //         process.StartInfo = startInfo;
+            //         process.Start();
+            //
+            //         // Đọc lại toàn bộ nội dung mà Python đã print() ra
+            //         string outputLog = process.StandardOutput.ReadToEnd();
+            //         string errorLog = process.StandardError.ReadToEnd();
+            //
+            //         process.WaitForExit();
+            //
+            //         // 5. Kiểm tra mã trả về
+            //         if (process.ExitCode != 0)
+            //         {
+            //             // Bắn ra Exception kèm theo log của file Python để dễ debug
+            //             throw new Exception(
+            //                 $"Dịch vụ ghép file thất bại (Mã lỗi: {process.ExitCode}).\n\nLog hệ thống:\n{outputLog}\n{errorLog}");
+            //         }
+            //     }
+            //
+            //     // 6. MỞ FILE SAU KHI GHÉP THÀNH CÔNG
+            //     Process.Start(new ProcessStartInfo(dirOutPut)
+            //     {
+            //         UseShellExecute = true
+            //     });
+            // }
+            // catch (Exception ex)
+            // {
+            //     throw new Exception($"Quá trình mergefile lỗi:{ex.Message}");
+            // }
+
+            progress.Report(100);
+        }
+
+
+        public string ExportCategoryNas(string nameReal, string targetFolder)
+        {
+            IList<string> listFile = FileFolderRepository.ListAllFileInFolder(targetFolder, "xlsx");
+            foreach (string item in listFile)
+            {
+                string file = FileFolderRepository.GetFileName(item).ToUpper().Replace(".XLSX", "");
+                if (file.Contains(nameReal.ToUpper()))
+                {
+                    return item;
+                }
+            }
+
+            return "Không có dữ liệu nas";
+        }
+
+        /// <summary>
+        //
+        /// </summary>
+        /// <param name="nameReal">Tên thực tế của hạng mục (sau khi export sẽ lưu lại dưới tên này</param>
+        /// <param name="category">Tên mục sẽ export (dựa vào tên này để chọn quy trình để xuất)</param>
+        /// <param name="reportForm">Lấy báo cáo từ true: từ báo cáo gốc, false: từ</param>
+        /// <param name="dbFirst">true:ưu tiên xuất dữ liệu từ database\ false kiểm tra xem có sẵn báo cáo đấy chưa nếu có thì sử dụng </param>
+        public string ExportCategoryDB(string nameReal, string category, bool reportForm, bool dbFirst,
+            Dictionary<string, string> info)
+        {
+            //Debugger.Break();
+
+            // Nếu ưu tiên sử dụng nas
+            if (info.TryGetValue("TargetFolder", out string targetFolder))
+            {
+                IList<string> listFile = FileFolderRepository.ListAllFileInFolder(targetFolder, "xlsx");
+                foreach (string item in listFile)
+                {
+                    string file = FileFolderRepository.GetFileName(item).ToUpper().Replace(".xlsx", "");
+                    if (file.Equals(nameReal))
+                    {
+                        if (!dbFirst)
+                        {
+                            return item;
+                        }
+                        else
+                        {
+                            targetFolder = item;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!info.TryGetValue("ItemCode", out string itemCode))
+            {
+                throw new Exception("ItemCode không tồn tại trong thông tin xuất!");
+            }
+
+            //Lấy format 
+            using (ExcelPackage package = reportForm
+                       ? new ExportProcess().FindFormatWithItemCode(itemCode)
+                       : new ExportProcess().OpenFileExcel(targetFolder))
+            {
+                // cho các thụuật toán xuất vào đây
+                Debugger.Break();
+                switch (category)
+                {
+                    case "Cross Section":
+                        if (info.TryGetValue("LotNo", out string lotNo))
+                        {
+                           return CrossSectionService.ExportAll(package, itemCode, lotNo);
+                            
+                        }
+                        else
+                        {
+                            
+                        }
+
+                        break;
+                }
+            }
+
+
+            return "";
+        }
 
         public void initData()
         {
@@ -425,22 +671,60 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
         }
 
-        public static bool checkCategory(string category, Dictionary<string, string> info, out string status)
+        public static string checkNas(string itemName, string build, string config)
         {
+            List<string> list = new List<string>();
+            string destinationFilePath = new ExportProcess().getExportLocation();
+            destinationFilePath = Path.Combine(destinationFilePath,
+                $"{itemName}_{build}_{config}");
+            if (!Directory.Exists(destinationFilePath))
+            {
+                return "";
+            }
+
+            List<string> listfile = Directory.GetFiles(destinationFilePath).ToList();
+            foreach (string item in listfile)
+            {
+                string name = FileFolderRepository.GetFileNameWithoutExtension(item);
+                list.Add($"{name}\u200BOK");
+            }
+
+            return string.Join("\u200F", list);
+        }
+
+        public static bool checkCategory(string category, Dictionary<string, string> info, out string status,
+            out string valueActtact)
+        {
+            valueActtact = "";
             status = "Data ERR";
+
             try
             {
-
-                string itemcode = "", lotNo = "", maker = "";
+                string itemcode = "", lotNo = "", maker = "", itemName = "", build = "", config = "";
 
                 switch (category)
                 {
+                    case "NONE_GROUP":
+                        status = "None";
+                        return true;
+                        break;
+                    case "NAS_GROUP":
+                        if (info.TryGetValue("ItemName", out itemName)
+                            && info.TryGetValue("Build", out build)
+                            && info.TryGetValue("Config", out config))
+                        {
+                            status = checkNas(itemName, build, config);
+                            return true;
+                        }
+
+                        break;
                     case "ORT": // kiểm tra các mục ort
                         if (info.TryGetValue("ItemCode", out itemcode)
                             && info.TryGetValue("LotNo", out lotNo)
                             && info.TryGetValue("Maker", out maker))
                         {
                             status = bending_check(itemcode, lotNo, maker);
+                            valueActtact = $"({itemcode}-{lotNo}-{maker})";
                             return true;
                         }
 
@@ -450,6 +734,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = itemCodeLotNo_Check(itemcode, lotNo);
+
+                            valueActtact = $"({itemcode}-{lotNo})";
                             return true;
                         }
 
@@ -459,6 +745,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = onproduct_check(itemcode, lotNo);
+
+                            valueActtact = $"({itemcode}-{lotNo})";
                             return true;
                         }
 
@@ -469,6 +757,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = FAI_check(itemcode, lotNo);
+
+                            valueActtact = $"{itemcode}-{lotNo}";
                             return true;
                         }
 
@@ -478,6 +768,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = crossSection_check(itemcode, lotNo);
+                            valueActtact = $"{itemcode}-{lotNo}";
                             return true;
                         }
 
@@ -491,6 +782,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = gapconnector_check(itemcode, lotNo);
+                            valueActtact = $"{itemcode}-{lotNo}";
                             return true;
                         }
 
@@ -501,6 +793,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = peelTest_check(itemcode, lotNo);
+                            valueActtact = $"{itemcode}-{lotNo}";
                             return true;
                         }
 
@@ -510,6 +803,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = sem_check(itemcode, lotNo);
+                            valueActtact = $"{itemcode}-{lotNo}";
                             return true;
                         }
 
@@ -520,6 +814,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("Maker", out maker))
                         {
                             status = environemnt_check(itemcode, lotNo, maker);
+                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
                             return true;
                         }
 
@@ -529,6 +824,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = pullTest_check(itemcode, lotNo);
+                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
                             return true;
                         }
 
@@ -538,6 +834,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = IQC_pullTest_check(itemcode, lotNo);
+                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
                             return true;
                         }
 
@@ -547,6 +844,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = shearTest_check(itemcode, lotNo);
+                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
                             return true;
                         }
 
@@ -556,6 +854,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = oqcummating_check(itemcode, lotNo);
+                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
                             return true;
                         }
 
@@ -565,6 +864,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = iqcliner_check(itemcode, lotNo);
+                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
                             return true;
                         }
 
@@ -574,6 +874,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = iqcpsa_check(itemcode, lotNo);
+                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
                             return true;
                         }
 
@@ -590,8 +891,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
             catch
             {
-                
             }
+
             return false;
         }
 
@@ -633,7 +934,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 
             return status;
         }
-        
+
         private static string pullTest_check(string itemCode, string lotNo)
         {
             string status = "";
@@ -646,14 +947,11 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 {
                     status = MSG_OK;
                 }
-
-              
             }
 
             return status;
-
         }
-        
+
         private static string iqcpsa_check(string itemCode, string lotNo)
         {
             string status = "";
@@ -666,13 +964,12 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 {
                     status = MSG_OK;
                 }
-
-              
             }
 
             return status;
+        }
 
-        }  private static string iqcliner_check(string itemCode, string lotNo)
+        private static string iqcliner_check(string itemCode, string lotNo)
         {
             string status = "";
             DataTable dt = new DataTable();
@@ -684,14 +981,11 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 {
                     status = MSG_OK;
                 }
-
-              
             }
 
             return status;
-
         }
-        
+
         private static string oqcummating_check(string itemCode, string lotNo)
         {
             string status = "";
@@ -704,13 +998,11 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 {
                     status = MSG_OK;
                 }
-
-              
             }
 
             return status;
-
         }
+
         private static string shearTest_check(string itemCode, string lotNo)
         {
             string status = "";
@@ -723,14 +1015,11 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 {
                     status = MSG_OK;
                 }
-
-              
             }
 
             return status;
-
         }
-        
+
         private static string IQC_pullTest_check(string itemCode, string lotNo)
         {
             string status = "";
@@ -743,13 +1032,12 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 {
                     status = MSG_OK;
                 }
-
-              
             }
 
 
             return status;
         }
+
         private static string peelTest_check(string itemCode, string lotNo)
         {
             string status = "";

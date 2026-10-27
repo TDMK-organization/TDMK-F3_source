@@ -14,28 +14,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79693909-c6be-4431-90a9-36eba68f2a7a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Repositories/ExportProcess.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Repositories/ExportProcess.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Repositories/NasRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Repositories/NasRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Services/CrossSectionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Services/CrossSectionService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Services/ExportService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Services/ExportService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Services/TDMK_ReportManagerService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Services/TDMK_ReportManagerService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Setup_spec.designer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/DBScreen.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/DBScreen.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/ReportManagerForm.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/ReportManagerForm.Designer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/ReportManagerForm.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/ReportManagerForm.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/RunProgess.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/Views/ReportManager/RunProgess.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/../FPCA OK2ship Auto System/Export_FPCA OK2ship Auto System/packages.config" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Funtion_F3_SMT/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/ACF.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/ACF.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_F3_SMT.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_F3_SMT.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_export_file_le_EPPlus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Funtion_export_file_le_EPPlus.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Repositories/ExportProcess.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Repositories/ExportProcess.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/ACFService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/ACFService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/CrossSectionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/CrossSectionService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/ERS_NetSpecService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/ERS_NetSpecService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/GAPConnectorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/GAPConnectorService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/Services/XRayPictureService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/Services/XRayPictureService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.Designer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_ERS_NETSpec.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_ERS_NETSpec.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.Designer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Funtion_F3_SMT/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/Funtion_F3_SMT/packages.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SMT_FAISPC/.idea/.idea.SMT_FAISPC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../SMT_FAISPC/.idea/.idea.SMT_FAISPC/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/AntdUI.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/AntdUI.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/AntdUI.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TestAreas/TDMK Program/FPCA OK2SHIP Auto System/AntdUI.xml" afterDir="false" />
@@ -59,6 +57,7 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/12e90d02f7ee4561b88d602d2057d6c318dab8/18/aa3a5bd3/MenuItems.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/21dcee4d99f948d0890cf7c33a43b4db91d98/86/ffe91973/ImageConverter.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/33331d1c7b64465b9a5cd252934095227b89e0/8f/27fd41ee/SpreadsheetDocument.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/402af08d116e430d9d66ba6ee06ad4bb3618b0/43/bf1c1154/ComponentResourceManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/402af08d116e430d9d66ba6ee06ad4bb3618b0/49/9e151129/PropertyDescriptor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4530c791bf814e4c9e2ce09d8a5986485b9598/21/a395d1bf/Control.cs" root0="FORCE_HIGHLIGHTING" />
@@ -92,6 +91,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/a2/eb58cf6d/TabPage.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/b0/eb469ff4/CellButton.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/be545d21e6d84992ab8d6d4c60f5bcb130a600/d8/6a71fffa/IControl.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/bfd49f34d99346d9a858bbbd68128a6153d938/17/0243ccab/ExecutionContext.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/bfd49f34d99346d9a858bbbd68128a6153d938/35/f1c30a38/Dictionary`2.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c115104f117b4d32a574806f587753714bf8/bb/0eb736d1/SystemDrawingImageHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/cfbe3cd186514c71ae576a8663cf2300531738/6d/659dd204/Path.cs" root0="FORCE_HIGHLIGHTING" />
@@ -142,60 +142,60 @@
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="5.807257378497614E-84" />
-      <entry key="S2" value="2.610106373375653E-21" />
-      <entry key="S5" value="8.856716056407999E-9" />
-      <entry key="S10" value="1.3312156758533205E-4" />
-      <entry key="S30" value="0.09340980063600729" />
-      <entry key="S60" value="0.7659409908677085" />
-      <entry key="M2" value="3.303860783741695" />
-      <entry key="M5" value="11.69167963745687" />
-      <entry key="M10" value="23.08584055611251" />
-      <entry key="M15" value="33.63745587742245" />
-      <entry key="M30" value="62.6782626825253" />
-      <entry key="H1" value="107.52265315070494" />
-      <entry key="H2" value="171.63652608622536" />
-      <entry key="H4" value="268.00940468729414" />
-      <entry key="D1" value="1030.259023326372" />
-      <entry key="W1" value="6098.521385671336" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="2.3327179176198868E-125" />
+      <entry key="S5" value="1.4032817917787922E-50" />
+      <entry key="S10" value="1.1846019549953443E-25" />
+      <entry key="S30" value="4.911236126586429E-9" />
+      <entry key="S60" value="7.008021209005027E-5" />
+      <entry key="M2" value="0.008371392482141204" />
+      <entry key="M5" value="0.1476111220903544" />
+      <entry key="M10" value="0.3842307357948065" />
+      <entry key="M15" value="0.5314775446941811" />
+      <entry key="M30" value="1.1369151102311081" />
+      <entry key="H1" value="7.22469065911134" />
+      <entry key="H2" value="34.914350837217" />
+      <entry key="H4" value="116.2063985267167" />
+      <entry key="D1" value="929.7561475526602" />
+      <entry key="W1" value="6037.684459627589" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="1.0" />
       <entry key="MS500" value="1.0" />
       <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0000000025069842" />
-      <entry key="S10" value="1.0000500907909131" />
-      <entry key="S30" value="1.0465127595058812" />
-      <entry key="S60" value="1.4515255983469175" />
-      <entry key="M2" value="2.8267077566546233" />
-      <entry key="M5" value="6.023861109005871" />
-      <entry key="M10" value="9.78541312086412" />
-      <entry key="M15" value="13.260651778464588" />
-      <entry key="M30" value="22.7330764208362" />
-      <entry key="H1" value="37.63604054956067" />
-      <entry key="H2" value="58.88462075362315" />
-      <entry key="H4" value="89.19700041457439" />
-      <entry key="D1" value="300.34391886571456" />
-      <entry key="W1" value="1725.8413852629717" />
+      <entry key="S5" value="1.0" />
+      <entry key="S10" value="1.0" />
+      <entry key="S30" value="1.0" />
+      <entry key="S60" value="1.0" />
+      <entry key="M2" value="1.0" />
+      <entry key="M5" value="1.0000000000084843" />
+      <entry key="M10" value="1.0000078583732477" />
+      <entry key="M15" value="1.000899635676189" />
+      <entry key="M30" value="1.1387885384729761" />
+      <entry key="H1" value="3.2252013324006246" />
+      <entry key="H2" value="12.462375190311908" />
+      <entry key="H4" value="37.89424087412684" />
+      <entry key="D1" value="269.38422854842605" />
+      <entry key="W1" value="1706.7849096986106" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.009226505167418202" />
-      <entry key="MS500" value="0.39174859347467034" />
-      <entry key="S2" value="0.7911373011854499" />
-      <entry key="S5" value="0.9105436070450124" />
-      <entry key="S10" value="0.9543984591866689" />
-      <entry key="S30" value="1.1221015910668328" />
-      <entry key="S60" value="2.200117795897263" />
-      <entry key="M2" value="6.107558369417257" />
-      <entry key="M5" value="17.68804665797062" />
-      <entry key="M10" value="32.843145399784376" />
-      <entry key="M15" value="46.870207344331746" />
-      <entry key="M30" value="85.38515096676464" />
-      <entry key="H1" value="145.13667701817113" />
-      <entry key="H2" value="230.50424526580295" />
-      <entry key="H4" value="357.19368755935557" />
-      <entry key="D1" value="1330.595529145561" />
-      <entry key="W1" value="7824.3557592652" />
+      <entry key="MS100" value="0.002879432065021682" />
+      <entry key="MS500" value="0.3103568728815281" />
+      <entry key="S2" value="0.7463891916484765" />
+      <entry key="S5" value="0.8895823072838765" />
+      <entry key="S10" value="0.9431767105287728" />
+      <entry key="S30" value="0.9806883697929063" />
+      <entry key="S60" value="0.9903666991333606" />
+      <entry key="M2" value="1.0034787731850492" />
+      <entry key="M5" value="1.1454557528317517" />
+      <entry key="M10" value="1.3829942472892265" />
+      <entry key="M15" value="1.531477776556437" />
+      <entry key="M30" value="2.275048688926237" />
+      <entry key="H1" value="10.448348877237482" />
+      <entry key="H2" value="47.3732844532846" />
+      <entry key="H4" value="154.09527360321815" />
+      <entry key="D1" value="1199.1337721579926" />
+      <entry key="W1" value="7744.462471073952" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -303,52 +303,13 @@
         </breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs</url>
-          <line>5049</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\View_Data_3.cs" containingFunctionPresentation="Method 'btn_select_Click'">
-            <startOffsets>
-              <option value="225007" />
-            </startOffsets>
-            <endOffsets>
-              <option value="225038" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="111" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs</url>
-          <line>12983</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\View_Data_3.cs" containingFunctionPresentation="Method 'export_new'">
-            <startOffsets>
-              <option value="619482" />
-            </startOffsets>
-            <endOffsets>
-              <option value="619558" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="113" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs</url>
-          <line>13179</line>
-          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\View_Data_3.cs" containingFunctionPresentation="Method 'btn_export_Click'">
-            <startOffsets>
-              <option value="629316" />
-            </startOffsets>
-            <endOffsets>
-              <option value="629317" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="114" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs</url>
-          <line>8882</line>
+          <line>8888</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\View_Data_3.cs" containingFunctionPresentation="Method 'btn_save_Click'">
             <startOffsets>
-              <option value="409862" />
+              <option value="410006" />
             </startOffsets>
             <endOffsets>
-              <option value="409948" />
+              <option value="410092" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="129" />
@@ -368,42 +329,94 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/UserControls/Bending/UC_BendingData.cs</url>
-          <line>686</line>
+          <line>685</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\UserControls\Bending\UC_BendingData.cs" containingFunctionPresentation="Lambda expression inside Method 'btn_exportALL_Click'">
             <startOffsets>
-              <option value="29587" />
+              <option value="29673" />
             </startOffsets>
             <endOffsets>
-              <option value="29623" />
+              <option value="29709" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="145" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs</url>
-          <line>1187</line>
+          <line>1204</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\BendingService.cs" containingFunctionPresentation="Method 'Export'">
             <startOffsets>
-              <option value="47728" />
+              <option value="48362" />
             </startOffsets>
             <endOffsets>
-              <option value="47791" />
+              <option value="48425" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="146" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs</url>
-          <line>1784</line>
+          <line>1818</line>
           <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\BendingService.cs" containingFunctionPresentation="Method 'ExportDataToICT'">
             <startOffsets>
-              <option value="75427" />
+              <option value="76528" />
             </startOffsets>
             <endOffsets>
-              <option value="75465" />
+              <option value="76566" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="159" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/View_Data_3.cs</url>
+          <line>7634</line>
+          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\View_Data_3.cs" containingFunctionPresentation="Method 'check_path_new'">
+            <startOffsets>
+              <option value="351143" />
+            </startOffsets>
+            <endOffsets>
+              <option value="351149" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="160" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/CrossSectionService.cs</url>
+          <line>166</line>
+          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\CrossSectionService.cs" containingFunctionPresentation="Method 'GetFlexSN'">
+            <startOffsets>
+              <option value="6968" />
+            </startOffsets>
+            <endOffsets>
+              <option value="6974" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="167" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/CrossSectionService.cs</url>
+          <line>90</line>
+          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\CrossSectionService.cs" containingFunctionPresentation="Method 'FillProductIdsInDataTable'">
+            <startOffsets>
+              <option value="3352" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3353" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="168" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Funtion_F3_SMT/Services/BendingService.cs</url>
+          <line>1994</line>
+          <properties documentPath="E:\thuyht\7.SEEV\0.F3\TDMK-F3_source\Funtion_F3_SMT\Funtion_F3_SMT\Services\BendingService.cs" containingFunctionPresentation="Local function 'FillSummaryBlock'">
+            <startOffsets>
+              <option value="85567" />
+            </startOffsets>
+            <endOffsets>
+              <option value="85608" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="181" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

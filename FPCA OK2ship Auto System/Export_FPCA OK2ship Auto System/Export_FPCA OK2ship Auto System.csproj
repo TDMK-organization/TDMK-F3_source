@@ -236,6 +236,12 @@
     <Reference Include="AntdUI, Version=2.4.11.0, Culture=neutral, PublicKeyToken=0e24e5118ea3d6af, processorArchitecture=MSIL">
       <HintPath>..\packages\AntdUI.2.4.11\lib\net48\AntdUI.dll</HintPath>
     </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=3.5.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.3.5.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml.Framework, Version=3.5.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.Framework.3.5.1\lib\net46\DocumentFormat.OpenXml.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="EPPlus, Version=7.7.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.7.7.3\lib\net462\EPPlus.dll</HintPath>
     </Reference>
@@ -290,6 +296,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\OldCode\SEEV-F3\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\TDMK_SQL.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
     <Reference Include="ZedGraph, Version=5.1.2.878, Culture=neutral, PublicKeyToken=02a83cbd123fcd60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\OldCode\SEEV-F3\TestAreas\TDMK Program\FPCA OK2SHIP Auto System\ZedGraph.dll</HintPath>

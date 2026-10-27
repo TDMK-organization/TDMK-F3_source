@@ -18,7 +18,6 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
 
             // Đăng ký sự kiện click nút trong bảng
             dgv.CellButtonClick += Dgv_CellButtonClick;
-
             initData();
         }
 
@@ -97,7 +96,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                 if (select)
                 {
                     DataRow dr = dt.NewRow();
-                    dr["Select"] =select;
+                    dr["Select"] = select;
                     dr["SheetName"] = row.SheetName;
                     dr["SheetDic"] = row.CollectFrom;
                     dt.Rows.Add(dr);
@@ -160,13 +159,17 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                     string sharedKey = group.Key;
 
                     // Đẩy tác vụ truy vấn DB xuống background thread
-                    var (isSuccess, status) = await Task.Run(() =>
+                    var (isSuccess, status, attact) = await Task.Run(() =>
                     {
-                        bool success = TDMK_ReportManagerService.checkCategory(sharedKey, dic, out string statusValue);
-                        return (success, statusValue);
+                        bool success = TDMK_ReportManagerService.checkCategory(sharedKey, dic, out string statusValue,
+                            out string valueAttact);
+                        return (success, statusValue, valueAttact);
                     });
 
-                    return new { Group = group, IsSuccess = isSuccess, Status = status };
+                    return new
+                    {
+                        Group = group, IsSuccess = isSuccess, Status = status, Collect = attact
+                    };
                 });
 
                 // Chờ tất cả DB queries hoàn thành trên background
@@ -208,6 +211,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                                 if (statusDict.TryGetValue(lookupKey, out string specificStatus))
                                 {
                                     row.Status = specificStatus;
+                                    string collect = row.CollectFrom.Split('(')[0];
+                                    row.CollectFrom = $"{collect}{result.Collect}";
                                 }
                                 else
                                 {
@@ -228,6 +233,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                         // Các mục tra cứu bình thường (Single)
                         foreach (var row in result.Group)
                         {
+                            string collect = row.CollectFrom.Split('(')[0];
+                            row.CollectFrom = $"{collect}({result.Collect})";
                             row.Status = result.IsSuccess ? result.Status : "Lỗi / Không tìm thấy";
                         }
                     }

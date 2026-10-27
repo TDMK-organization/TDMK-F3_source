@@ -219,8 +219,9 @@ namespace OK2SHIP_SMT.UserControls.Bending
                     // Nếu ép kiểu thành công và lấy được dòng dữ liệu
                     if (rowToUpdate != null)
                     {
+                        string rowJson = rowToUpdate["Custom Spec"].ToString();
                         // Mở form CustomSpec
-                        CustomSpec form = new CustomSpec("");
+                        CustomSpec form = new CustomSpec(rowJson);
                         form.ShowDialog();
 
                         // 2. An toàn: Kiểm tra xem DataTable đã có cột "Custom Spec" chưa.

@@ -366,7 +366,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     break;
                 case "Cross section":
                     CrossSectionService crossService = new CrossSectionService();
-                    msg = $"{category}-{_EXPORT_KEY}-{crossService.Export(itemCode, lotNo)}";
+                    msg = $"{category}-{_EXPORT_KEY}-{crossService.ExportOld(itemCode, lotNo)}";
                     break;
                 case "Table of Contents":
                     TableOfContentService tocService = new TableOfContentService();
@@ -574,7 +574,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     }
 
                     await MergeLargeExcelFilesAsync(package, list.ToArray(), progress);
-                    await process.SaveExcelPackage(package, $"Export all {itemCode}_{lotNo}");
+                    await process.SaveExcelPackage(package, $"Export all {itemCode}_{lotNo}", "", true);
                 }
             }
 

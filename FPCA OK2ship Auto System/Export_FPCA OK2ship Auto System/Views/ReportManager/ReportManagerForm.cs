@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using AntdUI;
 using Export_FPCA_OK2ship_Auto_System.Services;
@@ -86,42 +89,238 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
         {
             if (e.Column != null && e.Column.Title == "Action" && e.Btn is AntdUI.CellButton btn)
             {
-                var rowData = e.Record as Dictionary<string, object>;
-                if (rowData == null) return;
-
-                string sheetName = rowData["SheetName"]?.ToString();
-
-                if (btn.Text == "Xóa" || btn.Id.StartsWith("delete_"))
+                // Ép kiểu về Class Model thay vì Dictionary
+                if (e.Record is ReportManagerModel rowData)
                 {
-                    // var confirm = MessageBox.Show($"Bạn có chắc chắn muốn xóa sheet '{sheetName}'?", "Xác nhận",
-                    //     MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    // if (confirm == DialogResult.Yes)
-                    // {
-                    //     if (_service._DATA.ContainsKey(sheetName))
-                    //     {
-                    //         _service._DATA.Remove(sheetName);
-                    //     }
-                    //
-                    //     display_data(); // Load lại bảng
-                    // }
-                }
-                // Xử lý nút Upload
-                else if (btn.Text == "Setup" || btn.Id.StartsWith("setup_"))
-                {
-                    string itemName = ip_itemname.Text;
-                    string build = ip_build.Text;
-                    string config = ip_config.Text;
-                    SetupForm frm = new SetupForm(sheetName, _service);
-                    frm.ShowDialog();
-                    DisplayData();
-                    
+                    string sheetName = rowData.SheetName;
+
+                    if (btn.Text == "Xóa" || btn.Id.StartsWith("delete_"))
+                    {
+                        // Logic xóa...
+                    }
+                    else if (btn.Text == "Setup" || btn.Id.StartsWith("setup_"))
+                    {
+                        string itemName = ip_itemname.Text;
+                        string build = ip_build.Text;
+                        string config = ip_config.Text;
+                        SetupForm frm = new SetupForm(sheetName, _service);
+                        frm.ShowDialog();
+                        DisplayData();
+                    }
                 }
             }
+        }
+
+        private void btn_check_Click(object sender, EventArgs e)
+        {
+            CheckStatus();
         }
 
         #endregion
 
         #region method
+
+        private void ChangeColumnWidth()
+        {
+            // Kiểm tra xem bảng đã có cột nào chưa
+            if (dgv.Columns != null && dgv.Columns.Count > 0)
+            {
+                // Thay đổi cột "STT" (index 0) thành 100px
+                dgv.Columns[3].Width = "500";
+
+
+                // Yêu cầu Control vẽ lại để cập nhật giao diện mới nhất
+                dgv.Invalidate();
+            }
+        }
+
+        private async void CheckStatus()
+        {
+            // 1. Lấy dữ liệu từ bảng (Sử dụng BindingList Model)
+            var dataList = dgv.DataSource as System.ComponentModel.BindingList<ReportManagerModel>;
+            if (dataList == null || dataList.Count == 0) return;
+
+            try
+            {
+               
+
+                // 3. Gom nhóm theo SheetName
+                // Chỉ lấy những dòng có SheetName hợp lệ
+                var groups = dataList
+                    .Where(row => !string.IsNullOrEmpty(row.SheetName))
+                    .GroupBy(row =>
+                    {
+                        // Ưu tiên 0: Nếu DataForm chứa chữ "None" (không phân biệt hoa thường)
+                        if (!string.IsNullOrEmpty(row.DataForm) &&
+                            row.DataForm.Equals("None", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return "NONE_GROUP";
+                        }
+
+                        // Ưu tiên 1: Nếu DataForm chứa chữ "nas" (không phân biệt hoa thường)
+                        if (!string.IsNullOrEmpty(row.DataForm) &&
+                            row.DataForm.Equals("nas", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return "NAS_GROUP"; // Tất cả các dòng này sẽ dùng chung key là "NAS_GROUP"
+                        }
+
+                        // Ưu tiên 2: Nếu không phải nas, gom nhóm theo SharedKey như cũ
+                        return TDMK_ReportManagerService.GetSharedKey(row.SheetName);
+                    })
+                    .ToList();
+
+                if (groups.Count == 0) return;
+
+                // Cập nhật trạng thái chờ hiển thị tạm thời
+                // Do dùng BindingList và NotifyProperty, giao diện sẽ tự động hiển thị ngay lập tức
+                foreach (var row in dataList)
+                {
+                    if (!string.IsNullOrEmpty(row.SheetName))
+                    {
+                        row.Status = "Đang kiểm tra...";
+                    }
+                }
+
+                // 4. Khởi tạo các Task chạy song song
+                var tasks = groups.Select(async group =>
+                {
+                    string sharedKey = group.Key;
+                    // 2. Tạo Dictionary Input từ các TextBox của ReportManagerForm
+                    Dictionary<string, string> dic = new Dictionary<string, string>();
+                    string dtFrom = group.First().DataForm.ToString();
+                    string[] valueZ = dtFrom.Split('(', '-', ')');
+                    try
+                    {
+                        dic.Add("ItemName", ip_itemname.Text.Trim());
+                        dic.Add("Build", ip_build.Text.Trim());
+                        dic.Add("Config", ip_config.Text.Trim());
+                        dic.Add("ItemCode", valueZ[1]);
+                        dic.Add("LotNo", valueZ[2]);
+                        dic.Add("Maker", valueZ[3]);
+                    }
+                    catch
+                    {
+                        
+                    }
+                    var (isSuccess, status, attact) = await Task.Run(() =>
+                    {
+                        bool success = TDMK_ReportManagerService.checkCategory(sharedKey, dic, out string statusValue,
+                            out string valueAttact);
+                        return (success, statusValue, valueAttact);
+                    });
+
+                    return new { Group = group, IsSuccess = isSuccess, Status = status, Collect = attact };
+                });
+
+                // Chờ tất cả truy vấn nền hoàn thành
+                var results = await Task.WhenAll(tasks);
+
+                // Ngăn crash nếu user đã tắt Form trong lúc đang chờ Task
+                if (this.IsDisposed || this.Disposing) return;
+
+                // Tạm tắt sự kiện vẽ lại để gán dữ liệu hàng loạt cho mượt, không bị giật UI
+                dataList.RaiseListChangedEvents = false;
+
+                // 5. Bóc tách dữ liệu và cập nhật ngược lại vào UI
+                foreach (var result in results)
+                {
+                    string sharedKey = result.Group.Key;
+
+                    if (sharedKey == "ORT" || sharedKey == "NAS_GROUP" || sharedKey == "ITEMCODE_LOTNO_CHECK" ||
+                        sharedKey == "ONPRODUCT")
+                    {
+                        if (result.IsSuccess && !string.IsNullOrEmpty(result.Status))
+                        {
+                            var statusDict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                            string[] pairs = result.Status.Split(new[] { '\u200F' },
+                                StringSplitOptions.RemoveEmptyEntries);
+
+                            foreach (string pair in pairs)
+                            {
+                                string[] parts = pair.Split(new[] { '\u200B' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (parts.Length == 2)
+                                {
+                                    statusDict[parts[0].Trim()] = parts[1].Trim();
+                                }
+                            }
+
+                            foreach (var row in result.Group)
+                            {
+                                string sheetName = row.SheetName;
+                                string lookupKey = switchORT(sheetName);
+
+                                if (statusDict.TryGetValue(lookupKey, out string specificStatus))
+                                {
+                                    row.Status = specificStatus;
+                                }
+                                else
+                                {
+                                    row.Status = "No Data";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (var row in result.Group)
+                            {
+                                row.Status = "Lỗi / Không tìm thấy";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Các mục tra cứu bình thường (Single Check)
+                        foreach (var row in result.Group)
+                        {
+                            row.Status = result.IsSuccess ? result.Status : "Lỗi / Không tìm thấy";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageNotification("Lỗi", $"Có lỗi xảy ra trong quá trình kiểm tra:\n{ex.Message}", "error");
+            }
+            finally
+            {
+                // 6. Khôi phục trạng thái UI
+                if (!this.IsDisposed)
+                {
+                    if (dataList != null)
+                    {
+                        dataList.RaiseListChangedEvents = true; // Bật lại event
+                        dataList.ResetBindings(); // Báo cho UI vẽ lại 1 lần duy nhất toàn bộ bảng
+                    }
+
+                    MessageNotification("Thông báo", "Hoàn tất kiểm tra dữ liệu!", "info");
+                }
+            }
+        }
+
+
+        // Bổ sung thêm hàm switchORT vào form này nếu bạn chưa copy từ form cũ sang
+        private string switchORT(string sheetName)
+        {
+            sheetName = sheetName.Replace(" - ICT DATA", "");
+
+            switch (sheetName.ToLower().Trim())
+            {
+                case "heat soak & bending":
+                case "hs & bending":
+                    return "heat soak and flex bend";
+
+                case "heat soak and recovery":
+                case "heat soak & recovery":
+                    return "heat soak";
+
+                case "thermal cycling & bending":
+                case "tc & bending":
+                    return "thermal cycling and flex bending";
+
+                default:
+                    return sheetName;
+            }
+        }
 
         private void MessageNotification(string title, string message, string type = "error")
         {
@@ -152,44 +351,39 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
 
         private void DisplayData()
         {
-            List<Dictionary<string, object>> dataList = new List<Dictionary<string, object>>();
+            dgv.Columns = new AntdUI.ColumnCollection
+            {
+                new AntdUI.Column("STT", "STT") { Width = "60", Align = AntdUI.ColumnAlign.Center },
+                new AntdUI.Column("SheetName", "Sheet Name") { Width = "200" },
+                new AntdUI.Column("DataForm", "Data Form") { Width = "150" },
+                new AntdUI.Column("Status", "Status") { Width = "300" },
+                new AntdUI.Column("Action", "Action") { Width = "200", Align = AntdUI.ColumnAlign.Center }
+            };
+            var dataList = new System.ComponentModel.BindingList<ReportManagerModel>();
             int stt = 1;
+
             if (_service.listcategory.Count <= 0)
             {
-                dataList.Add(
-                    new Dictionary<string, object>
-                    {
-                        { "STT", "" },
-                        { "SheetName", "" },
-                        { "DataForm", "" },
-                        { "Status", "" },
-                        {
-                            "Action", ""
-                        }
-                    }
-                );
+                dataList.Add(new ReportManagerModel
+                {
+                    STT = "", SheetName = "", DataForm = "", Status = "", Action = null
+                });
             }
 
             foreach (string key in _service.listcategory)
             {
-                dataList.Add(
-                    new Dictionary<string, object>
+                dataList.Add(new ReportManagerModel
+                {
+                    STT = (stt++).ToString(),
+                    SheetName = key,
+                    DataForm = _service.__STATUS[key],
+                    Status = "None",
+                    Action = new AntdUI.CellLink[]
                     {
-                        { "STT", stt++ },
-                        { "SheetName", key },
-                        { "DataForm", _service.__STATUS[key] },
-                        { "Status", _service.__STATUS[key] },
-                        {
-                            "Action", new CellLink[]
-                            {
-                                // Đặt ID rõ ràng cho từng nút để nhận diện khi click
-                                new CellButton("setup_" + key, "Setup", TTypeMini.Primary),
-                                // Đặt ID rõ ràng cho từng nút để nhận diện khi click
-                                new CellButton("delete_" + key, "Delete", TTypeMini.Error),
-                            }
-                        }
+                        new AntdUI.CellButton("setup_" + key, "Setup", AntdUI.TTypeMini.Primary),
+                        new AntdUI.CellButton("delete_" + key, "Delete", AntdUI.TTypeMini.Error),
                     }
-                );
+                });
             }
 
             dgv.DataSource = dataList;
@@ -313,5 +507,54 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
         }
 
         #endregion
+
+        private async void button3_Click(object sender, EventArgs e)
+        {
+            // Tạm thời vô hiệu hóa nút bấm để tránh click nhiều lần
+            button3.Enabled = false;
+            progressExport.Visible = true;
+            progressExport.Value = 0f;
+
+            // Khởi tạo bộ lắng nghe tiến độ (Progress). Mã bên trong khối này sẽ chạy trên UI Thread.
+            var progressReporter = new Progress<float>(percent => { progressExport.Value = percent; });
+
+            try
+            {
+                List<string> listCateogry = new List<string>();
+                // Truyền biến progressReporter vào hàm và chờ nó chạy xong
+                await _service.ExportAll(listCateogry, progressReporter);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                // Đảm bảo luôn đầy 100% khi kết thúc và bật lại nút bấm
+                progressExport.Value = 1f;
+                button3.Enabled = true;
+            }
+        }
+    }
+
+    public class ReportManagerModel : AntdUI.NotifyProperty
+    {
+        public string STT { get; set; }
+        public string SheetName { get; set; }
+        public string DataForm { get; set; }
+
+        private string _status;
+
+        public string Status
+        {
+            get => _status;
+            set
+            {
+                _status = value;
+                OnPropertyChanged("Status"); // Tự động báo UI vẽ lại ô này
+            }
+        }
+
+        public AntdUI.CellLink[] Action { get; set; }
     }
 }

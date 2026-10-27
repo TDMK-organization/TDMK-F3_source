@@ -83,6 +83,7 @@
             this.cbl_sheet.Items.AddRange(new object[] {
             "FAI",
             "Cross section",
+            "Cross section B2B",
             "GAP Connector",
             "Peel Test",
             "(Mating) Pull Test",

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -167,6 +168,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                 if (parentForm != null)
                 {
                     parentForm.Close();
+                    return;
                 }
             }
 
@@ -192,37 +194,93 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                         Directory.CreateDirectory(targetFolder);
                     }
 
+                    List<Task> exportTasks = new List<Task>();
+
                     foreach (string key in dic.Keys)
                     {
                         string destination = Path.Combine(targetFolder, $"{key}{extension}");
                         List<string> list = dic[key].Split(';').ToList();
 
-                        // 3. Đưa tiến trình xử lý Excel nặng xuống Background Thread bằng Task.Run
-                        // Lệnh await sẽ chờ xuất file xong nhưng KHÔNG làm đơ giao diện (UI)
-                        await Task.Run(() => { ExportSpecificSheets(_location, list, destination); });
+                        // 2. Đưa từng tiến trình vào danh sách để chạy song song
+                        exportTasks.Add(ProcessExportAsync(key, list, destination));
+                    }
 
-                        // 4. Cập nhật trạng thái Tag (Chạy trên UI Thread do đã await xong Task phía trước)
-                        foreach (string item in list)
+                    // 3. Chờ TẤT CẢ các task hoàn thành
+                    await Task.WhenAll(exportTasks);
+
+                    // 4. Cuối cùng mới thực hiện Save một lần duy nhất
+                    _service.Save(false);
+
+                    // ==========================================
+                    // Hàm cục bộ (Local Function) xử lý từng File
+                    // ==========================================
+                    async Task ProcessExportAsync(string currentKey, List<string> currentList, string dest)
+                    {
+                        // Đưa tiến trình xuất file nặng xuống Background Thread
+                        await Task.Run(() => { ExportSpecificSheets(_location, currentList, dest); });
+
+                        // Sau khi await xong, code ở đây tự động quay lại UI Thread
+                        // Bạn có thể cập nhật giao diện an toàn mà không bị lỗi đơ app hay Cross-thread
+                        foreach (string item in currentList)
                         {
                             UpdateTagStatus(item, true);
-                            if (_service.__STATUS.TryGetValue(item, out string status))
+
+                            if (_service.__STATUS.ContainsKey(currentKey))
                             {
-                                _service.__STATUS[item] = "Nas";
+                                _service.__STATUS[currentKey] = "Nas";
                             }
                             else
                             {
-                                _service.__STATUS.Add(key, $"Nas");
+                                // Lưu ý: Đã đổi 'key' thành 'item' để đồng bộ với logic Dictionary
+                                _service.__STATUS.Add(currentKey, "Nas");
+                                _service.listcategory.Add(currentKey);
                             }
                         }
                     }
 
-                    _service.Save(false);
                     MessageBox.Show("Hoàn tất quá trình xuất file!", "Thành công", MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
                 }
                 else
                 {
                     // Qúa trình cài đặt itemcode lotno
+                    Debugger.Break();
+                    try
+                    {
+                        foreach (DataRow row in _dataTable.Rows)
+                        {
+                            string select = row["Select"].ToString();
+                            if (select.ToUpper().Equals("TRUE"))
+                            {
+                                string item = row["SheetName"].ToString();
+                                string SheetDic = row["SheetDic"].ToString();
+                                if (SheetDic.Contains('('))
+                                {
+                                    if (_service.__STATUS.TryGetValue(item, out string status))
+                                    {
+                                        _service.__STATUS[item] = SheetDic;
+                                    }
+                                    else
+                                    {
+                                        _service.__STATUS.Add(item, SheetDic);
+                                    }
+
+                                    UpdateTagStatus(item, true);
+                                }
+                                else
+                                {
+                                    UpdateTagStatus(item, false);
+                                }
+                            }
+                        }
+
+                        _service.Save(false);
+                        MessageBox.Show("Hoàn tất quá trình xuất file!", "Thành công", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
             catch (Exception ex)

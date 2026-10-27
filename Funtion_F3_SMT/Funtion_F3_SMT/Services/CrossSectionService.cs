@@ -15,6 +15,160 @@ namespace OK2SHIP_SMT.Services
 {
     public class CrossSectionService
     {
+        public static Dictionary<string, List<string>> GetGroupedProductIds(string filePath)
+        {
+            // Khởi tạo Dictionary. 
+            // Dùng StringComparer.OrdinalIgnoreCase để gộp chung các TestName giống nhau mà chỉ khác chữ hoa/thường.
+            Dictionary<string, List<string>> resultDict =
+                new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+
+            try
+            {
+                string[] lines = File.ReadAllLines(filePath);
+
+                if (lines.Length == 0) return resultDict;
+
+                // 1. Tìm vị trí cột động từ dòng tiêu đề
+                string[] headers = lines[0].Split(',');
+                int productIdIndex = -1;
+                int testNameIndex = -1;
+
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    string header = headers[i].Trim();
+                    if (header.Equals("ProductID", StringComparison.OrdinalIgnoreCase))
+                    {
+                        productIdIndex = i;
+                    }
+                    else if (header.Equals("TestName", StringComparison.OrdinalIgnoreCase))
+                    {
+                        testNameIndex = i;
+                    }
+                }
+
+                if (productIdIndex == -1 || testNameIndex == -1)
+                {
+                    Console.WriteLine("Lỗi: Không tìm thấy cột 'ProductID' hoặc 'TestName'.");
+                    return resultDict;
+                }
+
+                // 2. Đọc dữ liệu và gom nhóm vào Dictionary
+                for (int i = 1; i < lines.Length; i++)
+                {
+                    if (string.IsNullOrWhiteSpace(lines[i])) continue;
+
+                    string[] columns = lines[i].Split(',');
+
+                    int maxRequiredIndex = Math.Max(productIdIndex, testNameIndex);
+                    if (columns.Length > maxRequiredIndex)
+                    {
+                        string productId = columns[productIdIndex].Trim();
+                        string testName = columns[testNameIndex].Trim();
+
+                        // Nếu TestName trống thì có thể bỏ qua
+                        if (string.IsNullOrEmpty(testName)) continue;
+
+                        // Nếu Dictionary chưa có TestName này -> Tạo mới danh sách List<string>
+                        if (!resultDict.ContainsKey(testName))
+                        {
+                            resultDict[testName] = new List<string>();
+                        }
+
+                        // Thêm ProductID vào danh sách của TestName tương ứng
+                        resultDict[testName].Add(productId);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Có lỗi xảy ra: " + ex.Message);
+            }
+
+            return resultDict;
+        }
+
+        public static void FillProductIdsInDataTable(DataTable targetTable, Dictionary<string, List<string>> csvData)
+        {
+            // Kiểm tra xem DataTable có các cột cần thiết không
+            if (!targetTable.Columns.Contains("ProductID") ||
+                !targetTable.Columns.Contains("Region") ||
+                !targetTable.Columns.Contains("Sample"))
+            {
+                Console.WriteLine("Lỗi: DataTable không có đủ các cột 'ProductID', 'Region', hoặc 'Sample'.");
+                return;
+            }
+
+            // Duyệt qua từng dòng trong DataTable
+            foreach (DataRow row in targetTable.Rows)
+            {
+                // Lấy giá trị của Region (tương ứng với TestName)
+                string region = row["Region"]?.ToString();
+
+                // Lấy giá trị Sample (và chuyển sang số nguyên)
+                string sampleStr = row["Sample"]?.ToString();
+
+                if (string.IsNullOrWhiteSpace(region) || string.IsNullOrWhiteSpace(sampleStr))
+                {
+                    continue; // Bỏ qua nếu dữ liệu trống
+                }
+
+                // Ép kiểu Sample sang số nguyên (int)
+                if (int.TryParse(sampleStr, out int sampleNumber))
+                {
+                    // Logic: Sample trong bảng bắt đầu từ 1, List index bắt đầu từ 0
+                    int targetIndex = sampleNumber - 1;
+
+                    // Kiểm tra xem TestName (Region) này có tồn tại trong dữ liệu CSV không
+                    if (csvData.TryGetValue(region, out List<string> productIdsList))
+                    {
+                        // Kiểm tra xem targetIndex có hợp lệ trong danh sách không
+                        if (targetIndex >= 0 && targetIndex < productIdsList.Count)
+                        {
+                            // Gán ProductID vào DataRow
+                            row["ProductID"] = productIdsList[targetIndex];
+                        }
+                        else
+                        {
+                            // (Tùy chọn) Ghi log nếu Sample vượt quá số lượng ProductID có trong CSV
+                            Console.WriteLine(
+                                $"Cảnh báo: Sample '{sampleNumber}' cho Region '{region}' vượt quá số lượng ProductID ({productIdsList.Count}) trong dữ liệu CSV.");
+                        }
+                    }
+                    else
+                    {
+                        // (Tùy chọn) Ghi log nếu không tìm thấy Region trong file CSV
+                        Console.WriteLine($"Cảnh báo: Không tìm thấy dữ liệu CSV cho Region '{region}'.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Lỗi: Giá trị Sample '{sampleStr}' không phải là số hợp lệ ở ID: {row["ID"]}");
+                }
+            }
+        }
+
+        public static void GetFlexSN(DataTable dt, string location, string itemCode, string lotNo)
+        {
+            if (!FileFolderRepository.checkLocationIsValid(location))
+            {
+                throw new Exception("File không tồn tại");
+            }
+
+            List<string> list = FileFolderRepository.GetFileByExtension(location, ".csv").ToList();
+            foreach (string item in list)
+            {
+                string nameFile = FileFolderRepository.GetFileNameWithoutExtension(item).ToLower();
+                if (nameFile.Contains("cross")
+                    && nameFile.Contains("section")
+                    && nameFile.Contains($"{itemCode.Trim().ToLower()}00000b{lotNo.Trim().ToLower()}"))
+                {
+                    Dictionary<string, List<string>> dic = GetGroupedProductIds(item);
+                    FillProductIdsInDataTable(dt, dic);
+                    break;
+                }
+            }
+        }
+
         public static DataTable SelectData(DataTable dataTable)
         {
             // Kiểm tra an toàn nếu dữ liệu rỗng hoặc không chứa cột "select"
@@ -48,7 +202,7 @@ namespace OK2SHIP_SMT.Services
         {
             DBContext _dbContext = new DBContext();
             DataTable spec = _dbContext.LoadDataTable("SPEC_COMMENT_3", new[] { "ItemCode", "Sheet" },
-                new[] { itemCode, "CROSS_SECTION" });
+                new[] { itemCode, "CROSS_SECTION_B2B" });
             if (spec.Rows.Count <= 0)
             {
                 throw new Exception("Spec is not valid");
@@ -131,6 +285,7 @@ namespace OK2SHIP_SMT.Services
             row["LocationImg"] = location;
             dtSave.Rows.Add(row);
             _context.BuckDataTable(dtSave, _DBNAME, new[] { "ItemCode", "LotNo", "Sheet" }, null, "ID");
+            throw new Exception("Complete!");
         }
 
         public static void ExportClip(string itemcode, string lotno)
@@ -272,6 +427,7 @@ namespace OK2SHIP_SMT.Services
                             {
                                 try
                                 {
+                        
                                     ExportProcess.InsertImageToCell(ws,
                                         ws.Cells[ExportProcess.AddColumn(add, number + 3)], (byte[])row["Image"],
                                         $"{row["NameImage"]}_{number}{Guid.NewGuid()}");
@@ -391,6 +547,8 @@ namespace OK2SHIP_SMT.Services
                             try
                             {
                                 int ix = 0;
+                                ws.Cells[ExportProcess.AddRow(ExportProcess.AddColumn(add, number + 3), -1)]
+                                    .Value = row["ProductID"].ToString();
                                 ExportProcess.InsertImageToCell(ws, ws.Cells[ExportProcess.AddColumn(add, number + 3)],
                                     (byte[])row["Image"], $"{row["NameImage"]}_{number}{Guid.NewGuid()}");
                                 string[] splitData = row["Data"].ToString().Split(';');
@@ -430,6 +588,7 @@ namespace OK2SHIP_SMT.Services
                     }
                 }
             }
+            ws.Cells[address].Value = "";
         }
 
         public static DataTable ReadLogfile(string in_src, string infor, out string msg, string type)

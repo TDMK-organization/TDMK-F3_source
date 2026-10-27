@@ -9,15 +9,15 @@ using System.IO;
 
 namespace Export_FPCA_OK2ship_Auto_System.Services
 {
-    public class NasRepository
+      public class NasRepository
     {
         IniFile TDMK_init;
-        private string _nasAddress = "";
+        public string _nasAddress = "";
         public NasRepository()
         {
             //config file
             string app_path = System.Windows.Forms.Application.StartupPath;
-            string config_path = Path.Combine(app_path.Replace(@"\FPCA OK2SHIP Auto System", ""), "Config.ini");
+            string config_path = Path.Combine(app_path.Replace(@"\FPCA OK2SHIP Auto System\VHX-IMADA", ""), "Config.ini");
             TDMK_init = new IniFile(config_path);
             _nasAddress = TDMK_init.Read("NasAddress", "SMT_Config");
             ///////////////////////
@@ -25,12 +25,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             {
                 if (FileFolderRepository.checkLocationIsValid(_nasAddress))
                 {
-                    string year = DateTimeOffset.UtcNow.ToString("yyyy");
-                    string month = DateTimeOffset.UtcNow.ToString("MM");
-                    string quy = ((DateTimeOffset.UtcNow.Month - 1) / 3 + 1).ToString();
-                    string day = DateTimeOffset.UtcNow.ToString("dd");
-                    // nam/quy/month-day
-                    _nasAddress = $"{_nasAddress}\\{year}\\{quy}\\{month}-{day}";
+                    _nasAddress = $"{_nasAddress}";
                 }
                 else
                 {
@@ -45,11 +40,10 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
         }
         public bool IsImageColumn(DataColumn column)
         {
-            // Cột hình ảnh thường được lưu trữ dưới dạng mảng byte (byte[])
             return column.DataType == typeof(Image);
         }
 
-        public List<KeyValuePair<string, Image>> GetImageColumn(DataTable dataTable)
+        public List<KeyValuePair<string, byte[]>> GetImageColumn(DataTable dataTable)
         {
             if (dataTable == null || dataTable.Rows.Count == 0)
             {
@@ -63,13 +57,17 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 
 
 
-            List<KeyValuePair<string, Image>> listImage = new List<KeyValuePair<string, Image>>();
+            List<KeyValuePair<string, byte[]>> listImage = new List<KeyValuePair<string, byte[]>>();
             List<string> strings = new List<string>();
 
 
             foreach (DataColumn column in dataTable.Columns)
             {
                 if (IsImageColumn(column))
+                {
+                    strings.Add(column.ColumnName);
+                }
+                if (column.DataType == typeof(byte[]))
                 {
                     strings.Add(column.ColumnName);
                 }
@@ -92,7 +90,15 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         {
                             string name = $"{row["ID"]}-{Guid.NewGuid()}";
                             dataTable.Rows[row.Table.Rows.IndexOf(row)][item + "$Image"] = name;
-                            listImage.Add(new KeyValuePair<string, Image>(name, (Image)row[item]));
+                            if (dataTable.Columns[item].DataType == typeof(byte[]))
+                            {
+
+                                listImage.Add(new KeyValuePair<string, byte[]>(name, (byte[])row[item]));
+                            }
+                            else
+                            {
+                                listImage.Add(new KeyValuePair<string, byte[]>(name, TDMK_ImageConverter.ImageToByteArray((Image)row[item], ImageFormat.Jpeg)));
+                            }
                         }
                     }
                     catch
@@ -136,11 +142,11 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 return false;
             }
         }
-        public int SaveImage(List<KeyValuePair<string, Image>> listIMG, string location)
+        public int SaveImage(List<KeyValuePair<string, byte[]>> listIMG, string location)
         {
             int res = 0;
             EnsureDirectoryExists(location);
-            foreach (KeyValuePair<string, Image> item in listIMG)
+            foreach (KeyValuePair<string, byte[]> item in listIMG)
             {
                 //Image image = ConvertToJpeg(item.Value);
 
@@ -148,7 +154,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
             return res;
         }
-        public int SaveImageObjectToPath(Image imageObject, string destinationPath)
+        public int SaveImageObjectToPath(byte[] imageObject, string destinationPath)
         {
             if (imageObject == null)
             {
@@ -165,15 +171,15 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 }
 
                 // Lưu ảnh dưới định dạng JPEG
-                ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
-                if (jpegCodec == null)
-                    throw new InvalidOperationException("JPEG encoder not found.");
+                //ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
+                //if (jpegCodec == null)
+                //    throw new InvalidOperationException("JPEG encoder not found.");
 
-                EncoderParameters encoderParams = new EncoderParameters(1);
-                encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 85L);
+                //EncoderParameters encoderParams = new EncoderParameters(1);
+                //encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 85L);
 
-                imageObject.Save(destinationPath, jpegCodec, encoderParams);
-
+                //imageObject.Save(destinationPath, jpegCodec, encoderParams);
+                File.WriteAllBytes(destinationPath, imageObject);
                 return 1;
             }
             catch (Exception ex)
@@ -183,7 +189,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
         }
         public void MergeDataTable(DataTable dataTable, string category, string itemCode, string lotNo, string address)
         {
-            Dictionary<string, byte[]> images = GetImagesByte(address);
+            Dictionary<string, byte[]> images = GetImages(address);
             List<string> columnImage = new List<string>();
             foreach (DataColumn column in dataTable.Columns)
             {
@@ -213,7 +219,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 dataTable.Columns.Remove(item);
             }
         }
-        public Dictionary<string, byte[]> GetImagesByte(string path)
+
+        public Dictionary<string, byte[]> GetImages(string path)
         {
             string[] folder = Directory.GetFiles(path);
             Dictionary<string, byte[]> listPicture = new Dictionary<string, byte[]>();
@@ -228,24 +235,9 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
             return listPicture;
         }
-        public Dictionary<string, Image> GetImages(string path)
-        {
-            string[] folder = Directory.GetFiles(path);
-            Dictionary<string, Image> listPicture = new Dictionary<string, Image>();
-            foreach (string item in folder)
-            {
-                if (item.Contains(".jpg"))
-                {
-                    // Debugger.Break();
-                    string nameFile = FileFolderRepository.GetFileName(item).Replace(".jpg", "");
-                    listPicture.Add(nameFile, Image.FromFile(item));
-                }
-            }
-            return listPicture;
-        }
         public string HandleImageDataTable(DataTable dataTable, string category, string itemCode, string lotNo)
         {
-            List<KeyValuePair<string, Image>> list = GetImageColumn(dataTable);
+            List<KeyValuePair<string, byte[]>> list = GetImageColumn(dataTable);
             string location = $"{_nasAddress}\\{category}\\{itemCode}-{lotNo}\\";
             SaveImage(list, location);
             return location;

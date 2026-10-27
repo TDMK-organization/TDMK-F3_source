@@ -489,32 +489,32 @@ namespace OK2SHIP_SMT.UserControls.Bending
             }
         }
 
-        private void btn_export_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string itemCode = tb_itemCode.Text.Trim();
-                string lotNo = tb_lotNo.Text.Trim();
-                string maker = tb_maker.Text.Trim();
-                string category;
-                if (menu_option.SelectItem == null)
-                {
-                    category = "Flex Bending";
-                }
-                else
-                {
-                    category = menu_option.SelectItem.ToString();
-                }
-
-                __Service = new BendingService();
-                __Service.Export(itemCode, lotNo, maker, category);
-                DisplayData();
-            }
-            catch (Exception ex)
-            {
-                AntdUI.Notification.error(window, $"Error", ex.Message, autoClose: 10, align: align);
-            }
-        }
+        // private void btn_export_Click(object sender, EventArgs e)
+        // {
+        //     try
+        //     {
+        //         string itemCode = tb_itemCode.Text.Trim();
+        //         string lotNo = tb_lotNo.Text.Trim();
+        //         string maker = tb_maker.Text.Trim();
+        //         string category;
+        //         if (menu_option.SelectItem == null)
+        //         {
+        //             category = "Flex Bending";
+        //         }
+        //         else
+        //         {
+        //             category = menu_option.SelectItem.ToString();
+        //         }
+        //
+        //         __Service = new BendingService();
+        //         __Service.Export(itemCode, lotNo, maker, category);
+        //         DisplayData();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         AntdUI.Notification.error(window, $"Error", ex.Message, autoClose: 10, align: align);
+        //     }
+        // }
 
         private string status_TABLE = "";
 
@@ -567,7 +567,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
             {
                 if (!string.IsNullOrEmpty(value))
                 {
-                    if (value.Equals("NG"))
+                    if (value.Equals("NG") || value.Equals("OK*"))
                     {
                         e.CellStyle.BackColor = Color.Red;
                         //Debugger.Break();
@@ -674,7 +674,6 @@ namespace OK2SHIP_SMT.UserControls.Bending
                     }.ToList();
                     List<string> ar = new List<string>();
                     List<string> msg = new List<string>();
-// __Service.checkers
                     foreach (string category in list)
                     {
                         try
@@ -705,7 +704,6 @@ namespace OK2SHIP_SMT.UserControls.Bending
                         MessageBox.Show(
                             $"Xuất dữ liệu hoàn tất! \n [KPI CHECK] Thời gian chạy MergeFile: {stopwatch.ElapsedMilliseconds} ms ({stopwatch.Elapsed.TotalSeconds} giây)",
                             "Thông báo");
-                        throw new Exception("Không có sheet nào để merge");
                     }
 
                     // đo thời gian
@@ -770,6 +768,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
 
             _cancellationTokenSource = new CancellationTokenSource();
             var token = _cancellationTokenSource.Token;
+                List<string> msg = new List<string>();
 
             try
             {
@@ -813,7 +812,6 @@ namespace OK2SHIP_SMT.UserControls.Bending
                         "Thermal shock", "Heat soak"
                     }.ToList();
                     List<string> ar = new List<string>();
-                    List<string> msg = new List<string>();
 
                     foreach (string category in list)
                     {
@@ -821,16 +819,11 @@ namespace OK2SHIP_SMT.UserControls.Bending
                         {
                             string itemc = __Service.Export(itemCode, lotNo, maker, category, false, true);
                             ar.Add(itemc);
+                            break;
                         }
                         catch (Exception ex)
                         {
                             msg.Add($"{category}: {ex.Message}");
-                        }
-
-                        if (Debugger.IsAttached)
-                        {
-                            Debugger.Break();
-                            break;
                         }
                     }
 
@@ -839,7 +832,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
                     Stopwatch stopwatch = Stopwatch.StartNew();
                     if (ar.Count <= 0)
                     {
-                        throw new Exception("Không có dữ liệu");
+                        throw new Exception("Không xuất được worksheet nào để merge!");
                     }
 
                     __Service.MergeFile(ar.ToArray(), $"ALL_NET\\{itemCode}-{lotNo}");
@@ -864,6 +857,7 @@ namespace OK2SHIP_SMT.UserControls.Bending
             catch (Exception ex)
             {
                 MessageBox.Show("Có lỗi xảy ra: " + ex.Message, "Lỗi");
+                MessageBox.Show(string.Join("\n", msg));
             }
             finally
             {

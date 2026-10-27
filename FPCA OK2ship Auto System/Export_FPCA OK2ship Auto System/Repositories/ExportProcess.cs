@@ -136,6 +136,11 @@ namespace Export_FPCA_OK2ship_Auto_System
         {
             return new ExcelPackage(location);
         }
+        
+        public string getLocationSave()
+        {
+            return $"{EXPORT_LOACTION}\\";
+        }
         public string FindFormatWithItemCodeString(string itemCode)
         {
             itemCode = itemCode.Trim();
@@ -582,6 +587,16 @@ namespace Export_FPCA_OK2ship_Auto_System
                 Process.Start(file.FullName);
             }
 
+        }
+        public string SaveExcelPackage(ExcelPackage package, string nameFile, string location = "")
+        {
+            if (string.IsNullOrEmpty(location))
+            {
+                location = EXPORT_LOACTION_LAST;
+            }
+            FileInfo file = new FileInfo($"{location}\\{nameFile}{_EXTENSION}");
+            package.SaveAs(file);
+            return $"{location}\\{nameFile}{_EXTENSION}";
         }
         public async Task SaveExcelPackage(ExcelPackage package, string nameFile, string location = "", bool isOpen = true)
         {

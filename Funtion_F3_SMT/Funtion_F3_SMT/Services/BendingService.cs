@@ -741,11 +741,6 @@ namespace OK2SHIP_SMT.Services
 
                                                 // mặc định spec là 500% đối với các mục - theo sumitomo
 
-                                                if (category.Contains("TC") || category.Contains("TS") ||
-                                                    category.Contains("HS"))
-                                                {
-                                                    checkAgain = 5;
-                                                }
 
                                                 if (!string.IsNullOrEmpty(specCustomer))
                                                 {
@@ -766,8 +761,17 @@ namespace OK2SHIP_SMT.Services
 
                                                 if (z > checkAgain || z < -checkAgain)
                                                 {
-                                                    res = "NG";
-                                                    result_err = "Vanability R NG";
+                                                    if ((category.Contains("TC") || category.Contains("TS") ||
+                                                        category.Contains("HS")) && (z < 5 || z > -5))
+                                                    {
+                                                        res = "OK*";
+                                                        result_err = "Vanability R NG";
+                                                    }
+                                                    else
+                                                    {
+                                                        res = "NG";
+                                                        result_err = "Vanability R NG";
+                                                    }
                                                 }
                                                 else if (z > 0.095 || z < -0.095)
                                                 {
@@ -805,8 +809,20 @@ namespace OK2SHIP_SMT.Services
             __SPEC = _service._DATA;
         }
 
-        public void Load(string itemCode, string lotNo, string maker)
+        private string cacheData;
+
+        public void Load(string itemCode, string lotNo, string maker, bool cacheMode = false)
         {
+            if (cacheMode)
+            {
+                if (cacheData == $"{itemCode}-{lotNo}-{maker}")
+                {
+                    return;
+                }
+
+                cacheData = $"{itemCode}-{lotNo}-{maker}";
+            }
+
             _DATA.Clear();
             __SPEC.Clear();
             _RESULT.Clear();
@@ -1115,6 +1131,7 @@ namespace OK2SHIP_SMT.Services
                     using (ExcelWorksheet worksheet_ICT = process.FindSheetWithKey(package, ictsheet))
                     using (ExcelWorksheet worksheetXray = process.FindSheetWithKey(package, xraysheet))
                     {
+                       
                         int slot = 0;
                         if (dt_maker.Rows.Count > 0)
                         {
@@ -1133,7 +1150,7 @@ namespace OK2SHIP_SMT.Services
                             lotNo = row["LotNo"].ToString();
                             maker = row["Maker"].ToString();
 
-                            Load(itemCode, lotNo, maker);
+                            Load(itemCode, lotNo, maker, true);
                             List<string> listFlexSN = _RESULT[category].Columns.Cast<DataColumn>()
                                 .Select(col => col.ColumnName)
                                 .Where(flexSN => !flexSN.Contains("Select") && !flexSN.Contains("Cycle"))
@@ -1194,7 +1211,7 @@ namespace OK2SHIP_SMT.Services
             else
             {
                 ExportProcess process = new ExportProcess();
-                Load(itemCode, lotNo, maker);
+                Load(itemCode, lotNo, maker, true);
                 using (ExcelPackage package = process.FindFormatProcess("", itemCode, lotNo))
                 {
                     List<string> name = new[] { namesheet, ictsheet }.ToList();
@@ -1299,7 +1316,7 @@ namespace OK2SHIP_SMT.Services
         {
             if (worksheet == null)
             {
-                throw new Exception("worksheet is not valid");
+                throw new Exception("worksheet không tồn tại!");
             }
 
             if (bend)
@@ -1398,7 +1415,7 @@ namespace OK2SHIP_SMT.Services
                     i++;
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 //Debugger.Break();
             }
@@ -1526,29 +1543,46 @@ namespace OK2SHIP_SMT.Services
                 "Sample no.", "Net no.", "Flex SN", "Sumitomo net name", "Customer net name", "Pin 1", "Pin 2",
                 "LSL", "USL", "Before", "% Resistance change", "Judgement"
             });
-
+            string GetAddress(string key)
+            {
+                if (!dic.ContainsKey(key))
+                {
+                    throw new Exception($"Trong format không có vị trí \"{key}\"");
+                }
+                return dic[key];
+            }
             dic["Before"] = dic["Before"].Split('-').Last();
 
-            int row_Sample = ws.Cells[dic["Sample no."]].Start.Row;
-            int col_Sample = ws.Cells[dic["Sample no."]].Start.Column;
-            int row_Net = ws.Cells[dic["Net no."]].Start.Row;
-            int col_Net = ws.Cells[dic["Net no."]].Start.Column;
-            int row_Flex = ws.Cells[dic["Flex SN"]].Start.Row;
-            int col_Flex = ws.Cells[dic["Flex SN"]].Start.Column;
-            int row_Sumi = ws.Cells[dic["Sumitomo net name"]].Start.Row;
-            int col_Sumi = ws.Cells[dic["Sumitomo net name"]].Start.Column;
-            int row_Cus = ws.Cells[dic["Customer net name"]].Start.Row;
-            int col_Cus = ws.Cells[dic["Customer net name"]].Start.Column;
-            int row_Pin1 = ws.Cells[dic["Pin 1"]].Start.Row;
-            int col_Pin1 = ws.Cells[dic["Pin 1"]].Start.Column;
-            int row_Pin2 = ws.Cells[dic["Pin 2"]].Start.Row;
-            int col_Pin2 = ws.Cells[dic["Pin 2"]].Start.Column;
-            int row_LSL = ws.Cells[dic["LSL"]].Start.Row;
-            int col_LSL = ws.Cells[dic["LSL"]].Start.Column;
-            int row_USL = ws.Cells[dic["USL"]].Start.Row;
-            int col_USL = ws.Cells[dic["USL"]].Start.Column;
-            int row_Before = ws.Cells[dic["Before"]].Start.Row;
-            int col_Before = ws.Cells[dic["Before"]].Start.Column;
+            // Áp dụng vào code của bạn
+            int row_Sample = ws.Cells[GetAddress("Sample no.")].Start.Row;
+            int col_Sample = ws.Cells[GetAddress("Sample no.")].Start.Column;
+
+            int row_Net = ws.Cells[GetAddress("Net no.")].Start.Row;
+            int col_Net = ws.Cells[GetAddress("Net no.")].Start.Column;
+
+            int row_Flex = ws.Cells[GetAddress("Flex SN")].Start.Row;
+            int col_Flex = ws.Cells[GetAddress("Flex SN")].Start.Column;
+
+            int row_Sumi = ws.Cells[GetAddress("Sumitomo net name")].Start.Row;
+            int col_Sumi = ws.Cells[GetAddress("Sumitomo net name")].Start.Column;
+
+            int row_Cus = ws.Cells[GetAddress("Customer net name")].Start.Row;
+            int col_Cus = ws.Cells[GetAddress("Customer net name")].Start.Column;
+
+            int row_Pin1 = ws.Cells[GetAddress("Pin 1")].Start.Row;
+            int col_Pin1 = ws.Cells[GetAddress("Pin 1")].Start.Column;
+
+            int row_Pin2 = ws.Cells[GetAddress("Pin 2")].Start.Row;
+            int col_Pin2 = ws.Cells[GetAddress("Pin 2")].Start.Column;
+
+            int row_LSL = ws.Cells[GetAddress("LSL")].Start.Row;
+            int col_LSL = ws.Cells[GetAddress("LSL")].Start.Column;
+
+            int row_USL = ws.Cells[GetAddress("USL")].Start.Row;
+            int col_USL = ws.Cells[GetAddress("USL")].Start.Column;
+
+            int row_Before = ws.Cells[GetAddress("Before")].Start.Row;
+            int col_Before = ws.Cells[GetAddress("Before")].Start.Column;
 
             int col_Judge = -1;
             if (dic.ContainsKey("Judgement"))
@@ -1750,20 +1784,20 @@ namespace OK2SHIP_SMT.Services
                                             //Debugger.Break();
                                             //sumitomo
                                             double specCustom = 0.1;
-                                            string c = switchCategory(category);
-                                            if (c == "TS" || c == "HS" || c == "TC")
-                                            {
-                                                specCustom = 5;
-                                            }
+                                            // string c = switchCategory(category);
+                                            // if (c == "TS" || c == "HS" || c == "TC")
+                                            // {
+                                            //     specCustom = 5;
+                                            // }
 
                                             string iitem = row["Net No"].ToString();
                                             int i = int.Parse(iitem);
                                             // // viết biến thiên custom ở đây
-                                            var table = __SPEC[category];
 
                                             string specCustomer = "";
                                             try
                                             {
+                                                var table = __SPEC[category];
                                                 if (table.Rows.Count > i)
                                                 {
                                                     specCustomer = table.Columns.Contains("Custom Spec") &&
@@ -1942,9 +1976,9 @@ namespace OK2SHIP_SMT.Services
                         }
                         else
                         {
-                            ws.Cells[startRow, colIdx].Value = "";
-                            ws.Cells[startRow + 1, colIdx].Value = "";
-                            ws.Cells[startRow + 2, colIdx].Value = "";
+                            // ws.Cells[startRow, colIdx].Value = "";
+                            // ws.Cells[startRow + 1, colIdx].Value = "";
+                            // ws.Cells[startRow + 2, colIdx].Value = "";
                         }
                     }
 
@@ -1972,9 +2006,9 @@ namespace OK2SHIP_SMT.Services
                         }
                         else
                         {
-                            ws.Cells[startRow, colIdx].Value = "";
-                            ws.Cells[startRow + 1, colIdx].Value = "";
-                            ws.Cells[startRow + 2, colIdx].Value = "";
+                            // ws.Cells[startRow, colIdx].Value = "";
+                            // ws.Cells[startRow + 1, colIdx].Value = "";
+                            // ws.Cells[startRow + 2, colIdx].Value = "";
                         }
                     }
                 }

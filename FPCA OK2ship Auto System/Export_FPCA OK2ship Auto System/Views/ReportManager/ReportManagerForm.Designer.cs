@@ -34,6 +34,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.dgv = new AntdUI.Table();
+            this.progressExport = new AntdUI.Progress();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -46,6 +47,11 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_save = new AntdUI.Button();
             this.btn_delete = new AntdUI.Button();
             this.ip_itemname = new AntdUI.Input();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.button3 = new AntdUI.Button();
+            this.button2 = new AntdUI.Button();
+            this.btn_check = new AntdUI.Button();
+            this.button1 = new AntdUI.Button();
             this.titlebar = new AntdUI.PageHeader();
             this.button_color = new AntdUI.Button();
             this.tableLayoutPanel1.SuspendLayout();
@@ -53,6 +59,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
             this.titlebar.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -77,6 +84,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel4.ColumnCount = 1;
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel4.Controls.Add(this.dgv, 0, 1);
+            this.tableLayoutPanel4.Controls.Add(this.progressExport, 0, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 189);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -95,12 +103,23 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.dgv.Size = new System.Drawing.Size(1160, 432);
             this.dgv.TabIndex = 2;
             // 
+            // progressExport
+            // 
+            this.progressExport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.progressExport.Location = new System.Drawing.Point(3, 3);
+            this.progressExport.Name = "progressExport";
+            this.progressExport.Size = new System.Drawing.Size(1160, 26);
+            this.progressExport.TabIndex = 3;
+            this.progressExport.Text = "progress1";
+            this.progressExport.Visible = false;
+            // 
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 2;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 482F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 515F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.Controls.Add(this.groupBox1, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel5, 1, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 41);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -115,7 +134,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(476, 136);
+            this.groupBox1.Size = new System.Drawing.Size(509, 136);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Data";
@@ -126,7 +145,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel2.ColumnCount = 3;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 117F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 185F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 188F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 211F));
             this.tableLayoutPanel2.Controls.Add(this.ip_config, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.ip_build, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.label1, 0, 0);
@@ -143,7 +162,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(470, 117);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(503, 117);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // ip_config
@@ -205,7 +224,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_load.Location = new System.Drawing.Point(308, 4);
             this.btn_load.Name = "btn_load";
-            this.btn_load.Size = new System.Drawing.Size(182, 31);
+            this.btn_load.Size = new System.Drawing.Size(205, 31);
             this.btn_load.TabIndex = 2;
             this.btn_load.Text = "Load";
             this.btn_load.Click += new System.EventHandler(this.btn_load_Click);
@@ -216,7 +235,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_save.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_save.Location = new System.Drawing.Point(308, 42);
             this.btn_save.Name = "btn_save";
-            this.btn_save.Size = new System.Drawing.Size(182, 31);
+            this.btn_save.Size = new System.Drawing.Size(205, 31);
             this.btn_save.TabIndex = 3;
             this.btn_save.Text = "Create New";
             this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
@@ -227,7 +246,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_delete.Location = new System.Drawing.Point(308, 80);
             this.btn_delete.Name = "btn_delete";
-            this.btn_delete.Size = new System.Drawing.Size(182, 33);
+            this.btn_delete.Size = new System.Drawing.Size(205, 33);
             this.btn_delete.TabIndex = 4;
             this.btn_delete.Text = "Delete";
             this.btn_delete.Type = AntdUI.TTypeMini.Error;
@@ -241,6 +260,67 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.ip_itemname.Size = new System.Drawing.Size(179, 31);
             this.ip_itemname.TabIndex = 5;
             this.ip_itemname.Leave += new System.EventHandler(this.ip_itemname_Leave);
+            // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 2;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.Controls.Add(this.button3, 1, 1);
+            this.tableLayoutPanel5.Controls.Add(this.button2, 1, 0);
+            this.tableLayoutPanel5.Controls.Add(this.btn_check, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(this.button1, 0, 1);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(518, 3);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 2;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(645, 136);
+            this.tableLayoutPanel5.TabIndex = 2;
+            // 
+            // button3
+            // 
+            this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.button3.Location = new System.Drawing.Point(325, 71);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(317, 62);
+            this.button3.TabIndex = 3;
+            this.button3.Text = "Export Full Process";
+            this.button3.Type = AntdUI.TTypeMini.Primary;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button2
+            // 
+            this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.button2.Location = new System.Drawing.Point(325, 3);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(317, 62);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "Export All";
+            this.button2.Type = AntdUI.TTypeMini.Primary;
+            // 
+            // btn_check
+            // 
+            this.btn_check.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_check.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_check.Location = new System.Drawing.Point(3, 3);
+            this.btn_check.Name = "btn_check";
+            this.btn_check.Size = new System.Drawing.Size(316, 62);
+            this.btn_check.TabIndex = 0;
+            this.btn_check.Text = "Check Status";
+            this.btn_check.Click += new System.EventHandler(this.btn_check_Click);
+            // 
+            // button1
+            // 
+            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button1.Location = new System.Drawing.Point(3, 71);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(316, 62);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "button1";
             // 
             // titlebar
             // 
@@ -283,9 +363,21 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel3.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
             this.titlebar.ResumeLayout(false);
             this.ResumeLayout(false);
         }
+
+        private AntdUI.Progress progressExport;
+
+        private AntdUI.Button button2;
+        private AntdUI.Button button3;
+
+        private AntdUI.Button button1;
+
+        private AntdUI.Button btn_check;
+
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
 
         private AntdUI.Input ip_itemname;
         private AntdUI.Input ip_build;
