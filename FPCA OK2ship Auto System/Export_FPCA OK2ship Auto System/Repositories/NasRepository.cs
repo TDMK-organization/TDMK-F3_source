@@ -17,7 +17,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
         {
             //config file
             string app_path = System.Windows.Forms.Application.StartupPath;
-            string config_path = Path.Combine(app_path.Replace(@"\FPCA OK2SHIP Auto System\VHX-IMADA", ""), "Config.ini");
+            string config_path = Path.Combine(app_path.Replace(@"\FPCA OK2SHIP Auto System", ""), "Config.ini");
             TDMK_init = new IniFile(config_path);
             _nasAddress = TDMK_init.Read("NasAddress", "SMT_Config");
             ///////////////////////

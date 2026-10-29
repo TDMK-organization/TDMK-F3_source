@@ -80,12 +80,14 @@
       <DependentUpon>NVL_SP.cs</DependentUpon>
     </Compile>
     <Compile Include="Repositories\DBContext.cs" />
+    <Compile Include="Repositories\DBRepository.cs" />
     <Compile Include="Repositories\ExportProcess.cs" />
     <Compile Include="Repositories\FileFolderRepository.cs" />
     <Compile Include="Services\ACFService.cs" />
     <Compile Include="Services\AirBubbleService.cs" />
     <Compile Include="Services\AssyYieldService.cs" />
     <Compile Include="Services\BarCodeVertification.cs" />
+    <Compile Include="Services\BendingService.cs" />
     <Compile Include="Services\CrossSectionService.cs" />
     <Compile Include="Services\EEDService.cs" />
     <Compile Include="Services\ExportService.cs" />

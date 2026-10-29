@@ -266,7 +266,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
 
         private string switchORT(string sheetName)
         {
-            sheetName = sheetName.Replace(" - ICT DATA", "");
+            sheetName = sheetName.ToLower().Replace(" - ict data", "");
 
             switch (sheetName.ToLower().Trim())
             {

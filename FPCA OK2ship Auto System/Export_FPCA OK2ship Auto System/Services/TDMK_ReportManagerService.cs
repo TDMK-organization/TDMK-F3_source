@@ -7,7 +7,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Export_FPCA_OK2ship_Auto_System.Repositories;
 using Microsoft.Office.Interop.Excel;
 using OfficeOpenXml;
@@ -102,8 +104,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
         /// </summary>
         /// <param name="progress"></param>
         /// <param name="reportForm">true is get sheet from report, false get sheet from format</param>
-        public async Task ExportAll(List<string> _listCategory, IProgress<float> progress = null,
-            bool reportForm = false, bool dbFirst = false)
+        public async Task ExportAll(List<string> _listCategory, IProgress<ExportProgressReport> progress = null,
+            bool reportForm = true, bool dbFirst = false, CancellationToken token = default)
         {
             if (_listCategory.Count <= 0)
             {
@@ -111,145 +113,170 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
 
             string destinationFilePath = new ExportProcess().getExportLocation();
-            string targetFolder = Path.Combine(destinationFilePath,
-                $"{__ItemName}_{__Build}_{__ItemName}");
-            List<string> allFile = new List<string>();
-            float num = 80 / _listCategory.Count;
-            float percent = 0;
+            string targetFolder = Path.Combine(destinationFilePath, $"{__ItemName}_{__Build}_{__ItemName}");
+            float num = 80f / _listCategory.Count;
 
-            // [Step 1]: Lấy dữ liệu lẻ 
-            foreach (string item in _listCategory)
+            // Truyền token vào Task.Run
+            await Task.Run(() =>
             {
-                progress.Report(percent);
-                string status = "";
+                List<string> allFile = new List<string>();
+                float percent = 0f;
+
+                // ==========================================
+                // [Step 1]: Lấy dữ liệu lẻ 
+                // ==========================================
+                foreach (string item in _listCategory)
+                {
+                    // KIỂM TRA HỦY: Nếu có tín hiệu hủy, dừng vòng lặp ngay lập tức!
+                    token.ThrowIfCancellationRequested();
+
+                    progress?.Report(new ExportProgressReport
+                        { PercentComplete = percent, SheetName = item, StatusResult = "Đang xuất..." });
+
+                    string status = "";
+                    try
+                    {
+                        if (__STATUS.TryGetValue(item, out string value))
+                        {
+                            if (value.ToUpper().Equals("NAS"))
+                                status = ExportCategoryNas(item, targetFolder);
+                            else if (value.ToUpper().Equals("NONE"))
+                                status = "Bỏ qua (NONE)";
+                            else if (value.ToUpper().Contains("OK2SHIP") || value.ToUpper().Contains("OK2BUILD"))
+                            {
+                                Dictionary<string, string> dic = new Dictionary<string, string>();
+                                string[] valueArr = value.ToString().Split('(', ')', '-');
+                                try
+                                {
+                                    dic.Add("TargetFolder", targetFolder);
+                                    dic.Add("ItemCode", valueArr[1]);
+                                    dic.Add("LotNo", valueArr[2]);
+                                    dic.Add("Maker", valueArr[3]);
+                                }
+                                catch
+                                {
+                                }
+
+                                status = ExportCategoryDB(item, item, reportForm, dbFirst, dic);
+                            }
+                            else status = "Không có trường hợp này!";
+                        }
+                        else status = "Không tìm thấy trạng thái cấu hình!";
+                    }
+                    catch (Exception ex)
+                    {
+                        status = $"Lỗi: {ex.Message}";
+                    }
+
+                    allFile.Add($"{item}\u200B{status}");
+                    percent += num;
+
+                    progress?.Report(new ExportProgressReport
+                    {
+                        PercentComplete = percent,
+                        SheetName = item,
+                        StatusResult = status.Contains("Lỗi") ? status : "Hoàn thành"
+                    });
+                }
+
+                // ==========================================
+                // [Step 2]: Gộp file
+                // ==========================================
+
+                // KIỂM TRA HỦY LẦN NỮA trước khi gọi file exe chạy ngầm
+                token.ThrowIfCancellationRequested();
+
+                progress?.Report(new ExportProgressReport { PercentComplete = 80f });
+
+                List<string> mergerFile = new List<string>();
+                foreach (string item in allFile)
+                {
+                    string[] split = item.Split('\u200B');
+                    if (split.Length > 1 && !string.IsNullOrEmpty(split[1]) && File.Exists(split[1]))
+                    {
+                        mergerFile.Add(split[1]);
+                    }
+                }
+
                 try
                 {
-                    if (__STATUS.TryGetValue(item, out string value))
-                    {
-                        //Debugger.Break();
-                        // trường hợp nếu là export từ nas
-                        if (value.ToUpper().Equals("NAS"))
-                        {
-                            status = ExportCategoryNas(item, targetFolder);
-                        }
-                        else if (value.ToUpper().Equals("NONE"))
-                        {
-                            // bỏ qua
-                        }
-                        else if (value.ToUpper().Contains("OK2SHIP") || value.ToUpper().Contains("OK2BUILD"))
-                        {
-                            Dictionary<string, string> dic = new Dictionary<string, string>();
-                            string[] valueArr = value.ToString().Split('(', ')', '-');
-                            try
-                            {
-                                dic.Add("TargetFolder", targetFolder);
-                                dic.Add("ItemCode", valueArr[1]);
-                                dic.Add("LotNo", valueArr[2]);
-                                dic.Add("Maker", valueArr[3]);
-                            }
-                            catch
-                            {
-                            }
+                    string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                    string exePath = Path.Combine(baseDirectory, "VHX-IMADA", "MergeService",
+                        "MergeHeavyExcelService.exe");
+                    if (!File.Exists(exePath)) throw new Exception("Không tìm thấy file dịch vụ!");
 
-                            status = ExportCategoryDB(item, item, reportForm, dbFirst, dic);
-                        }
-                        else
+                    StringBuilder arguments = new StringBuilder();
+                    foreach (string file in mergerFile) arguments.Append($"\"{file}\" ");
+
+                    string dirOutPut = new ExportProcess().getLocationSave();
+                    string finalOutputFile = Path.Combine(dirOutPut, $"{__ItemName}_{__Build}_{__ItemName}.xlsx");
+                    arguments.Append($"\"{finalOutputFile}\"");
+
+                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    {
+                        FileName = exePath, Arguments = arguments.ToString(),
+                        UseShellExecute = false, CreateNoWindow = true, WindowStyle = ProcessWindowStyle.Hidden,
+                        RedirectStandardOutput = true, RedirectStandardError = true,
+                        StandardOutputEncoding = Encoding.UTF8, StandardErrorEncoding = Encoding.UTF8
+                    };
+
+                    using (Process process = new Process())
+                    {
+                        process.StartInfo = startInfo;
+                        process.Start();
+
+                        // NÂNG CAO: Nếu người dùng ấn hủy TRONG LÚC file exe đang chạy, ta ép đóng tiến trình đó luôn
+                        using (token.Register(() =>
+                               {
+                                   try
+                                   {
+                                       if (!process.HasExited) process.Kill();
+                                   }
+                                   catch
+                                   {
+                                   }
+                               }))
                         {
-                            // Trường hợp đặc biệt
-                            Debugger.Break();
-                            throw new Exception("Không có trường hợp này!");
+                            string outputLog = process.StandardOutput.ReadToEnd();
+                            string errorLog = process.StandardError.ReadToEnd();
+                            process.WaitForExit();
+
+                            if (process.ExitCode != 0 && !token.IsCancellationRequested)
+                            {
+                                throw new Exception(
+                                    $"Dịch vụ ghép file thất bại. Lỗi: {process.ExitCode}\nLog: {outputLog}\n{errorLog}");
+                            }
                         }
                     }
+
+                    // Nếu bị hủy trong lúc gộp file thì dừng luôn, không mở thư mục nữa
+                    token.ThrowIfCancellationRequested();
+
+                    Process.Start(new ProcessStartInfo(finalOutputFile) { UseShellExecute = true });
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    status = ex.Message;
+                    throw new Exception($"Quá trình merge file lỗi: {ex.Message}");
                 }
 
-                allFile.Add($"{item}:{status}");
-                progress.Report(percent);
-                percent += num;
-            }
-
-            // [Step 2]: Gộp file
-            progress.Report(80);
-            // try
-            // {
-            //     // 2.1. Lấy đường dẫn động tới thư mục chứa phần mềm
-            //     string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            //
-            //     // Tạo đường dẫn chuẩn đến file .exe
-            //     string exePath = Path.Combine(baseDirectory, "VHX-IMADA", "MergeService", "MergeHeavyExcelService.exe");
-            //
-            //     // Kiểm tra xem file .exe có tồn tại không
-            //     if (!File.Exists(exePath))
-            //     {
-            //         throw new Exception("Không tìm thấy file dịch vụ MergeHeavyExcelService.exe tại: " + exePath);
-            //     }
-            //
-            //     // 2. Tạo chuỗi arguments (tham số)
-            //     StringBuilder arguments = new StringBuilder();
-            //
-            //     // Nối danh sách các file input (Mỗi đường dẫn bọc trong dấu ngoặc kép "")
-            //     foreach (string file in allFile)
-            //     {
-            //         arguments.Append($"\"{file}\" ");
-            //     }
-            //
-            //     string dirOutPut = new ExportProcess().getLocationSave();
-            //     // Nối file output vào cuối cùng (Bọc trong ngoặc kép "")
-            //     arguments.Append($"\"{dirOutPut}\"");
-            //
-            //     // 3. Cấu hình tiến trình (Process) chạy file exe
-            //     ProcessStartInfo startInfo = new ProcessStartInfo
-            //     {
-            //         FileName = exePath,
-            //         Arguments = arguments.ToString(),
-            //         UseShellExecute = false,
-            //         CreateNoWindow = true,
-            //         WindowStyle = ProcessWindowStyle.Hidden,
-            //         // THÊM: Đọc luồng để bắt lỗi từ Python
-            //         RedirectStandardOutput = true,
-            //         RedirectStandardError = true,
-            //         StandardOutputEncoding = Encoding.UTF8,
-            //         StandardErrorEncoding = Encoding.UTF8
-            //     };
-            //
-            //     // 4. Khởi chạy tiến trình
-            //     using (Process process = new Process())
-            //     {
-            //         process.StartInfo = startInfo;
-            //         process.Start();
-            //
-            //         // Đọc lại toàn bộ nội dung mà Python đã print() ra
-            //         string outputLog = process.StandardOutput.ReadToEnd();
-            //         string errorLog = process.StandardError.ReadToEnd();
-            //
-            //         process.WaitForExit();
-            //
-            //         // 5. Kiểm tra mã trả về
-            //         if (process.ExitCode != 0)
-            //         {
-            //             // Bắn ra Exception kèm theo log của file Python để dễ debug
-            //             throw new Exception(
-            //                 $"Dịch vụ ghép file thất bại (Mã lỗi: {process.ExitCode}).\n\nLog hệ thống:\n{outputLog}\n{errorLog}");
-            //         }
-            //     }
-            //
-            //     // 6. MỞ FILE SAU KHI GHÉP THÀNH CÔNG
-            //     Process.Start(new ProcessStartInfo(dirOutPut)
-            //     {
-            //         UseShellExecute = true
-            //     });
-            // }
-            // catch (Exception ex)
-            // {
-            //     throw new Exception($"Quá trình mergefile lỗi:{ex.Message}");
-            // }
-
-            progress.Report(100);
+                progress?.Report(new ExportProgressReport { PercentComplete = 100f });
+            }, token);
         }
 
+        public class ExportProgressReport
+        {
+            public float PercentComplete { get; set; }
+
+            // Tên sheet vừa xuất xong
+            public string SheetName { get; set; }
+
+            // Trạng thái kết quả xuất (VD: đường dẫn file, hoặc câu báo lỗi)
+            public string StatusResult { get; set; }
+        }
 
         public string ExportCategoryNas(string nameReal, string targetFolder)
         {
@@ -306,26 +333,32 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
 
             //Lấy format 
+            using (ExportProcess process = new ExportProcess())
             using (ExcelPackage package = reportForm
-                       ? new ExportProcess().FindFormatWithItemCode(itemCode)
-                       : new ExportProcess().OpenFileExcel(targetFolder))
-            {
-                // cho các thụuật toán xuất vào đây
-                Debugger.Break();
-                switch (category)
-                {
-                    case "Cross Section":
-                        if (info.TryGetValue("LotNo", out string lotNo))
-                        {
-                           return CrossSectionService.ExportAll(package, itemCode, lotNo);
-                            
-                        }
-                        else
-                        {
-                            
-                        }
+                       ? process.FindFormatWithItemCode(itemCode)
+                       : process.OpenFileExcel(targetFolder))
 
-                        break;
+            {
+                try
+                {
+                    // cho các thụuật toán xuất vào đây
+                    switch (category)
+                    {
+                        case "Cross Section":
+                            if (info.TryGetValue("LotNo", out string lotNo))
+                            {
+                                return $"{CrossSectionService.ExportAll(package, itemCode, lotNo)}";
+                            }
+
+                            throw new Exception("Không có lotNo");
+                        case "GAP Connector":
+
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return $"{ex.Message}";
                 }
             }
 
@@ -724,7 +757,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("Maker", out maker))
                         {
                             status = bending_check(itemcode, lotNo, maker);
-                            valueActtact = $"({itemcode}-{lotNo}-{maker})";
+                            valueActtact = $"({itemcode.Trim()}-{lotNo.PadLeft(5, '0')}-{maker.Trim()})";
                             return true;
                         }
 
@@ -734,8 +767,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = itemCodeLotNo_Check(itemcode, lotNo);
-
-                            valueActtact = $"({itemcode}-{lotNo})";
+                            valueActtact = $"({itemcode.Trim()}-{lotNo.PadLeft(5, '0')})";
                             return true;
                         }
 
@@ -834,7 +866,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = IQC_pullTest_check(itemcode, lotNo);
-                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
+                            valueActtact = $"{itemcode}-{lotNo}";
                             return true;
                         }
 
@@ -844,7 +876,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = shearTest_check(itemcode, lotNo);
-                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
+                            valueActtact = $"{itemcode}-{lotNo}";
                             return true;
                         }
 
@@ -854,7 +886,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = oqcummating_check(itemcode, lotNo);
-                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
+                            valueActtact = $"{itemcode}-{lotNo}";
                             return true;
                         }
 
@@ -864,7 +896,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = iqcliner_check(itemcode, lotNo);
-                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
+                            valueActtact = $"{itemcode}-{lotNo}";
                             return true;
                         }
 
@@ -874,7 +906,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                             && info.TryGetValue("LotNo", out lotNo))
                         {
                             status = iqcpsa_check(itemcode, lotNo);
-                            valueActtact = $"{itemcode}-{lotNo}-{maker}";
+                            valueActtact = $"{itemcode}-{lotNo}";
                             return true;
                         }
 
@@ -1221,15 +1253,25 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 
         private static string bending_check(string itemCode, string lotNo, string maker)
         {
-            itemCode = itemCode.Trim();
-            lotNo = lotNo.Trim().PadLeft(5, '0');
-            maker = maker.Trim();
+            string formattedItemCode = itemCode.Trim();
+
+            string formattedLotNo = lotNo.Trim().PadLeft(5, '0');
+            string formattedMaker = maker.Trim();
+
             string status = "";
             DataTable dt = new DataTable();
-            using (DBContext db = new DBContext())
+            // 2. Truy vấn dữ liệu
+            using (DBRepository db = new DBRepository())
             {
-                dt = db.LoadDataTable("BENDING_TEST_DATA", new[] { "ItemCode", "LotNo", "Maker" },
-                    new[] { itemCode, lotNo, maker });
+                try
+                {
+                    dt = db.LoadDataTable("BENDING_TEST_DATA", new[] { "ItemCode", "LotNo", "Maker" },
+                        new[] { formattedItemCode, formattedLotNo, formattedMaker });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Không có dữ liệu bending: {ex.Message}");
+                }
             }
 
             if (dt != null && dt.Rows.Count > 0)
@@ -1237,7 +1279,10 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 string checking = dt.Rows[0]["Result"].ToString();
                 if (string.IsNullOrEmpty(checking))
                 {
-                    return MSG_NODATA;
+                    BendingService service =  new BendingService();
+                    service.Load(itemCode, lotNo, maker);
+                   // service.Save(itemCode, lotNo, maker, 2);
+                    checking = service.GetSpecResult();
                 }
 
                 return checking;

@@ -51,7 +51,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.button3 = new AntdUI.Button();
             this.button2 = new AntdUI.Button();
             this.btn_check = new AntdUI.Button();
-            this.button1 = new AntdUI.Button();
+            this.btn_checknas = new AntdUI.Button();
             this.titlebar = new AntdUI.PageHeader();
             this.button_color = new AntdUI.Button();
             this.tableLayoutPanel1.SuspendLayout();
@@ -145,7 +145,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel2.ColumnCount = 3;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 117F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 185F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 211F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 215F));
             this.tableLayoutPanel2.Controls.Add(this.ip_config, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.ip_build, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.label1, 0, 0);
@@ -224,7 +224,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_load.Location = new System.Drawing.Point(308, 4);
             this.btn_load.Name = "btn_load";
-            this.btn_load.Size = new System.Drawing.Size(205, 31);
+            this.btn_load.Size = new System.Drawing.Size(209, 31);
             this.btn_load.TabIndex = 2;
             this.btn_load.Text = "Load";
             this.btn_load.Click += new System.EventHandler(this.btn_load_Click);
@@ -235,7 +235,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_save.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_save.Location = new System.Drawing.Point(308, 42);
             this.btn_save.Name = "btn_save";
-            this.btn_save.Size = new System.Drawing.Size(205, 31);
+            this.btn_save.Size = new System.Drawing.Size(209, 31);
             this.btn_save.TabIndex = 3;
             this.btn_save.Text = "Create New";
             this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
@@ -246,7 +246,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_delete.Location = new System.Drawing.Point(308, 80);
             this.btn_delete.Name = "btn_delete";
-            this.btn_delete.Size = new System.Drawing.Size(205, 33);
+            this.btn_delete.Size = new System.Drawing.Size(209, 33);
             this.btn_delete.TabIndex = 4;
             this.btn_delete.Text = "Delete";
             this.btn_delete.Type = AntdUI.TTypeMini.Error;
@@ -269,7 +269,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel5.Controls.Add(this.button3, 1, 1);
             this.tableLayoutPanel5.Controls.Add(this.button2, 1, 0);
             this.tableLayoutPanel5.Controls.Add(this.btn_check, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.button1, 0, 1);
+            this.tableLayoutPanel5.Controls.Add(this.btn_checknas, 0, 1);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel5.Location = new System.Drawing.Point(518, 3);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
@@ -299,7 +299,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(317, 62);
             this.button2.TabIndex = 2;
-            this.button2.Text = "Export All";
+            this.button2.Text = "Setup";
             this.button2.Type = AntdUI.TTypeMini.Primary;
             // 
             // btn_check
@@ -313,14 +313,15 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_check.Text = "Check Status";
             this.btn_check.Click += new System.EventHandler(this.btn_check_Click);
             // 
-            // button1
+            // btn_checknas
             // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button1.Location = new System.Drawing.Point(3, 71);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(316, 62);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
+            this.btn_checknas.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_checknas.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.btn_checknas.Location = new System.Drawing.Point(3, 71);
+            this.btn_checknas.Name = "btn_checknas";
+            this.btn_checknas.Size = new System.Drawing.Size(316, 62);
+            this.btn_checknas.TabIndex = 1;
+            this.btn_checknas.Text = "Check Nas";
             // 
             // titlebar
             // 
@@ -373,7 +374,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
         private AntdUI.Button button2;
         private AntdUI.Button button3;
 
-        private AntdUI.Button button1;
+        private AntdUI.Button btn_checknas;
 
         private AntdUI.Button btn_check;
 

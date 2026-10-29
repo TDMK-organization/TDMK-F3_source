@@ -186,7 +186,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
 
                     // 1. Dùng Path.Combine thay vì nối chuỗi thủ công "\\", đồng thời xác định thư mục đích
                     string targetFolder = Path.Combine(destinationFilePath,
-                        $"{_service.__ItemName}_{_service.__Build}_{_service.__ItemName}");
+                        $"{_service.__ItemName}_{_service.__Build}_{_service.__Config}");
 
                     // 2. Kiểm tra và TẠO THƯ MỤC nếu nó chưa tồn tại (Rất quan trọng, nếu không sẽ bị lỗi DirectoryNotFound)
                     if (!Directory.Exists(targetFolder))
@@ -244,7 +244,6 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                 else
                 {
                     // Qúa trình cài đặt itemcode lotno
-                    Debugger.Break();
                     try
                     {
                         foreach (DataRow row in _dataTable.Rows)

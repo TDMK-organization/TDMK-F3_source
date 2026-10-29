@@ -151,8 +151,12 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
         public string GenerateSelectCommand(string tableName, string[] colName = null, string[] selectColumn = null)
         {
             string command = $"FROM [{tableName}] ";
+    
             if (selectColumn == null)
             {
+                // Nếu chọn tất cả (*), SQL Server trả về nguyên bản. 
+                // Lưu ý: Nếu bảng có nchar và bạn muốn tự động RTRIM tất cả, 
+                // tốt nhất nên truyền danh sách cột cụ thể vào selectColumn thay vì dùng dấu *.
                 command = $"SELECT * {command}";
             }
             else
@@ -160,7 +164,9 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
                 string selectClause = "";
                 for (int i = 0; i < selectColumn.Length; i++)
                 {
-                    selectClause += $"[{selectColumn[i]}]"; // Using parameterized queries
+                    // Tự động bọc RTRIM() cho các cột dữ liệu để loại bỏ khoảng trắng thừa của kiểu nchar
+                    selectClause += $"RTRIM([{selectColumn[i]}]) AS [{selectColumn[i]}]"; 
+            
                     if (i < selectColumn.Length - 1)
                     {
                         selectClause += ", ";
@@ -168,11 +174,10 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
                 }
                 command = $"SELECT {selectClause} {command}";
             }
+
             if (colName != null && colName.Count() > 0)
             {
-                string whereClause = "";
-
-                whereClause = "WHERE ";
+                string whereClause = "WHERE ";
                 for (int i = 0; i < colName.Length; i++)
                 {
                     whereClause += $"[{colName[i]}] = @{colName[i]}"; // Using parameterized queries
@@ -184,6 +189,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Repositories
 
                 command = $"{command} {whereClause} ";
             }
+    
             return command;
         }
         #endregion

@@ -328,7 +328,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
 
 
-            string category = dt.Rows[0]["Region"].ToString().Trim();
+            string category = dt.Rows[0]["Sheet"].ToString().Trim();
             DataTable dt_data = HandleData(dt);
             try
             {
@@ -337,9 +337,14 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     return ExportClip(package, dt_data, itemCode, lotNo);
                 }
 
-                if (category.ToUpper().Trim() == "SHIELD B2B")
+                else if (category.ToUpper().Trim() == "SHIELD B2B")
                 {
                     return Export(package, dt_data, itemCode, lotNo);
+                }
+
+                else
+                {
+                    
                 }
             }
             catch (Exception ex)
@@ -361,8 +366,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             {
                 ExportWSClip(worksheet, dt_data);
 
-                return process.SaveExcelPackage(package, "Cross Section Clip",
-                    $"Cross Section");
+                return process.SaveExcelPackage(package, $"Cross Section", "");
             }
         }
 

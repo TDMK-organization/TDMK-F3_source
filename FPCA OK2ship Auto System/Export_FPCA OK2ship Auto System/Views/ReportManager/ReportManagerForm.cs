@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AntdUI;
@@ -142,8 +143,6 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
 
             try
             {
-               
-
                 // 3. Gom nhóm theo SheetName
                 // Chỉ lấy những dòng có SheetName hợp lệ
                 var groups = dataList
@@ -200,8 +199,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                     }
                     catch
                     {
-                        
                     }
+
                     var (isSuccess, status, attact) = await Task.Run(() =>
                     {
                         bool success = TDMK_ReportManagerService.checkCategory(sharedKey, dic, out string statusValue,
@@ -301,7 +300,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
         // Bổ sung thêm hàm switchORT vào form này nếu bạn chưa copy từ form cũ sang
         private string switchORT(string sheetName)
         {
-            sheetName = sheetName.Replace(" - ICT DATA", "");
+            sheetName = sheetName.ToLower().Replace(" - ict data", "");
 
             switch (sheetName.ToLower().Trim())
             {
@@ -508,32 +507,105 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
 
         #endregion
 
+        // Biến toàn cục để giữ tín hiệu hủy và trạng thái chạy
+        private CancellationTokenSource _cancellationTokenSource;
+        private bool _isExporting = false;
+
         private async void button3_Click(object sender, EventArgs e)
         {
-            // Tạm thời vô hiệu hóa nút bấm để tránh click nhiều lần
-            button3.Enabled = false;
+            // ==================================================
+            // NẾU ĐANG CHẠY -> HÀNH ĐỘNG HỦY
+            // ==================================================
+            if (_isExporting)
+            {
+                if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
+                {
+                    _cancellationTokenSource.Cancel();
+
+                    button3.Text = "Đang hủy...";
+                    button3.Enabled = false; // Tạm khóa để không bị bấm hủy liên tục nhiều lần
+
+                    MessageNotification("Đang Hủy", "Hệ thống đang dừng quá trình, vui lòng chờ...", "info");
+                }
+
+                return; // Thoát hàm, không chạy code bên dưới
+            }
+
+            // ==================================================
+            // NẾU CHƯA CHẠY -> HÀNH ĐỘNG BẮT ĐẦU XUẤT
+            // ==================================================
+            _isExporting = true;
+
+            // Đổi giao diện nút thành Hủy (Bạn có thể đổi màu nút sang Đỏ nếu dùng AntdUI)
+            button3.Text = "Hủy (Cancel)";
+
+            // Gọi hàm phụ để KHÓA các Textbox nhưng VẪN ĐỂ bảng dgv hoạt động
+            LockControls(true);
+
             progressExport.Visible = true;
             progressExport.Value = 0f;
 
-            // Khởi tạo bộ lắng nghe tiến độ (Progress). Mã bên trong khối này sẽ chạy trên UI Thread.
-            var progressReporter = new Progress<float>(percent => { progressExport.Value = percent; });
+            var dataList = dgv.DataSource as System.ComponentModel.BindingList<ReportManagerModel>;
+            var progressReporter = new Progress<TDMK_ReportManagerService.ExportProgressReport>(reportInfo =>
+            {
+                progressExport.Value = reportInfo.PercentComplete / 100f;
+                if (!string.IsNullOrEmpty(reportInfo.SheetName) && dataList != null)
+                {
+                    var rowToUpdate = dataList.FirstOrDefault(x => x.SheetName == reportInfo.SheetName);
+                    if (rowToUpdate != null) rowToUpdate.Status = reportInfo.StatusResult;
+                }
+            });
+
+            _cancellationTokenSource = new CancellationTokenSource();
 
             try
             {
-                List<string> listCateogry = new List<string>();
-                // Truyền biến progressReporter vào hàm và chờ nó chạy xong
-                await _service.ExportAll(listCateogry, progressReporter);
+                List<string> listCateogry = dataList?.Select(x => x.SheetName).ToList() ?? new List<string>();
+
+                await _service.ExportAll(listCateogry, progressReporter, token: _cancellationTokenSource.Token);
+
+                MessageNotification("Thông báo", "Xuất file hoàn tất!", "info");
+            }
+            catch (OperationCanceledException)
+            {
+                MessageNotification("Đã Hủy", "Quá trình xuất file đã bị hủy bỏ.", "warning");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show("Lỗi: " + ex.Message);
             }
             finally
             {
-                // Đảm bảo luôn đầy 100% khi kết thúc và bật lại nút bấm
+                // Khôi phục lại trạng thái ban đầu sau khi Xong hoặc Hủy
+                _isExporting = false;
                 progressExport.Value = 1f;
-                button3.Enabled = true;
+
+                button3.Text = "Export All"; // Đổi lại tên nút
+                button3.Enabled = true; // Mở khóa lại nút (nếu đã bị khóa lúc bấm Hủy)
+
+                // Mở khóa lại các Textbox
+                LockControls(false);
+
+                if (_cancellationTokenSource != null)
+                {
+                    _cancellationTokenSource.Dispose();
+                    _cancellationTokenSource = null;
+                }
             }
+        }
+
+// Hàm phụ trợ để khóa/mở khóa giao diện thông minh
+        private void LockControls(bool isLocked)
+        {
+            // Khóa các ô nhập liệu và các nút khác để người dùng không sửa giữa chừng
+            ip_itemname.Enabled = !isLocked;
+            ip_build.Enabled = !isLocked;
+            ip_config.Enabled = !isLocked;
+            btn_save.Enabled = !isLocked;
+            btn_load.Enabled = !isLocked;
+
+            // ĐẢM BẢO bảng dgv LUÔN MỞ để có thể cuộn (scroll)
+            dgv.Enabled = true;
         }
     }
 

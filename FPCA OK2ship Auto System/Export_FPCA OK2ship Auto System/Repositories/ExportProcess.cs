@@ -529,6 +529,55 @@ namespace Export_FPCA_OK2ship_Auto_System
             destinationRowRange.Style.Border.Left.Style = sourceRowRange.Style.Border.Left.Style;
             destinationRowRange.Style.Border.Right.Style = sourceRowRange.Style.Border.Right.Style;
         }
+        public string SaveExcelWorksheet(ExcelPackage excelPackage, string sheetName, string nameFile,
+            string type = "NPI", bool open = true)
+        {
+            string[] sheetNames = sheetName.Replace(" ", "_").ToUpper().Split(':');
+            DateTime nowDate = DateTime.Now;
+            IList<ExcelWorksheet> worksheets = new List<ExcelWorksheet>();
+            foreach (var item in excelPackage.Workbook.Worksheets)
+            {
+                if (!sheetNames.Contains(item.Name.Trim().Replace(" ", "_").ToUpper()))
+                {
+                    worksheets.Add(item);
+                }
+            }
+
+            foreach (ExcelWorksheet item in worksheets)
+            {
+                excelPackage.Workbook.Worksheets.Delete(item.Name);
+            }
+
+            //excelPackage.Workbook.Worksheets.Delete("Rev History");
+            int month = nowDate.Month;
+
+            // Lưu package vào địa chỉ được chỉ định
+            string[] str = nameFile.Split('.');
+            string folderName = $"{EXPORT_LOACTION}\\{sheetNames[0]}\\THANG {month}\\";
+
+            if (!Directory.Exists(folderName))
+            {
+                try
+                {
+                    // Tạo thư mục nếu nó không tồn tại
+                    Directory.CreateDirectory(folderName);
+                }
+                catch (Exception ex)
+                {
+                    // Xử lý lỗi nếu không thể tạo thư mục
+                    throw new Exception($"Lỗi: Không thể tạo thư mục '{folderName}'. Lỗi: {ex.Message}");
+                }
+            }
+
+            FileInfo file = new FileInfo($"{folderName}{nameFile}{_EXTENSION}");
+            excelPackage.SaveAs(file);
+            if (open)
+            {
+                Process.Start(file.FullName);
+            }
+
+            return file.FullName;
+        }
 
         public void SaveExcelWorksheet(ExcelPackage excelPackage, string sheetName, string nameFile, string type = "NPI", bool prime = true, string extension = "", string category = "")
         {
@@ -594,6 +643,11 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 location = EXPORT_LOACTION_LAST;
             }
+
+            if (string.IsNullOrEmpty(_EXTENSION))
+            {
+                _EXTENSION = package.File?.Extension;
+            }
             FileInfo file = new FileInfo($"{location}\\{nameFile}{_EXTENSION}");
             package.SaveAs(file);
             return $"{location}\\{nameFile}{_EXTENSION}";
@@ -610,6 +664,19 @@ namespace Export_FPCA_OK2ship_Auto_System
             {
                 Process.Start(file.FullName);
             }
+        }
+
+        public ExcelWorksheet FindSheetWithKey(ExcelPackage excelPackage, string sheetName)
+        {
+            foreach (ExcelWorksheet sheet in excelPackage.Workbook.Worksheets)
+            {
+                if (sheet.Name.Trim().Replace(" ", "_").ToUpper().Contains(sheetName.Replace(" ", "_").ToUpper()))
+                {
+                    return sheet;
+                }
+            }
+
+            return null;
         }
     }
 }

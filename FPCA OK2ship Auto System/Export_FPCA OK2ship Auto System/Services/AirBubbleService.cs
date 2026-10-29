@@ -908,7 +908,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 
                         ExportSetupLiner(ws1, "PSA");
                         ExportPSASheet(ws1, "PSA");
-                        exportProcess.SaveExcelWorksheet(package, "Air bubble btw Liner-PSA:Air bubble btw PSA-FPC", $"{_itemCode.Trim()}-{_lotNo.Trim()}");
+                        // exportProcess.SaveExcelWorksheet(package, "Air bubble btw Liner-PSA:Air bubble btw PSA-FPC", $"{_itemCode.Trim()}-{_lotNo.Trim()}");
 
 
 
