@@ -145,7 +145,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel2.ColumnCount = 3;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 117F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 185F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 215F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 227F));
             this.tableLayoutPanel2.Controls.Add(this.ip_config, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.ip_build, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.label1, 0, 0);
@@ -192,7 +192,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(111, 37);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Item Name";
+            this.label1.Text = "Year";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label2
@@ -204,7 +204,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(111, 37);
             this.label2.TabIndex = 0;
-            this.label2.Text = "Build";
+            this.label2.Text = "ItemName";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label3
@@ -215,7 +215,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(111, 39);
             this.label3.TabIndex = 1;
-            this.label3.Text = "Config";
+            this.label3.Text = "Build_Config";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btn_load
@@ -224,7 +224,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_load.Location = new System.Drawing.Point(308, 4);
             this.btn_load.Name = "btn_load";
-            this.btn_load.Size = new System.Drawing.Size(209, 31);
+            this.btn_load.Size = new System.Drawing.Size(221, 31);
             this.btn_load.TabIndex = 2;
             this.btn_load.Text = "Load";
             this.btn_load.Click += new System.EventHandler(this.btn_load_Click);
@@ -235,7 +235,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_save.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_save.Location = new System.Drawing.Point(308, 42);
             this.btn_save.Name = "btn_save";
-            this.btn_save.Size = new System.Drawing.Size(209, 31);
+            this.btn_save.Size = new System.Drawing.Size(221, 31);
             this.btn_save.TabIndex = 3;
             this.btn_save.Text = "Create New";
             this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
@@ -246,7 +246,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_delete.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_delete.Location = new System.Drawing.Point(308, 80);
             this.btn_delete.Name = "btn_delete";
-            this.btn_delete.Size = new System.Drawing.Size(209, 33);
+            this.btn_delete.Size = new System.Drawing.Size(221, 33);
             this.btn_delete.TabIndex = 4;
             this.btn_delete.Text = "Delete";
             this.btn_delete.Type = AntdUI.TTypeMini.Error;
@@ -301,6 +301,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.button2.TabIndex = 2;
             this.button2.Text = "Setup";
             this.button2.Type = AntdUI.TTypeMini.Primary;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // btn_check
             // 
@@ -322,6 +323,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.btn_checknas.Size = new System.Drawing.Size(316, 62);
             this.btn_checknas.TabIndex = 1;
             this.btn_checknas.Text = "Check Nas";
+            this.btn_checknas.Click += new System.EventHandler(this.btn_checknas_Click);
             // 
             // titlebar
             // 

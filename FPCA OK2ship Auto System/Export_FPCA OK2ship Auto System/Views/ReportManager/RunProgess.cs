@@ -186,7 +186,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
 
                     // 1. Dùng Path.Combine thay vì nối chuỗi thủ công "\\", đồng thời xác định thư mục đích
                     string targetFolder = Path.Combine(destinationFilePath,
-                        $"{_service.__ItemName}_{_service.__Build}_{_service.__Config}");
+                        $"{_service.__ItemName}\\{_service.__Build}_{_service.__Config}");
 
                     // 2. Kiểm tra và TẠO THƯ MỤC nếu nó chưa tồn tại (Rất quan trọng, nếu không sẽ bị lỗi DirectoryNotFound)
                     if (!Directory.Exists(targetFolder))
@@ -304,43 +304,37 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                 throw new FileNotFoundException($"Không tìm thấy file gốc tại: {sourceFilePath}");
             }
 
-            // 2. Xóa file đích nếu đã tồn tại
-            if (File.Exists(destinationFilePath))
-            {
-                File.Delete(destinationFilePath);
-            }
-
-            // (Bắt buộc cho EPPlus version 5 trở lên) Cấu hình bản quyền
+            // 2. Cấu hình bản quyền EPPlus
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            // 3. Mở file gốc và tạo file mới
-            using (var sourcePackage = new ExcelPackage(new FileInfo(sourceFilePath)))
-            using (var destPackage = new ExcelPackage())
+            // 3. COPY NGUYÊN BẢN FILE GỐC RA FILE MỚI 
+            // Thao tác này giúp giữ nguyên 100% cấu trúc .xlsm (VBA, Macro, Style chung)
+            File.Copy(sourceFilePath, destinationFilePath, overwrite: true);
+
+            // 4. Mở file mới lên để chỉnh sửa (Xóa các sheet không nằm trong danh sách)
+            using (var destPackage = new ExcelPackage(new FileInfo(destinationFilePath)))
             {
-                foreach (string sheetName in sheetNames)
+                // Tìm tên các sheet KHÔNG CÓ trong danh sách sheetNames để xóa đi
+                var sheetsToDelete = destPackage.Workbook.Worksheets
+                    .Where(ws => !sheetNames.Contains(ws.Name))
+                    .Select(ws => ws.Name)
+                    .ToList();
+
+                // Kiểm tra an toàn: Excel bắt buộc phải có ít nhất 1 sheet. 
+                // Nếu xóa hết tất cả các sheet thì sẽ bị lỗi.
+                if (sheetsToDelete.Count == destPackage.Workbook.Worksheets.Count)
                 {
-                    // Kiểm tra sheet có tồn tại trong file gốc không
-                    var sourceSheet = sourcePackage.Workbook.Worksheets[sheetName];
-                    if (sourceSheet != null)
-                    {
-                        // Copy toàn bộ dữ liệu & định dạng sang file mới
-                        destPackage.Workbook.Worksheets.Add(sheetName, sourceSheet);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Cảnh báo: Không tìm thấy sheet '{sheetName}' trong file gốc.");
-                    }
+                    throw new Exception("Không có sheet nào hợp lệ để trích xuất.");
                 }
 
-                // 4. Lưu file mới (chỉ lưu khi có ít nhất 1 sheet được copy thành công)
-                if (destPackage.Workbook.Worksheets.Count > 0)
+                // Xóa các sheet thừa
+                foreach (string sheet in sheetsToDelete)
                 {
-                    destPackage.SaveAs(new FileInfo(destinationFilePath));
+                    destPackage.Workbook.Worksheets.Delete(sheet);
                 }
-                else
-                {
-                    throw new Exception("Không có sheet nào hợp lệ để trích xuất. File mới không được tạo.");
-                }
+
+                // 5. Lưu lại thay đổi
+                destPackage.Save();
             }
         }
     }

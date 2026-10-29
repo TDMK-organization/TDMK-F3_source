@@ -11,14 +11,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Export_FPCA_OK2ship_Auto_System.Repositories;
-using Microsoft.Office.Interop.Excel;
 using OfficeOpenXml;
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
 using DataTable = System.Data.DataTable;
-using Sheets = DocumentFormat.OpenXml.Spreadsheet.Sheets;
-using Workbook = DocumentFormat.OpenXml.Spreadsheet.Workbook;
 
 namespace Export_FPCA_OK2ship_Auto_System.Services
 {
@@ -113,7 +107,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
 
             string destinationFilePath = new ExportProcess().getExportLocation();
-            string targetFolder = Path.Combine(destinationFilePath, $"{__ItemName}_{__Build}_{__ItemName}");
+            string targetFolder = Path.Combine(destinationFilePath, $"{__ItemName}_{__Build}_{__Config}");
             float num = 80f / _listCategory.Count;
 
             // Truyền token vào Task.Run
@@ -198,20 +192,39 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                     }
                 }
 
+// Kiểm tra xem danh sách file có dữ liệu không
+                if (mergerFile == null || mergerFile.Count == 0)
+                {
+                 
+                    MessageBox.Show(string.Join(", ", allFile));
+                    return; // Dừng tiến trình ngay lập tức, không gọi file .exe nữa
+                }
+
                 try
                 {
                     string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
                     string exePath = Path.Combine(baseDirectory, "VHX-IMADA", "MergeService",
                         "MergeHeavyExcelService.exe");
+
                     if (!File.Exists(exePath)) throw new Exception("Không tìm thấy file dịch vụ!");
 
                     StringBuilder arguments = new StringBuilder();
-                    foreach (string file in mergerFile) arguments.Append($"\"{file}\" ");
+                    bool hasMacro = false;
+
+                    // Quét các file đầu vào, nếu có file .xlsm thì đánh dấu
+                    foreach (string file in mergerFile)
+                    {
+                        if (file.EndsWith(".xlsm", StringComparison.OrdinalIgnoreCase)) hasMacro = true;
+                        arguments.Append($"\"{file}\" ");
+                    }
 
                     string dirOutPut = new ExportProcess().getLocationSave();
-                    string finalOutputFile = Path.Combine(dirOutPut, $"{__ItemName}_{__Build}_{__ItemName}.xlsx");
-                    arguments.Append($"\"{finalOutputFile}\"");
 
+                    // Động thay đổi đuôi file xuất ra: Có file đầu vào là xlsm thì xuất xlsm, ngược lại xuất xlsx
+                    string extension = hasMacro ? ".xlsm" : ".xlsx";
+                    string finalOutputFile = Path.Combine(dirOutPut, $"{__ItemName}_{__Build}_{__ItemName}{extension}");
+                    arguments.Append($"\"{finalOutputFile}\"");
+               
                     ProcessStartInfo startInfo = new ProcessStartInfo
                     {
                         FileName = exePath, Arguments = arguments.ToString(),
@@ -220,12 +233,15 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                         StandardOutputEncoding = Encoding.UTF8, StandardErrorEncoding = Encoding.UTF8
                     };
 
+                    // Khai báo biến log ở ngoài để có thể sử dụng nếu lỗi ở bước kiểm tra file
+                    string outputLog = "";
+                    string errorLog = "";
+
                     using (Process process = new Process())
                     {
                         process.StartInfo = startInfo;
                         process.Start();
 
-                        // NÂNG CAO: Nếu người dùng ấn hủy TRONG LÚC file exe đang chạy, ta ép đóng tiến trình đó luôn
                         using (token.Register(() =>
                                {
                                    try
@@ -237,20 +253,26 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                                    }
                                }))
                         {
-                            string outputLog = process.StandardOutput.ReadToEnd();
-                            string errorLog = process.StandardError.ReadToEnd();
+                            outputLog = process.StandardOutput.ReadToEnd();
+                            errorLog = process.StandardError.ReadToEnd();
                             process.WaitForExit();
 
                             if (process.ExitCode != 0 && !token.IsCancellationRequested)
                             {
                                 throw new Exception(
-                                    $"Dịch vụ ghép file thất bại. Lỗi: {process.ExitCode}\nLog: {outputLog}\n{errorLog}");
+                                    $"Dịch vụ ghép file thất bại (Exit: {process.ExitCode}).\nLog: {outputLog}\n{errorLog}");
                             }
                         }
                     }
 
-                    // Nếu bị hủy trong lúc gộp file thì dừng luôn, không mở thư mục nữa
                     token.ThrowIfCancellationRequested();
+
+                    // BẮT BUỘC KIỂM TRA TỒN TẠI TRƯỚC KHI MỞ
+                    if (!File.Exists(finalOutputFile))
+                    {
+                        throw new Exception(
+                            $"Ghép file xong nhưng không tìm thấy file đầu ra tại: {finalOutputFile}\n\nLog tiến trình:\n{outputLog}\n{errorLog}");
+                    }
 
                     Process.Start(new ProcessStartInfo(finalOutputFile) { UseShellExecute = true });
                 }
@@ -280,10 +302,18 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
 
         public string ExportCategoryNas(string nameReal, string targetFolder)
         {
-            IList<string> listFile = FileFolderRepository.ListAllFileInFolder(targetFolder, "xlsx");
+            // 1. Lấy danh sách cả 2 loại file
+            var listFileXlsx = FileFolderRepository.ListAllFileInFolder(targetFolder, "xlsx");
+            var listFileXlsm = FileFolderRepository.ListAllFileInFolder(targetFolder, "xlsm");
+
+            // Gộp 2 danh sách lại với nhau
+            var listFile = listFileXlsx.Concat(listFileXlsm).ToList();
+
             foreach (string item in listFile)
             {
-                string file = FileFolderRepository.GetFileName(item).ToUpper().Replace(".XLSX", "");
+                // 2. Tối ưu: Dùng Path.GetFileNameWithoutExtension để tự động cắt bỏ mọi loại đuôi file
+                string file = Path.GetFileNameWithoutExtension(item).ToUpper();
+
                 if (file.Contains(nameReal.ToUpper()))
                 {
                     return item;
@@ -704,12 +734,49 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
             }
         }
 
+        public string checkNas()
+        {
+            List<string> list = new List<string>();
+            string destinationFilePath = new ExportProcess().getExportLocation();
+            destinationFilePath = Path.Combine(destinationFilePath,
+                $"{__ItemName}\\{__Build}_{__Config}");
+
+            if (!Directory.Exists(destinationFilePath))
+            {
+                return "Tất cả dữ liệu đã được cập nhật";
+            }
+
+            List<string> listfile = Directory.GetFiles(destinationFilePath).ToList();
+            foreach (string item in listfile)
+            {
+                string name = FileFolderRepository.GetFileNameWithoutExtension(item);
+                if (__STATUS.TryGetValue(name, out string status))
+                {
+                    if (status.ToLower() == "none")
+                    {
+                        list.Add(name);
+                    }
+                }
+                else
+                {
+                    list.Add(name);
+                }
+            }
+
+            if (list.Count > 0)
+            {
+                throw new Exception($"Các file {string.Join(",", list)} chưa được cài!");
+            }
+
+            return "Tất cả dữ liệu đã được cập nhật";
+        }
+
         public static string checkNas(string itemName, string build, string config)
         {
             List<string> list = new List<string>();
             string destinationFilePath = new ExportProcess().getExportLocation();
             destinationFilePath = Path.Combine(destinationFilePath,
-                $"{itemName}_{build}_{config}");
+                $"{itemName}\\{build}_{config}");
             if (!Directory.Exists(destinationFilePath))
             {
                 return "";
@@ -1279,9 +1346,9 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
                 string checking = dt.Rows[0]["Result"].ToString();
                 if (string.IsNullOrEmpty(checking))
                 {
-                    BendingService service =  new BendingService();
+                    BendingService service = new BendingService();
                     service.Load(itemCode, lotNo, maker);
-                   // service.Save(itemCode, lotNo, maker, 2);
+                    // service.Save(itemCode, lotNo, maker, 2);
                     checking = service.GetSpecResult();
                 }
 
@@ -1292,5 +1359,38 @@ namespace Export_FPCA_OK2ship_Auto_System.Services
         }
 
         #endregion
+
+        public void updateNas()
+        {
+            List<string> list = new List<string>();
+            string destinationFilePath = new ExportProcess().getExportLocation();
+            destinationFilePath = Path.Combine(destinationFilePath,
+                $"{__ItemName}_{__Build}_{__Config}");
+
+            if (!Directory.Exists(destinationFilePath))
+            {
+                return;
+            }
+
+            List<string> listfile = Directory.GetFiles(destinationFilePath).ToList();
+            foreach (string item in listfile)
+            {
+                string name = FileFolderRepository.GetFileNameWithoutExtension(item);
+                if (__STATUS.TryGetValue(name, out string status))
+                {
+                    if (status.ToLower() == "none")
+                    {
+                        __STATUS[name] = "Nas";
+                    }
+                }
+                else
+                {
+                    __STATUS.Add(name, "Nas");
+                    listcategory.Add(name);
+                }
+            }
+
+            Save(false);
+        }
     }
 }

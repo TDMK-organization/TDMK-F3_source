@@ -101,10 +101,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                     }
                     else if (btn.Text == "Setup" || btn.Id.StartsWith("setup_"))
                     {
-                        string itemName = ip_itemname.Text;
-                        string build = ip_build.Text;
-                        string config = ip_config.Text;
-                        SetupForm frm = new SetupForm(sheetName, _service);
+                        SetupForm frm = new SetupForm(_service);
                         frm.ShowDialog();
                         DisplayData();
                     }
@@ -379,7 +376,6 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
                     Status = "None",
                     Action = new AntdUI.CellLink[]
                     {
-                        new AntdUI.CellButton("setup_" + key, "Setup", AntdUI.TTypeMini.Primary),
                         new AntdUI.CellButton("delete_" + key, "Delete", AntdUI.TTypeMini.Error),
                     }
                 });
@@ -606,6 +602,29 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
 
             // ĐẢM BẢO bảng dgv LUÔN MỞ để có thể cuộn (scroll)
             dgv.Enabled = true;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SetupForm frm = new SetupForm(_service);
+            frm.ShowDialog();
+            DisplayData();
+        }
+
+        private void btn_checknas_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                MessageBox.Show( _service.checkNas(), "Thông báo") ;
+            }
+            catch (Exception ex)
+            {
+                if (MessageBox.Show($"{ex.Message} Bạn có muốn cập nhật", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                     _service.updateNas();
+                     DisplayData();
+                }
+            }
         }
     }
 

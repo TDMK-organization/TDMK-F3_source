@@ -48,6 +48,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.ip = new AntdUI.Input();
             this.selectMultiple = new AntdUI.SelectMultiple();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.button1 = new System.Windows.Forms.Button();
             this.btn_back = new System.Windows.Forms.Button();
             this.btn_next = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
@@ -104,7 +105,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(896, 353);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(896, 498);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
             // tbl_step1
@@ -125,7 +126,7 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tbl_step1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.tbl_step1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 46F));
             this.tbl_step1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 162F));
-            this.tbl_step1.Size = new System.Drawing.Size(890, 347);
+            this.tbl_step1.Size = new System.Drawing.Size(890, 492);
             this.tbl_step1.TabIndex = 0;
             // 
             // label1
@@ -227,15 +228,27 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel3.Controls.Add(this.button1, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.btn_back, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.btn_next, 2, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 440);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 585);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(896, 47);
             this.tableLayoutPanel3.TabIndex = 2;
+            // 
+            // button1
+            // 
+            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button1.Location = new System.Drawing.Point(301, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(292, 41);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "Close";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // btn_back
             // 
@@ -276,6 +289,8 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
             this.tableLayoutPanel3.ResumeLayout(false);
             this.ResumeLayout(false);
         }
+
+        private System.Windows.Forms.Button button1;
 
         private AntdUI.Panel panel1;
         private AntdUI.Button btn_addCateogry;

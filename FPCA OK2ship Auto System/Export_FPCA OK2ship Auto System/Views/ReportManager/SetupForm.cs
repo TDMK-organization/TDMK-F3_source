@@ -11,14 +11,12 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
 {
     public partial class SetupForm : Form
     {
-        public string SHEET_NAME { get; set; }
 
         private TDMK_ReportManagerService _service;
 
-        public SetupForm(string sheetName, TDMK_ReportManagerService service)
+        public SetupForm(TDMK_ReportManagerService service)
         {
             InitializeComponent();
-            SHEET_NAME = sheetName;
             this._service = service;
             InitView();
         }
@@ -204,5 +202,11 @@ namespace Export_FPCA_OK2ship_Auto_System.Views
         }
 
         #endregion
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // tôi muốn thoát ra khỏi cửa sổ này
+            this.Close();
+        }
     }
 }
